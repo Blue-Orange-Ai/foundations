@@ -1,0 +1,106 @@
+
+
+.foundations-default-btn {
+    color: white;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.875rem;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.foundations-primary-btn {
+    border: 1px solid black;
+    background-color: black;
+}
+
+.foundations-secondary-btn {
+    border: 1px solid #e0e1e2;
+    background-color: white;
+    color: black;
+}
+
+.foundations-danger-btn {
+    border: 1px solid #e11d48;
+    background-color: #e11d48;
+}
+
+.foundations-success-btn {
+    border: 1px solid #16a34b;
+    background-color: #16a34b;
+}
+
+.foundations-warning-btn {
+    border: 1px solid #f97317;
+    background-color: #f97317;
+}
+
+.foundations-clear-btn {
+    border: 1px solid transparent;
+    background-color: transparent;
+    color: black;
+}
+
+.foundations-btn-disabled{
+    cursor: not-allowed;
+}
+
+.foundations-default-btn-icon-left {
+    margin-right: 10px;
+}
+
+.foundations-default-btn-icon-right {
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.foundations-btn-rotate-spinner {
+    display: inline-block;
+    animation: spin 0.4s linear infinite;
+}
+
+.success-animation { margin:150px auto;}
+
+/*.checkmark {*/
+/*    width: 20px;*/
+/*    height: 20px;*/
+/*    border-radius: 50%;*/
+/*    display: block;*/
+/*    stroke-miterlimit: 10;*/
+/*    animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;*/
+/*    position:relative;*/
+/*}*/
+
+/*@keyframes fill {*/
+/*    from {*/
+/*        fill-opacity: 0;*/
+/*    }*/
+/*    to {*/
+/*        fill-opacity: 1;*/
+/*    }*/
+/*}*/
+
+/*@keyframes scale {*/
+/*    0%, 100% {*/
+/*        transform: none;*/
+/*    }*/
+
+/*    50% {*/
+/*        transform: scale3d(1.1, 1.1, 1);*/
+/*    }*/
+/*}*/
+
+
+
