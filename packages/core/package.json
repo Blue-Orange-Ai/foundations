@@ -5,7 +5,7 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "author": "Blue Orange AI",
-  "private": true,
+  "private": false,
   "dependencies": {
     "remixicon": "^3.5.0",
     "tippy.js": "^6.3.7"
