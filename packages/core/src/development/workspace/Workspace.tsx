@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 
 import './Workspace.css'
-import {Button, ButtonIconPos, ButtonType} from "../button/Button";
+import {Button, ButtonIconPos, ButtonType} from "../../components/button/Button";
 
 interface Props {
 }
@@ -33,7 +33,7 @@ export const Workspace: React.FC<Props> = ({}) => {
 						buttonType={ButtonType.SECONDARY}
 						onClick={btnClick}
 						icon="ri-git-merge-line"
-						iconPos={ButtonIconPos.LEFT}
+						iconPos={ButtonIconPos.RIGHT}
 						tooltip={'Hello world I am a tooltip'}
 						isLoading={isLoading}
 						isSuccess={success}

@@ -4,7 +4,7 @@ import 'remixicon/fonts/remixicon.css';
 import 'tippy.js/dist/tippy.css'
 import './App.css';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import {Workspace} from "./components/workspace/Workspace";
+import {Workspace} from "./development/workspace/Workspace";
 
 function App() {
   return (
