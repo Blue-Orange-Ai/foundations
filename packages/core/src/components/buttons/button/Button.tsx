@@ -1,9 +1,9 @@
 import React, {useEffect, useRef, useState} from "react";
-import { Instance } from 'tippy.js';
 import tippy from "tippy.js";
 import './Button.css';
-import {SuccessAnimation} from "../successanimation/SuccessAnimation";
-import {ErrorAnimation} from "../erroranimation/ErrorAnimation";
+import {SuccessAnimation} from "../utils/successanimation/SuccessAnimation";
+import {ErrorAnimation} from "../utils/erroranimation/ErrorAnimation";
+import {TippyHTMLElement} from "../../../interfaces/AppInterfaces";
 
 export enum ButtonType {
 	PRIMARY,
@@ -18,13 +18,6 @@ export enum ButtonType {
 export enum ButtonIconPos {
 	LEFT,
 	RIGHT
-}
-
-interface TippyInstance extends Instance {
-	_tippy?: TippyInstance;
-}
-interface TippyHTMLElement extends HTMLElement {
-	_tippy?: TippyInstance;
 }
 
 interface Props {

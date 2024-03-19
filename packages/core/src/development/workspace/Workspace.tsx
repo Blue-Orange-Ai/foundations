@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 
 import './Workspace.css'
-import {Button, ButtonIconPos, ButtonType} from "../../components/button/Button";
+import {Button, ButtonIconPos, ButtonType} from "../../components/buttons/button/Button";
 
 interface Props {
 }

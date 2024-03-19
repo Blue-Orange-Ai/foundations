@@ -1,5 +1,5 @@
 import React from "react";
-import {ButtonIconPos, ButtonType} from "../button/Button";
+import {ButtonIconPos, ButtonType} from "../../button/Button";
 
 import './ErrorAnimation.css';
 
