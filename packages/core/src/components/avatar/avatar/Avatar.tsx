@@ -7,7 +7,7 @@ import {AvatarImage} from "../avatarimage/AvatarImage";
 import {PassportAvatar, User} from "@blue-orange-ai/foundations-clients/lib/Passport";
 import {BlueOrangeMedia} from "@blue-orange-ai/foundations-clients/lib/BlueOrangeMedia";
 import {Button, ButtonType} from "../../buttons/button/Button";
-import {FileUploadBtn} from "../../buttons/fileuploadbtn/FileUploadBtn";
+import {FileUploadBtn} from "../../buttons/file-upload-btn/FileUploadBtn";
 
 
 interface Props {
