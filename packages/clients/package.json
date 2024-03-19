@@ -1,14 +1,26 @@
 {
-  "name": "clients",
+  "name": "@Blue-Orange-Ai/foundations-clients",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "prepare": "npm run build"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "Blue Orange AI",
+  "license": "ISC",
+  "dependencies": {
+    "remixicon": "^3.5.0",
+    "tippy.js": "^6.3.7"
+  },
+  "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
+    "typescript": "^4.9.5"
+  },
+  "publishConfig": {
+    "@Blue-Orange-Ai:registry": "https://npm.pkg.github.com"
+  }
 }

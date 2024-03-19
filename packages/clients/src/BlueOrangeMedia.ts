@@ -13,7 +13,7 @@ export type Media = {
 };
 
 
-class BlueOrangeMedia {
+export class BlueOrangeMedia {
     private baseUrl: string;
     private authCookie: string;
 
@@ -139,5 +139,3 @@ class BlueOrangeMedia {
         });
     }
 }
-
-export default BlueOrangeMedia;

@@ -215,7 +215,7 @@ export type AddRemoveGroupsToUserRequest = {
     userId: number;
 }
 
-class Passport {
+export class Passport {
 
     private baseUrl: string;
     private authCookie: string;
@@ -471,7 +471,5 @@ class Passport {
     }
 
 }
-
-export default Passport
 
 
