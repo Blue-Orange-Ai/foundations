@@ -1,6 +1,6 @@
 {
   "name": "@Blue-Orange-Ai/foundations-clients",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -13,8 +13,8 @@
   "author": "Blue Orange AI",
   "license": "ISC",
   "dependencies": {
-    "remixicon": "^3.5.0",
     "js-cookie": "^3.0.5",
+    "remixicon": "^3.5.0",
     "tippy.js": "^6.3.7"
   },
   "devDependencies": {
