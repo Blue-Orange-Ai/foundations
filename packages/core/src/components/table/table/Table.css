@@ -1,0 +1,17 @@
+
+.blue-orange-data-table-cont {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.blue-orange-data-table {
+    border-collapse: collapse;
+}
+
+.blue-orange-data-table td {
+    border: 1px solid black;
+}
+
+.blue-orange-data-table th {
+    border: 1px solid black;
+}

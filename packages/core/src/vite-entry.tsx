@@ -10,11 +10,11 @@ export { ButtonCircleIcon } from './components/buttons/button-circle-icon/Button
 
 // Inputs
 export { AddressInput } from './components/inputs/address/AddressInput';
-export { DefaultInput } from './components/inputs/defaultinput/DefaultInput';
-export { DefaultTextArea } from './components/inputs/defaulttextarea/DefaultTextArea';
+export { Input } from './components/inputs/input/Input';
+export { TextArea } from './components/inputs/textarea/TextArea';
 export { PhoneInput } from './components/inputs/phone/PhoneInput';
 export { SearchInput } from './components/inputs/search/SearchInput';
-export { DefaultCheckbox } from './components/inputs/defaultcheckbox/DefaultCheckbox';
+export { Checkbox } from './components/inputs/checkbox/Checkbox';
 
 // Alerts
 export { ErrorBlockAlert } from './components/alerts/in-line-block/erroralert/ErrorBlockAlert';

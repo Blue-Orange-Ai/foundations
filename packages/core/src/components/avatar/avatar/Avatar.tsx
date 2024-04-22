@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Media, Passport} from "@blue-orange-ai/foundations-clients";
 
 import './Avatar.css';
@@ -8,6 +8,8 @@ import {PassportAvatar, User} from "@blue-orange-ai/foundations-clients/lib/Pass
 import {BlueOrangeMedia} from "@blue-orange-ai/foundations-clients/lib/BlueOrangeMedia";
 import {Button, ButtonType} from "../../buttons/button/Button";
 import {FileUploadBtn} from "../../buttons/file-upload-btn/FileUploadBtn";
+import {TippyHTMLElement} from "../../../interfaces/AppInterfaces";
+import tippy from "tippy.js";
 
 
 interface Props {
@@ -15,14 +17,19 @@ interface Props {
 	edit?: boolean;
 	height?: number;
 	width?:number; // Callback prop to send value to parent
+	tooltip?:boolean
 }
 
 export const Avatar: React.FC<Props> = ({
 											user,
 											edit = false,
 											height=80,
-											width=80}) => {
+											width=80,
+											tooltip = false
+										}) => {
 
+
+	const btnRef = useRef<HTMLDivElement | null>(null);
 
 	const avatarModalElem = useRef<HTMLDivElement>(null);
 
@@ -187,8 +194,23 @@ export const Avatar: React.FC<Props> = ({
 		}
 	}
 
+	useEffect(() => {
+		const current = btnRef.current as TippyHTMLElement;
+		if (current && tooltip) {
+			tippy(current, {
+				content: user.name,
+			});
+			return () => {
+				const tippyInstance = current._tippy;
+				if (tippyInstance) {
+					tippyInstance.destroy();
+				}
+			};
+		}
+	}, []);
+
 	return (
-		<div>
+		<div ref={btnRef}>
 			<div className="avatar-group-cont" style={scaleStyle}>
 				<div className="default-avatar-cont" style={scaleStyle} onClick={openAvatarModal}>
 					{(workingUser === undefined || !workingUser.avatar?.enabled) && <AvatarEmpty height={height}></AvatarEmpty>}

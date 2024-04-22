@@ -1,33 +1,32 @@
 
 
 
-.passport-default-context-menu{
+.blue-orange-default-context-menu{
     position: fixed;
     z-index: 10;
     background-color: white;
     min-width: 50px;
-    min-height: 50px;
     overflow-y: auto;
 }
 
-.passport-default-context-menu-row{
-    width: calc(100% - 20px);
-    padding: 10px;
+.blue-orange-default-context-menu-row{
+    width: calc(100% - 10px);
+    padding: 5px;
     display: flex;
     flex-direction: row;
     align-items: center;
     cursor: pointer;
 }
 
-.passport-default-context-menu-row:hover{
+.blue-orange-default-context-menu-row:hover{
     background-color: #e0e1e2;
     transition: 0.2s;
 }
 
-.passport-default-context-menu-row-icon{
+.blue-orange-default-context-menu-row-icon{
     margin-right: 15px;
 }
 
-.passport-default-context-menu-row-general-text{
-    font-size: 0.8rem;
+.blue-orange-default-context-menu-row-general-text{
+    font-size: 0.7rem;
 }

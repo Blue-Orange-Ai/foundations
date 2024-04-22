@@ -11,6 +11,6 @@ interface Props {
 export const AvatarImage: React.FC<Props> = ({url, height, width}) => {
 
 	return (
-		<img className="passport-default-avatar-image" src={url} alt={"User profile picture"} width={width} height={height}/>
+		<img className="blue-orange-default-avatar-image" src={url} alt={"User profile picture"} width={width} height={height}/>
 	);
 };

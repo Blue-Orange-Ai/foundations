@@ -1,6 +1,6 @@
 import React, {useRef, useState} from "react";
 
-import './DefaultTextArea.css';
+import './TextArea.css';
 
 interface Props {
 	value?:string;
@@ -9,7 +9,7 @@ interface Props {
 	onInputChange?: (value: string) => void;
 }
 
-export const DefaultTextArea: React.FC<Props> = ({value="", placeholder="", style = {}, onInputChange}) => {
+export const TextArea: React.FC<Props> = ({value="", placeholder="", style = {}, onInputChange}) => {
 
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {

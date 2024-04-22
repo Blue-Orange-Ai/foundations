@@ -14,10 +14,10 @@ export type Address = {
     address: string;
 };
 
-export type PassportAvatar = {
+export type Avatar = {
     id?: number;
     uri: string;
-    mediaId: number;
+    mediaId: string;
     enabled: boolean;
 }
 
@@ -38,7 +38,7 @@ export type PublicUser = {
     name: string;
     username: string;
     color: string;
-    avatar: PassportAvatar;
+    avatar: Avatar;
 }
 
 export type ServiceAccount = {
@@ -74,7 +74,7 @@ export type User = {
     username: string;
     email: string;
     color: string;
-    avatar: PassportAvatar | undefined;
+    avatar: Avatar | undefined;
     telephone: Telephone | undefined;
     address: Address | undefined;
     lastActive: Date;
@@ -94,7 +94,7 @@ export type UserCreateRequest = {
     email?: string;
     password: string;
     color?: string;
-    avatar?: PassportAvatar;
+    avatar?: Avatar;
     telephone?: Telephone;
     address?: Address;
     forcePasswordReset?: boolean;

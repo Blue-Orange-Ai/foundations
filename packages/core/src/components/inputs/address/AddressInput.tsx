@@ -1,7 +1,7 @@
 import React, {ChangeEvent, useRef, useState} from "react";
 
 import './AddressInput.css';
-import {DefaultInput} from "../defaultinput/DefaultInput";
+import {Input} from "../input/Input";
 import {Address} from "@blue-orange-ai/foundations-clients/lib/Passport";
 
 interface Props {
@@ -1563,12 +1563,12 @@ export const AddressInput: React.FC<Props> = ({address, onInputChange}) => {
 	return (
 		<div className="address-input-group">
 			<div className="address-main-input">
-				<DefaultInput placeholder="Address" value={addr.address} onInputChange={handleMainAddress}></DefaultInput>
+				<Input placeholder="Address" value={addr.address} onInputChange={handleMainAddress}></Input>
 			</div>
 			<div className="address-sub-input">
-				<DefaultInput placeholder="City" value={addr.city} style={{width: "calc(40% - 10px)"}} onInputChange={handleCity}></DefaultInput>
-				<DefaultInput placeholder="State" value={addr.state} style={{width: "calc(15% - 10px)"}} onInputChange={handleState}></DefaultInput>
-				<DefaultInput placeholder="Postcode" value={addr.postcode} style={{width: "calc(15% - 10px)"}} onInputChange={handlePostcode}></DefaultInput>
+				<Input placeholder="City" value={addr.city} style={{width: "calc(40% - 10px)"}} onInputChange={handleCity}></Input>
+				<Input placeholder="State" value={addr.state} style={{width: "calc(15% - 10px)"}} onInputChange={handleState}></Input>
+				<Input placeholder="Postcode" value={addr.postcode} style={{width: "calc(15% - 10px)"}} onInputChange={handlePostcode}></Input>
 				<div className="address-input-country-group">
 					<select value={getCountryByName(inputAddress.country).code} className="address-input-country-select" onChange={handleSelection}>
 						{countries.map(country => (

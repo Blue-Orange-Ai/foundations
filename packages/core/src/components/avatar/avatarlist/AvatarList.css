@@ -1,0 +1,23 @@
+
+.blue-orange-avatar-list {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.blue-orange-avatar-overflow {
+    font-size: 80%;
+    background-color: #e0e1e2;
+    color: #919191;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.blue-orange-avatar-overflow .ri-add-line {
+    margin-right: -2px;
+}
+

@@ -1,7 +1,7 @@
 import React, {ChangeEvent, useRef, useState} from "react";
 
 import './PhoneInput.css';
-import {Telephone} from "../sdks/passport/Passport";
+import {Telephone} from "@blue-orange-ai/foundations-clients/lib/Passport";
 
 interface Props {
 	telephone?: Telephone;

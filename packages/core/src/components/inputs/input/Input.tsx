@@ -1,6 +1,6 @@
 import React, {useRef, useState} from "react";
 
-import './DefaultInput.css';
+import './Input.css';
 
 interface Props {
 	value?:string;
@@ -12,7 +12,7 @@ interface Props {
 	onInputChange?: (value: string) => void; // Callback prop to send value to parent
 }
 
-export const DefaultInput: React.FC<Props> = ({
+export const Input: React.FC<Props> = ({
 												  value,
 												  placeholder,
 												  onInputChange,

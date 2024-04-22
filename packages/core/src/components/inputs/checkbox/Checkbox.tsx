@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 
-import './DefaultCheckbox.css';
+import './Checkbox.css';
 
 interface Props {
 	checked?:boolean;
@@ -10,7 +10,7 @@ interface Props {
 	style?: React.CSSProperties;
 }
 
-export const DefaultCheckbox: React.FC<Props> = ({
+export const Checkbox: React.FC<Props> = ({
 													 checked=false,
 													 onCheckboxChange,
 													 readonly=false,
@@ -33,7 +33,7 @@ export const DefaultCheckbox: React.FC<Props> = ({
 	};
 
 	return (
-		<div>
+		<div className='blue-orange-checkbox'>
 			{readonly &&
 				<input type="checkbox"
 					   checked={isChecked}

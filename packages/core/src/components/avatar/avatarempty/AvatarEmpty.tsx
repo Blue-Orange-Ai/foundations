@@ -1,5 +1,5 @@
 import React, {useRef, useState} from "react";
-import BlueOrangeMedia from "../../sdks/media/BlueOrangeMedia";
+import {BlueOrangeMedia} from "@blue-orange-ai/foundations-clients/lib/BlueOrangeMedia";
 
 import './AvatarEmpty.css';
 
@@ -14,7 +14,7 @@ export const AvatarEmpty: React.FC<Props> = ({height}) => {
 	}
 
 	return (
-		<div className="passport-default-avatar-empty">
+		<div className="blue-orange-default-avatar-empty">
 			<i className="ri-user-4-line" style={fontSizeStyle}></i>
 		</div>
 	);

@@ -128,19 +128,19 @@ export const ContextMenu: React.FC<Props> = ({children, items, width, maxHeight,
 			</ForwardingRefWrapper>
 			{visible && (
 				<div
-					className="passport-default-context-menu shadow"
+					className="blue-orange-default-context-menu shadow"
 					ref={menuRef}
 					style={style}
 				>
 					{items.map((item, index) => (
 						<div
 							key={index}
-							className="passport-default-context-menu-row no-select"
+							className="blue-orange-default-context-menu-row no-select"
 							onClick={() => handleItemClick(item)}>
 							{item.icon && (
-								<div className="passport-default-context-menu-row-icon"><i className="ri-expand-right-fill"></i></div>
+								<div className="blue-orange-default-context-menu-row-icon"><i className={item.icon}></i></div>
 							)}
-							<div dangerouslySetInnerHTML={{ __html: item.label }}></div>
+							<div className="blue-orange-default-context-menu-row-general-text" dangerouslySetInnerHTML={{ __html: item.label }}></div>
 						</div>
 					))}
 				</div>
