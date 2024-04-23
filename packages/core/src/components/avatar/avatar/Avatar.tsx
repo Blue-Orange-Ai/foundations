@@ -4,7 +4,7 @@ import {Media, Passport} from "@blue-orange-ai/foundations-clients";
 import './Avatar.css';
 import {AvatarEmpty} from "../avatarempty/AvatarEmpty";
 import {AvatarImage} from "../avatarimage/AvatarImage";
-import {PassportAvatar, User} from "@blue-orange-ai/foundations-clients/lib/Passport";
+import {Avatar as AvatarObj, User} from "@blue-orange-ai/foundations-clients/lib/Passport";
 import {BlueOrangeMedia} from "@blue-orange-ai/foundations-clients/lib/BlueOrangeMedia";
 import {Button, ButtonType} from "../../buttons/button/Button";
 import {FileUploadBtn} from "../../buttons/file-upload-btn/FileUploadBtn";
@@ -110,12 +110,12 @@ export const Avatar: React.FC<Props> = ({
 	const updateUserAvatar = (media: Media) => {
 		if (workingUser.avatar) {
 			workingUser.avatar.enabled = true;
-			workingUser.avatar.mediaId = media.id as number;
+			workingUser.avatar.mediaId = (media.id as number).toString();
 			workingUser.avatar.uri = media.url
 		} else {
-			var avatar: PassportAvatar = {
+			var avatar: AvatarObj = {
 				enabled: true,
-				mediaId: media.id as number,
+				mediaId: (media.id as number).toString(),
 				uri: media.url
 			}
 			workingUser.avatar = avatar;
@@ -136,12 +136,12 @@ export const Avatar: React.FC<Props> = ({
 	const removeUserAvatar = () => {
 		if (workingUser.avatar) {
 			workingUser.avatar.enabled = false;
-			workingUser.avatar.mediaId = -1;
+			workingUser.avatar.mediaId = "-1";
 			workingUser.avatar.uri = "";
 		} else {
-			var avatar: PassportAvatar = {
+			var avatar: AvatarObj = {
 				enabled: false,
-				mediaId: -1,
+				mediaId: "-1",
 				uri: ""
 			}
 			workingUser.avatar = avatar;
@@ -178,7 +178,7 @@ export const Avatar: React.FC<Props> = ({
 		if (workingUser.avatar !== undefined) {
 			setLoadingRemove(true);
 			bom.deleteById(
-				workingUser.avatar.mediaId
+				+workingUser.avatar.mediaId
 			)
 				.then(response => {
 					setLoadingRemove(false);

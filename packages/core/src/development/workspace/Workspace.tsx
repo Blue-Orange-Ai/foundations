@@ -10,8 +10,9 @@ import {TBody} from "../../components/table/tbody/TBody";
 import {CellAlignment} from "../../interfaces/AppInterfaces";
 import {CheckboxCell} from "../../components/table/cells/checkboxcell/CheckboxCell";
 import {Avatar} from "../../components/avatar/avatar/Avatar";
-import {PassportAvatar, User} from "@blue-orange-ai/foundations-clients/lib/Passport";
+import {Avatar as AvatarObj, User} from "@blue-orange-ai/foundations-clients/lib/Passport";
 import {AvatarList} from "../../components/avatar/avatarlist/AvatarList";
+import {PrimaryCell} from "../../components/table/cells/primarycell/PrimaryCell";
 
 interface Props {
 }
@@ -24,9 +25,9 @@ export const Workspace: React.FC<Props> = ({}) => {
 
 	const [error, setError] = useState(false);
 
-	const avatar: PassportAvatar = {
+	const avatar: AvatarObj = {
 		enabled: true,
-		mediaId: 1,
+		mediaId: "",
 		uri: "http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"
 	}
 
@@ -65,30 +66,30 @@ export const Workspace: React.FC<Props> = ({}) => {
 	return (
 		<div className="workspace-main-window">
 			<div className="workspace-display-window">
-				<Avatar user={user} height={42} width={42} tooltip={true}></Avatar>
-				<AvatarList users={[user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user]} overlap={30}></AvatarList>
-				{/*<Table>*/}
-				{/*	<THead>*/}
-				{/*		<Row>*/}
-				{/*			<CheckboxCell state={true}></CheckboxCell>*/}
-				{/*			<HeaderCell dropdownItems={[{label: "Sort ASC", icon: "ri-sort-asc", value: "SORT_ASC"}]}>Header 2</HeaderCell>*/}
-				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 3</HeaderCell>*/}
-				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 4</HeaderCell>*/}
-				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 5</HeaderCell>*/}
-				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 6</HeaderCell>*/}
-				{/*		</Row>*/}
-				{/*	</THead>*/}
-				{/*	<TBody>*/}
-				{/*		<Row>*/}
-				{/*			<CheckboxCell state={true}></CheckboxCell>*/}
-				{/*			<Cell alignment={CellAlignment.RIGHT}>Hello 2</Cell>*/}
-				{/*			<Cell>Hello 3</Cell>*/}
-				{/*			<Cell alignment={CellAlignment.LEFT}>Hello 4</Cell>*/}
-				{/*			<Cell>Hello 5</Cell>*/}
-				{/*			<Cell>Hello 6</Cell>*/}
-				{/*		</Row>*/}
-				{/*	</TBody>*/}
-				{/*</Table>*/}
+				{/*<Avatar user={user} height={42} width={42} tooltip={true}></Avatar>*/}
+				{/*<AvatarList users={[user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user]} overlap={30}></AvatarList>*/}
+				<Table>
+					<THead>
+						<Row>
+							<CheckboxCell state={true}></CheckboxCell>
+							<HeaderCell dropdownItems={[{label: "Sort ASC", icon: "ri-sort-asc", value: "SORT_ASC"}]}>Header 2</HeaderCell>
+							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 3</HeaderCell>
+							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 4</HeaderCell>
+							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 5</HeaderCell>
+							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 6</HeaderCell>
+						</Row>
+					</THead>
+					<TBody>
+						<Row hoverBackgroundColor={"red"}>
+							<CheckboxCell state={true}></CheckboxCell>
+							<PrimaryCell src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} text={"Demonstration Primary Cell"} secondaryText={"This is where the secondary text goes"} style={{paddingLeft: "15px", paddingRight: "15px"}}></PrimaryCell>
+							<Cell>Hello 3</Cell>
+							<Cell alignment={CellAlignment.LEFT}>Hello 4</Cell>
+							<Cell>Hello 5</Cell>
+							<Cell>Hello 6</Cell>
+						</Row>
+					</TBody>
+				</Table>
 			</div>
 		</div>
 	)

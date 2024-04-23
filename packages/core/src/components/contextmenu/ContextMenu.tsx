@@ -14,13 +14,14 @@ interface Props {
 	maxHeight: number;
 	items: Array<IContextMenuItem>;
 	onClick?: (arg0: IContextMenuItem) => void;
+	disabled?: boolean
 }
 
 type ForwardingRefWrapperProps = {
 	children?: React.ReactNode;
 };
 
-export const ContextMenu: React.FC<Props> = ({children, items, width, maxHeight, onClick}) => {
+export const ContextMenu: React.FC<Props> = ({children, items, width, maxHeight, onClick, disabled = false}) => {
 
 	const [visible, setVisible] = useState(false);
 	const [style, setStyle] = useState<React.CSSProperties>({});
@@ -40,11 +41,13 @@ export const ContextMenu: React.FC<Props> = ({children, items, width, maxHeight,
 	}, [visible]);
 
 	const handleClick = (e:MouseEvent) => {
-		const target = e.target as HTMLElement;
-		if (contextMenuRef && isDescendantOf(contextMenuRef.current, target)) {
-			handleContextMenu(e)
-		} else if (visibleRef.current) {
-			setVisible(false);
+		if (!disabled) {
+			const target = e.target as HTMLElement;
+			if (contextMenuRef && isDescendantOf(contextMenuRef.current, target)) {
+				handleContextMenu(e)
+			} else if (visibleRef.current) {
+				setVisible(false);
+			}
 		}
 	};
 
@@ -117,8 +120,8 @@ export const ContextMenu: React.FC<Props> = ({children, items, width, maxHeight,
 	const handleItemClick = (item: IContextMenuItem) => {
 		if (onClick) {
 			onClick(item);
-			close();
 		}
+		close();
 	};
 
 	return (

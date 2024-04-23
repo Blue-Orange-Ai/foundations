@@ -5,9 +5,12 @@ import {CellAlignment} from "../../../../interfaces/AppInterfaces";
 import {Checkbox} from "../../../inputs/checkbox/Checkbox";
 
 interface Props {
-	state?: boolean
+	state?: boolean,
+	onClick?: (state: boolean, rowId: string) => void,
+	hover?: boolean,
+	rowId?: string
 }
-export const CheckboxCell: React.FC<Props> = ({state = false}) => {
+export const CheckboxCell: React.FC<Props> = ({state = false, onClick, hover=false,rowId=""}) => {
 
 	return (
 		<td className='blue-orange-checkbox-data-table-cell'>

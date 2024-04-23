@@ -5,9 +5,12 @@ import {CellAlignment} from "../../../../interfaces/AppInterfaces";
 
 interface Props {
 	children: ReactNode;
-	alignment?: CellAlignment
+	alignment?: CellAlignment,
+	onClick?: (rowId: string) => void,
+	hover?: boolean,
+	rowId?: string
 }
-export const Cell: React.FC<Props> = ({children, alignment=CellAlignment.LEFT}) => {
+export const Cell: React.FC<Props> = ({children, alignment=CellAlignment.LEFT, hover=false,rowId="", onClick}) => {
 
 
 	const getTextAlignment = () => {

@@ -6,13 +6,17 @@ import {ContextMenu, IContextMenuItem} from "../../../contextmenu/ContextMenu";
 interface Props {
 	children: ReactNode;
 	dropdownItems: Array<IContextMenuItem>;
+	onClick?: (rowId: string) => void,
+	onDropdownSelected?: (arg0: IContextMenuItem) => void;
+	hover?: boolean,
+	rowId?: string
 }
-export const HeaderCell: React.FC<Props> = ({children, dropdownItems}) => {
+export const HeaderCell: React.FC<Props> = ({children, dropdownItems, onClick, onDropdownSelected, hover=false,rowId=""}) => {
 
 
 	return (
 			<td>
-				<ContextMenu width={120} maxHeight={200} items={dropdownItems}>
+				<ContextMenu width={120} maxHeight={200} items={dropdownItems} onClick={onDropdownSelected}>
 					<div className="blue-orange-header-data-table-cell">
 						{children}
 						<div className='blue-orange-header-data-table-cell-control'>

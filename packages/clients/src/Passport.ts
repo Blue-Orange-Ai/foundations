@@ -1,12 +1,12 @@
 import Cookies from "js-cookie";
 
 export type AddRemoveUserToGroupRequest = {
-    userId: number;
+    userId: string;
     groupName: string;
 };
 
 export type Address = {
-    id?: number;
+    id?: string;
     country: string;
     city: string;
     state: string
@@ -15,19 +15,20 @@ export type Address = {
 };
 
 export type Avatar = {
-    id?: number;
+    id?: string;
     uri: string;
-    mediaId: string;
+    mediaId: number;
     enabled: boolean;
 }
 
 export type Group = {
-    id?: number;
+    id?: string;
     name: string;
     serviceAccount: boolean;
     service: string;
     description: string;
     excludedUsers: Array<number>;
+    externallyManaged: boolean;
 }
 
 export type GroupDeleteRequest = {
@@ -42,7 +43,7 @@ export type PublicUser = {
 }
 
 export type ServiceAccount = {
-    id?: number;
+    id?: string;
     name: string;
     description: string;
     token: string;
@@ -60,7 +61,7 @@ export type SimpleTokenRequestWithGroups = {
 }
 
 export type Telephone = {
-    id?: number;
+    id?: string;
     country: string;
     extension: string;
     format: string;
@@ -69,7 +70,7 @@ export type Telephone = {
 }
 
 export type User = {
-    id?: number;
+    id?: string;
     name: string;
     username: string;
     email: string;
@@ -108,7 +109,7 @@ export type UserCreateWithGroupsRequest = {
 }
 
 export type UserGroupValidationRequest = {
-    userId: number;
+    userId: string;
     groups: Array<string>;
 }
 
@@ -191,9 +192,9 @@ export type UserUpdatePassword = {
 }
 
 export type UserGroup = {
-    id: number;
-    userId: number;
-    groupId: number;
+    id: string;
+    userId: string;
+    groupId: string;
     groupName: string;
     inherited: boolean;
 }
@@ -212,7 +213,7 @@ export type UserGroupSearchResult = {
 
 export type AddRemoveGroupsToUserRequest = {
     groups: Array<number>;
-    userId: number;
+    userId: string;
 }
 
 export class Passport {
@@ -268,7 +269,7 @@ export class Passport {
         });
     }
 
-    get(userId: number): Promise<User> {
+    get(userId: string): Promise<User> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
@@ -291,7 +292,7 @@ export class Passport {
         });
     }
 
-    adminUpdatePassword(userId: number, password: AdminUpdatePasswordRequest): Promise<Boolean> {
+    adminUpdatePassword(userId: string, password: AdminUpdatePasswordRequest): Promise<Boolean> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
@@ -335,7 +336,7 @@ export class Passport {
         });
     }
 
-    adminDeleteUser(userId: number): Promise<Boolean> {
+    adminDeleteUser(userId: string): Promise<Boolean> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
@@ -357,7 +358,7 @@ export class Passport {
         });
     }
 
-    adminGetUserGroups(userId: number, query: UserGroupSearchQuery): Promise<UserGroupSearchResult> {
+    adminGetUserGroups(userId: string, query: UserGroupSearchQuery): Promise<UserGroupSearchResult> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
