@@ -1,11 +1,11 @@
 
-.passport-search2-group{
+.passport-search-group{
     display: flex;
     position: relative;
     width: 100%;
 }
 
-.passport-search2-group-icon {
+.passport-search-group-icon {
     position: absolute;
     height: 100%;
     display: flex;
@@ -16,7 +16,7 @@
     pointer-events: none;
 }
 
-.passport-search2-group-input {
+.blue-orange-search-group-input {
     width: calc(100% - 47px);
     border: 1px solid #e0e1e2;
     height: 32px;
@@ -27,6 +27,6 @@
     font-size: 0.8rem;
 }
 
-.passport-search2-group-input:focus {
+.blue-orange-search-group-input:focus {
     outline: 1.5px solid black;
 }

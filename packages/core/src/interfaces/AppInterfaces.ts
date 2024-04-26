@@ -15,3 +15,22 @@ export enum CellAlignment {
     CENTER,
     RIGHT
 }
+
+export enum DropdownItemType {
+    TEXT,
+    HEADING,
+    ICON,
+    IMAGE
+}
+
+export interface DropdownItem {
+    label: string,
+    reference: string,
+    selected: boolean,
+    type: DropdownItemType,
+    disabled?: boolean,
+    icon?: boolean,
+    image?: boolean,
+    heading?: boolean,
+    src?: string
+}

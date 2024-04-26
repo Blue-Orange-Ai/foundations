@@ -67,14 +67,14 @@ export const SearchInput: React.FC<Props> = ({
 	}
 
 	return (
-		<div className="passport-search2-group" style={style}>
+		<div className="blue-orange-search-group" style={style}>
 			{icon !== undefined &&
-				<div className="passport-search2-group-icon">
+				<div className="blue-orange-search-group-icon">
 					<i className={icon}></i>
 				</div>
 			}
 			<input
-				className="passport-search2-group-input"
+				className="blue-orange-search-group-input"
 				style={inputStyle}
 				value={inputValue === undefined ? "" : inputValue}
 				placeholder={label}

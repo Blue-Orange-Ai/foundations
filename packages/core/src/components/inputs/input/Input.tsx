@@ -48,7 +48,7 @@ export const Input: React.FC<Props> = ({
 
 	return (
 		<input
-			className="passport-login-input"
+			className="blue-orange-input"
 			style={style}
 			placeholder={placeholder}
 			value={inputValue === undefined ? "" : inputValue}

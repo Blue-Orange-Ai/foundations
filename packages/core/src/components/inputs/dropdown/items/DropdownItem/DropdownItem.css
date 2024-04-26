@@ -1,0 +1,19 @@
+
+
+.blue-orange-dropdown-item {
+    cursor: pointer;
+    padding: 5px 10px;
+    width: calc(100% - 20px);
+    transition: 0.2s;
+    font-size: 14px;
+}
+
+.blue-orange-dropdown-item-hoverable:hover {
+    background-color: #e0e1e2;
+}
+
+.blue-orange-dropdown-item-disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+

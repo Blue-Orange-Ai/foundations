@@ -1,15 +1,15 @@
 
 
-.passport-login-input{
+.blue-orange-input{
     width: calc(100% - 10px);
     border: 1px solid #e0e1e2;
     height: 42px;
-    background-color: #f7f7f9;
+    background-color: white;
     border-radius: 4px;
     padding-left: 5px;
     padding-right: 5px;
 }
 
-.passport-login-input:focus {
+.blue-orange-input:focus {
     outline: 1.5px solid black;
 }

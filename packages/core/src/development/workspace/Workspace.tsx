@@ -7,12 +7,13 @@ import {Cell} from "../../components/table/cells/cell/Cell";
 import {HeaderCell} from "../../components/table/cells/headercell/HeaderCell";
 import {Row} from "../../components/table/row/Row";
 import {TBody} from "../../components/table/tbody/TBody";
-import {CellAlignment} from "../../interfaces/AppInterfaces";
+import {CellAlignment, DropdownItem, DropdownItemType} from "../../interfaces/AppInterfaces";
 import {CheckboxCell} from "../../components/table/cells/checkboxcell/CheckboxCell";
 import {Avatar} from "../../components/avatar/avatar/Avatar";
 import {Avatar as AvatarObj, User} from "@blue-orange-ai/foundations-clients/lib/Passport";
 import {AvatarList} from "../../components/avatar/avatarlist/AvatarList";
 import {PrimaryCell} from "../../components/table/cells/primarycell/PrimaryCell";
+import {DropdownBasic} from "../../components/inputs/dropdown/basic/DropdownBasic";
 
 interface Props {
 }
@@ -51,6 +52,53 @@ export const Workspace: React.FC<Props> = ({}) => {
 
 	}
 
+	const dropdownItems: Array<DropdownItem> = [
+		{
+			label: "Names",
+			reference: "5",
+			selected: false,
+			type: DropdownItemType.HEADING
+		},
+		{
+			label: "Lisbeth",
+			reference: "1",
+			selected: false,
+			type: DropdownItemType.TEXT
+		},
+		{
+			label: "Aruna",
+			reference: "2",
+			selected: false,
+			type: DropdownItemType.TEXT
+		},
+		{
+			label: "Lauren",
+			reference: "3",
+			selected: false,
+			disabled: true,
+			type: DropdownItemType.TEXT
+		},
+		{
+			label: "Thomas",
+			reference: "4",
+			selected: true,
+			type: DropdownItemType.TEXT
+		},
+		{
+			label: "Persons",
+			reference: "6",
+			selected: false,
+			type: DropdownItemType.HEADING
+		},
+		{
+			label: "James",
+			reference: "7",
+			selected: false,
+			src: "http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ",
+			type: DropdownItemType.IMAGE
+		}
+	]
+
 	const btnClick = () => {
 		setError(true);
 	}
@@ -68,28 +116,32 @@ export const Workspace: React.FC<Props> = ({}) => {
 			<div className="workspace-display-window">
 				{/*<Avatar user={user} height={42} width={42} tooltip={true}></Avatar>*/}
 				{/*<AvatarList users={[user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user]} overlap={30}></AvatarList>*/}
-				<Table>
-					<THead>
-						<Row>
-							<CheckboxCell state={true}></CheckboxCell>
-							<HeaderCell dropdownItems={[{label: "Sort ASC", icon: "ri-sort-asc", value: "SORT_ASC"}]}>Header 2</HeaderCell>
-							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 3</HeaderCell>
-							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 4</HeaderCell>
-							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 5</HeaderCell>
-							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 6</HeaderCell>
-						</Row>
-					</THead>
-					<TBody>
-						<Row hoverBackgroundColor={"red"}>
-							<CheckboxCell state={true}></CheckboxCell>
-							<PrimaryCell src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} text={"Demonstration Primary Cell"} secondaryText={"This is where the secondary text goes"} style={{paddingLeft: "15px", paddingRight: "15px"}}></PrimaryCell>
-							<Cell>Hello 3</Cell>
-							<Cell alignment={CellAlignment.LEFT}>Hello 4</Cell>
-							<Cell>Hello 5</Cell>
-							<Cell>Hello 6</Cell>
-						</Row>
-					</TBody>
-				</Table>
+				{/*<Table>*/}
+				{/*	<THead>*/}
+				{/*		<Row>*/}
+				{/*			<CheckboxCell state={true}></CheckboxCell>*/}
+				{/*			<HeaderCell dropdownItems={[{label: "Sort ASC", icon: "ri-sort-asc", value: "SORT_ASC"}]}>Header 2</HeaderCell>*/}
+				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 3</HeaderCell>*/}
+				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 4</HeaderCell>*/}
+				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 5</HeaderCell>*/}
+				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 6</HeaderCell>*/}
+				{/*		</Row>*/}
+				{/*	</THead>*/}
+				{/*	<TBody>*/}
+				{/*		<Row hoverBackgroundColor={"red"}>*/}
+				{/*			<CheckboxCell state={true}></CheckboxCell>*/}
+				{/*			<PrimaryCell src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} text={"Demonstration Primary Cell"} secondaryText={"This is where the secondary text goes"} style={{paddingLeft: "15px", paddingRight: "15px"}}></PrimaryCell>*/}
+				{/*			<Cell>Hello 3</Cell>*/}
+				{/*			<Cell alignment={CellAlignment.LEFT}>Hello 4</Cell>*/}
+				{/*			<Cell>Hello 5</Cell>*/}
+				{/*			<Cell>Hello 6</Cell>*/}
+				{/*		</Row>*/}
+				{/*	</TBody>*/}
+				{/*</Table>*/}
+				<div style={{width: "200px"}}>
+					<DropdownBasic items={dropdownItems}></DropdownBasic>
+				</div>
+
 			</div>
 		</div>
 	)
