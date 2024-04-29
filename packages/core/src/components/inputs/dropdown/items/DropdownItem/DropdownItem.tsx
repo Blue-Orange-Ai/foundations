@@ -62,7 +62,7 @@ export const DropdownItem: React.FC<Props> = ({
 				</div>
 			}
 			{!displayedValue &&
-				<div className={generateItemStyle()} onClick={handleClick}>
+				<div className="blue-orange-dropdown-item" onClick={handleClick}>
 					{item.type == DropdownItemType.IMAGE &&
 						<DropdownItemImage
 							src={item.src as string}

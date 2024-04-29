@@ -36,6 +36,8 @@ export const DropdownBasic: React.FC<Props> = ({
 
 	const [blockMouseClick, setBlockMouseClick] = useState(false);
 
+	const [lastUpdated, setLastUpdated] = useState(new Date());
+
 	const inputRef = useRef<HTMLDivElement | null>(null);
 
 	const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -43,6 +45,8 @@ export const DropdownBasic: React.FC<Props> = ({
 	const visibleRef = useRef(visible);
 
 	const blockMouseClickRef = useRef(blockMouseClick);
+
+
 
 	useEffect(() => {
 		visibleRef.current = visible;
@@ -269,12 +273,15 @@ export const DropdownBasic: React.FC<Props> = ({
 			modItems.forEach(item => {
 				item.selected = false;
 			})
+			setSelectedValue(item)
+			item.selected = true;
+		} else {
+			item.selected = !item.selected
 		}
-		setSelectedValue(item)
-		item.selected = true;
 		updateModifiedItems(item, modItems);
 		updateSelectedItems(item, modSelectedItems);
-		if (closeOnClick) {
+		setLastUpdated(new Date())
+		if (closeOnClick && !allowMultipleSelection) {
 			setVisible(false);
 		}
 	}
@@ -345,8 +352,8 @@ export const DropdownBasic: React.FC<Props> = ({
 						{queryItems.map((item, index) => (
 							<div key={index} className={generateItemStyle(item)}>
 								{allowMultipleSelection && item.type != DropdownItemType.HEADING &&
-									<div className="blue-orange-dropdown-item-check-cont">
-										<Checkbox checked={item.selected} readonly={item.disabled}></Checkbox>
+									<div className="blue-orange-dropdown-item-check-cont" onClick={() => handleItemClick(item)}>
+										<Checkbox checked={item.selected} readonly={true} update={lastUpdated}></Checkbox>
 									</div>
 								}
 								<div className="blue-orange-dropdown-item-el-cont">
