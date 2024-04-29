@@ -19,17 +19,20 @@ export const DropdownItem: React.FC<Props> = ({
 
 	const generateItemStyle = () => {
 		var className = "blue-orange-dropdown-item"
-		if (item.type != DropdownItemType.HEADING && !item.disabled) {
-			className += " blue-orange-dropdown-item-hoverable"
-		}
-		if (item.disabled) {
-			className += " blue-orange-dropdown-item-disabled"
-		}
+		// if (item.type != DropdownItemType.HEADING && !item.disabled) {
+		// 	className += " blue-orange-dropdown-item-hoverable"
+		// }
+		// if (item.disabled) {
+		// 	className += " blue-orange-dropdown-item-disabled"
+		// }
+		// if (item.focused) {
+		// 	className += " blue-orange-dropdown-item-focused"
+		// }
 		return className;
 	}
 
 	const handleClick = () => {
-		if (onClick && (item.disabled == undefined || !item.disabled)) {
+		if (onClick && (item.disabled == undefined || !item.disabled) && item.type !== DropdownItemType.HEADING) {
 			onClick(item);
 		}
 	}

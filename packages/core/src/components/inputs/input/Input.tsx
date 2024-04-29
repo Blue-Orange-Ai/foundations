@@ -1,6 +1,8 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 import './Input.css';
+import {TippyHTMLElement} from "../../../interfaces/AppInterfaces";
+import tippy from "tippy.js";
 
 interface Props {
 	value?:string;
@@ -9,19 +11,26 @@ interface Props {
 	preventSpaces?:boolean;
 	style?: React.CSSProperties;
 	isPassword?: boolean;
-	onInputChange?: (value: string) => void; // Callback prop to send value to parent
+	onInputChange?: (value: string) => void;
+	focus?: boolean;
+	focusChange?: (state: boolean) => void;
 }
 
 export const Input: React.FC<Props> = ({
-												  value,
-												  placeholder,
-												  onInputChange,
-												  isPassword,
-												  isEmail,
-												  preventSpaces,
-												  style={}}) => {
+										   value,
+										   placeholder,
+										   onInputChange,
+										   isPassword,
+										   isEmail,
+										   preventSpaces,
+										   style={},
+										   focus=false,
+										   focusChange
+}) => {
 
 	const [inputValue, setInputValue] = useState(value === undefined ? "" : value);
+
+	const inputRef = useRef<HTMLInputElement | null>(null);
 
 	const handleKeydownChange = (event: React.KeyboardEvent<HTMLInputElement>) => {
 		if ((preventSpaces || isEmail) && (event.key === "Space" || event.key === " ")) {
@@ -46,15 +55,22 @@ export const Input: React.FC<Props> = ({
 		return "text";
 	}
 
+	useEffect(() => {
+		if (focus) {
+			inputRef.current?.focus();
+		}
+	}, []);
+
 	return (
 		<input
+			ref={inputRef}
 			className="blue-orange-input"
 			style={style}
 			placeholder={placeholder}
 			value={inputValue === undefined ? "" : inputValue}
 			onKeyDown={handleKeydownChange}
 			onChange={handleInputChange}
-			type={isPassword ? "password" : "text"}
+			type={generateType()}
 		/>
 	);
 };

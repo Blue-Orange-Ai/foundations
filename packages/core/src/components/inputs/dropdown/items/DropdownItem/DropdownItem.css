@@ -17,3 +17,13 @@
     cursor: not-allowed;
 }
 
+.blue-orange-dropdown-item-focused {
+    background-color: #ebf0fb;
+    color: dodgerblue;
+}
+
+.blue-orange-dropdown-item-focused:hover {
+    background-color: #ebf0fb;
+    color: dodgerblue;
+}
+

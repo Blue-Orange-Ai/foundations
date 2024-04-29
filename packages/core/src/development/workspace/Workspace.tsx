@@ -14,6 +14,8 @@ import {Avatar as AvatarObj, User} from "@blue-orange-ai/foundations-clients/lib
 import {AvatarList} from "../../components/avatar/avatarlist/AvatarList";
 import {PrimaryCell} from "../../components/table/cells/primarycell/PrimaryCell";
 import {DropdownBasic} from "../../components/inputs/dropdown/basic/DropdownBasic";
+import {Badge} from "../../components/text-decorations/badge/Badge";
+import {Tag} from "../../components/text-decorations/tag/Tag";
 
 interface Props {
 }
@@ -139,8 +141,10 @@ export const Workspace: React.FC<Props> = ({}) => {
 				{/*	</TBody>*/}
 				{/*</Table>*/}
 				<div style={{width: "200px"}}>
-					<DropdownBasic items={dropdownItems}></DropdownBasic>
+					<DropdownBasic items={dropdownItems} filter={true} allowMultipleSelection={true}></DropdownBasic>
 				</div>
+				<Badge>Hello</Badge>
+				<Tag>Hello</Tag>
 
 			</div>
 		</div>

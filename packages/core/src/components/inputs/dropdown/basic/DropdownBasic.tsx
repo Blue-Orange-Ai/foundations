@@ -2,6 +2,9 @@ import React, {useEffect, useRef, useState} from "react";
 import './DropdownBasic.css'
 import {DropdownItem as DropdownItemObj, DropdownItemType} from "../../../../interfaces/AppInterfaces";
 import {DropdownItem} from "../items/DropdownItem/DropdownItem";
+import {Input} from "../../input/Input";
+import Fuse from "fuse.js";
+import {Checkbox} from "../../checkbox/Checkbox";
 
 interface Props {
 	items: Array<DropdownItemObj>,
@@ -12,7 +15,8 @@ interface Props {
 	allowMultipleSelection?: boolean,
 	onSelection?: (item: DropdownItemObj) => void,
 	onItemsSelected?: (items: Array<DropdownItemObj>) => void,
-	onUpdate?: (items: Array<DropdownItemObj>) => void
+	onUpdate?: (items: Array<DropdownItemObj>) => void,
+	filter?: boolean
 }
 
 export const DropdownBasic: React.FC<Props> = ({
@@ -24,7 +28,8 @@ export const DropdownBasic: React.FC<Props> = ({
 													allowMultipleSelection = false,
 													onSelection,
 													onItemsSelected,
-													onUpdate
+													onUpdate,
+													filter=false
 											   }) => {
 
 	const [visible, setVisible] = useState(false);
@@ -46,6 +51,12 @@ export const DropdownBasic: React.FC<Props> = ({
 	useEffect(() => {
 		blockMouseClickRef.current = blockMouseClick;
 	}, [blockMouseClick]);
+
+	const fuseOptions = {
+		keys: [
+			"label",
+		]
+	};
 
 	const getInitialSelectedValue = () => {
 		var selectedVal = undefined
@@ -70,6 +81,8 @@ export const DropdownBasic: React.FC<Props> = ({
 	const [selectedItems, setSelectedItems] = useState<Array<DropdownItemObj>>(items.filter(item => item.selected))
 
 	const [modifiedItems, setModifiedItems] = useState<Array<DropdownItemObj>>(items)
+
+	const [queryItems, setQueryItems] = useState<Array<DropdownItemObj>>(items)
 
 	useEffect(() => {
 		if (onSelection) {
@@ -166,11 +179,18 @@ export const DropdownBasic: React.FC<Props> = ({
 		display: visibleRef ? "flex" : "none",
 		flexDirection: "column",
 		width: contextWidth == undefined ? inputRef.current?.clientWidth : contextWidth,
-		minHeight: "100px",
+		paddingBottom: "10px",
 		maxHeight: contextMaxHeight == undefined ? "200px" : contextMaxHeight,
 		left: calculateLeftPosition(),
 		bottom: isPosAbove() ? getClientBottom() + getClientHeight() + 10 + "px" : "unset",
-		top: !isPosAbove() ? getClientTop() + getClientHeight() + 10 + "px" : "unset"
+		top: !isPosAbove() ? getClientTop() + getClientHeight() + 10 + "px" : "unset",
+	}
+
+	var dropdownItemStyle: React.CSSProperties = {
+		marginTop: filter ? "54px" : "unset",
+		width: "100%",
+		height: "100%",
+		overflow: "auto"
 	}
 
 	const handleClick = (e:MouseEvent) => {
@@ -181,9 +201,25 @@ export const DropdownBasic: React.FC<Props> = ({
 		}
 	};
 
+	const handleKeyDownEvent = (e:KeyboardEvent) => {
+		if (e.key == "ArrowDown" && visible) {
+			e.preventDefault();
+			for (var i=0; i < queryItems.length; i++) {
+
+			}
+		} else if (e.key == "ArrowUp" && visible) {
+			e.preventDefault();
+
+		}
+	};
+
 	useEffect(() => {
 		document.addEventListener('click', handleClick);
-		return () => document.removeEventListener('click', handleClick);
+		document.addEventListener('keydown', handleKeyDownEvent)
+		return () => {
+			document.removeEventListener('click', handleClick);
+			document.removeEventListener('keydown', handleKeyDownEvent);
+		}
 	}, []);
 
 	useEffect(() => {
@@ -199,7 +235,7 @@ export const DropdownBasic: React.FC<Props> = ({
 				setBlockMouseClick(false);
 			}, 500)
 			setVisible(true);
-
+			handleFilterChange("");
 		}
 	}
 
@@ -243,6 +279,51 @@ export const DropdownBasic: React.FC<Props> = ({
 		}
 	}
 
+	const handleFilterChange = (query: string) => {
+		if (query == "" || query == undefined) {
+			var queryItems = modifiedItems;
+			queryItems.forEach(item => item.focused = false);
+			for (let item of queryItems) {
+				if (item.type !== DropdownItemType.HEADING && !item.disabled) {
+					item.focused = true
+					break; // Breaks out of the loop if the condition is met
+				}
+			}
+			setQueryItems(queryItems);
+		} else {
+			const fuse = new Fuse(modifiedItems.filter(item =>
+				item.type != DropdownItemType.HEADING), fuseOptions);
+			const queryItems = fuse.search(query).map(fuseItem => fuseItem.item);
+			if (queryItems.length <= 0) {
+				setQueryItems([{
+					label: "No items found..",
+					reference: "-1",
+					selected: false,
+					disabled: true,
+					type: DropdownItemType.TEXT
+				}])
+			} else {
+				queryItems.forEach(item => item.focused = false);
+				queryItems[0].focused = true;
+				setQueryItems(queryItems);
+			}
+		}
+	}
+
+	const generateItemStyle = (item: DropdownItemObj) => {
+		var className = "blue-orange-dropdown-item-cont"
+		if (item.type != DropdownItemType.HEADING && !item.disabled) {
+			className += " blue-orange-dropdown-item-hoverable"
+		}
+		if (item.disabled) {
+			className += " blue-orange-dropdown-item-disabled"
+		}
+		if (item.focused) {
+			className += " blue-orange-dropdown-item-focused"
+		}
+		return className;
+	}
+
 	return (
 		<div className="blue-orange-dropdown-cont">
 			<div ref={inputRef} className="blue-orange-dropdown" onClick={toggleVisibleState}>
@@ -255,11 +336,25 @@ export const DropdownBasic: React.FC<Props> = ({
 			</div>
 			{visible &&
 				<div ref={dropdownRef} className="blue-orange-dropdown-window shadow" style={dropdownWindowStyle}>
-					{modifiedItems.map((item, index) => (
-						<div key={index}>
-							<DropdownItem item={item} onClick={handleItemClick}></DropdownItem>
+					{filter &&
+						<div className="blue-orange-dropdown-window-filter-cont">
+							<Input placeholder={"Filter..."} style={{height: "32px", fontSize: "14px"}} onInputChange={handleFilterChange} focus={true}></Input>
 						</div>
-					))}
+					}
+					<div style={dropdownItemStyle}>
+						{queryItems.map((item, index) => (
+							<div key={index} className={generateItemStyle(item)}>
+								{allowMultipleSelection && item.type != DropdownItemType.HEADING &&
+									<div className="blue-orange-dropdown-item-check-cont">
+										<Checkbox checked={item.selected} readonly={item.disabled}></Checkbox>
+									</div>
+								}
+								<div className="blue-orange-dropdown-item-el-cont">
+									<DropdownItem item={item} onClick={handleItemClick}></DropdownItem>
+								</div>
+							</div>
+						))}
+					</div>
 				</div>
 			}
 		</div>

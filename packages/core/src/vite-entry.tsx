@@ -21,6 +21,6 @@ export { ErrorBlockAlert } from './components/alerts/in-line-block/erroralert/Er
 export { SuccessBlockAlert } from './components/alerts/in-line-block/successalert/SuccessBlockAlert';
 export { InfoBlockAlert } from './components/alerts/in-line-block/infoalert/InfoBlockAlert';
 
-// Headings
-export { FormHeading } from './components/headings/form-heading/FormHeading';
-export { PageHeading } from './components/headings/page-heading/PageHeading';
+// Text
+export { FormHeading } from './components/text-decorations/form-heading/FormHeading';
+export { PageHeading } from './components/text-decorations/page-heading/PageHeading';

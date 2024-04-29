@@ -32,5 +32,6 @@ export interface DropdownItem {
     icon?: boolean,
     image?: boolean,
     heading?: boolean,
-    src?: string
+    src?: string,
+    focused?: boolean
 }
