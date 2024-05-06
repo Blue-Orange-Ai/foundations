@@ -143,8 +143,8 @@ export const Workspace: React.FC<Props> = ({}) => {
 				<div style={{width: "200px"}}>
 					<DropdownBasic items={dropdownItems} filter={true} allowMultipleSelection={true}></DropdownBasic>
 				</div>
-				<Badge>Hello</Badge>
-				<Tag>Hello</Tag>
+				{/*<Badge>Hello</Badge>*/}
+				{/*<Tag>Hello</Tag>*/}
 
 			</div>
 		</div>

@@ -5,6 +5,7 @@ import {DropdownItem} from "../items/DropdownItem/DropdownItem";
 import {Input} from "../../input/Input";
 import Fuse from "fuse.js";
 import {Checkbox} from "../../checkbox/Checkbox";
+import {DropdownItemStyle} from "../items/DropdownItemStyle/DropdownItemStyle";
 
 interface Props {
 	items: Array<DropdownItemObj>,
@@ -205,15 +206,61 @@ export const DropdownBasic: React.FC<Props> = ({
 		}
 	};
 
-	const handleKeyDownEvent = (e:KeyboardEvent) => {
-		if (e.key == "ArrowDown" && visible) {
-			e.preventDefault();
-			for (var i=0; i < queryItems.length; i++) {
-
+	const getFocusedItemIdx = () => {
+		for (var i=0; i < queryItems.length; i++) {
+			if (queryItems[i].focused) {
+				return i;
 			}
-		} else if (e.key == "ArrowUp" && visible) {
-			e.preventDefault();
+		}
+		return -1;
+	}
 
+	const getNextSelectableItem = () => {
+		var focusedItem = getFocusedItemIdx();
+		for (var i= focusedItem + 1; i < queryItems.length; i++) {
+			if (queryItems[i].type != DropdownItemType.HEADING && !queryItems[i].disabled) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	const getPreviousSelectableItem = () => {
+		var focusedItem = getFocusedItemIdx() == -1 ? queryItems.length : getFocusedItemIdx();
+		for (var i= focusedItem -1; i >= 0; i--) {
+			if (queryItems[i].type != DropdownItemType.HEADING && !queryItems[i].disabled) {
+				return i;
+			}
+		}
+		return queryItems.length;
+	}
+
+	const handleKeyDownEvent = (e:KeyboardEvent) => {
+		var modQueryItems = queryItems;
+		if (e.key == "ArrowDown" && visibleRef.current) {
+			e.preventDefault();
+			var nextFocusedItem = getNextSelectableItem();
+			modQueryItems.forEach(item => item.focused = false);
+			if (nextFocusedItem > -1) {
+				modQueryItems[nextFocusedItem].focused = true;
+			}
+			setQueryItems(modQueryItems);
+			setLastUpdated(new Date())
+		} else if (e.key == "ArrowUp" && visibleRef.current) {
+			e.preventDefault();
+			var prevFocusedItem = getPreviousSelectableItem();
+			modQueryItems.forEach(item => item.focused = false);
+			if (prevFocusedItem < queryItems.length) {
+				modQueryItems[prevFocusedItem].focused = true;
+			}
+			setQueryItems(modQueryItems);
+			setLastUpdated(new Date())
+		} else if (e.key == "Enter" && visibleRef.current) {
+			e.preventDefault();
+			var focusedItemIdx = getFocusedItemIdx();
+			if (focusedItemIdx > -1) {
+				handleItemClick(queryItems[focusedItemIdx]);
+			}
 		}
 	};
 
@@ -293,7 +340,7 @@ export const DropdownBasic: React.FC<Props> = ({
 			for (let item of queryItems) {
 				if (item.type !== DropdownItemType.HEADING && !item.disabled) {
 					item.focused = true
-					break; // Breaks out of the loop if the condition is met
+					break;
 				}
 			}
 			setQueryItems(queryItems);
@@ -350,7 +397,7 @@ export const DropdownBasic: React.FC<Props> = ({
 					}
 					<div style={dropdownItemStyle}>
 						{queryItems.map((item, index) => (
-							<div key={index} className={generateItemStyle(item)}>
+							<DropdownItemStyle key={index} item={item} update={lastUpdated}>
 								{allowMultipleSelection && item.type != DropdownItemType.HEADING &&
 									<div className="blue-orange-dropdown-item-check-cont" onClick={() => handleItemClick(item)}>
 										<Checkbox checked={item.selected} readonly={true} update={lastUpdated}></Checkbox>
@@ -359,7 +406,7 @@ export const DropdownBasic: React.FC<Props> = ({
 								<div className="blue-orange-dropdown-item-el-cont">
 									<DropdownItem item={item} onClick={handleItemClick}></DropdownItem>
 								</div>
-							</div>
+							</DropdownItemStyle>
 						))}
 					</div>
 				</div>
