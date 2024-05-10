@@ -35,3 +35,18 @@ export interface DropdownItem {
     src?: string,
     focused?: boolean
 }
+
+export enum DatePickerMonth {
+    JAN,
+    FEB,
+    MAR,
+    APR,
+    MAY,
+    JUN,
+    JUL,
+    AUG,
+    SEP,
+    OCT,
+    NOV,
+    DEC
+}

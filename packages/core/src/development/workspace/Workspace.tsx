@@ -16,6 +16,7 @@ import {PrimaryCell} from "../../components/table/cells/primarycell/PrimaryCell"
 import {DropdownBasic} from "../../components/inputs/dropdown/basic/DropdownBasic";
 import {Badge} from "../../components/text-decorations/badge/Badge";
 import {Tag} from "../../components/text-decorations/tag/Tag";
+import {Month} from "../../components/inputs/date/datepicker/items/month/Month";
 
 interface Props {
 }
@@ -140,11 +141,12 @@ export const Workspace: React.FC<Props> = ({}) => {
 				{/*		</Row>*/}
 				{/*	</TBody>*/}
 				{/*</Table>*/}
-				<div style={{width: "200px"}}>
-					<DropdownBasic items={dropdownItems} filter={true} allowMultipleSelection={true}></DropdownBasic>
-				</div>
+				{/*<div style={{width: "200px"}}>*/}
+				{/*	<DropdownBasic items={dropdownItems} filter={true} allowMultipleSelection={true}></DropdownBasic>*/}
+				{/*</div>*/}
 				{/*<Badge>Hello</Badge>*/}
 				{/*<Tag>Hello</Tag>*/}
+				<Month date={new Date()} hideInActiveMonths={false}></Month>
 
 			</div>
 		</div>

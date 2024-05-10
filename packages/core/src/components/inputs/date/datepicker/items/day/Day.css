@@ -1,0 +1,30 @@
+.blue-orange-date-picker-day {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #393939;
+    width: 32px;
+    cursor: pointer;
+    text-align: center;
+    height: 30px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+}
+
+.blue-orange-date-picker-day-in-active{
+    opacity: 0.4;
+}
+
+.blue-orange-date-picker-day-current-day {
+    border: 1px solid black;
+}
+
+.blue-orange-date-picker-day-selected {
+    border: 1px solid black;
+    background-color: black;
+    color: white;
+}
+
+.blue-orange-date-picker-day-hide-in-active {
+    opacity: 0;
+    pointer-events: none;
+}

@@ -6,7 +6,7 @@ export { ContextMenu } from './components/contextmenu/ContextMenu';
 // Buttons
 export { FileUploadBtn } from './components/buttons/file-upload-btn/FileUploadBtn';
 export { Button } from './components/buttons/button/Button';
-export { ButtonCircleIcon } from './components/buttons/button-circle-icon/ButtonCircleIcon';
+export { ButtonIcon } from './components/buttons/button-circle-icon/ButtonIcon';
 
 // Inputs
 export { AddressInput } from './components/inputs/address/AddressInput';
