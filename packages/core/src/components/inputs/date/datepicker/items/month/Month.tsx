@@ -12,6 +12,7 @@ interface Props {
 	minStartingYear?: number,
 	maxStartingYear?: number,
 	sundayStart?: boolean,
+	showHeader?: boolean,
 	onSelection?: (date: Date) => void
 }
 
@@ -21,6 +22,7 @@ export const Month: React.FC<Props> = ({
 										   minStartingYear=1900,
 										   maxStartingYear=2200,
 										   sundayStart  = false,
+										   showHeader = true,
 										   onSelection}) => {
 
 	const todayDate = new Date();
@@ -143,48 +145,50 @@ export const Month: React.FC<Props> = ({
 
 	return (
 		<div className="blue-orange-date-picker-cont">
-			<div className="blue-orange-date-picker-header">
-				<ButtonIcon icon={"ri-arrow-left-s-line"} style={btnStyle} onClick={clickPreviousMonth}></ButtonIcon>
-				<div className="blue-orange-date-picker-month-heading-text-group">
-					<div className="blue-orange-date-picker-month-heading">
-						{currentMonth == 0 && "January"}
-						{currentMonth == 1 && "February"}
-						{currentMonth == 2 && "March"}
-						{currentMonth == 3 && "April"}
-						{currentMonth == 4 && "May"}
-						{currentMonth == 5 && "June"}
-						{currentMonth == 6 && "July"}
-						{currentMonth == 7 && "August"}
-						{currentMonth == 8 && "September"}
-						{currentMonth == 9 && "October"}
-						{currentMonth == 10 && "November"}
-						{currentMonth == 11 && "December"}
-						<select className="blue-orange-date-picker-header-select" value={currentMonth} onChange={changeMonth}>
-							<option value={0}>January</option>
-							<option value={1}>February</option>
-							<option value={2}>March</option>
-							<option value={3}>April</option>
-							<option value={4}>May</option>
-							<option value={5}>June</option>
-							<option value={6}>July</option>
-							<option value={7}>August</option>
-							<option value={8}>September</option>
-							<option value={9}>October</option>
-							<option value={10}>November</option>
-							<option value={11}>December</option>
-						</select>
+			{showHeader &&
+				<div className="blue-orange-date-picker-header">
+					<ButtonIcon icon={"ri-arrow-left-s-line"} style={btnStyle} onClick={clickPreviousMonth}></ButtonIcon>
+					<div className="blue-orange-date-picker-month-heading-text-group">
+						<div className="blue-orange-date-picker-month-heading">
+							{currentMonth == 0 && "January"}
+							{currentMonth == 1 && "February"}
+							{currentMonth == 2 && "March"}
+							{currentMonth == 3 && "April"}
+							{currentMonth == 4 && "May"}
+							{currentMonth == 5 && "June"}
+							{currentMonth == 6 && "July"}
+							{currentMonth == 7 && "August"}
+							{currentMonth == 8 && "September"}
+							{currentMonth == 9 && "October"}
+							{currentMonth == 10 && "November"}
+							{currentMonth == 11 && "December"}
+							<select className="blue-orange-date-picker-header-select" value={currentMonth} onChange={changeMonth}>
+								<option value={0}>January</option>
+								<option value={1}>February</option>
+								<option value={2}>March</option>
+								<option value={3}>April</option>
+								<option value={4}>May</option>
+								<option value={5}>June</option>
+								<option value={6}>July</option>
+								<option value={7}>August</option>
+								<option value={8}>September</option>
+								<option value={9}>October</option>
+								<option value={10}>November</option>
+								<option value={11}>December</option>
+							</select>
+						</div>
+						<div className="blue-orange-date-picker-year-heading">
+							{currentYear}
+							<select className="blue-orange-date-picker-header-select" value={currentYear} onChange={changeYear}>
+								{yearSelection.map((item, index) => (
+									<option key={index} value={item}>{item}</option>
+								))}
+							</select>
+						</div>
 					</div>
-					<div className="blue-orange-date-picker-year-heading">
-						{currentYear}
-						<select className="blue-orange-date-picker-header-select" value={currentYear} onChange={changeYear}>
-							{yearSelection.map((item, index) => (
-								<option key={index} value={item}>{item}</option>
-							))}
-						</select>
-					</div>
+					<ButtonIcon icon={"ri-arrow-right-s-line"} style={btnStyle} onClick={clickNextMonth}></ButtonIcon>
 				</div>
-				<ButtonIcon icon={"ri-arrow-right-s-line"} style={btnStyle} onClick={clickNextMonth}></ButtonIcon>
-			</div>
+			}
 			<table className="blue-orange-date-picker">
 				<thead>
 				{sundayStart &&
