@@ -18,6 +18,7 @@ import {Badge} from "../../components/text-decorations/badge/Badge";
 import {Tag} from "../../components/text-decorations/tag/Tag";
 import {Month} from "../../components/inputs/date/datepicker/items/month/Month";
 import {DateInput} from "../../components/inputs/date/datepicker/inputs/dateinput/DateInput";
+import {RichText} from "../../components/inputs/richtext/RichText";
 
 interface Props {
 }
@@ -147,8 +148,9 @@ export const Workspace: React.FC<Props> = ({}) => {
 				{/*</div>*/}
 				{/*<Badge>Hello</Badge>*/}
 				{/*<Tag>Hello</Tag>*/}
-				<DateInput displayFormat={"ddd, MMMM Do YYYY"}></DateInput>
+				{/*<DateInput displayFormat={"ddd, MMMM Do YYYY"}></DateInput>*/}
 
+				<RichText></RichText>
 			</div>
 		</div>
 	)

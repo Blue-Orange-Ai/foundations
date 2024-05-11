@@ -8,6 +8,12 @@
   "private": false,
   "dependencies": {
     "@blue-orange-ai/foundations-clients": "^0.0.5",
+    "@tiptap/extension-code-block": "^2.3.2",
+    "@tiptap/extension-link": "^2.3.2",
+    "@tiptap/extension-placeholder": "^2.3.2",
+    "@tiptap/pm": "^2.3.2",
+    "@tiptap/react": "^2.3.2",
+    "@tiptap/starter-kit": "^2.3.2",
     "@types/moment": "^2.13.0",
     "animate.css": "^4.1.1",
     "chrono-node": "^2.7.5",

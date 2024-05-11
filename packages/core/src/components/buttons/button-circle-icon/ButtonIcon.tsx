@@ -1,4 +1,4 @@
-import React, { useEffect, useRef }  from "react";
+import React, {useEffect, useRef, useState} from "react";
 import tippy from "tippy.js";
 import {TippyHTMLElement} from "../../../interfaces/AppInterfaces";
 
@@ -9,12 +9,29 @@ interface Props {
 	label?: string;
 	isDisabled?: boolean;
 	onClick?: () => void;
-	style?: React.CSSProperties
+	style?: React.CSSProperties;
+	className?: string;
 }
 
-export const ButtonIcon: React.FC<Props> = ({icon, label, onClick, isDisabled, style}) => {
+export const ButtonIcon: React.FC<Props> = ({
+												icon,
+												label,
+												onClick,
+												isDisabled,
+												style,
+												className}) => {
+
+	const generateClassname = (name: string | undefined) => {
+		const base = "blue-orange-default-btn-icon no-select"
+		if (name) {
+			return base + " " + name;
+		}
+		return base;
+	}
 
 	const btnRef = useRef<HTMLDivElement | null>(null);
+
+	const [classname, setClassname] = useState(generateClassname(className));
 
 	useEffect(() => {
 		if (label) {
@@ -35,6 +52,10 @@ export const ButtonIcon: React.FC<Props> = ({icon, label, onClick, isDisabled, s
 		}
 	}, []);
 
+	useEffect(() => {
+		setClassname(generateClassname(className))
+	}, [className]);
+
 	const handleClick = () => {
 		if (!isDisabled && onClick) {
 			onClick();
@@ -52,7 +73,7 @@ export const ButtonIcon: React.FC<Props> = ({icon, label, onClick, isDisabled, s
 	}
 
 	return (
-		<div ref={btnRef} className="blue-orange-default-btn-icon no-select" onClick={handleClick} style={setStyle()}>
+		<div ref={btnRef} className={classname} onClick={handleClick} style={setStyle()}>
 			<i className={icon}></i>
 		</div>
 	)
