@@ -10,6 +10,7 @@
     "@blue-orange-ai/foundations-clients": "^0.0.5",
     "@tiptap/extension-code-block": "^2.3.2",
     "@tiptap/extension-link": "^2.3.2",
+    "@tiptap/extension-mention": "^2.3.2",
     "@tiptap/extension-placeholder": "^2.3.2",
     "@tiptap/pm": "^2.3.2",
     "@tiptap/react": "^2.3.2",

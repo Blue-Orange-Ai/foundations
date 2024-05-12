@@ -167,7 +167,7 @@ export const DateInput: React.FC<Props> = ({
 		document.addEventListener('keydown', handleKeyDown);
 		return () => {
 			document.removeEventListener('mousedown', handleMouseDown);
-			document.addEventListener('keydown', handleKeyDown);
+			document.removeEventListener('keydown', handleKeyDown);
 		}
 	}, []);
 

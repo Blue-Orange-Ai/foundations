@@ -18,7 +18,7 @@ import {Badge} from "../../components/text-decorations/badge/Badge";
 import {Tag} from "../../components/text-decorations/tag/Tag";
 import {Month} from "../../components/inputs/date/datepicker/items/month/Month";
 import {DateInput} from "../../components/inputs/date/datepicker/inputs/dateinput/DateInput";
-import {RichText} from "../../components/inputs/richtext/RichText";
+import {RichText} from "../../components/inputs/richtext/default/RichText";
 
 interface Props {
 }
