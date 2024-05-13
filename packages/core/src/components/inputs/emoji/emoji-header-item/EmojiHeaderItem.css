@@ -1,5 +1,5 @@
 
-.blue-orange-html-emoji-header-icon {
+.blue-orange-html-emoji-header-icon-class {
     height: 38px;
     border-top: 1px solid transparent;
     border-bottom: 1px solid transparent;
@@ -13,8 +13,22 @@
     cursor: pointer;
 }
 
-.blue-orange-html-emoji-header-icon:hover {
+.blue-orange-html-emoji-header-icon-class:hover {
     opacity: 1;
     transition: 0.2s;
+}
+
+.blue-orange-html-emoji-header-icon-class-active {
+    opacity: 1;
+    height: 38px;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid dodgerblue;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #393939;
+    font-size: 1.4rem;
+    cursor: pointer;
 }
 

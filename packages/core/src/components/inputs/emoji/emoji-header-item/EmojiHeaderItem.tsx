@@ -7,9 +7,10 @@ import {ButtonIcon} from "../../../buttons/button-circle-icon/ButtonIcon";
 interface Props {
 	icon: string,
 	index: number,
+	state: number,
 	onHeaderItemClicked?: (state: number) => void
 }
-export const EmojiHeaderItem: React.FC<Props> = ({icon, index, onHeaderItemClicked}) => {
+export const EmojiHeaderItem: React.FC<Props> = ({icon, index, state, onHeaderItemClicked}) => {
 
 
 	const style: React.CSSProperties = {
@@ -25,8 +26,13 @@ export const EmojiHeaderItem: React.FC<Props> = ({icon, index, onHeaderItemClick
 	}
 
 	return (
-		<div className="blue-orange-html-emoji-header-icon">
-			<ButtonIcon icon={icon} className={"blue-orange-html-emoji-header-icon-class"} style={style} onClick={itemClicked}></ButtonIcon>
+		<div className={state == index ?
+			"blue-orange-html-emoji-header-icon-class-active" :
+			"blue-orange-html-emoji-header-icon-class"}>
+			<ButtonIcon
+				icon={icon}
+				style={style}
+				onClick={itemClicked}></ButtonIcon>
 		</div>
 	)
 }

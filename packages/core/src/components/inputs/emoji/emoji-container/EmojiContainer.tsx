@@ -39,8 +39,8 @@ export const EmojiContainer: React.FC<Props> = ({onSelection}) => {
 	}
 
 	return (
-		<div className="blue-orange-html-emoji">
-			<EmojiHeader onHeaderItemClicked={changeState}></EmojiHeader>
+		<div className="blue-orange-html-emoji shadow">
+			<EmojiHeader onHeaderItemClicked={changeState} state={state}></EmojiHeader>
 			{state == 0 &&
 				<EmojiSearchState
 					emojis={flatEmojis}
