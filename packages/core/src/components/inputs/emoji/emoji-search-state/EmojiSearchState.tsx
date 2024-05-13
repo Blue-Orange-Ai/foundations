@@ -11,12 +11,14 @@ import {EmojiGroupHeaderTxt} from "../emoji-group-header-txt/EmojiGroupHeaderTxt
 
 interface Props {
 	emojis: EmojiObj[],
+	skinTone: number,
 	onMouseOver?: (emoji: EmojiObj) => void,
 	onMouseLeave?: (emoji: EmojiObj) => void,
 	onSelection?: (emoji: EmojiObj) => void,
 }
 export const EmojiSearchState: React.FC<Props> = ({
 													  emojis,
+													  skinTone,
 													  onMouseOver,
 													  onMouseLeave,
 													  onSelection}) => {
@@ -47,7 +49,13 @@ export const EmojiSearchState: React.FC<Props> = ({
 			<EmojiGroupHeaderTxt label={"All Emojis"}></EmojiGroupHeaderTxt>
 			<div className="blue-orange-html-emoji-body-display">
 				{queryItems.map((item, index) => (
-					<EmojiSelection key={index} emoji={item} onMouseOver={onMouseOver} onMouseLeave={onMouseLeave} onSelection={onSelection}></EmojiSelection>
+					<EmojiSelection
+						key={index}
+						emoji={item}
+						onMouseOver={onMouseOver}
+						onMouseLeave={onMouseLeave}
+						skin_tone={skinTone}
+						onSelection={onSelection}></EmojiSelection>
 				))}
 			</div>
 		</div>

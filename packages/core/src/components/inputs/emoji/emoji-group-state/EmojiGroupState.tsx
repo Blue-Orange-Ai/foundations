@@ -8,6 +8,7 @@ import {EmojiSelection} from "../emoji-selection/EmojiSelection";
 interface Props {
 	label: string,
 	emojis: EmojiObj[],
+	skinTone: number,
 	onMouseOver?: (emoji: EmojiObj) => void,
 	onMouseLeave?: (emoji: EmojiObj) => void,
 	onSelection?: (emoji: EmojiObj) => void,
@@ -15,6 +16,7 @@ interface Props {
 export const EmojiGroupState: React.FC<Props> = ({
 													 label,
 													 emojis,
+													 skinTone,
 													 onMouseOver,
 													 onMouseLeave,
 													 onSelection}) => {
@@ -27,6 +29,7 @@ export const EmojiGroupState: React.FC<Props> = ({
 					<EmojiSelection
 						key={index}
 						emoji={item}
+						skin_tone={skinTone}
 						onMouseOver={onMouseOver}
 						onMouseLeave={onMouseLeave}
 						onSelection={onSelection}></EmojiSelection>
