@@ -22,13 +22,15 @@ interface Props {
 	content?: string,
 	placeholder?: string,
 	displayFormatting?: boolean,
-	editorHeight?: number
+	editorHeight?: number,
+	minEditorHeight?: number
 }
 
 export const RichText: React.FC<Props> = ({
 											  content,
 											  placeholder,
-											  displayFormatting= true}) => {
+											  displayFormatting= true,
+											  minEditorHeight = 10}) => {
 
 
 	const [displayHeading, setDisplayHeading] = useState(displayFormatting);
@@ -36,6 +38,10 @@ export const RichText: React.FC<Props> = ({
 	const [query, setQuery] = useState('');
 
 	const [mentionItems, setMentionItems] = useState<Array<MentionItem>>([]);
+
+	const editorContainerRef = useRef<HTMLDivElement>(null);
+
+	const initRef = useRef(false);
 
 	const extensions = [
 		StarterKit,
@@ -100,8 +106,28 @@ export const RichText: React.FC<Props> = ({
 		setDisplayHeading(!displayHeading);
 	}
 
+	const initialise = () => {
+		const intervalId = setInterval(() => {
+			if (editorContainerRef.current) {
+				const childElements = editorContainerRef.current.querySelectorAll('.tiptap');
+				if (childElements.length > 0) {
+					var tiptapEl: HTMLElement = childElements[0] as HTMLElement;
+					tiptapEl.style.minHeight = minEditorHeight + "px";
+					clearInterval(intervalId);
+				}
+			}
+		}, 10);
+	}
+
+	useEffect(() => {
+		if (!initRef.current) {
+			initRef.current = true
+			initialise();
+		}
+	}, []);
+
 	return (
-		<div className='blue-orange-rich-text-editor'>
+		<div ref={editorContainerRef} className='blue-orange-rich-text-editor'>
 			{displayHeading &&
 				<div className="blue-orange-rich-text-editor-heading">
 					<ButtonIcon
@@ -160,7 +186,9 @@ export const RichText: React.FC<Props> = ({
 					></ButtonIcon>
 				</div>
 			}
-			<EditorContent editor={editor}></EditorContent>
+			<div ref={editorContainerRef}>
+				<EditorContent editor={editor}></EditorContent>
+			</div>
 			<div className="blue-orange-rich-text-editor-heading-footer">
 				<div className="blue-orange-rich-text-editor-heading-footer-left-cont">
 					<ButtonIcon

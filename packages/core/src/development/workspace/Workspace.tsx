@@ -19,6 +19,8 @@ import {Tag} from "../../components/text-decorations/tag/Tag";
 import {Month} from "../../components/inputs/date/datepicker/items/month/Month";
 import {DateInput} from "../../components/inputs/date/datepicker/inputs/dateinput/DateInput";
 import {RichText} from "../../components/inputs/richtext/default/RichText";
+import {EditorContent} from "@tiptap/react";
+import {EmojiContainer} from "../../components/inputs/emoji/emoji-container/EmojiContainer";
 
 interface Props {
 }
@@ -149,8 +151,8 @@ export const Workspace: React.FC<Props> = ({}) => {
 				{/*<Badge>Hello</Badge>*/}
 				{/*<Tag>Hello</Tag>*/}
 				{/*<DateInput displayFormat={"ddd, MMMM Do YYYY"}></DateInput>*/}
-
-				<RichText></RichText>
+				<EmojiContainer></EmojiContainer>
+				{/*<RichText minEditorHeight={10}></RichText>*/}
 			</div>
 		</div>
 	)

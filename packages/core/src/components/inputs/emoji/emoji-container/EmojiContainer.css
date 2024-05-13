@@ -1,0 +1,12 @@
+
+.blue-orange-html-emoji {
+    height: 400px;
+    width: 382px;
+    background-color: white;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+

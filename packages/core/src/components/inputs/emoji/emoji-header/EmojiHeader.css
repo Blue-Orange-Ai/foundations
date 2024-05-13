@@ -1,0 +1,10 @@
+
+.blue-orange-html-emoji-header{
+    width: calc(100% - 15px);
+    padding-left: 7.5px;
+    padding-right: 7.5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 1px solid #dedede;
+}
