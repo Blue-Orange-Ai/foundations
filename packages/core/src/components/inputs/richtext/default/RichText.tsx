@@ -179,6 +179,16 @@ export const RichText: React.FC<Props> = ({
 		}
 	}
 
+	const insertMentionStart = () => {
+		if (editor) {
+			editor
+				.chain()
+				.focus()
+				.insertContent("@")
+				.run();
+		}
+	}
+
 	return (
 		<div ref={editorContainerRef} className='blue-orange-rich-text-editor'>
 			{displayHeading &&
@@ -268,7 +278,7 @@ export const RichText: React.FC<Props> = ({
 					<ButtonIcon
 						icon={"ri-at-line"}
 						style={defaultIconStyle}
-						onClick={toggleHeading}
+						onClick={insertMentionStart}
 						label={"Mention someone"}
 					></ButtonIcon>
 				</div>
