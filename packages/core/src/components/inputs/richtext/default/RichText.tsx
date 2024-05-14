@@ -14,6 +14,7 @@ import {fetchEmojiItems, renderEmojiSuggestions} from "../suggestion/EmojiSugges
 import {EmojiMention} from "../extensions/EmojiMention";
 import {EmojiObj} from "../../emoji/data/UnicodeEmoji";
 import Cookies from "js-cookie";
+import {EmojiWrapper} from "../../emoji/emoji-wrapper/EmojiWrapper";
 
 export interface MentionItem {
 	label: string,
@@ -167,6 +168,17 @@ export const RichText: React.FC<Props> = ({
 		}
 	}, []);
 
+	const emojiSelection = (emoji: string) => {
+		if (editor) {
+			const textEmoji = new DOMParser().parseFromString(emoji, 'text/html').body.textContent;
+			editor
+				.chain()
+				.focus()
+				.insertContent(textEmoji)
+				.run();
+		}
+	}
+
 	return (
 		<div ref={editorContainerRef} className='blue-orange-rich-text-editor'>
 			{displayHeading &&
@@ -246,12 +258,13 @@ export const RichText: React.FC<Props> = ({
 						onClick={toggleHeading}
 						label={"Toggle formatting"}
 					></ButtonIcon>
-					<ButtonIcon
-						icon={"ri-emotion-happy-line"}
-						style={defaultIconStyle}
-						onClick={toggleHeading}
-						label={"Emoji"}
-					></ButtonIcon>
+					<EmojiWrapper onSelection={emojiSelection}>
+						<ButtonIcon
+							icon={"ri-emotion-happy-line"}
+							style={defaultIconStyle}
+							label={"Emoji"}
+						></ButtonIcon>
+					</EmojiWrapper>
 					<ButtonIcon
 						icon={"ri-at-line"}
 						style={defaultIconStyle}

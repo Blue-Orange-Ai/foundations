@@ -1,0 +1,24 @@
+
+.blue-orange-html-emoji-body-cont {
+    width: 100%;
+    flex: 1 auto;
+    display: flex;
+    overflow-x: hidden;
+    overflow-y: auto;
+    flex-direction: column;
+}
+
+.blue-orange-html-emoji-filter-cont {
+    width: calc(100% - 10px);
+    padding: 10px 5px 5px;
+    background-color: white;
+}
+
+.blue-orange-html-emoji-body-display {
+    width: calc(100% - 30px);
+    padding-left: 15px;
+    padding-right: 15px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
