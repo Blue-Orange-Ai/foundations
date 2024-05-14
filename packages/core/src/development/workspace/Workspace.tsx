@@ -151,8 +151,8 @@ export const Workspace: React.FC<Props> = ({}) => {
 				{/*<Badge>Hello</Badge>*/}
 				{/*<Tag>Hello</Tag>*/}
 				{/*<DateInput displayFormat={"ddd, MMMM Do YYYY"}></DateInput>*/}
-				<EmojiContainer></EmojiContainer>
-				{/*<RichText minEditorHeight={10}></RichText>*/}
+				{/*<EmojiContainer></EmojiContainer>*/}
+				<RichText minEditorHeight={10}></RichText>
 			</div>
 		</div>
 	)

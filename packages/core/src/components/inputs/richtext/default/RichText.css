@@ -135,6 +135,27 @@
     border-color: #000;
 }
 
+.blue-orange-rich-text-editor-emoji-item {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 0.4rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0;
+    padding: 0.2rem 0.4rem;
+    width: 100%;
+}
+
+.blue-orange-rich-text-editor-emoji-item-is-selected {
+    border-color: #000;
+}
+
+.blue-orange-rich-text-editor-emoji-item-display {
+    margin-right: 10px;
+}
+
 [data-theme="blue-orange-rich-text-editor-mention-tippy"] {
     background-color: transparent;
     border: none;

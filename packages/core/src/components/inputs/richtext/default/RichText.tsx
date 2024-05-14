@@ -10,6 +10,10 @@ import {CodeBlock} from "@tiptap/extension-code-block";
 import Mention from '@tiptap/extension-mention';
 import {Link} from "@tiptap/extension-link";
 import {fetchMentionItems, renderSuggestions} from "../suggestion/Suggestion";
+import {fetchEmojiItems, renderEmojiSuggestions} from "../suggestion/EmojiSuggestions";
+import {EmojiMention} from "../extensions/EmojiMention";
+import {EmojiObj} from "../../emoji/data/UnicodeEmoji";
+import Cookies from "js-cookie";
 
 export interface MentionItem {
 	label: string,
@@ -39,13 +43,28 @@ export const RichText: React.FC<Props> = ({
 
 	const [mentionItems, setMentionItems] = useState<Array<MentionItem>>([]);
 
+	const [emojiItems, setEmojiItems] = useState<Array<EmojiObj>>([]);
+
 	const editorContainerRef = useRef<HTMLDivElement>(null);
 
 	const initRef = useRef(false);
 
+	const getEmojiHtml = (emoji: EmojiObj) => {
+		const skin_tone = Cookies.get("skinTone")
+		var skin_tones = ["1F3FB", "1F3FC", "1F3FD", "1F3FE", "1F3FF"]
+		if (!emoji.skin_tone || skin_tone === undefined || +skin_tone == 0) {
+			return emoji.html;
+		}
+		var emojisSplit: string[] = emoji.html.split(";");
+		if (emojisSplit.length < 2) {
+			return emoji.html + "&#x" + skin_tones[+skin_tone - 1] + ";";
+		}
+		emojisSplit.splice(1, 0, "&#x" + skin_tones[+skin_tone - 1]);
+		return emojisSplit.join(";")
+	}
+
 	const extensions = [
 		StarterKit,
-		CodeBlock,
 		Placeholder.configure({
 			placeholder: placeholder ?? "",
 		}),
@@ -78,6 +97,28 @@ export const RichText: React.FC<Props> = ({
 					return mentionItems;
 				},
 				render: () => renderSuggestions({ query }, fetchMentionItems),
+			},
+		}),
+		EmojiMention.configure({
+			HTMLAttributes: {
+				class: 'emojis',
+			},
+			suggestion: {
+				char: ':',
+				startOfLine: false,
+				command: ({ editor, range, props }) => {
+					const textEmoji = new DOMParser().parseFromString(getEmojiHtml(props), 'text/html').body.textContent;
+					editor
+						.chain()
+						.focus()
+						.insertContentAt(range, textEmoji)
+						.run();
+				},
+				items: ({ query }) => {
+					setQuery(query);
+					return emojiItems;
+				},
+				render: () => renderEmojiSuggestions({ query }, fetchEmojiItems),
 			},
 		})
 	]
