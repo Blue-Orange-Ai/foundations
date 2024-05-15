@@ -21,6 +21,7 @@ import {DateInput} from "../../components/inputs/date/datepicker/inputs/dateinpu
 import {RichText} from "../../components/inputs/richtext/default/RichText";
 import {EditorContent} from "@tiptap/react";
 import {EmojiContainer} from "../../components/inputs/emoji/emoji-container/EmojiContainer";
+import {FileUploadBtn} from "../../components/buttons/file-upload-btn/FileUploadBtn";
 
 interface Props {
 }

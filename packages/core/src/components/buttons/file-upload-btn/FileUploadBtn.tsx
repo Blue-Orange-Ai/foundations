@@ -8,6 +8,7 @@ interface Props {
 	icon?: boolean;
 	isLoading?: boolean;
 	onFileSelect?: (value: File) => void;
+	maxFileMgb?: number;
 	style?: React.CSSProperties;
 }
 
@@ -17,6 +18,7 @@ export const FileUploadBtn: React.FC<Props> = ({
 												   label="Upload File",
 												   icon=false,
 												   isLoading=false,
+												   maxFileMgb,
 												   style={}}) => {
 
 	const fileUploadElem = useRef<HTMLInputElement>(null);
@@ -32,7 +34,9 @@ export const FileUploadBtn: React.FC<Props> = ({
 		let file: File;
 		if (event.target.files != null) {
 			file = event.target.files[0];
-			if (onFileSelect) {
+			if (maxFileMgb != undefined && file.size > 1024 * 1024 * maxFileMgb) {
+				alert('File is too large. Maximum size is ' + maxFileMgb + 'MB.');
+			} else if (onFileSelect) {
 				onFileSelect(file);
 			}
 		}

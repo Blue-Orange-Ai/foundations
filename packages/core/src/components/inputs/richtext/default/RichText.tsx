@@ -15,6 +15,7 @@ import {EmojiMention} from "../extensions/EmojiMention";
 import {EmojiObj} from "../../emoji/data/UnicodeEmoji";
 import Cookies from "js-cookie";
 import {EmojiWrapper} from "../../emoji/emoji-wrapper/EmojiWrapper";
+import {FileInputWrapper} from "../../file-input-wrapper/FileInputWrapper";
 
 export interface MentionItem {
 	label: string,
@@ -254,11 +255,13 @@ export const RichText: React.FC<Props> = ({
 			</div>
 			<div className="blue-orange-rich-text-editor-heading-footer">
 				<div className="blue-orange-rich-text-editor-heading-footer-left-cont">
-					<ButtonIcon
-						icon={"ri-add-line"}
-						style={defaultIconStyle}
-						label={"Add files"}
-					></ButtonIcon>
+					<FileInputWrapper accept={"*/*"}>
+						<ButtonIcon
+							icon={"ri-add-line"}
+							style={defaultIconStyle}
+							label={"Add files"}
+						></ButtonIcon>
+					</FileInputWrapper>
 					<div style={defaultIconStyle}>
 						<div className="blue-orange-rich-text-editor-vertical-line-sep"></div>
 					</div>
