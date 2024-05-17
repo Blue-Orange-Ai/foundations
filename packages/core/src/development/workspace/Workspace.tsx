@@ -22,6 +22,7 @@ import {RichText} from "../../components/inputs/richtext/default/RichText";
 import {EditorContent} from "@tiptap/react";
 import {EmojiContainer} from "../../components/inputs/emoji/emoji-container/EmojiContainer";
 import {FileUploadBtn} from "../../components/buttons/file-upload-btn/FileUploadBtn";
+import {Pdf} from "../../components/media/pdf/Pdf";
 
 interface Props {
 }
@@ -153,7 +154,8 @@ export const Workspace: React.FC<Props> = ({}) => {
 				{/*<Tag>Hello</Tag>*/}
 				{/*<DateInput displayFormat={"ddd, MMMM Do YYYY"}></DateInput>*/}
 				{/*<EmojiContainer></EmojiContainer>*/}
-				<RichText minEditorHeight={10}></RichText>
+				{/*<RichText minEditorHeight={10}></RichText>*/}
+				<Pdf src={"https://d8d6949rstsxl.cloudfront.net/public/BO-PDF-499ffd3b-f619-4522-9c4e-bdae1bee9f4c-Academic%20Test%201%20-%20Prompt%203%20-%20Measures%20of%20Poverty.pdf"}></Pdf>
 			</div>
 		</div>
 	)
