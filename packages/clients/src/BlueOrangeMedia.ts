@@ -9,8 +9,17 @@ export type Media = {
     dateCreated: Date;
     url: string;
     mediaPublic: boolean;
-    groups: Array<string>;
+    fragments: Array<MediaFragment>;
 };
+
+export type MediaFragment = {
+    id?: number;
+    height: number;
+    width: number;
+    referenceId: number;
+    referenceUuid: string;
+    referenceUrl: string;
+}
 
 
 export class BlueOrangeMedia {
