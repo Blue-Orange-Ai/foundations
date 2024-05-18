@@ -1,9 +1,26 @@
 import Cookies from "js-cookie";
 
-export type AddRemoveUserToGroupRequest = {
-    userId: string;
+export type AddGroup = {
+    id?: string;
+    name?: string;
+    permission: GroupPermission
+}
+
+export type AddRemoveGroupsToMemberRequest = {
+    groups: Array<AddGroup>;
+    memberId: string;
+}
+
+export type AddRemoveMembersToGroupRequest = {
+    members: Array<SimpleGroupMember>;
+    name?: string;
+    id?: string;
+}
+
+export type AddRemoveMemberToGroupRequest = {
+    member: SimpleGroupMember;
     groupName: string;
-};
+}
 
 export type Address = {
     id?: string;
@@ -21,18 +38,51 @@ export type Avatar = {
     enabled: boolean;
 }
 
+export type ExcludeUserRequest = {
+    userId: string
+}
+
 export type Group = {
     id?: string;
     name: string;
     serviceAccount: boolean;
     service: string;
     description: string;
-    excludedUsers: Array<number>;
     externallyManaged: boolean;
+    excludedUsers: Array<number>;
 }
 
 export type GroupDeleteRequest = {
     groupName: string
+}
+
+export enum GroupPermission {
+    OWNER,
+    EDITOR,
+    READ
+}
+
+export enum GroupSearchField {
+    NAME_DESCRIPTION,
+    SERVICE
+}
+
+export type GroupSearchFilter = {
+    direction: SearchDirection;
+    field: GroupSearchField;
+}
+
+export type GroupSearchQuery = {
+    query: string;
+    page: number;
+    size: number;
+    filter?: GroupSearchFilter;
+}
+
+export type GroupSearchResult = {
+    result: Array<Group>;
+    query: GroupSearchQuery;
+    count: number;
 }
 
 export type PublicUser = {
@@ -40,6 +90,11 @@ export type PublicUser = {
     username: string;
     color: string;
     avatar: Avatar;
+}
+
+export enum SearchDirection {
+    ASC,
+    DESC
 }
 
 export type ServiceAccount = {
@@ -51,13 +106,14 @@ export type ServiceAccount = {
     lastUsed: Date;
 }
 
-export type SimpleTokenRequest = {
-    token: string
+export type SimpleGroupMember = {
+    memberId: string
 }
 
-export type SimpleTokenRequestWithGroups = {
-    token: string;
-    groups: Array<string>
+export type SimpleTokenRequest = {
+    token: string,
+    groups?: Array<string>,
+    permission?: Array<GroupPermission>
 }
 
 export type Telephone = {
@@ -80,8 +136,7 @@ export type User = {
     address: Address | undefined;
     lastActive: Date;
     created: Date;
-    locked: boolean;
-    disabled: boolean;
+    state: UserState;
     forcePasswordReset: boolean;
     domain: string;
     notes: string;
@@ -105,33 +160,39 @@ export type UserCreateRequest = {
 
 export type UserCreateWithGroupsRequest = {
     user: UserCreateRequest;
-    groups: Array<string>
+    groups: Array<AddGroup>
 }
 
 export type UserGroupValidationRequest = {
     userId: string;
     groups: Array<string>;
+    permission: GroupPermission;
 }
 
 export type UserLoginRequest = {
     username: string;
     password: string;
+    domain: string;
 }
 
 export type UserLoginResponse = {
     token: string;
     forcePasswordReset: boolean;
+    expiry: Date
+}
+
+export enum UserState {
+    ACTIVE,
+    LOCKED,
+    DISABLED,
+    DELETED
 }
 
 export type UserTokenValidationRequest = {
     jwt: string;
     passwordReset: boolean;
     groups: Array<string>;
-}
-
-export enum SearchDirection {
-    ASC,
-    DESC
+    permission: GroupPermission;
 }
 
 export enum UserSearchField {
@@ -156,29 +217,6 @@ export type UserSearchQuery = {
 export type UserSearchResult = {
     result: Array<User>;
     query: UserSearchQuery;
-    count: number;
-}
-
-export enum GroupSearchField {
-    NAME_DESCRIPTION,
-    SERVICE
-}
-
-export type GroupSearchFilter = {
-    direction: SearchDirection;
-    field: GroupSearchField;
-}
-
-export type GroupSearchQuery = {
-    query: string;
-    page: number;
-    size: number;
-    filter?: GroupSearchFilter;
-}
-
-export type GroupSearchResult = {
-    result: Array<Group>;
-    query: GroupSearchResult;
     count: number;
 }
 
@@ -209,11 +247,6 @@ export type UserGroupSearchResult = {
     result: Array<UserGroup>;
     query: UserGroupSearchQuery;
     count: number;
-}
-
-export type AddRemoveGroupsToUserRequest = {
-    groups: Array<number>;
-    userId: string;
 }
 
 export class Passport {
@@ -381,11 +414,11 @@ export class Passport {
         });
     }
 
-    adminAddGroupsToUser(groupsToAdd: AddRemoveGroupsToUserRequest): Promise<Boolean> {
+    adminAddGroupsToUser(groupsToAdd: AddRemoveGroupsToMemberRequest): Promise<Boolean> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
-            xhr.open('POST', this.baseUrl + "/api/groups/add/groups/user");
+            xhr.open('POST', this.baseUrl + "/api/groups/add/groups/member");
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -403,11 +436,11 @@ export class Passport {
         });
     }
 
-    adminRemoveGroupsFromUser(groupsToAdd: AddRemoveGroupsToUserRequest): Promise<Boolean> {
+    adminRemoveGroupsFromUser(groupsToAdd: AddRemoveGroupsToMemberRequest): Promise<Boolean> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
-            xhr.open('POST', this.baseUrl + "/api/groups/remove/groups/user");
+            xhr.open('POST', this.baseUrl + "/api/groups/remove/groups/member");
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
