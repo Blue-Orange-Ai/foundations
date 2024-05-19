@@ -1,0 +1,28 @@
+
+.blue-orange-toaster {
+    padding: 24px;
+    width: 330px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: white;
+    margin: 10px;
+    animation-duration: 0.3s;
+}
+
+.blue-orange-toaster-text-group {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.blue-orange-toaster-text-group-heading {
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.blue-orange-toaster-text-group-description {
+    font-size: 0.8rem;
+    margin-top: 10px;
+    opacity: 0.8;
+}

@@ -1,0 +1,32 @@
+
+
+.blue-orange-toast-container {
+    position: fixed;
+    display: flex;
+    z-index: 100;
+}
+
+.blue-orange-toast-container-top-left {
+    left: 10px;
+    top: 10px;
+    flex-direction: column;
+}
+
+.blue-orange-toast-container-top-right {
+    right: 10px;
+    top: 10px;
+    flex-direction: column;
+}
+
+.blue-orange-toast-container-bottom-left {
+    left: 10px;
+    bottom: 10px;
+    flex-direction: column-reverse;
+}
+
+.blue-orange-toast-container-bottom-right {
+    right: 10px;
+    bottom: 10px;
+    flex-direction: column-reverse;
+}
+

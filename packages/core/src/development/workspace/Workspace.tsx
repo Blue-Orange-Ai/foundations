@@ -1,33 +1,19 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 
 import './Workspace.css'
-import {Table} from "../../components/table/table/Table";
-import {THead} from "../../components/table/thead/THead";
-import {Cell} from "../../components/table/cells/cell/Cell";
-import {HeaderCell} from "../../components/table/cells/headercell/HeaderCell";
-import {Row} from "../../components/table/row/Row";
-import {TBody} from "../../components/table/tbody/TBody";
-import {CellAlignment, DropdownItem, DropdownItemType} from "../../interfaces/AppInterfaces";
-import {CheckboxCell} from "../../components/table/cells/checkboxcell/CheckboxCell";
-import {Avatar} from "../../components/avatar/avatar/Avatar";
+import {DropdownItem, DropdownItemType} from "../../interfaces/AppInterfaces";
 import {Avatar as AvatarObj, User} from "@blue-orange-ai/foundations-clients/lib/Passport";
-import {AvatarList} from "../../components/avatar/avatarlist/AvatarList";
-import {PrimaryCell} from "../../components/table/cells/primarycell/PrimaryCell";
-import {DropdownBasic} from "../../components/inputs/dropdown/basic/DropdownBasic";
-import {Badge} from "../../components/text-decorations/badge/Badge";
-import {Tag} from "../../components/text-decorations/tag/Tag";
-import {Month} from "../../components/inputs/date/datepicker/items/month/Month";
-import {DateInput} from "../../components/inputs/date/datepicker/inputs/dateinput/DateInput";
-import {RichText} from "../../components/inputs/richtext/default/RichText";
-import {EditorContent} from "@tiptap/react";
-import {EmojiContainer} from "../../components/inputs/emoji/emoji-container/EmojiContainer";
-import {FileUploadBtn} from "../../components/buttons/file-upload-btn/FileUploadBtn";
-import {Pdf} from "../../components/media/pdf/Pdf";
+import {ToastContext, ToastLocation, ToastProvider} from "../../components/alerts/toast/toastcontext/ToastContext";
+import {Button, ButtonType} from "../../components/buttons/button/Button";
+
+import {ToasterType} from "../../components/alerts/toast/toaster/Toaster";
 
 interface Props {
 }
 
 export const Workspace: React.FC<Props> = ({}) => {
+
+	const { addToast } = useContext(ToastContext);
 
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -155,8 +141,19 @@ export const Workspace: React.FC<Props> = ({}) => {
 				{/*<DateInput displayFormat={"ddd, MMMM Do YYYY"}></DateInput>*/}
 				{/*<EmojiContainer></EmojiContainer>*/}
 				{/*<RichText minEditorHeight={10}></RichText>*/}
-				<Pdf src={"https://d8d6949rstsxl.cloudfront.net/public/BO-PDF-499ffd3b-f619-4522-9c4e-bdae1bee9f4c-Academic%20Test%201%20-%20Prompt%203%20-%20Measures%20of%20Poverty.pdf"}></Pdf>
+				{/*<Pdf src={"https://d8d6949rstsxl.cloudfront.net/public/BO-PDF-499ffd3b-f619-4522-9c4e-bdae1bee9f4c-Academic%20Test%201%20-%20Prompt%203%20-%20Measures%20of%20Poverty.pdf"}></Pdf>*/}
+				{/*<Toaster heading={"Hello world this is a toaster"}></Toaster>*/}
+				<Button text={"Test Toaster"} buttonType={ButtonType.PRIMARY} onClick={() => addToast({
+					id: "abcdefghi",
+					heading: "This is a test toaster",
+					description: "This is where the description will go",
+					location: ToastLocation.BOTTOM_RIGHT,
+					toastType: ToasterType.DEFAULT,
+					ttl: 5000
+				})}></Button>
+
 			</div>
+
 		</div>
 	)
 }
