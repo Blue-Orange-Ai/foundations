@@ -8,6 +8,10 @@ import {Button, ButtonType} from "../../components/buttons/button/Button";
 
 import {ToasterType} from "../../components/alerts/toast/toaster/Toaster";
 import {SimpleTag} from "../../components/inputs/tags/simple/SimpleTag";
+import {YamlEditor} from "../../components/inputs/code/yaml/YamlEditor";
+import {JsonEditor} from "../../components/inputs/code/json/JsonEditor";
+import {TextEditor} from "../../components/inputs/code/text/TextEditor";
+import {DiffEditor} from "../../components/inputs/code/diff/DiffEditor";
 
 interface Props {
 }
@@ -152,11 +156,15 @@ export const Workspace: React.FC<Props> = ({}) => {
 				{/*	toastType: ToasterType.DEFAULT,*/}
 				{/*	ttl: 5000*/}
 				{/*})}></Button>*/}
-				<SimpleTag
-					placeholder={"Enter Tags"}
-					initialTags={[]}
-					whitelist={["Hello", "world", "basketball"]}
-					onChange={(tags) => {}}></SimpleTag>
+				{/*<SimpleTag*/}
+				{/*	placeholder={"Enter Tags"}*/}
+				{/*	initialTags={[]}*/}
+				{/*	whitelist={["Hello", "world", "basketball"]}*/}
+				{/*	onChange={(tags) => {}}></SimpleTag>*/}
+				{/*<JsonEditor value={""}></JsonEditor>*/}
+				{/*<JsonEditor value={"{a: b}"}></JsonEditor>*/}
+				{/*<TextEditor value={""}></TextEditor>*/}
+				<DiffEditor original={"hello: true"} modified={"hello: false"} language={"yaml"}></DiffEditor>
 
 			</div>
 
