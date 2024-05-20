@@ -110,12 +110,12 @@ export const Avatar: React.FC<Props> = ({
 	const updateUserAvatar = (media: Media) => {
 		if (workingUser.avatar) {
 			workingUser.avatar.enabled = true;
-			workingUser.avatar.mediaId = (media.id as number).toString();
+			workingUser.avatar.mediaId = media.id as number;
 			workingUser.avatar.uri = media.url
 		} else {
 			var avatar: AvatarObj = {
 				enabled: true,
-				mediaId: (media.id as number).toString(),
+				mediaId: media.id as number,
 				uri: media.url
 			}
 			workingUser.avatar = avatar;
@@ -136,12 +136,12 @@ export const Avatar: React.FC<Props> = ({
 	const removeUserAvatar = () => {
 		if (workingUser.avatar) {
 			workingUser.avatar.enabled = false;
-			workingUser.avatar.mediaId = "-1";
+			workingUser.avatar.mediaId = -1;
 			workingUser.avatar.uri = "";
 		} else {
 			var avatar: AvatarObj = {
 				enabled: false,
-				mediaId: "-1",
+				mediaId: -1,
 				uri: ""
 			}
 			workingUser.avatar = avatar;

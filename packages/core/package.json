@@ -16,6 +16,8 @@
     "@tiptap/react": "^2.3.2",
     "@tiptap/starter-kit": "^2.3.2",
     "@types/moment": "^2.13.0",
+    "@types/yaireo__tagify": "^4.24.0",
+    "@yaireo/tagify": "^4.26.5",
     "animate.css": "^4.1.1",
     "chrono-node": "^2.7.5",
     "fuse.js": "^7.0.0",

@@ -1,0 +1,44 @@
+:root {
+    --tagify-dd-color-primary: black;
+}
+
+.blue-orange-tags {
+    --tag-bg: black;
+    --tag-text-color: white;
+    --tag-hover: black;
+    --tag-remove-btn-color: white;
+    border: 1px solid #e0e1e2;
+    width: calc(100% - 10px);
+    height: 42px;
+    background-color: white;
+    border-radius: 4px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.tagify--focus {
+    border: 1.5px solid black;
+}
+
+.tagify__dropdown {
+    margin-top: 10px;
+    background-color: #f9f9f9;
+    border: none;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    outline: none;
+    border-radius: 8px;
+}
+
+.tagify__dropdown:focus {
+    outline: none;
+    border: none;
+}
+
+.tagify__dropdown__wrapper {
+    border: 1px solid transparent;
+}
+
+.tagify__tag {
+    background-color: black;
+    color: white;
+}

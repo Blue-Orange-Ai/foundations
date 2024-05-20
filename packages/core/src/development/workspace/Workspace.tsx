@@ -7,6 +7,7 @@ import {ToastContext, ToastLocation, ToastProvider} from "../../components/alert
 import {Button, ButtonType} from "../../components/buttons/button/Button";
 
 import {ToasterType} from "../../components/alerts/toast/toaster/Toaster";
+import {SimpleTag} from "../../components/inputs/tags/simple/SimpleTag";
 
 interface Props {
 }
@@ -21,78 +22,78 @@ export const Workspace: React.FC<Props> = ({}) => {
 
 	const [error, setError] = useState(false);
 
-	const avatar: AvatarObj = {
-		enabled: true,
-		mediaId: "",
-		uri: "http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"
-	}
-
-	const user: User = {
-		address: undefined,
-		avatar: avatar,
-		color: "",
-		created: new Date(),
-		defaultUser: false,
-		disabled: false,
-		domain: "internal",
-		email: "tom@blueorange.ai",
-		forcePasswordReset: false,
-		lastActive: new Date(),
-		locked: false,
-		name: "Tom Seneviratne",
-		notes: "",
-		serviceUser: false,
-		telephone: undefined,
-		username: "tom"
-
-	}
-
-	const dropdownItems: Array<DropdownItem> = [
-		{
-			label: "Names",
-			reference: "5",
-			selected: false,
-			type: DropdownItemType.HEADING
-		},
-		{
-			label: "Lisbeth",
-			reference: "1",
-			selected: false,
-			type: DropdownItemType.TEXT
-		},
-		{
-			label: "Aruna",
-			reference: "2",
-			selected: false,
-			type: DropdownItemType.TEXT
-		},
-		{
-			label: "Lauren",
-			reference: "3",
-			selected: false,
-			disabled: true,
-			type: DropdownItemType.TEXT
-		},
-		{
-			label: "Thomas",
-			reference: "4",
-			selected: true,
-			type: DropdownItemType.TEXT
-		},
-		{
-			label: "Persons",
-			reference: "6",
-			selected: false,
-			type: DropdownItemType.HEADING
-		},
-		{
-			label: "James",
-			reference: "7",
-			selected: false,
-			src: "http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ",
-			type: DropdownItemType.IMAGE
-		}
-	]
+	// const avatar: AvatarObj = {
+	// 	enabled: true,
+	// 	mediaId: "",
+	// 	uri: "http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"
+	// }
+	//
+	// const user: User = {
+	// 	address: undefined,
+	// 	avatar: avatar,
+	// 	color: "",
+	// 	created: new Date(),
+	// 	defaultUser: false,
+	// 	disabled: false,
+	// 	domain: "internal",
+	// 	email: "tom@blueorange.ai",
+	// 	forcePasswordReset: false,
+	// 	lastActive: new Date(),
+	// 	locked: false,
+	// 	name: "Tom Seneviratne",
+	// 	notes: "",
+	// 	serviceUser: false,
+	// 	telephone: undefined,
+	// 	username: "tom"
+	//
+	// }
+	//
+	// const dropdownItems: Array<DropdownItem> = [
+	// 	{
+	// 		label: "Names",
+	// 		reference: "5",
+	// 		selected: false,
+	// 		type: DropdownItemType.HEADING
+	// 	},
+	// 	{
+	// 		label: "Lisbeth",
+	// 		reference: "1",
+	// 		selected: false,
+	// 		type: DropdownItemType.TEXT
+	// 	},
+	// 	{
+	// 		label: "Aruna",
+	// 		reference: "2",
+	// 		selected: false,
+	// 		type: DropdownItemType.TEXT
+	// 	},
+	// 	{
+	// 		label: "Lauren",
+	// 		reference: "3",
+	// 		selected: false,
+	// 		disabled: true,
+	// 		type: DropdownItemType.TEXT
+	// 	},
+	// 	{
+	// 		label: "Thomas",
+	// 		reference: "4",
+	// 		selected: true,
+	// 		type: DropdownItemType.TEXT
+	// 	},
+	// 	{
+	// 		label: "Persons",
+	// 		reference: "6",
+	// 		selected: false,
+	// 		type: DropdownItemType.HEADING
+	// 	},
+	// 	{
+	// 		label: "James",
+	// 		reference: "7",
+	// 		selected: false,
+	// 		src: "http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ",
+	// 		type: DropdownItemType.IMAGE
+	// 	}
+	// ]
 
 	const btnClick = () => {
 		setError(true);
@@ -143,14 +144,19 @@ export const Workspace: React.FC<Props> = ({}) => {
 				{/*<RichText minEditorHeight={10}></RichText>*/}
 				{/*<Pdf src={"https://d8d6949rstsxl.cloudfront.net/public/BO-PDF-499ffd3b-f619-4522-9c4e-bdae1bee9f4c-Academic%20Test%201%20-%20Prompt%203%20-%20Measures%20of%20Poverty.pdf"}></Pdf>*/}
 				{/*<Toaster heading={"Hello world this is a toaster"}></Toaster>*/}
-				<Button text={"Test Toaster"} buttonType={ButtonType.PRIMARY} onClick={() => addToast({
-					id: "abcdefghi",
-					heading: "This is a test toaster",
-					description: "This is where the description will go",
-					location: ToastLocation.BOTTOM_RIGHT,
-					toastType: ToasterType.DEFAULT,
-					ttl: 5000
-				})}></Button>
+				{/*<Button text={"Test Toaster"} buttonType={ButtonType.PRIMARY} onClick={() => addToast({*/}
+				{/*	id: "abcdefghi",*/}
+				{/*	heading: "This is a test toaster",*/}
+				{/*	description: "This is where the description will go",*/}
+				{/*	location: ToastLocation.BOTTOM_RIGHT,*/}
+				{/*	toastType: ToasterType.DEFAULT,*/}
+				{/*	ttl: 5000*/}
+				{/*})}></Button>*/}
+				<SimpleTag
+					placeholder={"Enter Tags"}
+					initialTags={[]}
+					whitelist={["Hello", "world", "basketball"]}
+					onChange={(tags) => {}}></SimpleTag>
 
 			</div>
 
