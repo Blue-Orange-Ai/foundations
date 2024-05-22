@@ -107,6 +107,11 @@ export const Avatar: React.FC<Props> = ({
 		setPercentageComplete(percentageComplete);
 	}
 
+	const getUserAvatarMedia = (user: User) => {
+		var bom = new BlueOrangeMedia("http://localhost:8086");
+		// bom.
+	}
+
 	const updateUserAvatar = (media: Media) => {
 		if (workingUser.avatar) {
 			workingUser.avatar.enabled = true;

@@ -1,3 +1,6 @@
+import Cookies from "js-cookie";
+import {UserSearchResult} from "./Passport";
+
 export type Media = {
     id?: number;
     uuid: string;
@@ -40,6 +43,33 @@ export class BlueOrangeMedia {
             }
         }
         return null;
+    }
+
+    async getMediaObj(mediaId: number): Promise<Media> {
+        return this.getMediaObjWithToken(this.getCookie(this.authCookie), mediaId);
+    }
+
+    async getMediaObjWithToken(authToken: string | null, mediaId: number): Promise<Media> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            var authToken = Cookies.get(this.authCookie)
+            xhr.open('GET', this.baseUrl + '/api/v1/storage/get/' + mediaId);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const media: Media = JSON.parse(xhr.responseText);
+                    resolve(media);
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response.details);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error during upload');
+            };
+            xhr.send();
+        });
     }
 
     async getPresigned(media: Media): Promise<string> {
