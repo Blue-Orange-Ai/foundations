@@ -23,7 +23,6 @@ export const DiffEditor: React.FC<Props> = ({original, modified, language, onCha
 				theme: 'vs-dark',
 				renderSideBySide: true
 			});
-
 			const originalModel = monaco.editor.createModel(original, language);
 			const modifiedModel = monaco.editor.createModel(modified, language);
 
@@ -39,6 +38,6 @@ export const DiffEditor: React.FC<Props> = ({original, modified, language, onCha
 	}, [original, modified]);
 
 	return (
-		<div ref={divRef} style={{ height: '500px', width: '800px', border: '1px solid #ccc' }} />
+		<div ref={divRef} style={{ height: '100%', width: '100%', border: '1px solid #ccc' }} />
 	)
 }

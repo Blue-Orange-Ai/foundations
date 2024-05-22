@@ -4,16 +4,6 @@ import * as monaco from 'monaco-editor';
 import './JsonEditor.css'
 
 
-monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-	validate: true,
-	schemas: [],
-});
-monaco.languages.json.getWorker().then(worker => {
-	console.log("JSON Worker loaded:", worker);
-}).catch(err => {
-	console.error("Failed to load JSON Worker:", err);
-});
-
 interface Props {
 	value: string,
 	onChange?: (value: string) => void;
