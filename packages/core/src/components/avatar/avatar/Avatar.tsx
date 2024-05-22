@@ -109,7 +109,15 @@ export const Avatar: React.FC<Props> = ({
 
 	const getUserAvatarMedia = (user: User) => {
 		var bom = new BlueOrangeMedia("http://localhost:8086");
-		// bom.
+		if (user.avatar) {
+			bom.getMediaObj(user.avatar.mediaId).then(media => {
+
+			}).catch(error => {
+				setLoading(false);
+				setWorkingUser(user);
+			});
+		}
+
 	}
 
 	const updateUserAvatar = (media: Media) => {

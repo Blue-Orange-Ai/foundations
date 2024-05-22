@@ -45,6 +45,42 @@ export class BlueOrangeMedia {
         return null;
     }
 
+    public async getUrl(media: Media, durationInMinutes?: number, height?: number): Promise<string> {
+        var fragment = this.findBestFragment(media, height);
+        if (media.mediaPublic) {
+            return fragment.referenceUrl;
+        }
+        return this.getPresigned(media, durationInMinutes);
+    }
+
+    public async getUrlFromMediaId(mediaId: number, durationInMinutes?: number, height?: number): Promise<string> {
+        var media = await this.getMediaObj(mediaId);
+        var fragment = this.findBestFragment(media, height);
+        if (media.mediaPublic) {
+            return fragment.referenceUrl;
+        }
+        return this.getPresigned(media, durationInMinutes);
+    }
+
+    public findBestFragment(media: Media, height?: number): MediaFragment {
+        var chosenFragment: MediaFragment = {
+            height: 0,
+            referenceId: media.id ?? -1,
+            referenceUrl: media.url,
+            referenceUuid: media.uuid,
+            width: 0
+        }
+        if (!height || media.mediaType.toLowerCase() != "image") {
+            return chosenFragment;
+        }
+        media.fragments.forEach(fragment => {
+            if (fragment.height > height && (fragment.height < chosenFragment.height || chosenFragment.height == 0)) {
+                chosenFragment = fragment;
+            }
+        })
+        return chosenFragment;
+    }
+
     async getMediaObj(mediaId: number): Promise<Media> {
         return this.getMediaObjWithToken(this.getCookie(this.authCookie), mediaId);
     }
@@ -72,13 +108,13 @@ export class BlueOrangeMedia {
         });
     }
 
-    async getPresigned(media: Media): Promise<string> {
-        return this.getPresignedWithToken(this.getCookie(this.authCookie), media);
+    async getPresigned(media: Media, durationMinutes?: number): Promise<string> {
+        return this.getPresignedWithToken(this.getCookie(this.authCookie), media.uuid, durationMinutes);
     }
 
-    async getPresignedWithToken(authToken: string | null, media: Media, durationMinutes?: number): Promise<string> {
+    async getPresignedWithToken(authToken: string | null, uuid: string, durationMinutes?: number): Promise<string> {
         const payload = {
-            uuid: media.uuid,
+            uuid: uuid,
             durationMinutes: durationMinutes
         };
         const response = await fetch(this.baseUrl + '/api/v1/presign/get/download', {
