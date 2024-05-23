@@ -35,7 +35,9 @@ export const Avatar: React.FC<Props> = ({
 
 	const [avatarModalState, setAvatarModalState] = useState(false);
 
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
+
+	const [initialised, setInitialised] = useState(false);
 
 	const [loadingRemove, setLoadingRemove] = useState(false);
 
@@ -109,12 +111,15 @@ export const Avatar: React.FC<Props> = ({
 
 	const getUserAvatarMedia = (user: User) => {
 		var bom = new BlueOrangeMedia("http://localhost:8086");
-		if (user.avatar) {
-			bom.getMediaObj(user.avatar.mediaId).then(media => {
-
+		if (workingUser.avatar) {
+			bom.getUrlFromMediaId(workingUser.avatar.mediaId, 120, height).then(url => {
+				if (workingUser.avatar) {
+					workingUser.avatar.uri = url;
+					setWorkingUser(workingUser);
+				}
+				setInitialised(true);
 			}).catch(error => {
-				setLoading(false);
-				setWorkingUser(user);
+				setLoading(true);
 			});
 		}
 
@@ -208,6 +213,7 @@ export const Avatar: React.FC<Props> = ({
 	}
 
 	useEffect(() => {
+		getUserAvatarMedia(user);
 		const current = btnRef.current as TippyHTMLElement;
 		if (current && tooltip) {
 			tippy(current, {
@@ -225,12 +231,14 @@ export const Avatar: React.FC<Props> = ({
 	return (
 		<div ref={btnRef}>
 			<div className="avatar-group-cont" style={scaleStyle}>
-				<div className="default-avatar-cont" style={scaleStyle} onClick={openAvatarModal}>
-					{(workingUser === undefined || !workingUser.avatar?.enabled) && <AvatarEmpty height={height}></AvatarEmpty>}
-					{workingUser !== undefined && workingUser.avatar?.enabled &&
-						<AvatarImage url={workingUser.avatar?.uri} height={height} width={height}></AvatarImage>
-					}
-				</div>
+				{initialised &&
+					<div className="default-avatar-cont" style={scaleStyle} onClick={openAvatarModal}>
+						{(workingUser === undefined || !workingUser.avatar?.enabled) && <AvatarEmpty height={height}></AvatarEmpty>}
+						{workingUser !== undefined && workingUser.avatar?.enabled &&
+							<AvatarImage url={workingUser.avatar?.uri} height={height} width={height}></AvatarImage>
+						}
+					</div>
+				}
 				{edit &&
 					<div className="avatar-edit-logo"
 						 style={{'height': height * 0.25 + "px", 'width': width * 0.25 + "px", fontSize: height * 0.25 * 0.6}}>

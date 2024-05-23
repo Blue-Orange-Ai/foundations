@@ -1,17 +1,10 @@
 import React, {useContext, useState} from "react";
 
 import './Workspace.css'
-import {DropdownItem, DropdownItemType} from "../../interfaces/AppInterfaces";
-import {Avatar as AvatarObj, User} from "@blue-orange-ai/foundations-clients/lib/Passport";
-import {ToastContext, ToastLocation, ToastProvider} from "../../components/alerts/toast/toastcontext/ToastContext";
-import {Button, ButtonType} from "../../components/buttons/button/Button";
-
-import {ToasterType} from "../../components/alerts/toast/toaster/Toaster";
-import {SimpleTag} from "../../components/inputs/tags/simple/SimpleTag";
-import {YamlEditor} from "../../components/inputs/code/yaml/YamlEditor";
-import {JsonEditor} from "../../components/inputs/code/json/JsonEditor";
-import {TextEditor} from "../../components/inputs/code/text/TextEditor";
+import {Avatar as AvatarObj, User, UserState} from "@blue-orange-ai/foundations-clients/lib/Passport";
+import {ToastContext} from "../../components/alerts/toast/toastcontext/ToastContext";
 import {DiffEditor} from "../../components/inputs/code/diff/DiffEditor";
+import {Avatar} from "../../components/avatar/avatar/Avatar";
 
 interface Props {
 }
@@ -26,31 +19,29 @@ export const Workspace: React.FC<Props> = ({}) => {
 
 	const [error, setError] = useState(false);
 
-	// const avatar: AvatarObj = {
-	// 	enabled: true,
-	// 	mediaId: "",
-	// 	uri: "http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"
-	// }
-	//
-	// const user: User = {
-	// 	address: undefined,
-	// 	avatar: avatar,
-	// 	color: "",
-	// 	created: new Date(),
-	// 	defaultUser: false,
-	// 	disabled: false,
-	// 	domain: "internal",
-	// 	email: "tom@blueorange.ai",
-	// 	forcePasswordReset: false,
-	// 	lastActive: new Date(),
-	// 	locked: false,
-	// 	name: "Tom Seneviratne",
-	// 	notes: "",
-	// 	serviceUser: false,
-	// 	telephone: undefined,
-	// 	username: "tom"
-	//
-	// }
+	const avatar: AvatarObj = {
+		enabled: true,
+		mediaId: 4,
+		uri: "http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"
+	}
+
+	const user: User = {
+		address: undefined,
+		avatar: avatar,
+		color: "",
+		created: new Date(),
+		defaultUser: false,
+		domain: "internal",
+		email: "tom@blueorange.ai",
+		forcePasswordReset: false,
+		lastActive: new Date(),
+		name: "Tom Seneviratne",
+		notes: "",
+		serviceUser: false,
+		telephone: undefined,
+		username: "tom",
+		state: UserState.ACTIVE
+	}
 	//
 	// const dropdownItems: Array<DropdownItem> = [
 	// 	{
@@ -114,7 +105,7 @@ export const Workspace: React.FC<Props> = ({}) => {
 	return (
 		<div className="workspace-main-window">
 			<div className="workspace-display-window">
-				{/*<Avatar user={user} height={42} width={42} tooltip={true}></Avatar>*/}
+				<Avatar user={user} height={350} width={350} tooltip={true}></Avatar>
 				{/*<AvatarList users={[user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user]} overlap={30}></AvatarList>*/}
 				{/*<Table>*/}
 				{/*	<THead>*/}
@@ -164,7 +155,7 @@ export const Workspace: React.FC<Props> = ({}) => {
 				{/*<JsonEditor value={""}></JsonEditor>*/}
 				{/*<JsonEditor value={"{a: b}"}></JsonEditor>*/}
 				{/*<TextEditor value={""}></TextEditor>*/}
-				<DiffEditor original={"hello: true"} modified={"hello: false"} language={"yaml"}></DiffEditor>
+				{/*<DiffEditor original={"hello: true"} modified={"hello: false"} language={"yaml"}></DiffEditor>*/}
 
 			</div>
 

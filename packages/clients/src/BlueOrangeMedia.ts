@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import {UserSearchResult} from "./Passport";
+import {GroupPermission, UserSearchResult} from "./Passport";
 
 export type Media = {
     id?: number;
@@ -22,6 +22,11 @@ export type MediaFragment = {
     referenceId: number;
     referenceUuid: string;
     referenceUrl: string;
+}
+
+export type MediaPermission = {
+    memberId: string;
+    permission: GroupPermission;
 }
 
 
@@ -132,8 +137,8 @@ export class BlueOrangeMedia {
         return response.text();
     }
 
-    uploadFile(file: File, mediaPublic: boolean, folder: string, groups: string[], onProgress: (percentComplete: number) => void): Promise<Media> {
-        return this.uploadFileWithToken(this.getCookie(this.authCookie), file, mediaPublic, folder, groups, onProgress);
+    uploadFile(file: File, mediaPublic: boolean, folder: string, permissions: MediaPermission[], onProgress: (percentComplete: number) => void): Promise<Media> {
+        return this.uploadFileWithToken(this.getCookie(this.authCookie), file, mediaPublic, folder, permissions, onProgress);
     }
 
     deleteWithToken(authToken: string | null, media: Media): Promise<Response> {
@@ -164,13 +169,13 @@ export class BlueOrangeMedia {
         return this.deleteByIdWithToken(this.getCookie(this.authCookie), id);
     }
 
-    uploadFileWithToken(authToken: string | null, file: File, mediaPublic: boolean, folder: string, groups: string[], onProgress: (percentComplete: number) => void): Promise<Media> {
+    uploadFileWithToken(authToken: string | null, file: File, mediaPublic: boolean, folder: string, permissions: MediaPermission[], onProgress: (percentComplete: number) => void): Promise<Media> {
         return new Promise(async (resolve, reject) => {
             try {
                 const payload = {
                     mediaPublic: mediaPublic,
                     folder: folder,
-                    groups: groups
+                    permissions: permissions
                 };
                 const response = await fetch(this.baseUrl + '/api/v1/presign/get/upload', {
                     method: 'POST',
