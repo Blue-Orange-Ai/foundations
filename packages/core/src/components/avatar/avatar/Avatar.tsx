@@ -4,7 +4,7 @@ import {Media, Passport} from "@blue-orange-ai/foundations-clients";
 import './Avatar.css';
 import {AvatarEmpty} from "../avatarempty/AvatarEmpty";
 import {AvatarImage} from "../avatarimage/AvatarImage";
-import {Avatar as AvatarObj, User} from "@blue-orange-ai/foundations-clients/lib/Passport";
+import {Avatar as AvatarObj, GroupPermission, User} from "@blue-orange-ai/foundations-clients/lib/Passport";
 import {BlueOrangeMedia} from "@blue-orange-ai/foundations-clients/lib/BlueOrangeMedia";
 import {Button, ButtonType} from "../../buttons/button/Button";
 import {FileUploadBtn} from "../../buttons/file-upload-btn/FileUploadBtn";
@@ -177,9 +177,12 @@ export const Avatar: React.FC<Props> = ({
 		setPercentageComplete(0);
 		bom.uploadFile(
 			file,
-			true,
+			false,
 			"",
-			[],
+			[{
+				groupName: "everyone",
+				permission: GroupPermission.READ
+			}],
 			onUploadProgress)
 			.then(mediaObject => {
 				setLoading(false);
