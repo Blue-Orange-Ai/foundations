@@ -25,7 +25,8 @@ export type MediaFragment = {
 }
 
 export type MediaPermission = {
-    memberId: string;
+    memberId?: string;
+    groupName?: string;
     permission: GroupPermission;
 }
 
