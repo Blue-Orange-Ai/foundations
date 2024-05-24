@@ -1,0 +1,43 @@
+
+.blue-orange-sidebar {
+    height: 100vh;
+    width: 300px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-right: 2px solid #e0e1e2;
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+    min-width: 250px;
+    max-width: 700px;
+}
+
+.blue-orange-sidebar-control {
+    position: absolute;
+    height: 100%;
+    width: 4px;
+    right: -2px;
+}
+
+.blue-orange-sidebar-control:hover {
+    background-color: dodgerblue;
+    cursor: col-resize;
+}
+
+.blue-orange-sidebar-header {
+    height: 120px;
+    background-color: red;
+    width: 100%;
+}
+
+.blue-orange-sidebar-body {
+    display: flex;
+    flex-grow: 1;
+}
+
+.blue-orange-sidebar-footer {
+    height: 60px;
+    background-color: blue;
+    width: 100%;
+}
