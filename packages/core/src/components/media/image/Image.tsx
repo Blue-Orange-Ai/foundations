@@ -10,7 +10,8 @@ interface Props {
 	alt: string,
 	borderRadius?: string,
 	fit?: string,
-	shadow?: boolean
+	shadow?: boolean,
+	loading?: boolean,
 }
 export const Image: React.FC<Props> = ({
 										   	src,
@@ -19,7 +20,8 @@ export const Image: React.FC<Props> = ({
 										   	alt,
 										   borderRadius,
 										   	fit,
-											shadow
+											shadow,
+										   loading
 									   }) => {
 
 	const generateObjectFit = () => {
