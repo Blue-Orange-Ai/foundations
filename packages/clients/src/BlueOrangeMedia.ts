@@ -1,5 +1,6 @@
 import Cookies from "js-cookie";
 import {GroupPermission, UserSearchResult} from "./Passport";
+import {LRUCache} from 'lru-cache';
 
 export type Media = {
     id?: number;
@@ -35,6 +36,12 @@ export class BlueOrangeMedia {
     private baseUrl: string;
     private authCookie: string;
 
+    private options = { max: 500, maxAge: 1000 * 60 * 20 };
+    private presignedCache = new LRUCache<number, string>(this.options);
+
+    private mediaCache = new LRUCache<number, Media>(this.options);
+
+
     constructor(baseUrl: string, authCookie: string = "authorization") {
         this.baseUrl = baseUrl;
         this.authCookie = authCookie;
@@ -60,7 +67,13 @@ export class BlueOrangeMedia {
     }
 
     public async getUrlFromMediaId(mediaId: number, durationInMinutes?: number, height?: number): Promise<string> {
-        var media = await this.getMediaObj(mediaId);
+        var media: Media;
+        if (this.mediaCache.has(mediaId)) {
+            media = this.mediaCache.get(mediaId) as Media;
+        } else {
+            media = await this.getMediaObj(mediaId);
+            this.mediaCache.set(mediaId, media);
+        }
         var fragment = this.findBestFragment(media, height);
         if (media.mediaPublic) {
             return fragment.referenceUrl;
@@ -115,7 +128,12 @@ export class BlueOrangeMedia {
     }
 
     async getPresigned(media: Media, durationMinutes?: number): Promise<string> {
-        return this.getPresignedWithToken(this.getCookie(this.authCookie), media.uuid, durationMinutes);
+        if (this.presignedCache.has((media.id as number))) {
+            return this.presignedCache.get((media.id as number)) as string;
+        }
+        var uri = await this.getPresignedWithToken(this.getCookie(this.authCookie), media.uuid, durationMinutes);
+        this.presignedCache.set((media.id as number), uri);
+        return uri;
     }
 
     async getPresignedWithToken(authToken: string | null, uuid: string, durationMinutes?: number): Promise<string> {
