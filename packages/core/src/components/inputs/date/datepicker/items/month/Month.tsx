@@ -4,7 +4,7 @@ import './Month.css';
 import {DatePickerMonth} from "../../../../../../interfaces/AppInterfaces";
 import {DayObj} from "../day/Day";
 import {Week, WeekObj} from "../week/Week";
-import {ButtonIcon} from "../../../../../buttons/button-circle-icon/ButtonIcon";
+import {ButtonIcon} from "../../../../../buttons/button-icon/ButtonIcon";
 
 interface Props {
 	date?: Date,

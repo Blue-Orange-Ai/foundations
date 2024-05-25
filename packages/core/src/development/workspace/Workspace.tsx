@@ -3,9 +3,11 @@ import React, {useContext, useState} from "react";
 import './Workspace.css'
 import {Avatar as AvatarObj, User, UserState} from "@blue-orange-ai/foundations-clients/lib/Passport";
 import {ToastContext} from "../../components/alerts/toast/toastcontext/ToastContext";
-import {DiffEditor} from "../../components/inputs/code/diff/DiffEditor";
-import {Avatar} from "../../components/avatar/avatar/Avatar";
-import {SideBar} from "../../components/layouts/sidebar/default/SideBar";
+import {SideBar, SideBarState} from "../../components/layouts/sidebar/default/SideBar";
+import {SideBarHeader} from "../../components/layouts/sidebar/sidebar-header/SideBarHeader";
+import {SideBarFooter} from "../../components/layouts/sidebar/sidebar-footer/SideBarFooter";
+import {SideBarHeaderItem} from "../../components/layouts/sidebar/items/sidebar-header-item/SideBarHeaderItem";
+import {Media} from "@blue-orange-ai/foundations-clients";
 
 interface Props {
 }
@@ -20,10 +22,55 @@ export const Workspace: React.FC<Props> = ({}) => {
 
 	const [error, setError] = useState(false);
 
+	const [sidebarState, setSidebarState] = useState(SideBarState.OPEN);
+
+	const changeSidebarState = (state: SideBarState) => {
+		setSidebarState(state);
+	}
+
 	const avatar: AvatarObj = {
 		enabled: true,
 		mediaId: 4,
 		uri: "http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"
+	}
+
+	const testMedia: Media = {
+		"id": 4,
+		"uuid": "zzAA2ixtQEOw6TMafUP6Uw",
+		"location": "FILE",
+		"filename": "jimmy-fermin-bqe0J0b26RQ-unsplash.jpg",
+		"folder": "",
+		"bucketname": "null",
+		"mediaType": "IMAGE",
+		"dateCreated": new Date(),
+		"url": "http://localhost:8086/files/get/presigned/26nErnPuTIqy4zIR2xiaNg",
+		"mediaPublic": false,
+		"fragments": [
+			{
+				"id": 1,
+				"height": 50,
+				"width": 50,
+				"referenceId": 1,
+				"referenceUuid": "irgKuUubRjGlQ3woLsioJQ",
+				"referenceUrl": "http://localhost:8086/files/get/presigned/Z8RzhPfRQvODtQofqKcWLg"
+			},
+			{
+				"id": 2,
+				"height": 250,
+				"width": 250,
+				"referenceId": 2,
+				"referenceUuid": "_EE7afSSSICacYXNeOBJFw",
+				"referenceUrl": "http://localhost:8086/files/get/presigned/JbrgVTagTou-dJ22vMa_XA"
+			},
+			{
+				"id": 3,
+				"height": 500,
+				"width": 500,
+				"referenceId": 3,
+				"referenceUuid": "fYPJeyLRQpy2jDek-taS3A",
+				"referenceUrl": "http://localhost:8086/files/get/presigned/YMua1wMETwCs99r4kvo_CA"
+			}
+		]
 	}
 
 	const user: User = {
@@ -104,7 +151,14 @@ export const Workspace: React.FC<Props> = ({}) => {
 	}
 
 	return (
-		<SideBar></SideBar>
+		<SideBar state={sidebarState} changeState={changeSidebarState}>
+			<SideBarHeader>
+				<SideBarHeaderItem label="Blue Orange Ai" state={sidebarState} media={testMedia} changeState={changeSidebarState}></SideBarHeaderItem>
+			</SideBarHeader>
+			<SideBarFooter>
+				<div style={{color: "white"}}>Hello World</div>
+			</SideBarFooter>
+		</SideBar>
 		// <div className="workspace-main-window">
 		// 	<div className="workspace-display-window">
 		// 		<Avatar user={user} height={350} width={350} tooltip={true}></Avatar>

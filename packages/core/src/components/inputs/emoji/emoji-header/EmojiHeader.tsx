@@ -1,8 +1,6 @@
-import React, {ReactNode} from "react";
+import React from "react";
 
 import './EmojiHeader.css'
-import {CellAlignment} from "../../../../interfaces/AppInterfaces";
-import {ButtonIcon} from "../../../buttons/button-circle-icon/ButtonIcon";
 import {EmojiHeaderItem} from "../emoji-header-item/EmojiHeaderItem";
 
 interface Props {

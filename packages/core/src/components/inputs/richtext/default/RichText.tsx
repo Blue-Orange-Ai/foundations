@@ -1,12 +1,11 @@
 import React, {useEffect, useRef, useState} from "react";
 
 import {StarterKit} from "@tiptap/starter-kit";
-import {EditorContent, EditorProvider, useCurrentEditor, useEditor} from "@tiptap/react";
-import {ButtonIcon} from "../../../buttons/button-circle-icon/ButtonIcon";
+import {EditorContent, useEditor} from "@tiptap/react";
+import {ButtonIcon} from "../../../buttons/button-icon/ButtonIcon";
 
 import './RichText.css';
 import {Placeholder} from "@tiptap/extension-placeholder";
-import {CodeBlock} from "@tiptap/extension-code-block";
 import Mention from '@tiptap/extension-mention';
 import {Link} from "@tiptap/extension-link";
 import {fetchMentionItems, renderSuggestions} from "../suggestion/Suggestion";

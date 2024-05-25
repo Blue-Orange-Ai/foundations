@@ -6,11 +6,16 @@
     left: 0;
     top: 0;
     border-right: 2px solid #e0e1e2;
-    background-color: black;
+    background-color: #f7f7f9;
     display: flex;
     flex-direction: column;
     min-width: 250px;
     max-width: 700px;
+}
+
+.blue-orange-sidebar-closed {
+    max-width: 52px;
+    min-width: 52px;
 }
 
 .blue-orange-sidebar-control {
@@ -26,8 +31,6 @@
 }
 
 .blue-orange-sidebar-header {
-    height: 120px;
-    background-color: red;
     width: 100%;
 }
 
@@ -37,7 +40,5 @@
 }
 
 .blue-orange-sidebar-footer {
-    height: 60px;
-    background-color: blue;
     width: 100%;
 }
