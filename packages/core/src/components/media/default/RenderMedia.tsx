@@ -4,7 +4,7 @@ import './RenderMedia.css'
 import {Media} from "@blue-orange-ai/foundations-clients";
 import {Image} from "../image/Image";
 import {Pdf} from "../pdf/Pdf";
-import {BlueOrangeMedia} from "@blue-orange-ai/foundations-clients/lib/BlueOrangeMedia";
+import blueOrangeMediaInstance from "../../config/BlueOrangeConfig";
 
 interface Props {
 	media: Media,
@@ -27,8 +27,7 @@ export const RenderMedia: React.FC<Props> = ({
 	const [uri, setUri] = useState("");
 
 	useEffect(() => {
-		var bom = new BlueOrangeMedia("http://localhost:8086");
-		bom.getUrl(media, 120, height).then(url => {
+		blueOrangeMediaInstance.getUrl(media, 120, height).then(url => {
 			setUri(url);
 		}).catch(error => {
 			setLoading(true);

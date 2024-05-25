@@ -7,7 +7,7 @@
   "author": "Blue Orange AI",
   "private": false,
   "dependencies": {
-    "@blue-orange-ai/foundations-clients": "^0.0.11",
+    "@blue-orange-ai/foundations-clients": "^0.0.12",
     "@tiptap/extension-code-block": "^2.3.2",
     "@tiptap/extension-link": "^2.3.2",
     "@tiptap/extension-mention": "^2.3.2",

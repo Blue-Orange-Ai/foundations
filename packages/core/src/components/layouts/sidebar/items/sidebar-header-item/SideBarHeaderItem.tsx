@@ -60,7 +60,9 @@ export const SideBarHeaderItem: React.FC<Props> = ({
 									icon="ri-arrow-right-double-fill"
 									onClick={() => changeSideBarState(SideBarState.OPEN)}></ButtonIcon>
 							}
-							{!closedHoverState && <RenderMedia media={(media as Media)} height={32} width={32} borderRadius={"4px"}></RenderMedia>}
+							<div style={{"display": !closedHoverState ? "unset" : "none"}}>
+								<RenderMedia media={(media as Media)} height={32} width={32} borderRadius={"4px"}></RenderMedia>
+							</div>
 						</div>
 					}
 					{media == undefined &&
