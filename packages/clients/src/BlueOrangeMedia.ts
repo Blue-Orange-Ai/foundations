@@ -33,6 +33,9 @@ export type MediaPermission = {
 
 
 export class BlueOrangeMedia {
+
+    private static instance: BlueOrangeMedia;
+
     private baseUrl: string;
     private authCookie: string;
 
@@ -45,6 +48,13 @@ export class BlueOrangeMedia {
     constructor(baseUrl: string, authCookie: string = "authorization") {
         this.baseUrl = baseUrl;
         this.authCookie = authCookie;
+    }
+
+    public static getInstance(baseUrl: string, authCookie: string = "authorization"): BlueOrangeMedia {
+        if (!BlueOrangeMedia.instance) {
+            BlueOrangeMedia.instance = new BlueOrangeMedia(baseUrl, authCookie);
+        }
+        return BlueOrangeMedia.instance;
     }
 
     private getCookie(name: string): string | null {
