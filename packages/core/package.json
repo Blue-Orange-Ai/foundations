@@ -19,6 +19,7 @@
     "@types/yaireo__tagify": "^4.24.0",
     "@yaireo/tagify": "^4.26.5",
     "animate.css": "^4.1.1",
+    "chart.js": "^4.4.3",
     "chrono-node": "^2.7.5",
     "fuse.js": "^7.0.0",
     "moment": "^2.30.1",

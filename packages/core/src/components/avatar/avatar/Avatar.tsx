@@ -10,6 +10,7 @@ import {Button, ButtonType} from "../../buttons/button/Button";
 import {FileUploadBtn} from "../../buttons/file-upload-btn/FileUploadBtn";
 import {TippyHTMLElement} from "../../../interfaces/AppInterfaces";
 import tippy from "tippy.js";
+import blueOrangeMediaInstance from "../../config/BlueOrangeConfig";
 
 
 interface Props {
@@ -110,9 +111,8 @@ export const Avatar: React.FC<Props> = ({
 	}
 
 	const getUserAvatarMedia = (user: User) => {
-		var bom = new BlueOrangeMedia("http://localhost:8086");
 		if (workingUser.avatar) {
-			bom.getUrlFromMediaId(workingUser.avatar.mediaId, 120, height).then(url => {
+			blueOrangeMediaInstance.getUrlFromMediaId(workingUser.avatar.mediaId, 120, height).then(url => {
 				if (workingUser.avatar) {
 					workingUser.avatar.uri = url;
 					setWorkingUser(workingUser);
@@ -169,13 +169,12 @@ export const Avatar: React.FC<Props> = ({
 	}
 
 	const fileUploadRequestReceived = (file: File) => {
-		var bom = new BlueOrangeMedia("http://localhost:8086");
 		try{
 			setLoadingImageUrl(URL.createObjectURL(file));
 		} catch (e) {}
 		setLoading(true);
 		setPercentageComplete(0);
-		bom.uploadFile(
+		blueOrangeMediaInstance.uploadFile(
 			file,
 			false,
 			"",
@@ -195,10 +194,9 @@ export const Avatar: React.FC<Props> = ({
 	}
 
 	const removeAvatarRequest = () => {
-		var bom = new BlueOrangeMedia("http://localhost:8086");
 		if (workingUser.avatar !== undefined) {
 			setLoadingRemove(true);
-			bom.deleteById(
+			blueOrangeMediaInstance.deleteById(
 				+workingUser.avatar.mediaId
 			)
 				.then(response => {

@@ -8,6 +8,7 @@ import {SideBarHeader} from "../../components/layouts/sidebar/sidebar-header/Sid
 import {SideBarFooter} from "../../components/layouts/sidebar/sidebar-footer/SideBarFooter";
 import {SideBarHeaderItem} from "../../components/layouts/sidebar/items/sidebar-header-item/SideBarHeaderItem";
 import {Media} from "@blue-orange-ai/foundations-clients";
+import {LineChart} from "../../components/charts/line/LineChart";
 
 interface Props {
 }
@@ -151,14 +152,21 @@ export const Workspace: React.FC<Props> = ({}) => {
 	}
 
 	return (
-		<SideBar state={sidebarState} changeState={changeSidebarState}>
-			<SideBarHeader>
-				<SideBarHeaderItem label="Blue Orange Ai" state={sidebarState} media={testMedia} changeState={changeSidebarState}></SideBarHeaderItem>
-			</SideBarHeader>
-			<SideBarFooter>
-				<div style={{color: "white"}}>Hello World</div>
-			</SideBarFooter>
-		</SideBar>
+		<LineChart labels={["January", "February", "March", "April"]} height={300} gridLines={true} dataset={[{
+			label: "Subscribers",
+			data: [1000,5000,4000,9000]
+		},{
+			label: "Something Else",
+			data: [5000,3000,7000,2000]
+		}]}></LineChart>
+		// <SideBar state={sidebarState} changeState={changeSidebarState}>
+		// 	<SideBarHeader>
+		// 		<SideBarHeaderItem label="Blue Orange Ai" state={sidebarState} media={testMedia} changeState={changeSidebarState}></SideBarHeaderItem>
+		// 	</SideBarHeader>
+		// 	<SideBarFooter>
+		// 		<div style={{color: "white"}}>Hello World</div>
+		// 	</SideBarFooter>
+		// </SideBar>
 		// <div className="workspace-main-window">
 		// 	<div className="workspace-display-window">
 		// 		<Avatar user={user} height={350} width={350} tooltip={true}></Avatar>
