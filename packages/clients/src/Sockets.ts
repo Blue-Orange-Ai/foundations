@@ -14,7 +14,7 @@ class Sockets {
         this.baseUrl = baseUrl;
         this.authCookie = authCookie;
         var authToken = Cookies.get(this.authCookie)
-        const socket = new SockJS(this.baseUrl + '/ws');
+        const socket = new SockJS(this.baseUrl + '/ws?authentication=' + authToken);
         this.client = new Client({
             webSocketFactory: () => socket,
             reconnectDelay: 5000,

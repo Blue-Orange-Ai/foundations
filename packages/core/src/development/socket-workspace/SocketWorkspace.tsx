@@ -1,10 +1,13 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect} from "react";
 
 import './SocketWorkspace.css'
 import {Button, ButtonType} from "../../components/buttons/button/Button";
 import {ToastContext, ToastLocation} from "../../components/alerts/toast/toastcontext/ToastContext";
 import {ToasterType} from "../../components/alerts/toast/toaster/Toaster";
 import Sockets from "@blue-orange-ai/foundations-clients/lib/Sockets";
+import {TippyHTMLElement} from "../../interfaces/AppInterfaces";
+import tippy from "tippy.js";
+import Cookies from "js-cookie";
 
 interface Props {
 }
@@ -13,7 +16,9 @@ export const SocketWorkspace: React.FC<Props> = ({}) => {
 
 	const { addToast } = useContext(ToastContext);
 
-	const topic = "8b4ef56d-c61e-4c41-bb25-942e9a7c684c"
+	const topic = "8b4ef56d-c61e-4c41-bb25-942e9a7c684c";
+
+	Cookies.set("authorization", "tom-test-auth-id")
 
 	const sockets = new Sockets(
 		"http://localhost:8087",
@@ -32,11 +37,16 @@ export const SocketWorkspace: React.FC<Props> = ({}) => {
 		}
 	)
 
-	sockets.connect();
-
 	const sendMessage = () => {
-		sockets.send(topic, "Hello world this is the message sent")
+		sockets.send(topic, {"msg": "Hello world this is the message sent"})
 	}
+
+	useEffect(() => {
+		sockets.connect();
+		return () => {
+			sockets.disconnect();
+		}
+	}, []);
 
 	return (
 		<div>
