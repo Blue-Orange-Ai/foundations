@@ -2,9 +2,9 @@ import React, {useContext} from "react";
 
 import './SocketWorkspace.css'
 import {Button, ButtonType} from "../../components/buttons/button/Button";
-import StompService from "@Blue-Orange-Ai/foundations-clients/lib/Sockets";
 import {ToastContext, ToastLocation} from "../../components/alerts/toast/toastcontext/ToastContext";
 import {ToasterType} from "../../components/alerts/toast/toaster/Toaster";
+import Sockets from "@blue-orange-ai/foundations-clients/lib/Sockets";
 
 interface Props {
 }
@@ -15,8 +15,7 @@ export const SocketWorkspace: React.FC<Props> = ({}) => {
 
 	const topic = "8b4ef56d-c61e-4c41-bb25-942e9a7c684c"
 
-	const sockets = new StompService(
-		"ws://localhost:8087",
+	const sockets = new Sockets(
 		"http://localhost:8087",
 		() => {
 			addToast({
