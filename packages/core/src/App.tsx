@@ -7,13 +7,14 @@ import './App.css';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {Workspace} from "./development/workspace/Workspace";
 import { ToastProvider } from './components/alerts/toast/toastcontext/ToastContext';
+import {SocketWorkspace} from "./development/socket-workspace/SocketWorkspace";
 
 function App() {
   return (
       <ToastProvider>
             <BrowserRouter>
               <Routes>
-                <Route path="/" element={<Workspace />}></Route>
+                <Route path="/" element={<SocketWorkspace />}></Route>
               </Routes>
             </BrowserRouter>
       </ToastProvider>

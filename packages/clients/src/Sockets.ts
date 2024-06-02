@@ -1,7 +1,8 @@
 import { Client, IMessage } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 import Cookies from "js-cookie";
 
-class StompService {
+class Sockets {
 
     private client: Client;
 
@@ -9,12 +10,13 @@ class StompService {
 
     private baseUrl: string;
 
-    constructor(brokerURL: string, baseUrl: string, onConnectCallback: () => void, authCookie: string = "authorization") {
+    constructor(baseUrl: string, onConnectCallback: () => void, authCookie: string = "authorization") {
         this.baseUrl = baseUrl;
         this.authCookie = authCookie;
         var authToken = Cookies.get(this.authCookie)
+        const socket = new SockJS(this.baseUrl + '/ws');
         this.client = new Client({
-            brokerURL: brokerURL,
+            webSocketFactory: () => socket,
             reconnectDelay: 5000,
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000,
@@ -61,4 +63,4 @@ class StompService {
     }
 }
 
-export default StompService;
+export default Sockets;
