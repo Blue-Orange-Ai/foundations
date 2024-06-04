@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from "react";
 
-import './LineChart.css'
+import './ScatterChart.css'
 
 import Chart from 'chart.js/auto';
 import {ChartDataset} from "../types/ChartTypes";
@@ -8,28 +8,22 @@ import {v4 as uuidv4} from "uuid";
 
 interface Props {
 	dataset: Array<ChartDataset>,
-	labels?: Array<string>,
 	gridLines?: boolean,
 	xScale?: string,
 	yScale?: string,
 	height?: string,
 	width?: string,
-	fill?: string, // 'start', 'end', 'origin'
-	tension?: number,
 	interactionType?: string  // mode: 'index' or mode: 'nearest'
 }
 
-export const LineChart: React.FC<Props> = ({
+export const ScatterChart: React.FC<Props> = ({
 											   dataset,
-												labels,
 											   gridLines=true,
 											   xScale,
 											   yScale,
 											   height="100%",
 											   width="100%",
-											   fill=false,
-											   tension= 0.2,
-											   interactionType = "index"}) => {
+											   interactionType = "nearest"}) => {
 
 	const chartRef = useRef<HTMLCanvasElement>(null);
 
@@ -39,21 +33,20 @@ export const LineChart: React.FC<Props> = ({
 		var myChart: any = undefined;
 		if (chartRef.current) {
 			const ctx = chartRef.current.getContext('2d');
-			dataset.forEach(ds => ds.fill = fill)
+
 			const data = {
-				labels: labels,
 				datasets: dataset
 			};
 
 			const config: any = {
-				type: "line",
+				type: "scatter",
 				data: data,
 				options: {
 					responsive: true,
 					maintainAspectRatio: false,
 					plugins: {
 						legend: {
-							display: false,
+							display: true,
 						},
 						tooltip: {
 							enabled: false,
@@ -146,19 +139,11 @@ export const LineChart: React.FC<Props> = ({
 							}
 						}
 					},
-					elements: {
-						line: {
-							tension: tension
-						},
-						point:{
-							radius: 0
-						}
-					},
 					scales: {
 						y: {
 							type: yScale,
 							grid: {
-								display: gridLines
+								display: true
 							},
 							ticks: {
 								display: true
@@ -170,7 +155,7 @@ export const LineChart: React.FC<Props> = ({
 								display: gridLines
 							},
 							ticks: {
-								display: true
+								display: gridLines
 							}
 						}
 					},

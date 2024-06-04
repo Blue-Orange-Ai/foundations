@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from "react";
 
-import './LineChart.css'
+import './BarChart.css'
 
 import Chart from 'chart.js/auto';
 import {ChartDataset} from "../types/ChartTypes";
@@ -8,27 +8,25 @@ import {v4 as uuidv4} from "uuid";
 
 interface Props {
 	dataset: Array<ChartDataset>,
+	indexAxis?: string, // x is vertical bar chart y is horizontal bar chart
 	labels?: Array<string>,
 	gridLines?: boolean,
 	xScale?: string,
 	yScale?: string,
 	height?: string,
 	width?: string,
-	fill?: string, // 'start', 'end', 'origin'
-	tension?: number,
 	interactionType?: string  // mode: 'index' or mode: 'nearest'
 }
 
-export const LineChart: React.FC<Props> = ({
+export const BarChart: React.FC<Props> = ({
 											   dataset,
+											  indexAxis="x",
 												labels,
 											   gridLines=true,
 											   xScale,
 											   yScale,
 											   height="100%",
 											   width="100%",
-											   fill=false,
-											   tension= 0.2,
 											   interactionType = "index"}) => {
 
 	const chartRef = useRef<HTMLCanvasElement>(null);
@@ -39,16 +37,17 @@ export const LineChart: React.FC<Props> = ({
 		var myChart: any = undefined;
 		if (chartRef.current) {
 			const ctx = chartRef.current.getContext('2d');
-			dataset.forEach(ds => ds.fill = fill)
+			dataset.forEach(ds => ds.axis = indexAxis)
 			const data = {
 				labels: labels,
 				datasets: dataset
 			};
 
 			const config: any = {
-				type: "line",
+				type: "bar",
 				data: data,
 				options: {
+					indexAxis: indexAxis,
 					responsive: true,
 					maintainAspectRatio: false,
 					plugins: {
@@ -146,31 +145,15 @@ export const LineChart: React.FC<Props> = ({
 							}
 						}
 					},
-					elements: {
-						line: {
-							tension: tension
-						},
-						point:{
-							radius: 0
-						}
-					},
 					scales: {
 						y: {
-							type: yScale,
 							grid: {
 								display: gridLines
-							},
-							ticks: {
-								display: true
 							}
 						},
 						x: {
-							type: xScale,
 							grid: {
 								display: gridLines
-							},
-							ticks: {
-								display: true
 							}
 						}
 					},

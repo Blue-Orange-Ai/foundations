@@ -9,6 +9,8 @@ import {SideBarFooter} from "../../components/layouts/sidebar/sidebar-footer/Sid
 import {SideBarHeaderItem} from "../../components/layouts/sidebar/items/sidebar-header-item/SideBarHeaderItem";
 import {Media} from "@blue-orange-ai/foundations-clients";
 import {LineChart} from "../../components/charts/line/LineChart";
+import {ScatterChart} from "../../components/charts/scatter/ScatterChart";
+import {BarChart} from "../../components/charts/bar/BarChart";
 
 interface Props {
 }
@@ -152,13 +154,81 @@ export const Workspace: React.FC<Props> = ({}) => {
 	}
 
 	return (
-		<LineChart labels={["January", "February", "March", "April"]} height={300} gridLines={true} dataset={[{
+		// <LineChart
+		// 	height={"100vh"}
+		// 	width={"100%"}
+		// 	gridLines={true}
+		// 	xScale={"linear"}
+		// 	dataset={[{
+		// 	label: "Subscribers",
+		// 		backgroundColor: "#BB8FCE",
+		// 		borderColor: "#BB8FCE",
+		// 	data: [{ x: -10, y: 0 },
+		// 		{ x: 0, y: 10 },
+		// 		{ x: 10, y: 5 },
+		// 		{ x: 20, y: -10 },
+		// 		{ x: 25, y: -5 }]
+		// },{
+		// 		label: "Subscribers 2",
+		// 		 backgroundColor: '#E59866',
+		// 		 borderColor: '#E59866',
+		// 		data: [{ x: -30, y: 0 },
+		// 			{ x: 30, y: 20 },
+		// 			{ x: 40, y: -5 },
+		// 			{ x: 50, y: -10 },
+		// 			{ x: 65, y: -50 }]
+		// 	}]}></LineChart>
+	// <LineChart
+	// 	height={"100vh"}
+	// 	width={"50%"}
+	// 	gridLines={true}
+	// 	xScale={"category"}
+	// 	labels={["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]}
+	// 	dataset={[{
+	// 		label: "Subscribers",
+	// 		backgroundColor: "#BB8FCE",
+	// 		borderColor: "#BB8FCE",
+	// 		data: [0, 20, -5, -10, -50]
+	// 	}]}></LineChart>
+
+	<BarChart
+		indexAxis={"y"}
+		height={"100vh"}
+		width={"50%"}
+		gridLines={true}
+		xScale={"category"}
+		labels={["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]}
+		dataset={[{
 			label: "Subscribers",
-			data: [1000,5000,4000,9000]
-		},{
-			label: "Something Else",
-			data: [5000,3000,7000,2000]
-		}]}></LineChart>
+			backgroundColor: "#BB8FCE",
+			borderColor: "#BB8FCE",
+			data: [0, 20, -5, -10, -50],
+			borderRadius: 20
+		}]}></BarChart>
+	// 	<ScatterChart
+	// 		height={"100vh"}
+	// 		width={"100%"}
+	// 		gridLines={true}
+	// 		xScale={"linear"}
+	// 		dataset={[{
+	// 		label: "Subscribers",
+	// 			backgroundColor: "#BB8FCE",
+	// 			borderColor: "#BB8FCE",
+	// 		data: [{ x: -10, y: 0 },
+	// 			{ x: 0, y: 10 },
+	// 			{ x: 10, y: 5 },
+	// 			{ x: 20, y: -10 },
+	// 			{ x: 25, y: -5 }]
+	// 	},{
+	// 			label: "Subscribers 2",
+	// 			 backgroundColor: '#E59866',
+	// 			 borderColor: '#E59866',
+	// 			data: [{ x: -30, y: 0 },
+	// 				{ x: 30, y: 20 },
+	// 				{ x: 40, y: -5 },
+	// 				{ x: 50, y: -10 },
+	// 				{ x: 65, y: -50 }]
+	// 		}]}></ScatterChart>
 		// <SideBar state={sidebarState} changeState={changeSidebarState}>
 		// 	<SideBarHeader>
 		// 		<SideBarHeaderItem label="Blue Orange Ai" state={sidebarState} media={testMedia} changeState={changeSidebarState}></SideBarHeaderItem>

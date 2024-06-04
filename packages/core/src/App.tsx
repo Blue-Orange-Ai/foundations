@@ -14,7 +14,7 @@ function App() {
       <ToastProvider>
             <BrowserRouter>
               <Routes>
-                <Route path="/" element={<SocketWorkspace />}></Route>
+                <Route path="/" element={<Workspace />}></Route>
               </Routes>
             </BrowserRouter>
       </ToastProvider>
