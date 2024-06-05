@@ -16,6 +16,6 @@ export const Badge: React.FC<Props> = ({children, backgroundColor="#18181b", tex
 	}
 
 	return (
-		<div className="blue-orange-badge" style={badgeStyle}>{children}</div>
+		<div className="blue-orange-badge no-select" style={badgeStyle}>{children}</div>
 	)
 }

@@ -11,6 +11,10 @@ import {Media} from "@blue-orange-ai/foundations-clients";
 import {LineChart} from "../../components/charts/line/LineChart";
 import {ScatterChart} from "../../components/charts/scatter/ScatterChart";
 import {BarChart} from "../../components/charts/bar/BarChart";
+import {SideBarBody} from "../../components/layouts/sidebar/sidebar-body/SideBarBody";
+import {SideBarBodyLabel} from "../../components/layouts/sidebar/items/sidebar-body-label/SideBarBodyLabel";
+import {Badge} from "../../components/text-decorations/badge/Badge";
+import {SideBarBodyItem} from "../../components/layouts/sidebar/items/sidebar-body-item/SideBarBodyItem";
 
 interface Props {
 }
@@ -191,20 +195,20 @@ export const Workspace: React.FC<Props> = ({}) => {
 	// 		data: [0, 20, -5, -10, -50]
 	// 	}]}></LineChart>
 
-	<BarChart
-		indexAxis={"y"}
-		height={"100vh"}
-		width={"50%"}
-		gridLines={true}
-		xScale={"category"}
-		labels={["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]}
-		dataset={[{
-			label: "Subscribers",
-			backgroundColor: "#BB8FCE",
-			borderColor: "#BB8FCE",
-			data: [0, 20, -5, -10, -50],
-			borderRadius: 20
-		}]}></BarChart>
+	// <BarChart
+	// 	indexAxis={"y"}
+	// 	height={"100vh"}
+	// 	width={"50%"}
+	// 	gridLines={true}
+	// 	xScale={"category"}
+	// 	labels={["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]}
+	// 	dataset={[{
+	// 		label: "Subscribers",
+	// 		backgroundColor: "#BB8FCE",
+	// 		borderColor: "#BB8FCE",
+	// 		data: [0, 20, -5, -10, -50],
+	// 		borderRadius: 20
+	// 	}]}></BarChart>
 	// 	<ScatterChart
 	// 		height={"100vh"}
 	// 		width={"100%"}
@@ -229,14 +233,38 @@ export const Workspace: React.FC<Props> = ({}) => {
 	// 				{ x: 50, y: -10 },
 	// 				{ x: 65, y: -50 }]
 	// 		}]}></ScatterChart>
-		// <SideBar state={sidebarState} changeState={changeSidebarState}>
-		// 	<SideBarHeader>
-		// 		<SideBarHeaderItem label="Blue Orange Ai" state={sidebarState} media={testMedia} changeState={changeSidebarState}></SideBarHeaderItem>
-		// 	</SideBarHeader>
-		// 	<SideBarFooter>
-		// 		<div style={{color: "white"}}>Hello World</div>
-		// 	</SideBarFooter>
-		// </SideBar>
+		<SideBar state={sidebarState} changeState={changeSidebarState}>
+			<SideBarHeader>
+				<SideBarHeaderItem label="Blue Orange Ai" state={sidebarState} media={testMedia} changeState={changeSidebarState}></SideBarHeaderItem>
+			</SideBarHeader>
+			<SideBarBody>
+				<SideBarBodyLabel
+					label={"Menu"}
+					badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
+				></SideBarBodyLabel>
+				<SideBarBodyItem
+					label={"Search"}
+					active={false}
+					focused={false}
+					defaultStyle={{opacity: "0.6"}}
+					activeStyle={{opacity: "1"}}
+					icon={<i className={"ri-search-line"}></i>}
+				></SideBarBodyItem>
+				<SideBarBodyItem
+					label={"Search 2"}
+					active={false}
+					focused={true}
+					defaultStyle={{opacity: "0.6"}}
+					focusedStyle={{opacity: "1"}}
+					hoverEffects={true}
+					hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
+					icon={<i className={"ri-search-line"}></i>}
+				></SideBarBodyItem>
+			</SideBarBody>
+			<SideBarFooter>
+				<div style={{color: "white"}}>Hello World</div>
+			</SideBarFooter>
+		</SideBar>
 		// <div className="workspace-main-window">
 		// 	<div className="workspace-display-window">
 		// 		<Avatar user={user} height={350} width={350} tooltip={true}></Avatar>

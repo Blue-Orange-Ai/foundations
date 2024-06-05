@@ -16,7 +16,15 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
     cursor: pointer;
+}
+
+.blue-orange-sidebar-header-item-left-cont {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    align-items: center;
 }
 
 .blue-orange-sidebar-header-item-media {

@@ -12,6 +12,7 @@ interface Props {
 	state: SideBarState,
 	media?: Media,
 	action?: ReactNode,
+	headerItemClicked?: () => void,
 	changeState?: (state: SideBarState) => void
 }
 
@@ -21,6 +22,7 @@ export const SideBarHeaderItem: React.FC<Props> = ({
 													   media,
 													   labelStyle={},
 													   action,
+													   headerItemClicked,
 													   changeState}) => {
 
 
@@ -32,16 +34,24 @@ export const SideBarHeaderItem: React.FC<Props> = ({
 		}
 	}
 
+	const leftHeaderItemClicked = () => {
+		if (headerItemClicked) {
+			headerItemClicked()
+		}
+	}
+
 	return (
 		<div className="blue-orange-sidebar-header-item no-select">
 			{state == SideBarState.OPEN &&
 				<div className="blue-orange-sidebar-header-item-cont">
-					{media != undefined &&
-						<div className="blue-orange-sidebar-header-item-media">
-							<RenderMedia media={(media as Media)} height={32} width={32} borderRadius={"4px"}></RenderMedia>
-						</div>
-					}
-					<div className="blue-orange-sidebar-header-item-media-body" style={labelStyle}>{label}</div>
+					<div className="blue-orange-sidebar-header-item-left-cont" onClick={leftHeaderItemClicked}>
+						{media != undefined &&
+							<div className="blue-orange-sidebar-header-item-media">
+								<RenderMedia media={(media as Media)} height={32} width={32} borderRadius={"4px"}></RenderMedia>
+							</div>
+						}
+						<div className="blue-orange-sidebar-header-item-media-body" style={labelStyle}>{label}</div>
+					</div>
 					{action &&
 						<div className="blue-orange-sidebar-header-item-action">
 							{action}
