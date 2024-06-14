@@ -13,6 +13,7 @@ interface Props {
 	icon?: React.ReactNode,
 	style?: React.CSSProperties,
 	badge?: React.ReactNode;
+	rightItems?: React.ReactNode;
 	hoverItems?: React.ReactNode;
 	onClick?: () => void;
 }
@@ -28,6 +29,7 @@ export const SideBarBodyItem: React.FC<Props> = ({
 													 focusedStyle,
 													 icon,
 													 badge,
+													 rightItems,
 													 hoverItems,
 													 onClick}) => {
 
@@ -60,8 +62,11 @@ export const SideBarBodyItem: React.FC<Props> = ({
 				{icon && <div className="blue-orange-sidebar-body-item-icon">{icon}</div>}
 				<div className="blue-orange-sidebar-body-item-label no-select">{label}</div>
 			</div>
-			{badge && (hoverEffects && !isHovered) && <>{badge}</>}
-			{hoverItems && (hoverEffects && isHovered) && <>{hoverItems}</>}
+			<div className="blue-orange-sidebar-body-item-right">
+				{badge && (!hoverEffects || !isHovered) && <>{badge}</>}
+				{hoverItems && (hoverEffects && isHovered) && <>{hoverItems}</>}
+				{rightItems && (!hoverEffects || !isHovered) && <>{rightItems}</>}
+			</div>
 		</div>
 	)
 }

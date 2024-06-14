@@ -5,7 +5,6 @@ import './Avatar.css';
 import {AvatarEmpty} from "../avatarempty/AvatarEmpty";
 import {AvatarImage} from "../avatarimage/AvatarImage";
 import {Avatar as AvatarObj, GroupPermission, User} from "@blue-orange-ai/foundations-clients/lib/Passport";
-import {BlueOrangeMedia} from "@blue-orange-ai/foundations-clients/lib/BlueOrangeMedia";
 import {Button, ButtonType} from "../../buttons/button/Button";
 import {FileUploadBtn} from "../../buttons/file-upload-btn/FileUploadBtn";
 import {TippyHTMLElement} from "../../../interfaces/AppInterfaces";

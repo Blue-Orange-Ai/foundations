@@ -15,6 +15,7 @@ import {SideBarBody} from "../../components/layouts/sidebar/sidebar-body/SideBar
 import {SideBarBodyLabel} from "../../components/layouts/sidebar/items/sidebar-body-label/SideBarBodyLabel";
 import {Badge} from "../../components/text-decorations/badge/Badge";
 import {SideBarBodyItem} from "../../components/layouts/sidebar/items/sidebar-body-item/SideBarBodyItem";
+import {SideBarBodyGroup} from "../../components/layouts/sidebar/items/sidebar-body-group/SideBarBodyGroup";
 
 interface Props {
 }
@@ -30,6 +31,8 @@ export const Workspace: React.FC<Props> = ({}) => {
 	const [error, setError] = useState(false);
 
 	const [sidebarState, setSidebarState] = useState(SideBarState.OPEN);
+
+	const [sidebarGroupState, setSidebarGroupState] = useState(false);
 
 	const changeSidebarState = (state: SideBarState) => {
 		setSidebarState(state);
@@ -238,6 +241,33 @@ export const Workspace: React.FC<Props> = ({}) => {
 				<SideBarHeaderItem label="Blue Orange Ai" state={sidebarState} media={testMedia} changeState={changeSidebarState}></SideBarHeaderItem>
 			</SideBarHeader>
 			<SideBarBody>
+				<SideBarBodyGroup opened={sidebarGroupState}>
+					<SideBarBodyLabel
+						icon={sidebarGroupState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
+						label={"Menu"}
+						onClick={() => setSidebarGroupState(!sidebarGroupState)}
+						badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
+					></SideBarBodyLabel>
+					<SideBarBodyItem
+						label={"Search"}
+						active={false}
+						focused={false}
+						defaultStyle={{opacity: "0.6"}}
+						activeStyle={{opacity: "1"}}
+						icon={<i className={"ri-search-line"}></i>}
+					></SideBarBodyItem>
+					<SideBarBodyItem
+						label={"Search 2"}
+						active={false}
+						focused={true}
+						defaultStyle={{opacity: "0.6"}}
+						focusedStyle={{opacity: "1"}}
+						hoverEffects={true}
+						onClick={() => console.log("Main body item clicked")}
+						hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
+						icon={<i className={"ri-search-line"}></i>}
+					></SideBarBodyItem>
+				</SideBarBodyGroup>
 				<SideBarBodyLabel
 					label={"Menu"}
 					badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
@@ -257,6 +287,7 @@ export const Workspace: React.FC<Props> = ({}) => {
 					defaultStyle={{opacity: "0.6"}}
 					focusedStyle={{opacity: "1"}}
 					hoverEffects={true}
+					onClick={() => console.log("Main body item clicked")}
 					hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
 					icon={<i className={"ri-search-line"}></i>}
 				></SideBarBodyItem>

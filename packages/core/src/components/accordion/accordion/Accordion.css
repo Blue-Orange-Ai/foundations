@@ -1,0 +1,11 @@
+
+.blue-orange-accordion {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.blue-orange-accordion-header {
+}
+
+
