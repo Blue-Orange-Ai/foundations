@@ -3,19 +3,17 @@ import React, {useContext, useState} from "react";
 import './Workspace.css'
 import {Avatar as AvatarObj, User, UserState} from "@blue-orange-ai/foundations-clients/lib/Passport";
 import {ToastContext} from "../../components/alerts/toast/toastcontext/ToastContext";
-import {SideBar, SideBarState} from "../../components/layouts/sidebar/default/SideBar";
-import {SideBarHeader} from "../../components/layouts/sidebar/sidebar-header/SideBarHeader";
-import {SideBarFooter} from "../../components/layouts/sidebar/sidebar-footer/SideBarFooter";
-import {SideBarHeaderItem} from "../../components/layouts/sidebar/items/sidebar-header-item/SideBarHeaderItem";
+import {SideBarState} from "../../components/layouts/sidebar/default/SideBar";
 import {Media} from "@blue-orange-ai/foundations-clients";
-import {LineChart} from "../../components/charts/line/LineChart";
 import {ScatterChart} from "../../components/charts/scatter/ScatterChart";
-import {BarChart} from "../../components/charts/bar/BarChart";
-import {SideBarBody} from "../../components/layouts/sidebar/sidebar-body/SideBarBody";
-import {SideBarBodyLabel} from "../../components/layouts/sidebar/items/sidebar-body-label/SideBarBodyLabel";
-import {Badge} from "../../components/text-decorations/badge/Badge";
-import {SideBarBodyItem} from "../../components/layouts/sidebar/items/sidebar-body-item/SideBarBodyItem";
-import {SideBarBodyGroup} from "../../components/layouts/sidebar/items/sidebar-body-group/SideBarBodyGroup";
+import {Modal} from "../../components/layouts/modal/modal/Modal";
+import {ModalHeader} from "../../components/layouts/modal/modal-header/ModalHeader";
+import {ModalDescription} from "../../components/layouts/modal/modal-description/ModalDescription";
+import {ModalBody} from "../../components/layouts/modal/modal-body/ModalBody";
+import {Input} from "../../components/inputs/input/Input";
+import {ModalFooter} from "../../components/layouts/modal/modal-footer/ModalFooter";
+import {ModalFooterRight} from "../../components/layouts/modal/modal-footer-right/ModalFooterRight";
+import {Button, ButtonType} from "../../components/buttons/button/Button";
 
 interface Props {
 }
@@ -199,7 +197,7 @@ export const Workspace: React.FC<Props> = ({}) => {
 	// 	}]}></LineChart>
 
 	// <BarChart
-	// 	indexAxis={"y"}
+	// 	indexAxis={"x"}
 	// 	height={"100vh"}
 	// 	width={"50%"}
 	// 	gridLines={true}
@@ -212,90 +210,109 @@ export const Workspace: React.FC<Props> = ({}) => {
 	// 		data: [0, 20, -5, -10, -50],
 	// 		borderRadius: 20
 	// 	}]}></BarChart>
-	// 	<ScatterChart
-	// 		height={"100vh"}
-	// 		width={"100%"}
-	// 		gridLines={true}
-	// 		xScale={"linear"}
-	// 		dataset={[{
-	// 		label: "Subscribers",
-	// 			backgroundColor: "#BB8FCE",
-	// 			borderColor: "#BB8FCE",
-	// 		data: [{ x: -10, y: 0 },
-	// 			{ x: 0, y: 10 },
-	// 			{ x: 10, y: 5 },
-	// 			{ x: 20, y: -10 },
-	// 			{ x: 25, y: -5 }]
-	// 	},{
-	// 			label: "Subscribers 2",
-	// 			 backgroundColor: '#E59866',
-	// 			 borderColor: '#E59866',
-	// 			data: [{ x: -30, y: 0 },
-	// 				{ x: 30, y: 20 },
-	// 				{ x: 40, y: -5 },
-	// 				{ x: 50, y: -10 },
-	// 				{ x: 65, y: -50 }]
-	// 		}]}></ScatterChart>
-		<SideBar state={sidebarState} changeState={changeSidebarState}>
-			<SideBarHeader>
-				<SideBarHeaderItem label="Blue Orange Ai" state={sidebarState} media={testMedia} changeState={changeSidebarState}></SideBarHeaderItem>
-			</SideBarHeader>
-			<SideBarBody>
-				<SideBarBodyGroup opened={sidebarGroupState}>
-					<SideBarBodyLabel
-						icon={sidebarGroupState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
-						label={"Menu"}
-						onClick={() => setSidebarGroupState(!sidebarGroupState)}
-						badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
-					></SideBarBodyLabel>
-					<SideBarBodyItem
-						label={"Search"}
-						active={false}
-						focused={false}
-						defaultStyle={{opacity: "0.6"}}
-						activeStyle={{opacity: "1"}}
-						icon={<i className={"ri-search-line"}></i>}
-					></SideBarBodyItem>
-					<SideBarBodyItem
-						label={"Search 2"}
-						active={false}
-						focused={true}
-						defaultStyle={{opacity: "0.6"}}
-						focusedStyle={{opacity: "1"}}
-						hoverEffects={true}
-						onClick={() => console.log("Main body item clicked")}
-						hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
-						icon={<i className={"ri-search-line"}></i>}
-					></SideBarBodyItem>
-				</SideBarBodyGroup>
-				<SideBarBodyLabel
-					label={"Menu"}
-					badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
-				></SideBarBodyLabel>
-				<SideBarBodyItem
-					label={"Search"}
-					active={false}
-					focused={false}
-					defaultStyle={{opacity: "0.6"}}
-					activeStyle={{opacity: "1"}}
-					icon={<i className={"ri-search-line"}></i>}
-				></SideBarBodyItem>
-				<SideBarBodyItem
-					label={"Search 2"}
-					active={false}
-					focused={true}
-					defaultStyle={{opacity: "0.6"}}
-					focusedStyle={{opacity: "1"}}
-					hoverEffects={true}
-					onClick={() => console.log("Main body item clicked")}
-					hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
-					icon={<i className={"ri-search-line"}></i>}
-				></SideBarBodyItem>
-			</SideBarBody>
-			<SideBarFooter>
-				<div style={{color: "white"}}>Hello World</div>
-			</SideBarFooter>
-		</SideBar>
+		<div>
+			<ScatterChart
+				height={"100vh"}
+				width={"100%"}
+				gridLines={true}
+				xScale={"linear"}
+				dataset={[{
+					label: "Subscribers",
+					backgroundColor: "#BB8FCE",
+					borderColor: "#BB8FCE",
+					data: [{ x: -10, y: 0 },
+						{ x: 0, y: 10 },
+						{ x: 10, y: 5 },
+						{ x: 20, y: -10 },
+						{ x: 25, y: -5 }]
+				},{
+					label: "Subscribers 2",
+					backgroundColor: '#E59866',
+					borderColor: '#E59866',
+					data: [{ x: -30, y: 0 },
+						{ x: 30, y: 20 },
+						{ x: 40, y: -5 },
+						{ x: 50, y: -10 },
+						{ x: 65, y: -50 }]
+				}]}></ScatterChart>
+			<Modal>
+				<ModalHeader label={"Hello World I am a modal"}></ModalHeader>
+				<ModalDescription description={"Hello modal this is a description of the modal"}></ModalDescription>
+				<ModalBody>
+					<div>
+						<Input placeholder={"This is where you write your input"}></Input>
+						<Input placeholder={"This is the second place you write your input"}></Input>
+					</div>
+				</ModalBody>
+				<ModalFooter>
+					<ModalFooterRight>
+						<Button text={"Submit"} buttonType={ButtonType.PRIMARY}></Button>
+					</ModalFooterRight>
+				</ModalFooter>
+			</Modal>
+		</div>
+
+
+	// 	<SideBar state={sidebarState} changeState={changeSidebarState}>
+	// 		<SideBarHeader>
+	// 			<SideBarHeaderItem label="Blue Orange Ai" state={sidebarState} media={testMedia} changeState={changeSidebarState}></SideBarHeaderItem>
+	// 		</SideBarHeader>
+	// 		<SideBarBody>
+	// 			<SideBarBodyGroup opened={sidebarGroupState}>
+	// 				<SideBarBodyLabel
+	// 					icon={sidebarGroupState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
+	// 					label={"Menu"}
+	// 					onClick={() => setSidebarGroupState(!sidebarGroupState)}
+	// 					badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
+	// 				></SideBarBodyLabel>
+	// 				<SideBarBodyItem
+	// 					label={"Search"}
+	// 					active={false}
+	// 					focused={false}
+	// 					defaultStyle={{opacity: "0.6"}}
+	// 					activeStyle={{opacity: "1"}}
+	// 					icon={<i className={"ri-search-line"}></i>}
+	// 				></SideBarBodyItem>
+	// 				<SideBarBodyItem
+	// 					label={"Search 2"}
+	// 					active={false}
+	// 					focused={true}
+	// 					defaultStyle={{opacity: "0.6"}}
+	// 					focusedStyle={{opacity: "1"}}
+	// 					hoverEffects={true}
+	// 					onClick={() => console.log("Main body item clicked")}
+	// 					hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
+	// 					icon={<i className={"ri-search-line"}></i>}
+	// 				></SideBarBodyItem>
+	// 			</SideBarBodyGroup>
+	// 			<SideBarBodyLabel
+	// 				label={"Menu"}
+	// 				badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
+	// 			></SideBarBodyLabel>
+	// 			<SideBarBodyItem
+	// 				label={"Search"}
+	// 				active={false}
+	// 				focused={false}
+	// 				defaultStyle={{opacity: "0.6"}}
+	// 				activeStyle={{opacity: "1"}}
+	// 				icon={<i className={"ri-search-line"}></i>}
+	// 			></SideBarBodyItem>
+	// 			<SideBarBodyItem
+	// 				label={"Search 2"}
+	// 				active={false}
+	// 				focused={true}
+	// 				defaultStyle={{opacity: "0.6"}}
+	// 				focusedStyle={{opacity: "1"}}
+	// 				hoverEffects={true}
+	// 				onClick={() => console.log("Main body item clicked")}
+	// 				hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
+	// 				icon={<i className={"ri-search-line"}></i>}
+	// 			></SideBarBodyItem>
+	// 		</SideBarBody>
+	// 		<SideBarFooter>
+	// 			<div style={{color: "white"}}>Hello World</div>
+	// 		</SideBarFooter>
+	// 	</SideBar>
 		// <div className="workspace-main-window">
 		// 	<div className="workspace-display-window">
 		// 		<Avatar user={user} height={350} width={350} tooltip={true}></Avatar>
