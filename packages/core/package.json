@@ -8,6 +8,7 @@
   "private": false,
   "dependencies": {
     "@blue-orange-ai/foundations-clients": "^0.0.16",
+    "@Blue-Orange-Ai/primitives-map": "^0.7.0",
     "@tiptap/extension-code-block": "^2.3.2",
     "@tiptap/extension-link": "^2.3.2",
     "@tiptap/extension-mention": "^2.3.2",
@@ -15,6 +16,7 @@
     "@tiptap/pm": "^2.3.2",
     "@tiptap/react": "^2.3.2",
     "@tiptap/starter-kit": "^2.3.2",
+    "@types/leaflet": "^1.9.12",
     "@types/moment": "^2.13.0",
     "@types/yaireo__tagify": "^4.24.0",
     "@yaireo/tagify": "^4.26.5",
@@ -22,6 +24,7 @@
     "chart.js": "^4.4.3",
     "chrono-node": "^2.7.5",
     "fuse.js": "^7.0.0",
+    "leaflet": "^1.9.4",
     "moment": "^2.30.1",
     "monaco-editor": "^0.48.0",
     "monaco-editor-webpack-plugin": "^7.1.0",

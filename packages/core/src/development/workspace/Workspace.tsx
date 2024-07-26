@@ -14,6 +14,8 @@ import {Input} from "../../components/inputs/input/Input";
 import {ModalFooter} from "../../components/layouts/modal/modal-footer/ModalFooter";
 import {ModalFooterRight} from "../../components/layouts/modal/modal-footer-right/ModalFooterRight";
 import {Button, ButtonType} from "../../components/buttons/button/Button";
+import {DateInput} from "../../components/inputs/date/datepicker/inputs/dateinput/DateInput";
+import {BlueOrangeMapWrapper} from "../../components/map/BlueOrangeMapWrapper";
 
 interface Props {
 }
@@ -210,165 +212,166 @@ export const Workspace: React.FC<Props> = ({}) => {
 	// 		data: [0, 20, -5, -10, -50],
 	// 		borderRadius: 20
 	// 	}]}></BarChart>
-		<div>
-			<ScatterChart
-				height={"100vh"}
-				width={"100%"}
-				gridLines={true}
-				xScale={"linear"}
-				dataset={[{
-					label: "Subscribers",
-					backgroundColor: "#BB8FCE",
-					borderColor: "#BB8FCE",
-					data: [{ x: -10, y: 0 },
-						{ x: 0, y: 10 },
-						{ x: 10, y: 5 },
-						{ x: 20, y: -10 },
-						{ x: 25, y: -5 }]
-				},{
-					label: "Subscribers 2",
-					backgroundColor: '#E59866',
-					borderColor: '#E59866',
-					data: [{ x: -30, y: 0 },
-						{ x: 30, y: 20 },
-						{ x: 40, y: -5 },
-						{ x: 50, y: -10 },
-						{ x: 65, y: -50 }]
-				}]}></ScatterChart>
-			<Modal>
-				<ModalHeader label={"Hello World I am a modal"}></ModalHeader>
-				<ModalDescription description={"Hello modal this is a description of the modal"}></ModalDescription>
-				<ModalBody>
-					<div>
-						<Input placeholder={"This is where you write your input"}></Input>
-						<Input placeholder={"This is the second place you write your input"}></Input>
-					</div>
-				</ModalBody>
-				<ModalFooter>
-					<ModalFooterRight>
-						<Button text={"Submit"} buttonType={ButtonType.PRIMARY}></Button>
-					</ModalFooterRight>
-				</ModalFooter>
-			</Modal>
+	// 	<div>
+	// 		{/*<ScatterChart*/}
+	// 		{/*	height={"100vh"}*/}
+	// 		{/*	width={"100%"}*/}
+	// 		{/*	gridLines={true}*/}
+	// 		{/*	xScale={"linear"}*/}
+	// 		{/*	dataset={[{*/}
+	// 		{/*		label: "Subscribers",*/}
+	// 		{/*		backgroundColor: "#BB8FCE",*/}
+	// 		{/*		borderColor: "#BB8FCE",*/}
+	// 		{/*		data: [{ x: -10, y: 0 },*/}
+	// 		{/*			{ x: 0, y: 10 },*/}
+	// 		{/*			{ x: 10, y: 5 },*/}
+	// 		{/*			{ x: 20, y: -10 },*/}
+	// 		{/*			{ x: 25, y: -5 }]*/}
+	// 		{/*	},{*/}
+	// 		{/*		label: "Subscribers 2",*/}
+	// 		{/*		backgroundColor: '#E59866',*/}
+	// 		{/*		borderColor: '#E59866',*/}
+	// 		{/*		data: [{ x: -30, y: 0 },*/}
+	// 		{/*			{ x: 30, y: 20 },*/}
+	// 		{/*			{ x: 40, y: -5 },*/}
+	// 		{/*			{ x: 50, y: -10 },*/}
+	// 		{/*			{ x: 65, y: -50 }]*/}
+	// 		{/*	}]}></ScatterChart>*/}
+	// 		{/*<Modal>*/}
+	// 		{/*	<ModalHeader label={"Hello World I am a modal"}></ModalHeader>*/}
+	// 		{/*	<ModalDescription description={"Hello modal this is a description of the modal"}></ModalDescription>*/}
+	// 		{/*	<ModalBody>*/}
+	// 		{/*		<div>*/}
+	// 		{/*			<Input placeholder={"This is where you write your input"}></Input>*/}
+	// 		{/*			<Input placeholder={"This is the second place you write your input"}></Input>*/}
+	// 		{/*		</div>*/}
+	// 		{/*	</ModalBody>*/}
+	// 		{/*	<ModalFooter>*/}
+	// 		{/*		<ModalFooterRight>*/}
+	// 		{/*			<Button text={"Submit"} buttonType={ButtonType.PRIMARY}></Button>*/}
+	// 		{/*		</ModalFooterRight>*/}
+	// 		{/*	</ModalFooter>*/}
+	// 		{/*</Modal>*/}
+	// 	</div>
+
+
+		// <SideBar state={sidebarState} changeState={changeSidebarState}>
+		// 	<SideBarHeader>
+		// 		<SideBarHeaderItem label="Blue Orange Ai" state={sidebarState} media={testMedia} changeState={changeSidebarState}></SideBarHeaderItem>
+		// 	</SideBarHeader>
+		// 	<SideBarBody>
+		// 		<SideBarBodyGroup opened={sidebarGroupState}>
+		// 			<SideBarBodyLabel
+		// 				icon={sidebarGroupState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
+		// 				label={"Menu"}
+		// 				onClick={() => setSidebarGroupState(!sidebarGroupState)}
+		// 				badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
+		// 			></SideBarBodyLabel>
+		// 			<SideBarBodyItem
+		// 				label={"Search"}
+		// 				active={false}
+		// 				focused={false}
+		// 				defaultStyle={{opacity: "0.6"}}
+		// 				activeStyle={{opacity: "1"}}
+		// 				icon={<i className={"ri-search-line"}></i>}
+		// 			></SideBarBodyItem>
+		// 			<SideBarBodyItem
+		// 				label={"Search 2"}
+		// 				active={false}
+		// 				focused={true}
+		// 				defaultStyle={{opacity: "0.6"}}
+		// 				focusedStyle={{opacity: "1"}}
+		// 				hoverEffects={true}
+		// 				onClick={() => console.log("Main body item clicked")}
+		// 				hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
+		// 				icon={<i className={"ri-search-line"}></i>}
+		// 			></SideBarBodyItem>
+		// 		</SideBarBodyGroup>
+		// 		<SideBarBodyLabel
+		// 			label={"Menu"}
+		// 			badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
+		// 		></SideBarBodyLabel>
+		// 		<SideBarBodyItem
+		// 			label={"Search"}
+		// 			active={false}
+		// 			focused={false}
+		// 			defaultStyle={{opacity: "0.6"}}
+		// 			activeStyle={{opacity: "1"}}
+		// 			icon={<i className={"ri-search-line"}></i>}
+		// 		></SideBarBodyItem>
+		// 		<SideBarBodyItem
+		// 			label={"Search 2"}
+		// 			active={false}
+		// 			focused={true}
+		// 			defaultStyle={{opacity: "0.6"}}
+		// 			focusedStyle={{opacity: "1"}}
+		// 			hoverEffects={true}
+		// 			onClick={() => console.log("Main body item clicked")}
+		// 			hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
+		// 			icon={<i className={"ri-search-line"}></i>}
+		// 		></SideBarBodyItem>
+		// 	</SideBarBody>
+		// 	<SideBarFooter>
+		// 		<div style={{color: "white"}}>Hello World</div>
+		// 	</SideBarFooter>
+		// </SideBar>
+		<div className="workspace-main-window">
+			<div className="workspace-display-window">
+				{/*<Avatar user={user} height={350} width={350} tooltip={true}></Avatar>*/}
+				{/*<AvatarList users={[user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user]} overlap={30}></AvatarList>*/}
+				{/*<Table>*/}
+				{/*	<THead>*/}
+				{/*		<Row>*/}
+				{/*			<CheckboxCell state={true}></CheckboxCell>*/}
+				{/*			<HeaderCell dropdownItems={[{label: "Sort ASC", icon: "ri-sort-asc", value: "SORT_ASC"}]}>Header 2</HeaderCell>*/}
+				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 3</HeaderCell>*/}
+				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 4</HeaderCell>*/}
+				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 5</HeaderCell>*/}
+				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 6</HeaderCell>*/}
+				{/*		</Row>*/}
+				{/*	</THead>*/}
+				{/*	<TBody>*/}
+				{/*		<Row hoverBackgroundColor={"red"}>*/}
+				{/*			<CheckboxCell state={true}></CheckboxCell>*/}
+				{/*			<PrimaryCell src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} text={"Demonstration Primary Cell"} secondaryText={"This is where the secondary text goes"} style={{paddingLeft: "15px", paddingRight: "15px"}}></PrimaryCell>*/}
+				{/*			<Cell>Hello 3</Cell>*/}
+				{/*			<Cell alignment={CellAlignment.LEFT}>Hello 4</Cell>*/}
+				{/*			<Cell>Hello 5</Cell>*/}
+				{/*			<Cell>Hello 6</Cell>*/}
+				{/*		</Row>*/}
+				{/*	</TBody>*/}
+				{/*</Table>*/}
+				{/*<div style={{width: "200px"}}>*/}
+				{/*	<DropdownBasic items={dropdownItems} filter={true} allowMultipleSelection={true}></DropdownBasic>*/}
+				{/*</div>*/}
+				{/*<Badge>Hello</Badge>*/}
+				{/*<Tag>Hello</Tag>*/}
+				{/*<DateInput displayFormat={"ddd, MMMM Do YYYY"}></DateInput>*/}
+				<BlueOrangeMapWrapper></BlueOrangeMapWrapper>
+				{/*<EmojiContainer></EmojiContainer>*/}
+				{/*<RichText minEditorHeight={10}></RichText>*/}
+				{/*<Pdf src={"https://d8d6949rstsxl.cloudfront.net/public/BO-PDF-499ffd3b-f619-4522-9c4e-bdae1bee9f4c-Academic%20Test%201%20-%20Prompt%203%20-%20Measures%20of%20Poverty.pdf"}></Pdf>*/}
+				{/*<Toaster heading={"Hello world this is a toaster"}></Toaster>*/}
+				{/*<Button text={"Test Toaster"} buttonType={ButtonType.PRIMARY} onClick={() => addToast({*/}
+				{/*	id: "abcdefghi",*/}
+				{/*	heading: "This is a test toaster",*/}
+				{/*	description: "This is where the description will go",*/}
+				{/*	location: ToastLocation.BOTTOM_RIGHT,*/}
+				{/*	toastType: ToasterType.DEFAULT,*/}
+				{/*	ttl: 5000*/}
+				{/*})}></Button>*/}
+				{/*<SimpleTag*/}
+				{/*	placeholder={"Enter Tags"}*/}
+				{/*	initialTags={[]}*/}
+				{/*	whitelist={["Hello", "world", "basketball"]}*/}
+				{/*	onChange={(tags) => {}}></SimpleTag>*/}
+				{/*<JsonEditor value={""}></JsonEditor>*/}
+				{/*<JsonEditor value={"{a: b}"}></JsonEditor>*/}
+				{/*<TextEditor value={""}></TextEditor>*/}
+				{/*<DiffEditor original={"hello: true"} modified={"hello: false"} language={"yaml"}></DiffEditor>*/}
+
+			</div>
+
 		</div>
-
-
-	// 	<SideBar state={sidebarState} changeState={changeSidebarState}>
-	// 		<SideBarHeader>
-	// 			<SideBarHeaderItem label="Blue Orange Ai" state={sidebarState} media={testMedia} changeState={changeSidebarState}></SideBarHeaderItem>
-	// 		</SideBarHeader>
-	// 		<SideBarBody>
-	// 			<SideBarBodyGroup opened={sidebarGroupState}>
-	// 				<SideBarBodyLabel
-	// 					icon={sidebarGroupState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
-	// 					label={"Menu"}
-	// 					onClick={() => setSidebarGroupState(!sidebarGroupState)}
-	// 					badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
-	// 				></SideBarBodyLabel>
-	// 				<SideBarBodyItem
-	// 					label={"Search"}
-	// 					active={false}
-	// 					focused={false}
-	// 					defaultStyle={{opacity: "0.6"}}
-	// 					activeStyle={{opacity: "1"}}
-	// 					icon={<i className={"ri-search-line"}></i>}
-	// 				></SideBarBodyItem>
-	// 				<SideBarBodyItem
-	// 					label={"Search 2"}
-	// 					active={false}
-	// 					focused={true}
-	// 					defaultStyle={{opacity: "0.6"}}
-	// 					focusedStyle={{opacity: "1"}}
-	// 					hoverEffects={true}
-	// 					onClick={() => console.log("Main body item clicked")}
-	// 					hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
-	// 					icon={<i className={"ri-search-line"}></i>}
-	// 				></SideBarBodyItem>
-	// 			</SideBarBodyGroup>
-	// 			<SideBarBodyLabel
-	// 				label={"Menu"}
-	// 				badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
-	// 			></SideBarBodyLabel>
-	// 			<SideBarBodyItem
-	// 				label={"Search"}
-	// 				active={false}
-	// 				focused={false}
-	// 				defaultStyle={{opacity: "0.6"}}
-	// 				activeStyle={{opacity: "1"}}
-	// 				icon={<i className={"ri-search-line"}></i>}
-	// 			></SideBarBodyItem>
-	// 			<SideBarBodyItem
-	// 				label={"Search 2"}
-	// 				active={false}
-	// 				focused={true}
-	// 				defaultStyle={{opacity: "0.6"}}
-	// 				focusedStyle={{opacity: "1"}}
-	// 				hoverEffects={true}
-	// 				onClick={() => console.log("Main body item clicked")}
-	// 				hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
-	// 				icon={<i className={"ri-search-line"}></i>}
-	// 			></SideBarBodyItem>
-	// 		</SideBarBody>
-	// 		<SideBarFooter>
-	// 			<div style={{color: "white"}}>Hello World</div>
-	// 		</SideBarFooter>
-	// 	</SideBar>
-		// <div className="workspace-main-window">
-		// 	<div className="workspace-display-window">
-		// 		<Avatar user={user} height={350} width={350} tooltip={true}></Avatar>
-		// 		{/*<AvatarList users={[user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user]} overlap={30}></AvatarList>*/}
-		// 		{/*<Table>*/}
-		// 		{/*	<THead>*/}
-		// 		{/*		<Row>*/}
-		// 		{/*			<CheckboxCell state={true}></CheckboxCell>*/}
-		// 		{/*			<HeaderCell dropdownItems={[{label: "Sort ASC", icon: "ri-sort-asc", value: "SORT_ASC"}]}>Header 2</HeaderCell>*/}
-		// 		{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 3</HeaderCell>*/}
-		// 		{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 4</HeaderCell>*/}
-		// 		{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 5</HeaderCell>*/}
-		// 		{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 6</HeaderCell>*/}
-		// 		{/*		</Row>*/}
-		// 		{/*	</THead>*/}
-		// 		{/*	<TBody>*/}
-		// 		{/*		<Row hoverBackgroundColor={"red"}>*/}
-		// 		{/*			<CheckboxCell state={true}></CheckboxCell>*/}
-		// 		{/*			<PrimaryCell src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} text={"Demonstration Primary Cell"} secondaryText={"This is where the secondary text goes"} style={{paddingLeft: "15px", paddingRight: "15px"}}></PrimaryCell>*/}
-		// 		{/*			<Cell>Hello 3</Cell>*/}
-		// 		{/*			<Cell alignment={CellAlignment.LEFT}>Hello 4</Cell>*/}
-		// 		{/*			<Cell>Hello 5</Cell>*/}
-		// 		{/*			<Cell>Hello 6</Cell>*/}
-		// 		{/*		</Row>*/}
-		// 		{/*	</TBody>*/}
-		// 		{/*</Table>*/}
-		// 		{/*<div style={{width: "200px"}}>*/}
-		// 		{/*	<DropdownBasic items={dropdownItems} filter={true} allowMultipleSelection={true}></DropdownBasic>*/}
-		// 		{/*</div>*/}
-		// 		{/*<Badge>Hello</Badge>*/}
-		// 		{/*<Tag>Hello</Tag>*/}
-		// 		{/*<DateInput displayFormat={"ddd, MMMM Do YYYY"}></DateInput>*/}
-		// 		{/*<EmojiContainer></EmojiContainer>*/}
-		// 		{/*<RichText minEditorHeight={10}></RichText>*/}
-		// 		{/*<Pdf src={"https://d8d6949rstsxl.cloudfront.net/public/BO-PDF-499ffd3b-f619-4522-9c4e-bdae1bee9f4c-Academic%20Test%201%20-%20Prompt%203%20-%20Measures%20of%20Poverty.pdf"}></Pdf>*/}
-		// 		{/*<Toaster heading={"Hello world this is a toaster"}></Toaster>*/}
-		// 		{/*<Button text={"Test Toaster"} buttonType={ButtonType.PRIMARY} onClick={() => addToast({*/}
-		// 		{/*	id: "abcdefghi",*/}
-		// 		{/*	heading: "This is a test toaster",*/}
-		// 		{/*	description: "This is where the description will go",*/}
-		// 		{/*	location: ToastLocation.BOTTOM_RIGHT,*/}
-		// 		{/*	toastType: ToasterType.DEFAULT,*/}
-		// 		{/*	ttl: 5000*/}
-		// 		{/*})}></Button>*/}
-		// 		{/*<SimpleTag*/}
-		// 		{/*	placeholder={"Enter Tags"}*/}
-		// 		{/*	initialTags={[]}*/}
-		// 		{/*	whitelist={["Hello", "world", "basketball"]}*/}
-		// 		{/*	onChange={(tags) => {}}></SimpleTag>*/}
-		// 		{/*<JsonEditor value={""}></JsonEditor>*/}
-		// 		{/*<JsonEditor value={"{a: b}"}></JsonEditor>*/}
-		// 		{/*<TextEditor value={""}></TextEditor>*/}
-		// 		{/*<DiffEditor original={"hello: true"} modified={"hello: false"} language={"yaml"}></DiffEditor>*/}
-		//
-		// 	</div>
-		//
-		// </div>
 	)
 }

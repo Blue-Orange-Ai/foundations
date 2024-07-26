@@ -2,7 +2,7 @@ import { Client, IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import Cookies from "js-cookie";
 
-class Sockets {
+export class Sockets {
 
     private client: Client;
 
