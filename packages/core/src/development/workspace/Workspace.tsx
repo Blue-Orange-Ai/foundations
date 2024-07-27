@@ -16,6 +16,8 @@ import {ModalFooterRight} from "../../components/layouts/modal/modal-footer-righ
 import {Button, ButtonType} from "../../components/buttons/button/Button";
 import {DateInput} from "../../components/inputs/date/datepicker/inputs/dateinput/DateInput";
 import {BlueOrangeMapWrapper} from "../../components/map/BlueOrangeMapWrapper";
+import { Edge, Node as GraphNode } from "@Blue-Orange-Ai/primitives-graph";
+import {BlueOrangeGraphWrapper} from "../../components/graph/BlueOrangeGraphWrapper";
 
 interface Props {
 }
@@ -159,6 +161,161 @@ export const Workspace: React.FC<Props> = ({}) => {
 	const finishError = () => {
 		setError(false);
 	}
+
+	var nodes: Array<GraphNode> =[{
+		id: "123456",
+		x: 80,
+		y: 50,
+		border: "2px solid transparent",
+		borderSelected: "2px solid dodgerblue",
+		borderRadius: 10,
+		backgroundColour: "transparent",
+		movable: true,
+		deletable: true,
+		html: "<div class=\"blue-orange-demo-graph-node\">\n" +
+			"          <div class=\"blue-orange-demo-graph-node-heading\">This is the demo heading</div>\n" +
+			"          <div class=\"blue-orange-demo-graph-node-body\">\n" +
+			"              <div>\n" +
+			"                <span class=\"blue-orange-demo-graph-node-body-item-heading\">Processed:</span>\n" +
+			"                <span class=\"blue-orange-demo-graph-node-body-item-value\">0.00 /s</span>\n" +
+			"              </div>\n" +
+			"              <div>\n" +
+			"                  <span class=\"blue-orange-demo-graph-node-body-item-heading\">Errors:</span>\n" +
+			"                  <span class=\"blue-orange-demo-graph-node-body-item-value\">0.00</span>\n" +
+			"              </div>\n" +
+			"          </div>\n" +
+			"      </div>",
+		width: 250,
+		height: 100
+	},
+		{
+			id: "123457",
+			x: 40,
+			y: 100,
+			border: "2px solid transparent",
+			borderSelected: "2px solid dodgerblue",
+			borderRadius: 10,
+			backgroundColour: "transparent",
+			movable: true,
+			deletable: true,
+			html: "<div class=\"blue-orange-demo-graph-node\">\n" +
+				"          <div class=\"blue-orange-demo-graph-node-heading\">This is the demo heading</div>\n" +
+				"          <div class=\"blue-orange-demo-graph-node-body\">\n" +
+				"              <div>\n" +
+				"                <span class=\"blue-orange-demo-graph-node-body-item-heading\">Processed:</span>\n" +
+				"                <span class=\"blue-orange-demo-graph-node-body-item-value\">0.00 /s</span>\n" +
+				"              </div>\n" +
+				"              <div>\n" +
+				"                  <span class=\"blue-orange-demo-graph-node-body-item-heading\">Errors:</span>\n" +
+				"                  <span class=\"blue-orange-demo-graph-node-body-item-value\">0.00</span>\n" +
+				"              </div>\n" +
+				"          </div>\n" +
+				"      </div>",
+			width: 250,
+			height: 100
+		},
+		{
+			id: "123458",
+			x: 50,
+			y: 250,
+			border: "2px solid transparent",
+			borderSelected: "2px solid #E74C3C",
+			borderRadius: 10,
+			backgroundColour: "transparent",
+			movable: true,
+			deletable: true,
+			html: "<div class=\"blue-orange-demo-graph-node\">\n" +
+				"          <div class=\"blue-orange-demo-graph-node-heading\">This is the demo heading</div>\n" +
+				"          <div class=\"blue-orange-demo-graph-node-body\">\n" +
+				"              <div>\n" +
+				"                <span class=\"blue-orange-demo-graph-node-body-item-heading\">Processed:</span>\n" +
+				"                <span class=\"blue-orange-demo-graph-node-body-item-value\">0.00 /s</span>\n" +
+				"              </div>\n" +
+				"              <div>\n" +
+				"                  <span class=\"blue-orange-demo-graph-node-body-item-heading\">Errors:</span>\n" +
+				"                  <span class=\"blue-orange-demo-graph-node-body-item-value\">0.00</span>\n" +
+				"              </div>\n" +
+				"          </div>\n" +
+				"      </div>",
+			width: 250,
+			height: 100
+		},
+		{
+			id: "123459",
+			x: 577,
+			y: 50,
+			border: "2px solid transparent",
+			borderSelected: "2px solid #2ECC71",
+			borderRadius: 10,
+			backgroundColour: "transparent",
+			movable: true,
+			deletable: true,
+			html: "<div class=\"blue-orange-demo-graph-node\">\n" +
+				"          <div class=\"blue-orange-demo-graph-node-heading\">This is the demo heading</div>\n" +
+				"          <div class=\"blue-orange-demo-graph-node-body\">\n" +
+				"              <div>\n" +
+				"                <span class=\"blue-orange-demo-graph-node-body-item-heading\">Processed:</span>\n" +
+				"                <span class=\"blue-orange-demo-graph-node-body-item-value\">0.00 /s</span>\n" +
+				"              </div>\n" +
+				"              <div>\n" +
+				"                  <span class=\"blue-orange-demo-graph-node-body-item-heading\">Errors:</span>\n" +
+				"                  <span class=\"blue-orange-demo-graph-node-body-item-value\">0.00</span>\n" +
+				"              </div>\n" +
+				"          </div>\n" +
+				"      </div>",
+			width: 250,
+			height: 100
+		}]
+
+
+	const edges: Array<Edge> = [{
+		"id": "abcdefg",
+		"sourceX": 180,
+		"sourceY": 190,
+		"sourceAnchorPoint": "right",
+		"sourceArrow": false,
+		"sourceId": "123456",
+		"targetX": 577,
+		"targetY": 90,
+		"targetAnchorPoint": "left",
+		"targetArrow": true,
+		"targetId": "123459",
+		"label": true,
+		"labelMetaData": "cdnsandkla",
+		"labelText": "",
+		"labelBackground": "white",
+		"style": "bezier",
+		"lineType": "solid",
+		"lineColour": "#bdbdbd",
+		"lineWidth": 2,
+		"anchorFixed": false,
+		"arrowHeadScale": 1.2,
+		"deletable": true
+	},
+		{
+			"id": "ghijkidfyhohidty",
+			"sourceX": 140,
+			"sourceY": 140,
+			"sourceAnchorPoint": "right",
+			"sourceArrow": false,
+			"sourceId": "123457",
+			"targetX": 50,
+			"targetY": 290,
+			"targetAnchorPoint": "left",
+			"targetArrow": true,
+			"targetId": "123458",
+			"label": true,
+			"labelMetaData": "cdnsandkla",
+			"labelText": "",
+			"labelBackground": "white",
+			"style": "bezier",
+			"lineType": "animated",
+			"lineColour": "#bdbdbd",
+			"lineWidth": 2,
+			"anchorFixed": false,
+			"arrowHeadScale": 1.2,
+			"deletable": true
+		}]
 
 	return (
 		// <LineChart
@@ -347,7 +504,8 @@ export const Workspace: React.FC<Props> = ({}) => {
 				{/*<Badge>Hello</Badge>*/}
 				{/*<Tag>Hello</Tag>*/}
 				{/*<DateInput displayFormat={"ddd, MMMM Do YYYY"}></DateInput>*/}
-				<BlueOrangeMapWrapper></BlueOrangeMapWrapper>
+				{/*<BlueOrangeMapWrapper></BlueOrangeMapWrapper>*/}
+				<BlueOrangeGraphWrapper nodes={nodes} edges={edges}></BlueOrangeGraphWrapper>
 				{/*<EmojiContainer></EmojiContainer>*/}
 				{/*<RichText minEditorHeight={10}></RichText>*/}
 				{/*<Pdf src={"https://d8d6949rstsxl.cloudfront.net/public/BO-PDF-499ffd3b-f619-4522-9c4e-bdae1bee9f4c-Academic%20Test%201%20-%20Prompt%203%20-%20Measures%20of%20Poverty.pdf"}></Pdf>*/}

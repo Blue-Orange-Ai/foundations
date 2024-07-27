@@ -4,7 +4,7 @@ import './BlueOrangeMapWrapper.css'
 
 import { BlueOrangeMap } from '@Blue-Orange-Ai/primitives-map'
 
-import '@Blue-Orange-Ai/primitives-map/dist/css/@Blue-Orange-Ai/primitives-map.min.css'
+import '@Blue-Orange-Ai/primitives-map/dist/css/primitives-map.min.css'
 
 
 interface Props {
