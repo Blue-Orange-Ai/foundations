@@ -18,6 +18,7 @@ import {DateInput} from "../../components/inputs/date/datepicker/inputs/dateinpu
 import {BlueOrangeMapWrapper} from "../../components/map/BlueOrangeMapWrapper";
 import { Edge, Node as GraphNode } from "@Blue-Orange-Ai/primitives-graph";
 import {BlueOrangeGraphWrapper} from "../../components/graph/BlueOrangeGraphWrapper";
+import {BlueOrangeBlockEditorWrapper} from "../../components/block-editor/BlueOrangeBlockEditorWrapper";
 
 interface Props {
 }
@@ -505,7 +506,8 @@ export const Workspace: React.FC<Props> = ({}) => {
 				{/*<Tag>Hello</Tag>*/}
 				{/*<DateInput displayFormat={"ddd, MMMM Do YYYY"}></DateInput>*/}
 				{/*<BlueOrangeMapWrapper></BlueOrangeMapWrapper>*/}
-				<BlueOrangeGraphWrapper nodes={nodes} edges={edges}></BlueOrangeGraphWrapper>
+				{/*<BlueOrangeGraphWrapper nodes={nodes} edges={edges}></BlueOrangeGraphWrapper>*/}
+				<BlueOrangeBlockEditorWrapper></BlueOrangeBlockEditorWrapper>
 				{/*<EmojiContainer></EmojiContainer>*/}
 				{/*<RichText minEditorHeight={10}></RichText>*/}
 				{/*<Pdf src={"https://d8d6949rstsxl.cloudfront.net/public/BO-PDF-499ffd3b-f619-4522-9c4e-bdae1bee9f4c-Academic%20Test%201%20-%20Prompt%203%20-%20Measures%20of%20Poverty.pdf"}></Pdf>*/}
