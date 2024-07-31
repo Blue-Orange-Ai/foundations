@@ -1,5 +1,8 @@
 import React, {ReactNode, useEffect, useRef} from "react";
 
+import '../../../../../node_modules/codemirror/lib/codemirror.css'
+import '../../../../../node_modules/plyr/dist/plyr.css'
+
 import './BlueOrangeBlockEditorWrapper.css'
 
 import { BlockEditor } from '@Blue-Orange-Ai/primitives-block-editor'

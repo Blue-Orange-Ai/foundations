@@ -8,7 +8,7 @@
   "private": false,
   "dependencies": {
     "@blue-orange-ai/foundations-clients": "^0.0.16",
-    "@Blue-Orange-Ai/primitives-block-editor": "^0.25.0",
+    "@Blue-Orange-Ai/primitives-block-editor": "^0.28.0",
     "@Blue-Orange-Ai/primitives-graph": "^0.15.0",
     "@Blue-Orange-Ai/primitives-map": "^0.15.0",
     "@tiptap/extension-code-block": "^2.3.2",
