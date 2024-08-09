@@ -1,13 +1,9 @@
 import React, {ReactNode, useRef, useState} from "react";
 
 import './EmojiSearchStateDisplay.css'
-import {EmojiHeader} from "../emoji-header/EmojiHeader";
-import {Input} from "../../input/Input";
-import {DropdownItem as DropdownItemObj, DropdownItemType} from "../../../../interfaces/AppInterfaces";
-import Fuse from "fuse.js";
 import {EmojiObj} from "../data/UnicodeEmoji";
 import {EmojiSelection} from "../emoji-selection/EmojiSelection";
-import {EmojiGroupHeaderTxt} from "../emoji-group-header-txt/EmojiGroupHeaderTxt";
+import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
 	queryItems: EmojiObj[],
@@ -24,12 +20,14 @@ export const EmojiSearchStateDisplay: React.FC<Props> = ({
 															 onSelection}) => {
 
 
+	const uuid = uuidv4();
+
 
 	return (
 		<div className="blue-orange-html-emoji-body-display">
 			{queryItems.map((item, index) => (
 				<EmojiSelection
-					key={item.uuid}
+					key={item.uuid + "-" + uuidv4()}
 					emoji={item}
 					onMouseOver={onMouseOver}
 					onMouseLeave={onMouseLeave}

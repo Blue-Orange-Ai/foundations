@@ -9,45 +9,8 @@ interface Props {
 	children: ReactNode;
 	onSelection?: (emoji: string) => void;
 }
+
 export const EmojiWrapper: React.FC<Props> = ({children, onSelection}) => {
-
-	const [visible, setVisible] = useState(false);
-
-	const visibleRef = useRef(visible);
-
-	const inputRef = useRef<HTMLInputElement | null>(null);
-
-	const emojiRef = useRef<HTMLInputElement | null>(null);
-
-	const toggleVisibility = (ev: ReactMouseEvent<HTMLDivElement>) => {
-		const target = ev.target as HTMLElement;
-		if (!isDescendantOf(emojiRef.current, target)) {
-			setVisible(!visibleRef.current)
-			visibleRef.current = !visibleRef.current
-		}
-
-	}
-
-	const calculateLeftPosition = () => {
-		try{
-			const rect = inputRef.current?.getBoundingClientRect() as DOMRect;
-			const clientWidth = rect.width;
-			const clientLeft = rect.left;
-			const width = 278;
-			const offset = (width - clientWidth) / 2;
-			return Math.max(0, clientLeft - offset);
-		} catch (e) {
-			return 0;
-		}
-
-	}
-
-	const isPosAbove = () => {
-		if (getClientTop() > window.innerHeight / 2) {
-			return true;
-		}
-		return false;
-	}
 
 	const getClientTop = () => {
 		try {
@@ -79,8 +42,29 @@ export const EmojiWrapper: React.FC<Props> = ({children, onSelection}) => {
 
 	}
 
+	const calculateLeftPosition = () => {
+		try{
+			const rect = inputRef.current?.getBoundingClientRect() as DOMRect;
+			const clientWidth = rect.width;
+			const clientLeft = rect.left;
+			const width = 278;
+			const offset = (width - clientWidth) / 2;
+			return Math.max(0, clientLeft - offset);
+		} catch (e) {
+			return 0;
+		}
+
+	}
+
+	const isPosAbove = () => {
+		if (getClientTop() > window.innerHeight / 2) {
+			return true;
+		}
+		return false;
+	}
+
 	const calculateContextWindowPos = () : React.CSSProperties => {
-		if (isPosAbove() && (getClientBottom() + getClientHeight() + 10 + 400) < getClientHeight()) {
+		if (isPosAbove() && (getClientBottom() + getClientHeight() + 10) < window.innerHeight) {
 			return {
 				left: calculateLeftPosition(),
 				bottom: getClientBottom() + getClientHeight() + 10 + "px"
@@ -90,7 +74,7 @@ export const EmojiWrapper: React.FC<Props> = ({children, onSelection}) => {
 				left: calculateLeftPosition(),
 				top: "20px"
 			}
-		} else if (!isPosAbove() && (getClientTop() + getClientHeight() + 20 + 400) < getClientHeight()) {
+		} else if (!isPosAbove() && (getClientTop() - getClientHeight() + 20) > 0) {
 			return {
 				left: calculateLeftPosition(),
 				top: getClientTop() + getClientHeight() + 20 + "px"
@@ -101,6 +85,26 @@ export const EmojiWrapper: React.FC<Props> = ({children, onSelection}) => {
 				bottom: "20px"
 			}
 		}
+	}
+
+	const [visible, setVisible] = useState(false);
+
+	const visibleRef = useRef(visible);
+
+	const inputRef = useRef<HTMLInputElement | null>(null);
+
+	const emojiRef = useRef<HTMLInputElement | null>(null);
+
+	const [position, setPosition] = useState(calculateContextWindowPos());
+
+	const toggleVisibility = (ev: ReactMouseEvent<HTMLDivElement>) => {
+		const target = ev.target as HTMLElement;
+		if (!isDescendantOf(emojiRef.current, target)) {
+			setVisible(!visibleRef.current)
+			visibleRef.current = !visibleRef.current
+			setPosition(calculateContextWindowPos());
+		}
+
 	}
 
 	const isDescendantOf = (parent:HTMLElement | null, child:HTMLElement | null) =>{
@@ -132,6 +136,7 @@ export const EmojiWrapper: React.FC<Props> = ({children, onSelection}) => {
 		} else if (inputRef && !isDescendantOf(inputRef.current, target) && !visibleRef.current) {
 			setVisible(true);
 			visibleRef.current = true;
+			setPosition(calculateContextWindowPos());
 		}
 	};
 
@@ -168,6 +173,8 @@ export const EmojiWrapper: React.FC<Props> = ({children, onSelection}) => {
 	const emojiSelection = (emoji: EmojiObj) => {
 		if (onSelection) {
 			onSelection(getEmojiHtml(emoji));
+			setVisible(false);
+			visibleRef.current = false;
 		}
 	}
 
@@ -175,7 +182,7 @@ export const EmojiWrapper: React.FC<Props> = ({children, onSelection}) => {
 		<div ref={inputRef} onClick={toggleVisibility}>
 			{children}
 			{visible &&
-				<div ref={emojiRef} className="blue-orange-emoji-wrapper" style={calculateContextWindowPos()}>
+				<div ref={emojiRef} className="blue-orange-emoji-wrapper" style={position}>
 					<EmojiContainer onSelection={emojiSelection}></EmojiContainer>
 				</div>
 			}

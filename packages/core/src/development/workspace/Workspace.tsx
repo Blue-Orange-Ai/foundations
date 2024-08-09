@@ -19,6 +19,7 @@ import {BlueOrangeMapWrapper} from "../../components/map/BlueOrangeMapWrapper";
 import { Edge, Node as GraphNode } from "@Blue-Orange-Ai/primitives-graph";
 import {BlueOrangeGraphWrapper} from "../../components/graph/BlueOrangeGraphWrapper";
 import {BlueOrangeBlockEditorWrapper} from "../../components/block-editor/BlueOrangeBlockEditorWrapper";
+import {RichText} from "../../components/inputs/richtext/default/RichText";
 
 interface Props {
 }
@@ -507,9 +508,9 @@ export const Workspace: React.FC<Props> = ({}) => {
 				{/*<DateInput displayFormat={"ddd, MMMM Do YYYY"}></DateInput>*/}
 				{/*<BlueOrangeMapWrapper></BlueOrangeMapWrapper>*/}
 				{/*<BlueOrangeGraphWrapper nodes={nodes} edges={edges}></BlueOrangeGraphWrapper>*/}
-				<BlueOrangeBlockEditorWrapper></BlueOrangeBlockEditorWrapper>
+				{/*<BlueOrangeBlockEditorWrapper></BlueOrangeBlockEditorWrapper>*/}
 				{/*<EmojiContainer></EmojiContainer>*/}
-				{/*<RichText minEditorHeight={10}></RichText>*/}
+				<RichText minEditorHeight={10}></RichText>
 				{/*<Pdf src={"https://d8d6949rstsxl.cloudfront.net/public/BO-PDF-499ffd3b-f619-4522-9c4e-bdae1bee9f4c-Academic%20Test%201%20-%20Prompt%203%20-%20Measures%20of%20Poverty.pdf"}></Pdf>*/}
 				{/*<Toaster heading={"Hello world this is a toaster"}></Toaster>*/}
 				{/*<Button text={"Test Toaster"} buttonType={ButtonType.PRIMARY} onClick={() => addToast({*/}
