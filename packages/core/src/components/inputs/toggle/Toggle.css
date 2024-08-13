@@ -1,0 +1,44 @@
+
+.blue-orange-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 36px; /* Adjusted width for the smaller switch */
+    height: 18px; /* Adjusted height for the smaller switch */
+}
+
+.blue-orange-toggle-switch input[type="checkbox"] {
+    /*display: none;*/
+}
+
+.blue-orange-toggle-switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 18px;
+}
+
+.blue-orange-toggle-switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 14px; /* Adjusted height for the smaller switch */
+    width: 14px; /* Adjusted width for the smaller switch */
+    left: 2px; /* Adjusted position for the smaller switch */
+    bottom: 2px; /* Adjusted position for the smaller switch */
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+.blue-orange-toggle-switch-input:checked + .blue-orange-toggle-switch-slider {
+    background-color: #2196F3;
+}
+
+
+.blue-orange-toggle-switch-input:checked + .blue-orange-toggle-switch-slider:before {
+    transform: translateX(18px);
+}

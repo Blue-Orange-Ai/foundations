@@ -20,8 +20,9 @@ import { Edge, Node as GraphNode } from "@Blue-Orange-Ai/primitives-graph";
 import {BlueOrangeGraphWrapper} from "../../components/graph/BlueOrangeGraphWrapper";
 import {BlueOrangeBlockEditorWrapper} from "../../components/block-editor/BlueOrangeBlockEditorWrapper";
 import {RichText} from "../../components/inputs/richtext/default/RichText";
-import {Avatar} from "../../vite-entry";
+import {Avatar, Checkbox} from "../../vite-entry";
 import Cookies from "js-cookie";
+import {Toggle} from "../../components/inputs/toggle/Toggle";
 
 interface Props {
 }
@@ -515,14 +516,16 @@ export const Workspace: React.FC<Props> = ({}) => {
 				{/*<BlueOrangeGraphWrapper nodes={nodes} edges={edges}></BlueOrangeGraphWrapper>*/}
 				{/*<BlueOrangeBlockEditorWrapper></BlueOrangeBlockEditorWrapper>*/}
 				{/*<EmojiContainer></EmojiContainer>*/}
-				<RichText minEditorHeight={10} onChange={(content: string, mentions: string[], attachments: Media[], filesUploading: boolean) => {
-					console.log({
-						content: content,
-						mentions: mentions,
-						attachments: attachments,
-						filesUploading: filesUploading
-					})
-				}}></RichText>
+				<Checkbox></Checkbox>
+				<Toggle></Toggle>
+				{/*<RichText minEditorHeight={10} onChange={(content: string, mentions: string[], attachments: Media[], filesUploading: boolean) => {*/}
+				{/*	console.log({*/}
+				{/*		content: content,*/}
+				{/*		mentions: mentions,*/}
+				{/*		attachments: attachments,*/}
+				{/*		filesUploading: filesUploading*/}
+				{/*	})*/}
+				{/*}}></RichText>*/}
 				{/*<Pdf src={"https://d8d6949rstsxl.cloudfront.net/public/BO-PDF-499ffd3b-f619-4522-9c4e-bdae1bee9f4c-Academic%20Test%201%20-%20Prompt%203%20-%20Measures%20of%20Poverty.pdf"}></Pdf>*/}
 				{/*<Toaster heading={"Hello world this is a toaster"}></Toaster>*/}
 				{/*<Button text={"Test Toaster"} buttonType={ButtonType.PRIMARY} onClick={() => addToast({*/}
