@@ -392,7 +392,7 @@ export const DropdownBasic: React.FC<Props> = ({
 				<div ref={dropdownRef} className="blue-orange-dropdown-window shadow" style={dropdownWindowStyle}>
 					{filter &&
 						<div className="blue-orange-dropdown-window-filter-cont">
-							<Input placeholder={"Filter..."} style={{height: "32px", fontSize: "14px"}} onInputChange={handleFilterChange} focus={true}></Input>
+							<Input placeholder={"Filter..."} style={{height: "32px", fontSize: "14px"}} onChange={handleFilterChange} focus={true}></Input>
 						</div>
 					}
 					<div style={dropdownItemStyle}>

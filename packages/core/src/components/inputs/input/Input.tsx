@@ -12,7 +12,7 @@ interface Props {
 	style?: React.CSSProperties;
 	isPassword?: boolean;
 	isInvalid?: boolean;
-	onInputChange?: (value: string) => void;
+	onChange?: (value: string) => void;
 	focus?: boolean;
 	focusIn?: () => void;
 	focusOut?: () => void;
@@ -23,7 +23,7 @@ interface Props {
 export const Input: React.FC<Props> = ({
 										   value,
 										   placeholder="",
-										   onInputChange,
+										   onChange,
 										   isPassword,
 										   isInvalid,
 										   isEmail,
@@ -65,8 +65,8 @@ export const Input: React.FC<Props> = ({
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const newValue = event.target.value;
 		setInputValue(newValue);
-		if (onInputChange) {
-			onInputChange(newValue);
+		if (onChange) {
+			onChange(newValue);
 		}
 	};
 

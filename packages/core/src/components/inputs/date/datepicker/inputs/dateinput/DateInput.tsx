@@ -11,14 +11,14 @@ interface Props {
 	value?: Date,
 	displayFormat?: string,
 	placeholder?: string,
-	selectedDate?: (date: Date) => void;
+	onChange?: (date: Date) => void;
 }
 
 export const DateInput: React.FC<Props> = ({
 											   value,
 											   displayFormat = 'ddd, MMMM Do YYYY',
 											   placeholder,
-											   selectedDate}) => {
+											   onChange}) => {
 
 	const getFormattedDate = (date: Date | undefined, invalid: boolean) => {
 		if (invalid) {
@@ -38,13 +38,20 @@ export const DateInput: React.FC<Props> = ({
 
 	const inputRef = useRef<HTMLInputElement | null>(null);
 
+	const updateDate = (date: Date) => {
+		setDateValue(date);
+		if (onChange) {
+			onChange(date);
+		}
+	}
+
 	const validateInputDate = () => {
 		var result = chrono.en.GB.parseDate(inputValue);
 		if (result == null) {
 			setInputValue(getFormattedDate(undefined, true));
 		} else {
 			setInputValue(getFormattedDate(result, false));
-			setDateValue(result);
+			updateDate(result);
 		}
 	}
 
@@ -122,7 +129,7 @@ export const DateInput: React.FC<Props> = ({
 
 	const onDateSelected = (date: Date) => {
 		setInputValue(getFormattedDate(date, false));
-		setDateValue(date);
+		updateDate(date);
 		setShowDateSelection(false)
 	}
 
@@ -172,8 +179,8 @@ export const DateInput: React.FC<Props> = ({
 	}, []);
 
 	useEffect(() => {
-		if (selectedDate && dateValue != undefined) {
-			selectedDate(dateValue);
+		if (onChange && dateValue != undefined) {
+			onChange(dateValue);
 		}
 	}, [dateValue]);
 
@@ -182,7 +189,7 @@ export const DateInput: React.FC<Props> = ({
 			<Input
 				placeholder={placeholder}
 				value={inputValue}
-				onInputChange={storeInputChange}
+				onChange={storeInputChange}
 				focusIn={focusIn}
 				enterEvent={validateInputDate}></Input>
 			{showDateSelection && <DateContextWindowSingle style={calculateContextWindowPos()} selectedDate={dateValue} onSelection={onDateSelected}></DateContextWindowSingle>}

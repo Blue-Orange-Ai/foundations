@@ -47,7 +47,7 @@ export const EmojiSearchState: React.FC<Props> = ({
 	return (
 		<div className="blue-orange-html-emoji-body-cont">
 			<div className="blue-orange-html-emoji-filter-cont">
-				<Input placeholder={"Filter..."} style={{height: "32px", fontSize: "14px"}} onInputChange={handleFilterChange} focus={true}></Input>
+				<Input placeholder={"Filter..."} style={{height: "32px", fontSize: "14px"}} onChange={handleFilterChange} focus={true}></Input>
 			</div>
 			<EmojiGroupHeaderTxt label={"All Emojis"}></EmojiGroupHeaderTxt>
 			<EmojiSearchStateDisplay

@@ -5,7 +5,7 @@ import {Telephone} from "@Blue-Orange-Ai/foundations-clients/lib/Passport";
 
 interface Props {
 	telephone?: Telephone;
-	onInputChange?: (value: Telephone) => void;
+	onChange?: (value: Telephone) => void;
 }
 
 type PhoneCountry = {
@@ -15,7 +15,7 @@ type PhoneCountry = {
 	code: string;
 }
 
-export const PhoneInput: React.FC<Props> = ({telephone, onInputChange}) => {
+export const PhoneInput: React.FC<Props> = ({telephone, onChange}) => {
 
 	const countries: Array<PhoneCountry> = [
 		{
@@ -1508,8 +1508,8 @@ export const PhoneInput: React.FC<Props> = ({telephone, onInputChange}) => {
 		tel.extension = country.dial_code;
 		tel.country = country.name;
 		setTel(tel);
-		if (onInputChange) {
-			onInputChange(tel);
+		if (onChange) {
+			onChange(tel);
 		}
 	}
 
@@ -1517,8 +1517,8 @@ export const PhoneInput: React.FC<Props> = ({telephone, onInputChange}) => {
 		const newValue = event.target.value;
 		tel.number = newValue;
 		setTel(tel);
-		if (onInputChange) {
-			onInputChange(tel);
+		if (onChange) {
+			onChange(tel);
 		}
 	};
 

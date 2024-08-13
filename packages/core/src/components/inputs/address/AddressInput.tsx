@@ -1563,12 +1563,12 @@ export const AddressInput: React.FC<Props> = ({address, onInputChange}) => {
 	return (
 		<div className="address-input-group">
 			<div className="address-main-input">
-				<Input placeholder="Address" value={addr.address} onInputChange={handleMainAddress}></Input>
+				<Input placeholder="Address" value={addr.address} onChange={handleMainAddress}></Input>
 			</div>
 			<div className="address-sub-input">
-				<Input placeholder="City" value={addr.city} style={{width: "calc(40% - 10px)"}} onInputChange={handleCity}></Input>
-				<Input placeholder="State" value={addr.state} style={{width: "calc(15% - 10px)"}} onInputChange={handleState}></Input>
-				<Input placeholder="Postcode" value={addr.postcode} style={{width: "calc(15% - 10px)"}} onInputChange={handlePostcode}></Input>
+				<Input placeholder="City" value={addr.city} style={{width: "calc(40% - 10px)"}} onChange={handleCity}></Input>
+				<Input placeholder="State" value={addr.state} style={{width: "calc(15% - 10px)"}} onChange={handleState}></Input>
+				<Input placeholder="Postcode" value={addr.postcode} style={{width: "calc(15% - 10px)"}} onChange={handlePostcode}></Input>
 				<div className="address-input-country-group">
 					<select value={getCountryByName(inputAddress.country).code} className="address-input-country-select" onChange={handleSelection}>
 						{countries.map(country => (
