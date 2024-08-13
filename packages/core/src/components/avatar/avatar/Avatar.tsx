@@ -1,15 +1,20 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Media, Passport} from "@blue-orange-ai/foundations-clients";
 
 import './Avatar.css';
 import {AvatarEmpty} from "../avatarempty/AvatarEmpty";
 import {AvatarImage} from "../avatarimage/AvatarImage";
-import {Avatar as AvatarObj, GroupPermission, User} from "@blue-orange-ai/foundations-clients/lib/Passport";
+import {Avatar as AvatarObj, GroupPermission, User} from "@Blue-Orange-Ai/foundations-clients/lib/Passport";
 import {Button, ButtonType} from "../../buttons/button/Button";
 import {FileUploadBtn} from "../../buttons/file-upload-btn/FileUploadBtn";
 import {TippyHTMLElement} from "../../../interfaces/AppInterfaces";
 import tippy from "tippy.js";
-import blueOrangeMediaInstance from "../../config/BlueOrangeConfig";
+import blueOrangeMediaInstance from "../../config/BlueOrangeMediaConfig";
+import {Modal} from "../../layouts/modal/modal/Modal";
+import {ModalHeader} from "../../layouts/modal/modal-header/ModalHeader";
+import {ModalDescription} from "../../layouts/modal/modal-description/ModalDescription";
+import {ModalBody} from "../../layouts/modal/modal-body/ModalBody";
+import {Media, Passport} from "@Blue-Orange-Ai/foundations-clients";
+import passport from "../../config/BlueOrangePassportConfig";
 
 
 interface Props {
@@ -35,7 +40,7 @@ export const Avatar: React.FC<Props> = ({
 
 	const [avatarModalState, setAvatarModalState] = useState(false);
 
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(false);
 
 	const [initialised, setInitialised] = useState(false);
 
@@ -79,8 +84,7 @@ export const Avatar: React.FC<Props> = ({
 		}
 	};
 
-	const forceCloseAvatarModal = (e:React.MouseEvent<HTMLDivElement>) => {
-		e.preventDefault();
+	const forceCloseAvatarModal = () => {
 		setAvatarModalState(false);
 	};
 
@@ -139,7 +143,6 @@ export const Avatar: React.FC<Props> = ({
 		}
 		setWorkingUser(workingUser);
 		setUri(media.url)
-		var passport = new Passport("http://localhost:8080");
 		passport.save(workingUser)
 			.then(savedUser => {
 				setWorkingUser(savedUser);
@@ -248,37 +251,44 @@ export const Avatar: React.FC<Props> = ({
 			</div>
 
 			{ avatarModalState &&
-				<div className="default-modal-backdrop" onClick={closeAvatarModal}>
-					<div ref={avatarModalElem} className="default-avatar-edit-card shadow">
-						<div className="default-modal-close-btn" onClick={forceCloseAvatarModal}>
-							<i className="ri-close-line"></i>
-						</div>
-						<h1>Profile Picture</h1>
-						<p className="default-avatar-modal-description">A picture helps people recognize you and lets you know when you’re signed in to your account</p>
-						<div className="default-avatar-modal-display">
-							<div className="default-avatar-cont" style={defaultScaleStyle}>
-								{(workingUser === undefined || workingUser.avatar === undefined || !workingUser.avatar.enabled) && !loading && <AvatarEmpty height={defaultScaleSize}></AvatarEmpty>}
-								{(workingUser !== undefined && workingUser.avatar !== undefined && workingUser.avatar.enabled) && !loading &&
-									<AvatarImage url={workingUser.avatar?.uri} height={defaultScaleSize} width={defaultScaleSize}></AvatarImage>}
-								{loadingImageUrl === undefined && loading && <AvatarEmpty height={defaultScaleSize}></AvatarEmpty>}
-								{loadingImageUrl === undefined && loading && <AvatarImage url={loadingImageUrl} height={defaultScaleSize} width={defaultScaleSize}></AvatarImage>}
-								{loading &&
-									<div className="default-avatar-overlay">
-										<span>{percentageComplete}%</span>
-									</div>
-								}
+				<Modal>
+					<div ref={avatarModalElem} className="default-avatar-edit-card">
+						<ModalHeader label={"Profile Picture"} onClose={forceCloseAvatarModal}></ModalHeader>
+						<ModalDescription description={"A picture helps people recognize you and lets you know when you’re signed in to your account"}></ModalDescription>
+						<ModalBody>
+							<div className="default-avatar-modal-display">
+								<div className="default-avatar-cont" style={defaultScaleStyle}>
+									{(workingUser === undefined || workingUser.avatar === undefined || !workingUser.avatar.enabled) && !loading &&
+										<AvatarEmpty height={defaultScaleSize}></AvatarEmpty>}
+									{(workingUser !== undefined && workingUser.avatar !== undefined && workingUser.avatar.enabled) && !loading &&
+										<AvatarImage url={workingUser.avatar?.uri} height={defaultScaleSize}
+													 width={defaultScaleSize}></AvatarImage>}
+									{loadingImageUrl === undefined && loading &&
+										<AvatarEmpty height={defaultScaleSize}></AvatarEmpty>}
+									{loadingImageUrl === undefined && loading &&
+										<AvatarImage url={loadingImageUrl} height={defaultScaleSize}
+													 width={defaultScaleSize}></AvatarImage>}
+									{loading &&
+										<div className="default-avatar-overlay">
+											<span>{percentageComplete}%</span>
+										</div>
+									}
+								</div>
 							</div>
-						</div>
+						</ModalBody>
 						<div className="default-avatar-modify-btns">
-							<FileUploadBtn label={"Upload Picture"} style={{width: "150px"}} accept={"image"} onFileSelect={fileUploadRequestReceived} isLoading={loading}></FileUploadBtn>
+							<FileUploadBtn label={"Upload Picture"} style={{width: "150px"}} accept={"image"}
+										   onFileSelect={fileUploadRequestReceived} isLoading={loading}></FileUploadBtn>
 							{workingUser !== undefined && workingUser.avatar && workingUser.avatar.enabled &&
 								<div className="default-avatar-remove-btn">
-									<Button text={"Remove Avatar"} style={{width: "150px"}} onClick={removeAvatarRequest} isLoading={loadingRemove} buttonType={ButtonType.PRIMARY}></Button>
+									<Button text={"Remove Avatar"} style={{width: "150px"}}
+											onClick={removeAvatarRequest} isLoading={loadingRemove}
+											buttonType={ButtonType.PRIMARY}></Button>
 								</div>
 							}
 						</div>
 					</div>
-				</div>
+				</Modal>
 			}
 		</div>
 	);

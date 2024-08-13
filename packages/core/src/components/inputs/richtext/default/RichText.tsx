@@ -1,12 +1,12 @@
 import React, {useEffect, useRef, useState} from "react";
 
 import {StarterKit} from "@tiptap/starter-kit";
-import {EditorContent, useEditor} from "@tiptap/react";
+import {AnyExtension, EditorContent, Extensions, useEditor} from "@tiptap/react";
 import {ButtonIcon} from "../../../buttons/button-icon/ButtonIcon";
+import { v4 as uuidv4 } from 'uuid';
 
 import './RichText.css';
 import {Placeholder} from "@tiptap/extension-placeholder";
-import Mention from '@tiptap/extension-mention';
 import {Link} from "@tiptap/extension-link";
 import {fetchMentionItems, renderSuggestions} from "../suggestion/Suggestion";
 import {fetchEmojiItems, renderEmojiSuggestions} from "../suggestion/EmojiSuggestions";
@@ -15,28 +15,76 @@ import {EmojiObj} from "../../emoji/data/UnicodeEmoji";
 import Cookies from "js-cookie";
 import {EmojiWrapper} from "../../emoji/emoji-wrapper/EmojiWrapper";
 import {FileInputWrapper} from "../../file-input-wrapper/FileInputWrapper";
+import {RichTextEditorUploadedFile, UploadedFile} from "../uploaded-file/UploadedFile";
+import {Media} from "@Blue-Orange-Ai/foundations-clients";
+import {MediaPermission} from "@Blue-Orange-Ai/foundations-clients/lib/BlueOrangeMedia";
+import {GroupPermission} from "@Blue-Orange-Ai/foundations-clients/lib/Passport";
+import CustomMention from "../mention-extension/MentionExtension";
 
 export interface MentionItem {
 	label: string,
 	icon: boolean,
 	image: boolean,
-	src: string
+	src: string,
+	userId: string
 }
 
 interface Props {
 	content?: string,
+	files?: Array<Media>
 	placeholder?: string,
 	displayFormatting?: boolean,
 	editorHeight?: number,
-	minEditorHeight?: number
+	minEditorHeight?: number,
+	allowMentions?: boolean,
+	allowEmojis?: boolean,
+	uploadPermissions?: Array<MediaPermission>,
+	onChange?: (content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean) => void
 }
+
+const defaultUploadPermission: MediaPermission[] = [{
+	groupName: "everyone",
+	permission: GroupPermission.READ
+}]
 
 export const RichText: React.FC<Props> = ({
 											  content,
+											  files=[],
 											  placeholder,
 											  displayFormatting= true,
-											  minEditorHeight = 10}) => {
+											  minEditorHeight = 10,
+											  allowMentions=true,
+											  allowEmojis=true,
+											  uploadPermissions=defaultUploadPermission,
+											  onChange
+										  }) => {
 
+
+	const initialiseFiles = (): RichTextEditorUploadedFile[] => {
+		var formattedFiles: RichTextEditorUploadedFile[] = []
+		for (var i=0; i < files.length; i++) {
+			formattedFiles.push({
+				uuid: uuidv4(),
+				uploaded: true,
+				media: files[i]
+			})
+		}
+		return formattedFiles
+	}
+
+	const generateMentions = (html: string | undefined) => {
+		if (html == undefined) {
+			return [];
+		}
+		const tempMentionsEl = document.createElement("div");
+		tempMentionsEl.innerHTML = html;
+		const mentionElements = tempMentionsEl.querySelectorAll('[data-type="mention"]');
+		var mentions: string[] = []
+		mentionElements.forEach((element) => {
+			mentions.push(element.getAttribute("data-user-id") as string)
+		});
+		return mentions;
+	}
 
 	const [displayHeading, setDisplayHeading] = useState(displayFormatting);
 
@@ -46,7 +94,15 @@ export const RichText: React.FC<Props> = ({
 
 	const [emojiItems, setEmojiItems] = useState<Array<EmojiObj>>([]);
 
+	const [storedFiles, setStoredFiles] = useState<Array<RichTextEditorUploadedFile>>(initialiseFiles());
+
+	const storedFilesRef = useRef<Array<RichTextEditorUploadedFile>>(initialiseFiles());
+
+	const [mentions, setMentions] = useState<Array<string>>(generateMentions(content));
+
 	const editorContainerRef = useRef<HTMLDivElement>(null);
+
+	const editorRef = useRef<any>(null);
 
 	const initRef = useRef(false);
 
@@ -64,7 +120,61 @@ export const RichText: React.FC<Props> = ({
 		return emojisSplit.join(";")
 	}
 
-	const extensions = [
+
+	const mentionExtension = CustomMention.configure({
+		HTMLAttributes: {
+			class: 'mention',
+		},
+		suggestion: {
+			char: '@',
+			startOfLine: false,
+			command: ({ editor, range, props }) => {
+				editor
+					.chain()
+					.focus()
+					.insertContentAt(range, [
+						{
+							type: 'mention',
+							attrs: props
+						},
+						{ type: 'text', text: ' ' },
+					])
+					.run();
+				editorChanged();
+			},
+			items: ({ query }) => {
+				setQuery(query);
+				return mentionItems;
+			},
+			render: () => renderSuggestions({ query }, fetchMentionItems),
+		},
+	});
+
+	const emojiExtension = EmojiMention.configure({
+		HTMLAttributes: {
+			class: 'emojis',
+		},
+		suggestion: {
+			char: ':',
+			startOfLine: false,
+			command: ({ editor, range, props }) => {
+				const textEmoji = new DOMParser().parseFromString(getEmojiHtml(props), 'text/html').body.textContent;
+				editor
+					.chain()
+					.focus()
+					.insertContentAt(range, textEmoji)
+					.run();
+				editorChanged();
+			},
+			items: ({ query }) => {
+				setQuery(query);
+				return emojiItems;
+			},
+			render: () => renderEmojiSuggestions({ query }, fetchEmojiItems),
+		},
+	})
+
+	var extensions = [
 		StarterKit,
 		Placeholder.configure({
 			placeholder: placeholder ?? "",
@@ -73,61 +183,64 @@ export const RichText: React.FC<Props> = ({
 			protocols: ['ftp', 'mailto'],
 			openOnClick: true,
 		}),
-		Mention.configure({
-			HTMLAttributes: {
-				class: 'mention',
-			},
-			suggestion: {
-				char: '@',
-				startOfLine: false,
-				command: ({ editor, range, props }) => {
-					editor
-						.chain()
-						.focus()
-						.insertContentAt(range, [
-							{
-								type: 'mention',
-								attrs: props,
-							},
-							{ type: 'text', text: ' ' },
-						])
-						.run();
-				},
-				items: ({ query }) => {
-					setQuery(query);
-					return mentionItems;
-				},
-				render: () => renderSuggestions({ query }, fetchMentionItems),
-			},
+		mentionExtension,
+		emojiExtension
+	]
+
+	const extensionsNoMentions = [
+		StarterKit,
+		Placeholder.configure({
+			placeholder: placeholder ?? "",
 		}),
-		EmojiMention.configure({
-			HTMLAttributes: {
-				class: 'emojis',
-			},
-			suggestion: {
-				char: ':',
-				startOfLine: false,
-				command: ({ editor, range, props }) => {
-					const textEmoji = new DOMParser().parseFromString(getEmojiHtml(props), 'text/html').body.textContent;
-					editor
-						.chain()
-						.focus()
-						.insertContentAt(range, textEmoji)
-						.run();
-				},
-				items: ({ query }) => {
-					setQuery(query);
-					return emojiItems;
-				},
-				render: () => renderEmojiSuggestions({ query }, fetchEmojiItems),
-			},
+		Link.configure({
+			protocols: ['ftp', 'mailto'],
+			openOnClick: true,
+		}),
+		emojiExtension
+	]
+
+	const extensionsNoEmojis = [
+		StarterKit,
+		Placeholder.configure({
+			placeholder: placeholder ?? "",
+		}),
+		Link.configure({
+			protocols: ['ftp', 'mailto'],
+			openOnClick: true,
+		}),
+		mentionExtension
+	]
+
+	const extensionsNoMentionsNoEmojis: AnyExtension[] = [
+		StarterKit,
+		Placeholder.configure({
+			placeholder: placeholder ?? "",
+		}),
+		Link.configure({
+			protocols: ['ftp', 'mailto'],
+			openOnClick: true,
 		})
 	]
+
+	const initExtensions = () => {
+		if (allowMentions === false && allowEmojis == false) {
+			return extensionsNoMentionsNoEmojis;
+		} else if (allowMentions === false) {
+			return extensionsNoMentions;
+		} else if (allowEmojis == false) {
+			return extensionsNoEmojis;
+		}
+		return extensions;
+	}
+
+	extensions = initExtensions();
 
 	const editor = useEditor({
 		extensions,
 		content,
 	})
+
+	editorRef.current = editor;
 
 	const defaultIconStyle: React.CSSProperties = {
 		height: "30px",
@@ -148,6 +261,39 @@ export const RichText: React.FC<Props> = ({
 		setDisplayHeading(!displayHeading);
 	}
 
+	const generateStoredFileAttachments = () => {
+		var savedMedia: Array<Media> = []
+		storedFilesRef.current.forEach(item => {
+			if (item.media) {
+				savedMedia.push(item.media);
+			}
+		})
+		return savedMedia;
+	}
+
+	const areFilesUploading = () => {
+		var savedMedia: Array<Media> = []
+		storedFiles.forEach(item => {
+			if (item.uploaded == false) {
+				return true;
+			}
+		})
+		return false;
+	}
+
+	const editorChanged = () => {
+		if (editorRef.current && onChange) {
+			var content = editorRef.current.getHTML();
+			var mentions = generateMentions(content);
+			onChange(
+				content,
+				mentions,
+				generateStoredFileAttachments(),
+				areFilesUploading())
+		}
+
+	}
+
 	const initialise = () => {
 		const intervalId = setInterval(() => {
 			if (editorContainerRef.current) {
@@ -159,6 +305,11 @@ export const RichText: React.FC<Props> = ({
 				}
 			}
 		}, 10);
+		if (editorContainerRef.current) {
+			editorContainerRef.current.addEventListener("keyup", () => {
+				editorChanged();
+			})
+		}
 	}
 
 	useEffect(() => {
@@ -189,8 +340,25 @@ export const RichText: React.FC<Props> = ({
 		}
 	}
 
+	const fileSelected = (file: File) => {
+		var newFile = {
+			uuid: uuidv4(),
+			uploaded: false,
+			media: undefined,
+			file: file
+		}
+		storedFilesRef.current = [...storedFiles, newFile];
+		setStoredFiles([...storedFiles, newFile]);
+	}
+
+	const removeStoredFile =(upload: RichTextEditorUploadedFile) => {
+		storedFilesRef.current = storedFiles.filter(obj => obj.uuid !== upload.uuid);
+		setStoredFiles(storedFiles.filter(obj => obj.uuid !== upload.uuid));
+		editorChanged();
+	}
+
 	return (
-		<div ref={editorContainerRef} className='blue-orange-rich-text-editor'>
+		<div className='blue-orange-rich-text-editor'>
 			{displayHeading &&
 				<div className="blue-orange-rich-text-editor-heading">
 					<ButtonIcon
@@ -252,9 +420,23 @@ export const RichText: React.FC<Props> = ({
 			<div ref={editorContainerRef}>
 				<EditorContent editor={editor}></EditorContent>
 			</div>
+			<div className="blue-orange-rich-text-editor-uploaded-files">
+				{storedFiles.map((item, index) => (
+					<UploadedFile
+						key={item.uuid}
+						upload={item}
+						uploadPermissions={uploadPermissions}
+						onRemove={removeStoredFile}
+						onMediaUploaded={(media: Media) => {
+							item.media = media;
+							editorChanged();
+						}}
+					></UploadedFile>
+				))}
+			</div>
 			<div className="blue-orange-rich-text-editor-heading-footer">
 				<div className="blue-orange-rich-text-editor-heading-footer-left-cont">
-					<FileInputWrapper accept={"*/*"}>
+					<FileInputWrapper accept={"*/*"} onFileSelect={fileSelected}>
 						<ButtonIcon
 							icon={"ri-add-line"}
 							style={defaultIconStyle}
@@ -284,7 +466,6 @@ export const RichText: React.FC<Props> = ({
 						label={"Mention someone"}
 					></ButtonIcon>
 				</div>
-
 			</div>
 		</div>
 	);

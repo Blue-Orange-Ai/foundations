@@ -5,7 +5,7 @@ import {ButtonIcon} from "../../../buttons/button-icon/ButtonIcon";
 
 interface Props {
 	label: string,
-	onClose?: () => {};
+	onClose?: () => void;
 }
 
 export const ModalHeader: React.FC<Props> = ({label, onClose}) => {

@@ -2,7 +2,7 @@ import React, {ChangeEvent, useRef, useState} from "react";
 
 import './AddressInput.css';
 import {Input} from "../input/Input";
-import {Address} from "@blue-orange-ai/foundations-clients/lib/Passport";
+import {Address} from "@Blue-Orange-Ai/foundations-clients/lib/Passport";
 
 interface Props {
 	address?: Address | undefined;

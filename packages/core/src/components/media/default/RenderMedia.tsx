@@ -1,10 +1,10 @@
 import React, {ReactNode, useEffect, useRef, useState} from "react";
 
 import './RenderMedia.css'
-import {Media} from "@blue-orange-ai/foundations-clients";
 import {Image} from "../image/Image";
 import {Pdf} from "../pdf/Pdf";
-import blueOrangeMediaInstance from "../../config/BlueOrangeConfig";
+import blueOrangeMediaInstance from "../../config/BlueOrangeMediaConfig";
+import {Media} from "@Blue-Orange-Ai/foundations-clients";
 
 interface Props {
 	media: Media,

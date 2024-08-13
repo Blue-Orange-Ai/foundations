@@ -1,10 +1,10 @@
 import React, {useContext, useState} from "react";
 
 import './Workspace.css'
-import {Avatar as AvatarObj, User, UserState} from "@blue-orange-ai/foundations-clients/lib/Passport";
+import {Avatar as AvatarObj, User, UserState} from "@Blue-Orange-Ai/foundations-clients/lib/Passport";
 import {ToastContext} from "../../components/alerts/toast/toastcontext/ToastContext";
 import {SideBarState} from "../../components/layouts/sidebar/default/SideBar";
-import {Media} from "@blue-orange-ai/foundations-clients";
+import {Media} from "@Blue-Orange-Ai/foundations-clients";
 import {ScatterChart} from "../../components/charts/scatter/ScatterChart";
 import {Modal} from "../../components/layouts/modal/modal/Modal";
 import {ModalHeader} from "../../components/layouts/modal/modal-header/ModalHeader";
@@ -20,9 +20,14 @@ import { Edge, Node as GraphNode } from "@Blue-Orange-Ai/primitives-graph";
 import {BlueOrangeGraphWrapper} from "../../components/graph/BlueOrangeGraphWrapper";
 import {BlueOrangeBlockEditorWrapper} from "../../components/block-editor/BlueOrangeBlockEditorWrapper";
 import {RichText} from "../../components/inputs/richtext/default/RichText";
+import {Avatar} from "../../vite-entry";
+import Cookies from "js-cookie";
 
 interface Props {
 }
+
+
+Cookies.set("authorization","eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMmQ2NTRmNi05NWI3LTQzZTUtOWZjMi0xZThmZWEwZGE2NjEiLCJleHAiOjE3MjYwMTYxMjV9.UQ3pYjrSYKdiZQmSlxqi8HTO5T1gcoQd2QVec4yPIyhW9C8vAiKSheJ6Y4XDoeqMijBi6_Yhsj2phtnJ8-6NfA")
 
 export const Workspace: React.FC<Props> = ({}) => {
 
@@ -476,7 +481,7 @@ export const Workspace: React.FC<Props> = ({}) => {
 		// </SideBar>
 		<div className="workspace-main-window">
 			<div className="workspace-display-window">
-				{/*<Avatar user={user} height={350} width={350} tooltip={true}></Avatar>*/}
+				{/*<Avatar edit={true} user={user} height={50} width={50} tooltip={true}></Avatar>*/}
 				{/*<AvatarList users={[user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user]} overlap={30}></AvatarList>*/}
 				{/*<Table>*/}
 				{/*	<THead>*/}
@@ -510,7 +515,14 @@ export const Workspace: React.FC<Props> = ({}) => {
 				{/*<BlueOrangeGraphWrapper nodes={nodes} edges={edges}></BlueOrangeGraphWrapper>*/}
 				{/*<BlueOrangeBlockEditorWrapper></BlueOrangeBlockEditorWrapper>*/}
 				{/*<EmojiContainer></EmojiContainer>*/}
-				<RichText minEditorHeight={10}></RichText>
+				<RichText minEditorHeight={10} onChange={(content: string, mentions: string[], attachments: Media[], filesUploading: boolean) => {
+					console.log({
+						content: content,
+						mentions: mentions,
+						attachments: attachments,
+						filesUploading: filesUploading
+					})
+				}}></RichText>
 				{/*<Pdf src={"https://d8d6949rstsxl.cloudfront.net/public/BO-PDF-499ffd3b-f619-4522-9c4e-bdae1bee9f4c-Academic%20Test%201%20-%20Prompt%203%20-%20Measures%20of%20Poverty.pdf"}></Pdf>*/}
 				{/*<Toaster heading={"Hello world this is a toaster"}></Toaster>*/}
 				{/*<Button text={"Test Toaster"} buttonType={ButtonType.PRIMARY} onClick={() => addToast({*/}

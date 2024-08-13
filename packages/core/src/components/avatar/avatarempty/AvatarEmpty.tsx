@@ -1,5 +1,4 @@
 import React, {useRef, useState} from "react";
-import {BlueOrangeMedia} from "@blue-orange-ai/foundations-clients/lib/BlueOrangeMedia";
 
 import './AvatarEmpty.css';
 

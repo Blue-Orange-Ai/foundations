@@ -4,7 +4,7 @@ import './SocketWorkspace.css'
 import {Button, ButtonType} from "../../components/buttons/button/Button";
 import {ToastContext, ToastLocation} from "../../components/alerts/toast/toastcontext/ToastContext";
 import {ToasterType} from "../../components/alerts/toast/toaster/Toaster";
-import Sockets from "@blue-orange-ai/foundations-clients/lib/Sockets";
+import Sockets from "@Blue-Orange-Ai/foundations-clients/lib/Sockets";
 import {TippyHTMLElement} from "../../interfaces/AppInterfaces";
 import tippy from "tippy.js";
 import Cookies from "js-cookie";

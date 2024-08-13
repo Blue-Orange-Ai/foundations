@@ -2,47 +2,34 @@ import {ReactRenderer} from "@tiptap/react";
 import {MentionList} from "../mentionlist/MentionList";
 import tippy from 'tippy.js'
 import {MentionItem} from "../default/RichText";
+import passport from "../../../config/BlueOrangePassportConfig";
+import {User, UserSearchFilter, UserSearchResult} from "@Blue-Orange-Ai/foundations-clients/lib/Passport";
+
+const getDisplayName = (user: User) => {
+    if (user.name == undefined || user.name == "") {
+        return user.username;
+    } else {
+        return user.name;
+    }
+}
 
 export const fetchMentionItems = async (query: string): Promise<MentionItem[]> => {
     try {
-        // const response = await axios.get('/api/users', {
-        //     params: { search: query },
-        // });
-        // return response.data;
-        const testUsers = [
-            'Lea Thompson',
-            'Cyndi Lauper',
-            'Tom Cruise',
-            'Madonna',
-            'Jerry Hall',
-            'Joan Collins',
-            'Winona Ryder',
-            'Christina Applegate',
-            'Alyssa Milano',
-            'Molly Ringwald',
-            'Ally Sheedy',
-            'Debbie Harry',
-            'Olivia Newton-John',
-            'Elton John',
-            'Michael J. Fox',
-            'Axl Rose',
-            'Emilio Estevez',
-            'Ralph Macchio',
-            'Rob Lowe',
-            'Jennifer Grey',
-            'Mickey Rourke',
-            'John Cusack',
-            'Matthew Broderick',
-            'Justine Bateman',
-            'Lisa Bonet',
-        ].filter(item => item.toLowerCase().startsWith(query.toLowerCase()))
-            .slice(0, 5);
-        return testUsers.map(item => {
+        var searchResult: UserSearchResult = await passport.searchUsers(
+            {
+                query: query,
+                page: 0,
+                size: 10
+            });
+        var users = searchResult.result;
+
+        return users.map(user => {
             return {
-                label: item,
+                label: getDisplayName(user),
                 icon: false,
                 image: false,
-                src: ""
+                src: "",
+                userId: user.id as string
             }
         })
 

@@ -1,7 +1,6 @@
 import React, {ReactNode} from "react";
 
 import './Image.css'
-import {Media} from "@blue-orange-ai/foundations-clients";
 
 interface Props {
 	src: string,
