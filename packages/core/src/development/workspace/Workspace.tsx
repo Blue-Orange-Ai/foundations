@@ -35,6 +35,7 @@ import {TBody} from "../../components/table/tbody/TBody";
 import {Currency} from "../../components/text-decorations/currency/Currency";
 import {Percentage} from "../../components/text-decorations/percentage/Percentage";
 import {TelephoneText} from "../../components/text-decorations/telephone/TelephoneText";
+import {EmailLink} from "../../components/text-decorations/email/EmailLink";
 
 interface Props {
 }
@@ -511,7 +512,9 @@ export const Workspace: React.FC<Props> = ({}) => {
 						<Row>
 							<CheckboxCell state={true}></CheckboxCell>
 							<PrimaryCell src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} text={"Demonstration Primary Cell"} secondaryText={"This is where the secondary text goes"} style={{paddingLeft: "15px", paddingRight: "15px"}}></PrimaryCell>
-							<Cell>Hello 3</Cell>
+							<Cell>
+								<EmailLink email={"toms126@gmail.com"}></EmailLink>
+							</Cell>
 							<Cell alignment={CellAlignment.LEFT}>
 								<TelephoneText phone={"0402747928"} country={"AU"}></TelephoneText>
 							</Cell>
