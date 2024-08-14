@@ -23,6 +23,16 @@ import {RichText} from "../../components/inputs/richtext/default/RichText";
 import {Avatar, Checkbox} from "../../vite-entry";
 import Cookies from "js-cookie";
 import {Toggle} from "../../components/inputs/toggle/Toggle";
+import {Table} from "../../components/table/table/Table";
+import {THead} from "../../components/table/thead/THead";
+import {Row} from "../../components/table/row/Row";
+import {CheckboxCell} from "../../components/table/cells/checkboxcell/CheckboxCell";
+import {HeaderCell} from "../../components/table/cells/headercell/HeaderCell";
+import {PrimaryCell} from "../../components/table/cells/primarycell/PrimaryCell";
+import {Cell} from "../../components/table/cells/cell/Cell";
+import {CellAlignment} from "../../interfaces/AppInterfaces";
+import {TBody} from "../../components/table/tbody/TBody";
+import {Currency} from "../../components/text-decorations/currency/Currency";
 
 interface Props {
 }
@@ -484,28 +494,30 @@ export const Workspace: React.FC<Props> = ({}) => {
 			<div className="workspace-display-window">
 				{/*<Avatar edit={true} user={user} height={50} width={50} tooltip={true}></Avatar>*/}
 				{/*<AvatarList users={[user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user]} overlap={30}></AvatarList>*/}
-				{/*<Table>*/}
-				{/*	<THead>*/}
-				{/*		<Row>*/}
-				{/*			<CheckboxCell state={true}></CheckboxCell>*/}
-				{/*			<HeaderCell dropdownItems={[{label: "Sort ASC", icon: "ri-sort-asc", value: "SORT_ASC"}]}>Header 2</HeaderCell>*/}
-				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 3</HeaderCell>*/}
-				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 4</HeaderCell>*/}
-				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 5</HeaderCell>*/}
-				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 6</HeaderCell>*/}
-				{/*		</Row>*/}
-				{/*	</THead>*/}
-				{/*	<TBody>*/}
-				{/*		<Row hoverBackgroundColor={"red"}>*/}
-				{/*			<CheckboxCell state={true}></CheckboxCell>*/}
-				{/*			<PrimaryCell src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} text={"Demonstration Primary Cell"} secondaryText={"This is where the secondary text goes"} style={{paddingLeft: "15px", paddingRight: "15px"}}></PrimaryCell>*/}
-				{/*			<Cell>Hello 3</Cell>*/}
-				{/*			<Cell alignment={CellAlignment.LEFT}>Hello 4</Cell>*/}
-				{/*			<Cell>Hello 5</Cell>*/}
-				{/*			<Cell>Hello 6</Cell>*/}
-				{/*		</Row>*/}
-				{/*	</TBody>*/}
-				{/*</Table>*/}
+				<Table>
+					<THead>
+						<Row>
+							<CheckboxCell state={true}></CheckboxCell>
+							<HeaderCell dropdownItems={[{label: "Sort ASC", icon: "ri-sort-asc", value: "SORT_ASC"}]}>Header 2</HeaderCell>
+							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 3</HeaderCell>
+							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 4</HeaderCell>
+							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 5</HeaderCell>
+							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 6</HeaderCell>
+						</Row>
+					</THead>
+					<TBody>
+						<Row>
+							<CheckboxCell state={true}></CheckboxCell>
+							<PrimaryCell src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} text={"Demonstration Primary Cell"} secondaryText={"This is where the secondary text goes"} style={{paddingLeft: "15px", paddingRight: "15px"}}></PrimaryCell>
+							<Cell>Hello 3</Cell>
+							<Cell alignment={CellAlignment.LEFT}>Hello 4</Cell>
+							<Cell>Hello 5</Cell>
+							<Cell>
+								<Currency amount={123456.55} currency={"aud"}></Currency>
+							</Cell>
+						</Row>
+					</TBody>
+				</Table>
 				{/*<div style={{width: "200px"}}>*/}
 				{/*	<DropdownBasic items={dropdownItems} filter={true} allowMultipleSelection={true}></DropdownBasic>*/}
 				{/*</div>*/}
@@ -516,8 +528,8 @@ export const Workspace: React.FC<Props> = ({}) => {
 				{/*<BlueOrangeGraphWrapper nodes={nodes} edges={edges}></BlueOrangeGraphWrapper>*/}
 				{/*<BlueOrangeBlockEditorWrapper></BlueOrangeBlockEditorWrapper>*/}
 				{/*<EmojiContainer></EmojiContainer>*/}
-				<Checkbox></Checkbox>
-				<Toggle></Toggle>
+				{/*<Checkbox></Checkbox>*/}
+				{/*<Toggle></Toggle>*/}
 				{/*<RichText minEditorHeight={10} onChange={(content: string, mentions: string[], attachments: Media[], filesUploading: boolean) => {*/}
 				{/*	console.log({*/}
 				{/*		content: content,*/}
