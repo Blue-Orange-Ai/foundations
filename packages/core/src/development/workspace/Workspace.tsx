@@ -33,6 +33,7 @@ import {Cell} from "../../components/table/cells/cell/Cell";
 import {CellAlignment} from "../../interfaces/AppInterfaces";
 import {TBody} from "../../components/table/tbody/TBody";
 import {Currency} from "../../components/text-decorations/currency/Currency";
+import {Percentage} from "../../components/text-decorations/percentage/Percentage";
 
 interface Props {
 }
@@ -511,7 +512,9 @@ export const Workspace: React.FC<Props> = ({}) => {
 							<PrimaryCell src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} text={"Demonstration Primary Cell"} secondaryText={"This is where the secondary text goes"} style={{paddingLeft: "15px", paddingRight: "15px"}}></PrimaryCell>
 							<Cell>Hello 3</Cell>
 							<Cell alignment={CellAlignment.LEFT}>Hello 4</Cell>
-							<Cell>Hello 5</Cell>
+							<Cell>
+								<Percentage percent={0.1123456789} decimalPlaces={5}></Percentage>
+							</Cell>
 							<Cell>
 								<Currency amount={123456.55} currency={"aud"}></Currency>
 							</Cell>
