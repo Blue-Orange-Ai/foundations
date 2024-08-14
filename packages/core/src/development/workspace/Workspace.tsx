@@ -34,6 +34,7 @@ import {CellAlignment} from "../../interfaces/AppInterfaces";
 import {TBody} from "../../components/table/tbody/TBody";
 import {Currency} from "../../components/text-decorations/currency/Currency";
 import {Percentage} from "../../components/text-decorations/percentage/Percentage";
+import {TelephoneText} from "../../components/text-decorations/telephone/TelephoneText";
 
 interface Props {
 }
@@ -511,7 +512,9 @@ export const Workspace: React.FC<Props> = ({}) => {
 							<CheckboxCell state={true}></CheckboxCell>
 							<PrimaryCell src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} text={"Demonstration Primary Cell"} secondaryText={"This is where the secondary text goes"} style={{paddingLeft: "15px", paddingRight: "15px"}}></PrimaryCell>
 							<Cell>Hello 3</Cell>
-							<Cell alignment={CellAlignment.LEFT}>Hello 4</Cell>
+							<Cell alignment={CellAlignment.LEFT}>
+								<TelephoneText phone={"0402747928"} country={"AU"}></TelephoneText>
+							</Cell>
 							<Cell>
 								<Percentage percent={0.1123456789} decimalPlaces={5}></Percentage>
 							</Cell>
