@@ -8,9 +8,16 @@ interface Props {
 	background?: string,
 	hoverEffect?: boolean,
 	hoverBackgroundColor?: string,
+	onClick?: (id: string) => void,
 	id?: string
 }
-export const Row: React.FC<Props> = ({children, background = "transparent", hoverEffect = true, hoverBackgroundColor = "#e0e1e2", id}) => {
+export const Row: React.FC<Props> = ({
+										 children,
+										 background = "transparent",
+										 hoverEffect = true,
+										 hoverBackgroundColor = "#e0e1e2",
+										 onClick,
+										 id}) => {
 
 	const [hover, setHover] = useState(false);
 
@@ -21,9 +28,16 @@ export const Row: React.FC<Props> = ({children, background = "transparent", hove
 		transition: 'background-color 0.3s ease'
 	}
 
+	const rowClicked = () => {
+		if (onClick) {
+			onClick(rowId);
+		}
+	}
+
 	return (
 		<tr
 			style={rowStyle}
+			onClick={rowClicked}
 			onMouseEnter={() => setHover(true)}
 			onMouseLeave={() => setHover(false)}>
 			{React.Children.map(children, child => {
