@@ -36,6 +36,7 @@ import {Currency} from "../../components/text-decorations/currency/Currency";
 import {Percentage} from "../../components/text-decorations/percentage/Percentage";
 import {TelephoneText} from "../../components/text-decorations/telephone/TelephoneText";
 import {EmailLink} from "../../components/text-decorations/email/EmailLink";
+import {IContextMenuItem} from "../../components/contextmenu/ContextMenu";
 
 interface Props {
 }
@@ -501,7 +502,10 @@ export const Workspace: React.FC<Props> = ({}) => {
 					<THead>
 						<Row>
 							<CheckboxCell state={true}></CheckboxCell>
-							<HeaderCell dropdownItems={[{label: "Sort ASC", icon: "ri-sort-asc", value: "SORT_ASC"}]}>Header 2</HeaderCell>
+							<HeaderCell dropdownItems={[{label: "Sort ASC", icon: "ri-sort-asc", value: "SORT_ASC"}]} onDropdownSelected={(item: IContextMenuItem) => {
+								console.log("Row Item Clicked")
+								console.log(item)
+							}}>Header 2</HeaderCell>
 							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 3</HeaderCell>
 							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 4</HeaderCell>
 							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 5</HeaderCell>

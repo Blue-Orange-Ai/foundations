@@ -16,14 +16,15 @@ export const HeaderCell: React.FC<Props> = ({children, dropdownItems, onClick, o
 
 	return (
 			<td>
-				<ContextMenu width={120} maxHeight={200} items={dropdownItems} onClick={onDropdownSelected}>
-					<div className="blue-orange-header-data-table-cell">
-						{children}
+				<div className="blue-orange-header-data-table-cell">
+					{children}
+					<ContextMenu width={120} maxHeight={200} items={dropdownItems} onClick={onDropdownSelected}>
 						<div className='blue-orange-header-data-table-cell-control'>
 							<i className="ri-arrow-down-s-line"></i>
 						</div>
-					</div>
-				</ContextMenu>
+					</ContextMenu>
+				</div>
+
 			</td>
 	)
 }

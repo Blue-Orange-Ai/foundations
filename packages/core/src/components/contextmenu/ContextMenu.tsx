@@ -101,7 +101,10 @@ export const ContextMenu: React.FC<Props> = ({children, items, width, maxHeight,
 			setVisible(false);
 		} else if (!visibleRef.current) {
 			e.preventDefault();
-			const button = childRef.current as HTMLElement;
+			var button = childRef.current as HTMLElement;
+			if (button.children.length > 0) {
+				button = button.children[0] as HTMLElement;
+			}
 			setContextMenuStyle(button);
 			setVisible(true);
 		}
