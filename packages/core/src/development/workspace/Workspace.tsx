@@ -68,6 +68,7 @@ import {Badge} from "../../components/text-decorations/badge/Badge";
 import {SideBarBodyItem} from "../../components/layouts/sidebar/items/sidebar-body-item/SideBarBodyItem";
 import {SideBarFooter} from "../../components/layouts/sidebar/sidebar-footer/SideBarFooter";
 import {SideBarBodyItemLink} from "../../components/layouts/sidebar/items/sidebar-body-item-link/SideBarBodyItemLink";
+import {SidebarPage} from "../../components/layouts/pages/sidebar-page/SidebarPage";
 
 interface Props {
 }
@@ -466,19 +467,52 @@ export const Workspace: React.FC<Props> = ({}) => {
 	// 		{/*</Modal>*/}
 	// 	</div>
 
-
-		<SideBar state={sidebarState} changeState={changeSidebarState}>
-			<SideBarHeader>
-				<SideBarHeaderItem label="Blue Orange Ai" state={sidebarState} media={testMedia} changeState={changeSidebarState}></SideBarHeaderItem>
-			</SideBarHeader>
-			<SideBarBody>
-				<SideBarBodyGroup opened={sidebarGroupState}>
+		<SidebarPage>
+			<SideBar state={sidebarState} changeState={changeSidebarState}>
+				<SideBarHeader>
+					<SideBarHeaderItem label="Blue Orange Ai" state={sidebarState} media={testMedia} changeState={changeSidebarState}></SideBarHeaderItem>
+				</SideBarHeader>
+				<SideBarBody>
+					<SideBarBodyGroup opened={sidebarGroupState}>
+						<SideBarBodyLabel
+							icon={sidebarGroupState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
+							label={"Menu"}
+							onClick={() => setSidebarGroupState(!sidebarGroupState)}
+							badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
+						></SideBarBodyLabel>
+						<SideBarBodyItem
+							label={"Search"}
+							active={false}
+							focused={false}
+							defaultStyle={{opacity: "0.6"}}
+							activeStyle={{opacity: "1"}}
+							icon={<i className={"ri-search-line"}></i>}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Search 2"}
+							active={false}
+							focused={true}
+							defaultStyle={{opacity: "0.6"}}
+							focusedStyle={{opacity: "1"}}
+							hoverEffects={true}
+							onClick={() => console.log("Main body item clicked")}
+							hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
+							icon={<i className={"ri-search-line"}></i>}
+						></SideBarBodyItem>
+					</SideBarBodyGroup>
 					<SideBarBodyLabel
-						icon={sidebarGroupState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
 						label={"Menu"}
-						onClick={() => setSidebarGroupState(!sidebarGroupState)}
 						badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
 					></SideBarBodyLabel>
+					<SideBarBodyItemLink
+						label={"Search Google"}
+						href={"https://www.google.com"}
+						active={false}
+						focused={false}
+						defaultStyle={{opacity: "0.6"}}
+						activeStyle={{opacity: "1"}}
+						icon={<i className={"ri-search-line"}></i>}
+					></SideBarBodyItemLink>
 					<SideBarBodyItem
 						label={"Search"}
 						active={false}
@@ -498,44 +532,14 @@ export const Workspace: React.FC<Props> = ({}) => {
 						hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
 						icon={<i className={"ri-search-line"}></i>}
 					></SideBarBodyItem>
-				</SideBarBodyGroup>
-				<SideBarBodyLabel
-					label={"Menu"}
-					badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
-				></SideBarBodyLabel>
-				<SideBarBodyItemLink
-					label={"Search Google"}
-					href={"https://www.google.com"}
-					active={false}
-					focused={false}
-					defaultStyle={{opacity: "0.6"}}
-					activeStyle={{opacity: "1"}}
-					icon={<i className={"ri-search-line"}></i>}
-				></SideBarBodyItemLink>
-				<SideBarBodyItem
-					label={"Search"}
-					active={false}
-					focused={false}
-					defaultStyle={{opacity: "0.6"}}
-					activeStyle={{opacity: "1"}}
-					icon={<i className={"ri-search-line"}></i>}
-				></SideBarBodyItem>
-				<SideBarBodyItem
-					label={"Search 2"}
-					active={false}
-					focused={true}
-					defaultStyle={{opacity: "0.6"}}
-					focusedStyle={{opacity: "1"}}
-					hoverEffects={true}
-					onClick={() => console.log("Main body item clicked")}
-					hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
-					icon={<i className={"ri-search-line"}></i>}
-				></SideBarBodyItem>
-			</SideBarBody>
-			<SideBarFooter>
-				<div style={{color: "white"}}>Hello World</div>
-			</SideBarFooter>
-		</SideBar>
+				</SideBarBody>
+				<SideBarFooter>
+					<div style={{color: "white"}}>Hello World</div>
+				</SideBarFooter>
+			</SideBar>
+			<div>Hello world</div>
+		</SidebarPage>
+
 		// <div className="workspace-main-window">
 		// 	<div className="workspace-display-window">
 		// 		{/*<Input label={"Hello world this is label"} placeholder={"This is where you write your input"} onChange={(value: string) => {*/}
