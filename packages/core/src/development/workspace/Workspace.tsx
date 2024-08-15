@@ -58,6 +58,7 @@ import {DrawerBody} from "../../components/layouts/drawer/drawer-body/DrawerBody
 import {DrawerFooter} from "../../components/layouts/drawer/drawer-footer/DrawerFooter";
 import {DrawerFooterLeft} from "../../components/layouts/drawer/drawer-footer-left/DrawerFooterLeft";
 import {DrawerFooterRight} from "../../components/layouts/drawer/drawer-footer-right/DrawerFooterRight";
+import {InputForm} from "../../components/inputs/form/InputForm";
 
 interface Props {
 }
@@ -635,10 +636,10 @@ export const Workspace: React.FC<Props> = ({}) => {
 					<DrawerHeader label={"Hello drawer"}></DrawerHeader>
 					<DrawerDescription description={"This is where the description will go"}></DrawerDescription>
 					<DrawerBody>
-						<div>
-							<Input placeholder={"This is where you write your input"} style={{marginTop: "10px", marginBottom: "10px", marginLeft: "1px", marginRight: "1px"}}></Input>
-							<Input placeholder={"This is the second place you write your input"}></Input>
-						</div>
+						<InputForm paddingTop={20}>
+							<Input label={"Hello Label 1"} placeholder={"This is where you write your input"}></Input>
+							<Input label={"Hello Label 2"} placeholder={"This is the second place you write your input"}></Input>
+						</InputForm>
 					</DrawerBody>
 					<DrawerFooter>
 						<DrawerFooterRight>
