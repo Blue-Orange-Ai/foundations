@@ -9,7 +9,7 @@ import {
 	UserState
 } from "@Blue-Orange-Ai/foundations-clients/lib/Passport";
 import {ToastContext} from "../../components/alerts/toast/toastcontext/ToastContext";
-import {SideBarState} from "../../components/layouts/sidebar/default/SideBar";
+import {SideBar, SideBarState} from "../../components/layouts/sidebar/default/SideBar";
 import {Media} from "@Blue-Orange-Ai/foundations-clients";
 import {ScatterChart} from "../../components/charts/scatter/ScatterChart";
 import {Modal} from "../../components/layouts/modal/modal/Modal";
@@ -59,6 +59,15 @@ import {DrawerFooter} from "../../components/layouts/drawer/drawer-footer/Drawer
 import {DrawerFooterLeft} from "../../components/layouts/drawer/drawer-footer-left/DrawerFooterLeft";
 import {DrawerFooterRight} from "../../components/layouts/drawer/drawer-footer-right/DrawerFooterRight";
 import {InputForm} from "../../components/inputs/form/InputForm";
+import {SideBarHeader} from "../../components/layouts/sidebar/sidebar-header/SideBarHeader";
+import {SideBarHeaderItem} from "../../components/layouts/sidebar/items/sidebar-header-item/SideBarHeaderItem";
+import {SideBarBody} from "../../components/layouts/sidebar/sidebar-body/SideBarBody";
+import {SideBarBodyGroup} from "../../components/layouts/sidebar/items/sidebar-body-group/SideBarBodyGroup";
+import {SideBarBodyLabel} from "../../components/layouts/sidebar/items/sidebar-body-label/SideBarBodyLabel";
+import {Badge} from "../../components/text-decorations/badge/Badge";
+import {SideBarBodyItem} from "../../components/layouts/sidebar/items/sidebar-body-item/SideBarBodyItem";
+import {SideBarFooter} from "../../components/layouts/sidebar/sidebar-footer/SideBarFooter";
+import {SideBarBodyItemLink} from "../../components/layouts/sidebar/items/sidebar-body-item-link/SideBarBodyItemLink";
 
 interface Props {
 }
@@ -458,197 +467,206 @@ export const Workspace: React.FC<Props> = ({}) => {
 	// 	</div>
 
 
-		// <SideBar state={sidebarState} changeState={changeSidebarState}>
-		// 	<SideBarHeader>
-		// 		<SideBarHeaderItem label="Blue Orange Ai" state={sidebarState} media={testMedia} changeState={changeSidebarState}></SideBarHeaderItem>
-		// 	</SideBarHeader>
-		// 	<SideBarBody>
-		// 		<SideBarBodyGroup opened={sidebarGroupState}>
-		// 			<SideBarBodyLabel
-		// 				icon={sidebarGroupState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
-		// 				label={"Menu"}
-		// 				onClick={() => setSidebarGroupState(!sidebarGroupState)}
-		// 				badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
-		// 			></SideBarBodyLabel>
-		// 			<SideBarBodyItem
-		// 				label={"Search"}
-		// 				active={false}
-		// 				focused={false}
-		// 				defaultStyle={{opacity: "0.6"}}
-		// 				activeStyle={{opacity: "1"}}
-		// 				icon={<i className={"ri-search-line"}></i>}
-		// 			></SideBarBodyItem>
-		// 			<SideBarBodyItem
-		// 				label={"Search 2"}
-		// 				active={false}
-		// 				focused={true}
-		// 				defaultStyle={{opacity: "0.6"}}
-		// 				focusedStyle={{opacity: "1"}}
-		// 				hoverEffects={true}
-		// 				onClick={() => console.log("Main body item clicked")}
-		// 				hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
-		// 				icon={<i className={"ri-search-line"}></i>}
-		// 			></SideBarBodyItem>
-		// 		</SideBarBodyGroup>
-		// 		<SideBarBodyLabel
-		// 			label={"Menu"}
-		// 			badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
-		// 		></SideBarBodyLabel>
-		// 		<SideBarBodyItem
-		// 			label={"Search"}
-		// 			active={false}
-		// 			focused={false}
-		// 			defaultStyle={{opacity: "0.6"}}
-		// 			activeStyle={{opacity: "1"}}
-		// 			icon={<i className={"ri-search-line"}></i>}
-		// 		></SideBarBodyItem>
-		// 		<SideBarBodyItem
-		// 			label={"Search 2"}
-		// 			active={false}
-		// 			focused={true}
-		// 			defaultStyle={{opacity: "0.6"}}
-		// 			focusedStyle={{opacity: "1"}}
-		// 			hoverEffects={true}
-		// 			onClick={() => console.log("Main body item clicked")}
-		// 			hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
-		// 			icon={<i className={"ri-search-line"}></i>}
-		// 		></SideBarBodyItem>
-		// 	</SideBarBody>
-		// 	<SideBarFooter>
-		// 		<div style={{color: "white"}}>Hello World</div>
-		// 	</SideBarFooter>
-		// </SideBar>
-		<div className="workspace-main-window">
-			<div className="workspace-display-window">
-				{/*<Input label={"Hello world this is label"} placeholder={"This is where you write your input"} onChange={(value: string) => {*/}
-				{/*	console.log("Basic Input Change")*/}
-				{/*	console.log(value);*/}
-				{/*}}></Input>*/}
-				{/*<AddressInput label={"Please enter you australian address"} onChange={(address: Address) => {*/}
-				{/*	console.log("Address Input Change")*/}
-				{/*	console.log(address);*/}
-				{/*}}></AddressInput>*/}
-				{/*<DateInput label={"Please enter a valid date"} onChange={(date: Date) => {*/}
-				{/*	console.log("Date input")*/}
-				{/*	console.log(date)*/}
-				{/*}}></DateInput>*/}
-				{/*<PhoneInput label={"This is the default phone input"} onChange={(value: Telephone) => {*/}
-				{/*	console.log("Workspace Telephone input")*/}
-				{/*	console.log(value)*/}
-				{/*}}></PhoneInput>*/}
-				{/*<Avatar edit={true} user={user} height={50} width={50} tooltip={true}></Avatar>*/}
-				{/*<AvatarList users={[user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user]} overlap={30}></AvatarList>*/}
-				{/*<Table>*/}
-				{/*	<THead>*/}
-				{/*		<Row>*/}
-				{/*			<CheckboxCell state={true}></CheckboxCell>*/}
-				{/*			<HeaderCell dropdownItems={[{label: "Sort ASC", icon: "ri-sort-asc", value: "SORT_ASC"}]} onDropdownSelected={(item: IContextMenuItem) => {*/}
-				{/*				console.log("Row Item Clicked")*/}
-				{/*				console.log(item)*/}
-				{/*			}}>Header 2</HeaderCell>*/}
-				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 3</HeaderCell>*/}
-				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 4</HeaderCell>*/}
-				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 5</HeaderCell>*/}
-				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 6</HeaderCell>*/}
-				{/*		</Row>*/}
-				{/*	</THead>*/}
-				{/*	<TBody>*/}
-				{/*		<Row>*/}
-				{/*			<CheckboxCell state={true}></CheckboxCell>*/}
-				{/*			<PrimaryCell src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} text={"Demonstration Primary Cell"} secondaryText={"This is where the secondary text goes"} style={{paddingLeft: "15px", paddingRight: "15px"}}></PrimaryCell>*/}
-				{/*			<Cell>*/}
-				{/*				<EmailLink email={"toms126@gmail.com"}></EmailLink>*/}
-				{/*			</Cell>*/}
-				{/*			<Cell alignment={CellAlignment.LEFT}>*/}
-				{/*				<TelephoneText phone={"0402747928"} country={"AU"}></TelephoneText>*/}
-				{/*			</Cell>*/}
-				{/*			<Cell>*/}
-				{/*				<Percentage percent={0.1123456789} decimalPlaces={5}></Percentage>*/}
-				{/*			</Cell>*/}
-				{/*			<Cell>*/}
-				{/*				<Currency amount={123456.55} currency={"aud"}></Currency>*/}
-				{/*			</Cell>*/}
-				{/*		</Row>*/}
-				{/*	</TBody>*/}
-				{/*</Table>*/}
-				{/*<div style={{width: "200px"}}>*/}
-				{/*<Dropdown label={"Hello dropdown"} items={dropdownItems} filter={true} allowMultipleSelection={true} onItemsSelected={(itemsSelected: Array<DropdownItem>) => {*/}
-				{/*	console.log("Selected items allow multiple")*/}
-				{/*	console.log(itemsSelected)*/}
-				{/*}}></Dropdown>*/}
-				{/*<Dropdown label={"Hello No multiples dropdown"} items={dropdownItems} filter={true} allowMultipleSelection={false} onSelection={(item: DropdownItem) => {*/}
-				{/*	console.log("Selected items single item")*/}
-				{/*	console.log(item)*/}
-				{/*}}></Dropdown>*/}
-				{/*<TagInput label={"Hello world this is a tag input"} initialTags={tags} onChange={(tags) => {*/}
-				{/*	setTags(tags)*/}
-				{/*	console.log("workspace log")*/}
-				{/*	console.log(tags);*/}
-				{/*}}></TagInput>*/}
-				{/*<TextArea label={"Hello text area"} placeholder={"Type anything in the text area"} onChange={(value: string) => {*/}
-				{/*	console.log("Workspace Text Area")*/}
-				{/*	console.log(value);*/}
-				{/*}}></TextArea>*/}
-				{/*</div>*/}
-				{/*<Badge>Hello</Badge>*/}
-				{/*<Tag>Hello</Tag>*/}
-				{/*<DateInput displayFormat={"ddd, MMMM Do YYYY"}></DateInput>*/}
-				{/*<BlueOrangeMapWrapper></BlueOrangeMapWrapper>*/}
-				{/*<BlueOrangeGraphWrapper nodes={nodes} edges={edges}></BlueOrangeGraphWrapper>*/}
-				{/*<BlueOrangeBlockEditorWrapper></BlueOrangeBlockEditorWrapper>*/}
-				{/*<EmojiContainer></EmojiContainer>*/}
-				{/*<Checkbox></Checkbox>*/}
-				{/*<Toggle></Toggle>*/}
-				{/*<RichText minEditorHeight={10} onChange={(content: string, mentions: string[], attachments: Media[], filesUploading: boolean) => {*/}
-				{/*	console.log({*/}
-				{/*		content: content,*/}
-				{/*		mentions: mentions,*/}
-				{/*		attachments: attachments,*/}
-				{/*		filesUploading: filesUploading*/}
-				{/*	})*/}
-				{/*}}></RichText>*/}
-				{/*<Pdf src={"https://d8d6949rstsxl.cloudfront.net/public/BO-PDF-499ffd3b-f619-4522-9c4e-bdae1bee9f4c-Academic%20Test%201%20-%20Prompt%203%20-%20Measures%20of%20Poverty.pdf"}></Pdf>*/}
-				{/*<Toaster heading={"Hello world this is a toaster"}></Toaster>*/}
-				{/*<Button text={"Test Toaster"} buttonType={ButtonType.PRIMARY} onClick={() => addToast({*/}
-				{/*	id: "abcdefghi",*/}
-				{/*	heading: "This is a test toaster",*/}
-				{/*	description: "This is where the description will go",*/}
-				{/*	location: ToastLocation.BOTTOM_RIGHT,*/}
-				{/*	toastType: ToasterType.DEFAULT,*/}
-				{/*	ttl: 5000*/}
-				{/*})}></Button>*/}
-				{/*<SimpleTag*/}
-				{/*	placeholder={"Enter Tags"}*/}
-				{/*	initialTags={[]}*/}
-				{/*	whitelist={["Hello", "world", "basketball"]}*/}
-				{/*	onChange={(tags) => {}}></SimpleTag>*/}
-				{/*<YamlEditor value={""} onChange={(value: string) => {*/}
-				{/*	console.log(value)*/}
-				{/*}}></YamlEditor>*/}
-				{/*<JsonEditor value={"{a: b}"} onChange={(value: string) => {*/}
-				{/*	console.log(value);*/}
-				{/*}}></JsonEditor>*/}
-				{/*<TextEditor value={""} onChange={(value: string) => {*/}
-				{/*	console.log(value);*/}
-				{/*}}></TextEditor>*/}
-				{/*<DiffEditor original={"{\"hello\": true}"} modified={"{\"hello\": false}"} language={"json"}></DiffEditor>*/}
-				<Drawer>
-					<DrawerHeader label={"Hello drawer"}></DrawerHeader>
-					<DrawerDescription description={"This is where the description will go"}></DrawerDescription>
-					<DrawerBody>
-						<InputForm paddingTop={20}>
-							<Input label={"Hello Label 1"} placeholder={"This is where you write your input"}></Input>
-							<Input label={"Hello Label 2"} placeholder={"This is the second place you write your input"}></Input>
-						</InputForm>
-					</DrawerBody>
-					<DrawerFooter>
-						<DrawerFooterRight>
-							<Button text={"Submit"} buttonType={ButtonType.PRIMARY}></Button>
-						</DrawerFooterRight>
-					</DrawerFooter>
-				</Drawer>
-			</div>
-
-		</div>
+		<SideBar state={sidebarState} changeState={changeSidebarState}>
+			<SideBarHeader>
+				<SideBarHeaderItem label="Blue Orange Ai" state={sidebarState} media={testMedia} changeState={changeSidebarState}></SideBarHeaderItem>
+			</SideBarHeader>
+			<SideBarBody>
+				<SideBarBodyGroup opened={sidebarGroupState}>
+					<SideBarBodyLabel
+						icon={sidebarGroupState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
+						label={"Menu"}
+						onClick={() => setSidebarGroupState(!sidebarGroupState)}
+						badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
+					></SideBarBodyLabel>
+					<SideBarBodyItem
+						label={"Search"}
+						active={false}
+						focused={false}
+						defaultStyle={{opacity: "0.6"}}
+						activeStyle={{opacity: "1"}}
+						icon={<i className={"ri-search-line"}></i>}
+					></SideBarBodyItem>
+					<SideBarBodyItem
+						label={"Search 2"}
+						active={false}
+						focused={true}
+						defaultStyle={{opacity: "0.6"}}
+						focusedStyle={{opacity: "1"}}
+						hoverEffects={true}
+						onClick={() => console.log("Main body item clicked")}
+						hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
+						icon={<i className={"ri-search-line"}></i>}
+					></SideBarBodyItem>
+				</SideBarBodyGroup>
+				<SideBarBodyLabel
+					label={"Menu"}
+					badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
+				></SideBarBodyLabel>
+				<SideBarBodyItemLink
+					label={"Search Google"}
+					href={"https://www.google.com"}
+					active={false}
+					focused={false}
+					defaultStyle={{opacity: "0.6"}}
+					activeStyle={{opacity: "1"}}
+					icon={<i className={"ri-search-line"}></i>}
+				></SideBarBodyItemLink>
+				<SideBarBodyItem
+					label={"Search"}
+					active={false}
+					focused={false}
+					defaultStyle={{opacity: "0.6"}}
+					activeStyle={{opacity: "1"}}
+					icon={<i className={"ri-search-line"}></i>}
+				></SideBarBodyItem>
+				<SideBarBodyItem
+					label={"Search 2"}
+					active={false}
+					focused={true}
+					defaultStyle={{opacity: "0.6"}}
+					focusedStyle={{opacity: "1"}}
+					hoverEffects={true}
+					onClick={() => console.log("Main body item clicked")}
+					hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
+					icon={<i className={"ri-search-line"}></i>}
+				></SideBarBodyItem>
+			</SideBarBody>
+			<SideBarFooter>
+				<div style={{color: "white"}}>Hello World</div>
+			</SideBarFooter>
+		</SideBar>
+		// <div className="workspace-main-window">
+		// 	<div className="workspace-display-window">
+		// 		{/*<Input label={"Hello world this is label"} placeholder={"This is where you write your input"} onChange={(value: string) => {*/}
+		// 		{/*	console.log("Basic Input Change")*/}
+		// 		{/*	console.log(value);*/}
+		// 		{/*}}></Input>*/}
+		// 		{/*<AddressInput label={"Please enter you australian address"} onChange={(address: Address) => {*/}
+		// 		{/*	console.log("Address Input Change")*/}
+		// 		{/*	console.log(address);*/}
+		// 		{/*}}></AddressInput>*/}
+		// 		{/*<DateInput label={"Please enter a valid date"} onChange={(date: Date) => {*/}
+		// 		{/*	console.log("Date input")*/}
+		// 		{/*	console.log(date)*/}
+		// 		{/*}}></DateInput>*/}
+		// 		{/*<PhoneInput label={"This is the default phone input"} onChange={(value: Telephone) => {*/}
+		// 		{/*	console.log("Workspace Telephone input")*/}
+		// 		{/*	console.log(value)*/}
+		// 		{/*}}></PhoneInput>*/}
+		// 		{/*<Avatar edit={true} user={user} height={50} width={50} tooltip={true}></Avatar>*/}
+		// 		{/*<AvatarList users={[user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user]} overlap={30}></AvatarList>*/}
+		// 		{/*<Table>*/}
+		// 		{/*	<THead>*/}
+		// 		{/*		<Row>*/}
+		// 		{/*			<CheckboxCell state={true}></CheckboxCell>*/}
+		// 		{/*			<HeaderCell dropdownItems={[{label: "Sort ASC", icon: "ri-sort-asc", value: "SORT_ASC"}]} onDropdownSelected={(item: IContextMenuItem) => {*/}
+		// 		{/*				console.log("Row Item Clicked")*/}
+		// 		{/*				console.log(item)*/}
+		// 		{/*			}}>Header 2</HeaderCell>*/}
+		// 		{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 3</HeaderCell>*/}
+		// 		{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 4</HeaderCell>*/}
+		// 		{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 5</HeaderCell>*/}
+		// 		{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 6</HeaderCell>*/}
+		// 		{/*		</Row>*/}
+		// 		{/*	</THead>*/}
+		// 		{/*	<TBody>*/}
+		// 		{/*		<Row>*/}
+		// 		{/*			<CheckboxCell state={true}></CheckboxCell>*/}
+		// 		{/*			<PrimaryCell src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} text={"Demonstration Primary Cell"} secondaryText={"This is where the secondary text goes"} style={{paddingLeft: "15px", paddingRight: "15px"}}></PrimaryCell>*/}
+		// 		{/*			<Cell>*/}
+		// 		{/*				<EmailLink email={"toms126@gmail.com"}></EmailLink>*/}
+		// 		{/*			</Cell>*/}
+		// 		{/*			<Cell alignment={CellAlignment.LEFT}>*/}
+		// 		{/*				<TelephoneText phone={"0402747928"} country={"AU"}></TelephoneText>*/}
+		// 		{/*			</Cell>*/}
+		// 		{/*			<Cell>*/}
+		// 		{/*				<Percentage percent={0.1123456789} decimalPlaces={5}></Percentage>*/}
+		// 		{/*			</Cell>*/}
+		// 		{/*			<Cell>*/}
+		// 		{/*				<Currency amount={123456.55} currency={"aud"}></Currency>*/}
+		// 		{/*			</Cell>*/}
+		// 		{/*		</Row>*/}
+		// 		{/*	</TBody>*/}
+		// 		{/*</Table>*/}
+		// 		{/*<div style={{width: "200px"}}>*/}
+		// 		{/*<Dropdown label={"Hello dropdown"} items={dropdownItems} filter={true} allowMultipleSelection={true} onItemsSelected={(itemsSelected: Array<DropdownItem>) => {*/}
+		// 		{/*	console.log("Selected items allow multiple")*/}
+		// 		{/*	console.log(itemsSelected)*/}
+		// 		{/*}}></Dropdown>*/}
+		// 		{/*<Dropdown label={"Hello No multiples dropdown"} items={dropdownItems} filter={true} allowMultipleSelection={false} onSelection={(item: DropdownItem) => {*/}
+		// 		{/*	console.log("Selected items single item")*/}
+		// 		{/*	console.log(item)*/}
+		// 		{/*}}></Dropdown>*/}
+		// 		{/*<TagInput label={"Hello world this is a tag input"} initialTags={tags} onChange={(tags) => {*/}
+		// 		{/*	setTags(tags)*/}
+		// 		{/*	console.log("workspace log")*/}
+		// 		{/*	console.log(tags);*/}
+		// 		{/*}}></TagInput>*/}
+		// 		{/*<TextArea label={"Hello text area"} placeholder={"Type anything in the text area"} onChange={(value: string) => {*/}
+		// 		{/*	console.log("Workspace Text Area")*/}
+		// 		{/*	console.log(value);*/}
+		// 		{/*}}></TextArea>*/}
+		// 		{/*</div>*/}
+		// 		{/*<Badge>Hello</Badge>*/}
+		// 		{/*<Tag>Hello</Tag>*/}
+		// 		{/*<DateInput displayFormat={"ddd, MMMM Do YYYY"}></DateInput>*/}
+		// 		{/*<BlueOrangeMapWrapper></BlueOrangeMapWrapper>*/}
+		// 		{/*<BlueOrangeGraphWrapper nodes={nodes} edges={edges}></BlueOrangeGraphWrapper>*/}
+		// 		{/*<BlueOrangeBlockEditorWrapper></BlueOrangeBlockEditorWrapper>*/}
+		// 		{/*<EmojiContainer></EmojiContainer>*/}
+		// 		{/*<Checkbox></Checkbox>*/}
+		// 		{/*<Toggle></Toggle>*/}
+		// 		{/*<RichText minEditorHeight={10} onChange={(content: string, mentions: string[], attachments: Media[], filesUploading: boolean) => {*/}
+		// 		{/*	console.log({*/}
+		// 		{/*		content: content,*/}
+		// 		{/*		mentions: mentions,*/}
+		// 		{/*		attachments: attachments,*/}
+		// 		{/*		filesUploading: filesUploading*/}
+		// 		{/*	})*/}
+		// 		{/*}}></RichText>*/}
+		// 		{/*<Pdf src={"https://d8d6949rstsxl.cloudfront.net/public/BO-PDF-499ffd3b-f619-4522-9c4e-bdae1bee9f4c-Academic%20Test%201%20-%20Prompt%203%20-%20Measures%20of%20Poverty.pdf"}></Pdf>*/}
+		// 		{/*<Toaster heading={"Hello world this is a toaster"}></Toaster>*/}
+		// 		{/*<Button text={"Test Toaster"} buttonType={ButtonType.PRIMARY} onClick={() => addToast({*/}
+		// 		{/*	id: "abcdefghi",*/}
+		// 		{/*	heading: "This is a test toaster",*/}
+		// 		{/*	description: "This is where the description will go",*/}
+		// 		{/*	location: ToastLocation.BOTTOM_RIGHT,*/}
+		// 		{/*	toastType: ToasterType.DEFAULT,*/}
+		// 		{/*	ttl: 5000*/}
+		// 		{/*})}></Button>*/}
+		// 		{/*<SimpleTag*/}
+		// 		{/*	placeholder={"Enter Tags"}*/}
+		// 		{/*	initialTags={[]}*/}
+		// 		{/*	whitelist={["Hello", "world", "basketball"]}*/}
+		// 		{/*	onChange={(tags) => {}}></SimpleTag>*/}
+		// 		{/*<YamlEditor value={""} onChange={(value: string) => {*/}
+		// 		{/*	console.log(value)*/}
+		// 		{/*}}></YamlEditor>*/}
+		// 		{/*<JsonEditor value={"{a: b}"} onChange={(value: string) => {*/}
+		// 		{/*	console.log(value);*/}
+		// 		{/*}}></JsonEditor>*/}
+		// 		{/*<TextEditor value={""} onChange={(value: string) => {*/}
+		// 		{/*	console.log(value);*/}
+		// 		{/*}}></TextEditor>*/}
+		// 		{/*<DiffEditor original={"{\"hello\": true}"} modified={"{\"hello\": false}"} language={"json"}></DiffEditor>*/}
+		// 		{/*<Drawer>*/}
+		// 		{/*	<DrawerHeader label={"Hello drawer"}></DrawerHeader>*/}
+		// 		{/*	<DrawerDescription description={"This is where the description will go"}></DrawerDescription>*/}
+		// 		{/*	<DrawerBody>*/}
+		// 		{/*		<InputForm paddingTop={20}>*/}
+		// 		{/*			<Input label={"Hello Label 1"} placeholder={"This is where you write your input"}></Input>*/}
+		// 		{/*			<Input label={"Hello Label 2"} placeholder={"This is the second place you write your input"}></Input>*/}
+		// 		{/*		</InputForm>*/}
+		// 		{/*	</DrawerBody>*/}
+		// 		{/*	<DrawerFooter>*/}
+		// 		{/*		<DrawerFooterRight>*/}
+		// 		{/*			<Button text={"Submit"} buttonType={ButtonType.PRIMARY}></Button>*/}
+		// 		{/*		</DrawerFooterRight>*/}
+		// 		{/*	</DrawerFooter>*/}
+		// 		{/*</Drawer>*/}
+		// 	</div>
+		//
+		// </div>
 	)
 }
