@@ -3,4 +3,5 @@
     border: 1px solid #e0e1e2;
     position: fixed;
     background-color: white;
+    z-index: 100000 !important;
 }

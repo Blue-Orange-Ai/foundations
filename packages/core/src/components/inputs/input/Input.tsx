@@ -1,15 +1,17 @@
 import React, {useEffect, useRef, useState} from "react";
 
 import './Input.css';
-import {TippyHTMLElement} from "../../../interfaces/AppInterfaces";
-import tippy from "tippy.js";
+import {HelpIcon} from "../help/HelpIcon";
+import {RequiredIcon} from "../required-icon/RequiredIcon";
 
 interface Props {
 	value?:string;
+	label?:string;
 	placeholder?: string;
 	isEmail?: boolean;
 	preventSpaces?:boolean;
 	style?: React.CSSProperties;
+	labelStyle?: React.CSSProperties;
 	isPassword?: boolean;
 	isInvalid?: boolean;
 	onChange?: (value: string) => void;
@@ -17,11 +19,14 @@ interface Props {
 	focusIn?: () => void;
 	focusOut?: () => void;
 	enterEvent?: () => void;
+	required?: boolean;
+	help?: string;
 	validateKey?: (key: string) => boolean;
 }
 
 export const Input: React.FC<Props> = ({
 										   value,
+										   label,
 										   placeholder="",
 										   onChange,
 										   isPassword,
@@ -29,10 +34,13 @@ export const Input: React.FC<Props> = ({
 										   isEmail,
 										   preventSpaces,
 										   style={},
+										   labelStyle={},
 										   focus=false,
 										   focusIn,
 										   focusOut,
 	                                       enterEvent,
+										   required=false,
+									       help,
 	                                       validateKey
 
 }) => {
@@ -109,17 +117,27 @@ export const Input: React.FC<Props> = ({
 	}, [value]);
 
 	return (
-		<input
-			ref={inputRef}
-			className={inputClassName}
-			style={style}
-			placeholder={placeholder}
-			value={inputValue === undefined ? "" : inputValue}
-			onKeyDown={handleKeydownChange}
-			onChange={handleInputChange}
-			onFocus={focusInEvent}
-			onBlur={focusOutEvent}
-			type={generateType()}
-		/>
+		<div className="blue-orange-default-input-cont">
+			{label &&
+				<div className={"blue-orange-default-input-label-cont"} style={labelStyle}>
+					{label}
+					{help && <HelpIcon label={help}></HelpIcon>}
+					{required && <RequiredIcon></RequiredIcon>}
+				</div>
+			}
+			<input
+				ref={inputRef}
+				className={inputClassName}
+				style={style}
+				placeholder={placeholder}
+				value={inputValue === undefined ? "" : inputValue}
+				onKeyDown={handleKeydownChange}
+				onChange={handleInputChange}
+				onFocus={focusInEvent}
+				onBlur={focusOutEvent}
+				type={generateType()}
+			/>
+		</div>
+
 	);
 };

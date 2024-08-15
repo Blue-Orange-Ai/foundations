@@ -3,10 +3,17 @@ import React, {ChangeEvent, useRef, useState} from "react";
 import './AddressInput.css';
 import {Input} from "../input/Input";
 import {Address} from "@Blue-Orange-Ai/foundations-clients/lib/Passport";
+import {HelpIcon} from "../help/HelpIcon";
+import {RequiredIcon} from "../required-icon/RequiredIcon";
 
 interface Props {
 	address?: Address | undefined;
-	onInputChange?: (value: Address) => void;
+	onChange?: (value: Address) => void;
+	label?:string;
+	required?: boolean;
+	help?: string;
+	style?: React.CSSProperties;
+	labelStyle?: React.CSSProperties;
 }
 
 
@@ -17,7 +24,15 @@ type Country = {
 	code: string;
 }
 
-export const AddressInput: React.FC<Props> = ({address, onInputChange}) => {
+export const AddressInput: React.FC<Props> = ({
+												  address,
+												  onChange,
+												  label,
+												  required=false,
+												  help,
+												  style = {},
+												  labelStyle={}
+											  }) => {
 
 	const countries: Array<Country> = [
 		{
@@ -1523,59 +1538,74 @@ export const AddressInput: React.FC<Props> = ({address, onInputChange}) => {
 		setCountryEmoji(country.emoji);
 		addr.country = country.name;
 		setAddr(addr);
-		if (onInputChange) {
-			onInputChange(addr);
+		if (onChange) {
+			onChange(addr);
 		}
 	}
 
 	const handleMainAddress = (text: string) => {
 		addr.address = text;
 		setAddr(addr);
-		if (onInputChange) {
-			onInputChange(addr);
+		if (onChange) {
+			onChange(addr);
 		}
 	}
 
 	const handleCity = (text: string) => {
 		addr.city = text;
 		setAddr(addr);
-		if (onInputChange) {
-			onInputChange(addr);
+		if (onChange) {
+			onChange(addr);
 		}
 	}
 
 	const handleState = (text: string) => {
 		addr.state = text;
 		setAddr(addr);
-		if (onInputChange) {
-			onInputChange(addr);
+		if (onChange) {
+			onChange(addr);
 		}
 	}
 
 	const handlePostcode = (text: string) => {
 		addr.postcode = text;
 		setAddr(addr);
-		if (onInputChange) {
-			onInputChange(addr);
+		if (onChange) {
+			onChange(addr);
 		}
 	}
 
 	return (
 		<div className="address-input-group">
+			{label &&
+				<div className={"blue-orange-default-input-label-cont"} style={labelStyle}>
+					{label}
+					{help && <HelpIcon label={help}></HelpIcon>}
+					{required && <RequiredIcon></RequiredIcon>}
+				</div>
+			}
 			<div className="address-main-input">
-				<Input placeholder="Address" value={addr.address} onChange={handleMainAddress}></Input>
+				<Input placeholder="Address" value={addr.address} onChange={handleMainAddress} style={style}></Input>
 			</div>
 			<div className="address-sub-input">
-				<Input placeholder="City" value={addr.city} style={{width: "calc(40% - 10px)"}} onChange={handleCity}></Input>
-				<Input placeholder="State" value={addr.state} style={{width: "calc(15% - 10px)"}} onChange={handleState}></Input>
-				<Input placeholder="Postcode" value={addr.postcode} style={{width: "calc(15% - 10px)"}} onChange={handlePostcode}></Input>
+				<div style={{width: "calc(40% - 10px)"}}>
+					<Input placeholder="City" value={addr.city} style={style} onChange={handleCity}></Input>
+				</div>
+				<div style={{width: "calc(15% - 10px)"}}>
+					<Input placeholder="State" value={addr.state} style={style} onChange={handleState}></Input>
+				</div>
+				<div style={{width: "calc(15% - 10px)"}}>
+					<Input placeholder="Postcode" value={addr.postcode} style={style} onChange={handlePostcode}></Input>
+				</div>
 				<div className="address-input-country-group">
-					<select value={getCountryByName(inputAddress.country).code} className="address-input-country-select" onChange={handleSelection}>
+					<select value={getCountryByName(inputAddress.country).code} className="address-input-country-select"
+							onChange={handleSelection}>
 						{countries.map(country => (
 							<option key={country.code} value={country.code}>{country.emoji} {country.name}</option>
 						))}
 					</select>
-					<span className="address-country-name">{countryEmoji} {country}</span><span><i className="ri-arrow-drop-down-line"></i></span>
+					<span className="address-country-name">{countryEmoji} {country}</span><span><i
+					className="ri-arrow-drop-down-line"></i></span>
 				</div>
 			</div>
 		</div>

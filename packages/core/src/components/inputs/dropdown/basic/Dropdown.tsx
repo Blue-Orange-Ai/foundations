@@ -1,14 +1,17 @@
 import React, {useEffect, useRef, useState} from "react";
-import './DropdownBasic.css'
+import './Dropdown.css'
 import {DropdownItem as DropdownItemObj, DropdownItemType} from "../../../../interfaces/AppInterfaces";
 import {DropdownItem} from "../items/DropdownItem/DropdownItem";
 import {Input} from "../../input/Input";
 import Fuse from "fuse.js";
 import {Checkbox} from "../../checkbox/Checkbox";
 import {DropdownItemStyle} from "../items/DropdownItemStyle/DropdownItemStyle";
+import {HelpIcon} from "../../help/HelpIcon";
+import {RequiredIcon} from "../../required-icon/RequiredIcon";
 
 interface Props {
 	items: Array<DropdownItemObj>,
+	placeholder?: string,
 	disabled?: boolean,
 	contextWidth?: number,
 	contextMaxHeight?: number,
@@ -17,12 +20,18 @@ interface Props {
 	onSelection?: (item: DropdownItemObj) => void,
 	onItemsSelected?: (items: Array<DropdownItemObj>) => void,
 	onUpdate?: (items: Array<DropdownItemObj>) => void,
-	filter?: boolean
+	filter?: boolean,
+	label?:string,
+	required?: boolean,
+	help?: string,
+	style?: React.CSSProperties,
+	labelStyle?: React.CSSProperties
 }
 
-export const DropdownBasic: React.FC<Props> = ({
+export const Dropdown: React.FC<Props> = ({
 												   items,
 												   disabled,
+												   placeholder="No items selected...",
 												   contextWidth,
 												   contextMaxHeight,
 												   closeOnClick = true,
@@ -30,8 +39,14 @@ export const DropdownBasic: React.FC<Props> = ({
 													onSelection,
 													onItemsSelected,
 													onUpdate,
-													filter=false
+													filter=false,
+												    label,
+												    required=false,
+												    help,
+												    style = {},
+												    labelStyle={}
 											   }) => {
+
 
 	const [visible, setVisible] = useState(false);
 
@@ -126,6 +141,24 @@ export const DropdownBasic: React.FC<Props> = ({
 			}
 		}
 		return null;
+	}
+
+	const isDescendantOfClassName = (className:string, child:HTMLElement) =>{
+		try{
+			if (child.classList.contains(className)) {
+				return true
+			}
+			var node = child.parentElement;
+			while (node != null){
+				if (node.classList.contains(className)){
+					return true;
+				}
+				node = node.parentElement;
+			}
+			return false;
+		} catch (e) {
+			return false;
+		}
 	}
 
 
@@ -277,16 +310,18 @@ export const DropdownBasic: React.FC<Props> = ({
 		setSelectedValue(getInitialSelectedValue())
 	}, [items]);
 
-	const toggleVisibleState = () => {
-		if (visibleRef.current) {
-			setVisible(false);
-		} else {
-			setBlockMouseClick(true);
-			setTimeout(() => {
-				setBlockMouseClick(false);
-			}, 500)
-			setVisible(true);
-			handleFilterChange("");
+	const toggleVisibleState = (ev: React.MouseEvent) => {
+		if (!isDescendantOfClassName("blue-orange-dropdown-remove-selection", ev.target as HTMLElement)) {
+			if (visibleRef.current) {
+				setVisible(false);
+			} else {
+				setBlockMouseClick(true);
+				setTimeout(() => {
+					setBlockMouseClick(false);
+				}, 500)
+				setVisible(true);
+				handleFilterChange("");
+			}
 		}
 	}
 
@@ -300,9 +335,14 @@ export const DropdownBasic: React.FC<Props> = ({
 	}
 
 	const updateSelectedItems = (item: DropdownItemObj, modSelectedItems: Array<DropdownItemObj>) => {
-		if (selectedItems.indexOf(item) < 0) {
+		if (selectedItems.indexOf(item) < 0 && item.selected) {
 			selectedItems.push(item);
 			setSelectedItems(selectedItems);
+		} else if (selectedItems.indexOf(item) >= 0 && !item.selected) {
+			selectedItems.splice(selectedItems.indexOf(item), 1);
+		}
+		if (onItemsSelected) {
+			onItemsSelected(selectedItems);
 		}
 	}
 
@@ -313,23 +353,25 @@ export const DropdownBasic: React.FC<Props> = ({
 	}
 
 	const handleItemClick = (item: DropdownItemObj) => {
-		var modSelectedItems = selectedItems;
-		var modItems = modifiedItems;
-		if (!allowMultipleSelection) {
-			modSelectedItems = [];
-			modItems.forEach(item => {
-				item.selected = false;
-			})
-			setSelectedValue(item)
-			item.selected = true;
-		} else {
-			item.selected = !item.selected
-		}
-		updateModifiedItems(item, modItems);
-		updateSelectedItems(item, modSelectedItems);
-		setLastUpdated(new Date())
-		if (closeOnClick && !allowMultipleSelection) {
-			setVisible(false);
+		if (!item.disabled) {
+			var modSelectedItems = selectedItems;
+			var modItems = modifiedItems;
+			if (!allowMultipleSelection) {
+				modSelectedItems = [];
+				modItems.forEach(item => {
+					item.selected = false;
+				})
+				setSelectedValue(item)
+				item.selected = true;
+			} else {
+				item.selected = !item.selected
+			}
+			updateModifiedItems(item, modItems);
+			updateSelectedItems(item, modSelectedItems);
+			setLastUpdated(new Date())
+			if (closeOnClick && !allowMultipleSelection) {
+				setVisible(false);
+			}
 		}
 	}
 
@@ -378,15 +420,51 @@ export const DropdownBasic: React.FC<Props> = ({
 		return className;
 	}
 
+	const removeSelectedItem = (ev: any, selectedItem: DropdownItemObj) => {
+		ev.preventDefault();
+		handleItemClick(selectedItem);
+	}
+
 	return (
-		<div className="blue-orange-dropdown-cont">
-			<div ref={inputRef} className="blue-orange-dropdown" onClick={toggleVisibleState}>
-				<div className="blue-orange-dropdown-selection">
-					<DropdownItem item={selectedValue} displayedValue={true}></DropdownItem>
+		<div className="blue-orange-dropdown-cont" style={style}>
+			{label &&
+				<div className={"blue-orange-default-input-label-cont"} style={labelStyle}>
+					{label}
+					{help && <HelpIcon label={help}></HelpIcon>}
+					{required && <RequiredIcon></RequiredIcon>}
 				</div>
-				<div className="blue-orange-dropdown-icon">
-					<i className="ri-arrow-down-s-line"></i>
-				</div>
+			}
+			<div ref={inputRef} className="blue-orange-dropdown" onClick={(ev) => toggleVisibleState(ev)}>
+				{!allowMultipleSelection &&
+					<>
+						<div className="blue-orange-dropdown-selection">
+							<DropdownItem item={selectedValue} displayedValue={true}></DropdownItem>
+						</div>
+						<div className="blue-orange-dropdown-icon">
+							<i className="ri-arrow-down-s-line"></i>
+						</div>
+					</>
+				}
+				{allowMultipleSelection && selectedItems.length > 0 &&
+					<>
+						<div className="blue-orange-dropdown-selection-multiple-selection">
+							{selectedItems.map((item, index) => (
+								<div key={index + "-" + item.label} className="blue-orange-dropdown-selection-multiple-selection-tag">
+									<DropdownItem item={item} displayedValue={true}></DropdownItem>
+									<div className="blue-orange-dropdown-remove-selection" onClick={(ev) => {removeSelectedItem(ev, item)}}>
+										<i className="ri-close-line"></i>
+									</div>
+								</div>
+							))}
+						</div>
+						<div className="blue-orange-dropdown-icon">
+							<i className="ri-arrow-down-s-line"></i>
+						</div>
+					</>
+				}
+				{allowMultipleSelection && selectedItems.length <= 0 &&
+					<Input placeholder={placeholder} style={{border: "transparent", height: "40px",pointerEvents: "none"}}></Input>
+				}
 			</div>
 			{visible &&
 				<div ref={dropdownRef} className="blue-orange-dropdown-window shadow" style={dropdownWindowStyle}>

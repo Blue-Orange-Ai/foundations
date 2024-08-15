@@ -2,10 +2,17 @@ import React, {ChangeEvent, useRef, useState} from "react";
 
 import './PhoneInput.css';
 import {Telephone} from "@Blue-Orange-Ai/foundations-clients/lib/Passport";
+import {HelpIcon} from "../help/HelpIcon";
+import {RequiredIcon} from "../required-icon/RequiredIcon";
 
 interface Props {
 	telephone?: Telephone;
 	onChange?: (value: Telephone) => void;
+	label?:string;
+	required?: boolean;
+	help?: string;
+	style?: React.CSSProperties
+	labelStyle?: React.CSSProperties
 }
 
 type PhoneCountry = {
@@ -15,7 +22,14 @@ type PhoneCountry = {
 	code: string;
 }
 
-export const PhoneInput: React.FC<Props> = ({telephone, onChange}) => {
+export const PhoneInput: React.FC<Props> = ({
+												telephone,
+												onChange,
+												label,
+												required=false,
+												help,
+												style={},
+												labelStyle={}}) => {
 
 	const countries: Array<PhoneCountry> = [
 		{
@@ -1499,6 +1513,8 @@ export const PhoneInput: React.FC<Props> = ({telephone, onChange}) => {
 
 	const [tel, setTel] = useState(inputTelephone);
 
+	const [telNum, setTelNum] = useState(inputTelephone.number);
+
 	const handleSelection = (event: ChangeEvent<HTMLSelectElement>) => {
 		var code = event.target.value;
 		var country = getCountryByCode(code);
@@ -1516,34 +1532,60 @@ export const PhoneInput: React.FC<Props> = ({telephone, onChange}) => {
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const newValue = event.target.value;
 		tel.number = newValue;
+		setTelNum(newValue);
 		setTel(tel);
 		if (onChange) {
 			onChange(tel);
 		}
 	};
 
-	return (
-		<div className="phone-input-group">
-			<div className="phone-input-display-flag">
-				<select
-					value={inputTelephone.code === undefined || inputTelephone.code === null ? "AU" : inputTelephone.code}
-					ref={countrySelectElem} className="phone-input-select"
-					onChange={handleSelection}>
-					{countries.map(country => (
-						<option key={country.code} value={country.code}>{country.emoji} {country.name}</option>
-					))}
-				</select>
-				<span>{countryEmoji}</span><span><i className="ri-arrow-drop-down-line"></i></span>
-			</div>
-			<div className="phone-input-text-group">
-				<div className="phone-input-text-extension">{countryCode}</div>
-				<input
-					className="phone-input-text"
-					type="tel"
-					onChange={handleInputChange}
-					value={tel.number === undefined ? "" : tel.number}/>
-			</div>
+	const handleKeydownEvent = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		const key = event.key;
+		if (!/[0-9]/.test(key)
+			&& key !== "ArrowLeft"
+			&& key !== "ArrowRight"
+			&& key !== "Enter"
+			&& key !== "Escape"
+			&& key !== "Backspace"
+			&& key !== "Tab") {
+			console.log("Key Blocked")
+			console.log(key)
+			event.preventDefault();
+		}
+	};
 
+	return (
+		<div className="blue-orange-phone-input-cont">
+			{label &&
+				<div className={"blue-orange-default-input-label-cont"} style={labelStyle}>
+					{label}
+					{help && <HelpIcon label={help}></HelpIcon>}
+					{required && <RequiredIcon></RequiredIcon>}
+				</div>
+			}
+			<div className="phone-input-group" style={style}>
+				<div className="phone-input-display-flag">
+					<select
+						value={inputTelephone.code === undefined || inputTelephone.code === null ? "AU" : inputTelephone.code}
+						ref={countrySelectElem} className="phone-input-select"
+						onChange={handleSelection}>
+						{countries.map(country => (
+							<option key={country.code} value={country.code}>{country.emoji} {country.name}</option>
+						))}
+					</select>
+					<span>{countryEmoji}</span><span><i className="ri-arrow-drop-down-line"></i></span>
+				</div>
+				<div className="phone-input-text-group">
+					<div className="phone-input-text-extension">{countryCode}</div>
+					<input
+						className="phone-input-text"
+						type="tel"
+						onKeyDown={handleKeydownEvent}
+						onChange={handleInputChange}
+						value={telNum}/>
+				</div>
+			</div>
 		</div>
+
 	);
 };

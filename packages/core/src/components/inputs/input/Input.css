@@ -1,4 +1,9 @@
 
+.blue-orange-default-input-cont {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
 
 .blue-orange-input{
     width: calc(100% - 10px);

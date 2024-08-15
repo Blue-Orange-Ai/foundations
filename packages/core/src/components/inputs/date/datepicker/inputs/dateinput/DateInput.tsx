@@ -12,13 +12,23 @@ interface Props {
 	displayFormat?: string,
 	placeholder?: string,
 	onChange?: (date: Date) => void;
+	label?:string;
+	required?: boolean;
+	help?: string;
+	style?: React.CSSProperties;
+	labelStyle?: React.CSSProperties;
 }
 
 export const DateInput: React.FC<Props> = ({
 											   value,
 											   displayFormat = 'ddd, MMMM Do YYYY',
 											   placeholder,
-											   onChange}) => {
+											   onChange,
+											   label,
+											   required=false,
+											   help,
+											   style = {},
+											   labelStyle={}}) => {
 
 	const getFormattedDate = (date: Date | undefined, invalid: boolean) => {
 		if (invalid) {
@@ -185,8 +195,13 @@ export const DateInput: React.FC<Props> = ({
 	}, [dateValue]);
 
 	return (
-		<div ref={inputRef}>
+		<div ref={inputRef} style={{width: "100%"}}>
 			<Input
+				label={label}
+				style={style}
+				labelStyle={labelStyle}
+				required={required}
+				help={help}
 				placeholder={placeholder}
 				value={inputValue}
 				onChange={storeInputChange}

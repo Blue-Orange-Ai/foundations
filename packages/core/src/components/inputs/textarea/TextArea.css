@@ -1,14 +1,20 @@
 
 
-.default-text-area{
+.blue-orange-text-area-input-cont {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.blue-orange-default-text-area{
     min-width: calc(100% - 10px);
     max-width: calc(100% - 10px);
     border: 1px solid #e0e1e2;
-    background-color: #f7f7f9;
+    background-color: white;
     border-radius: 4px;
     padding: 10px 5px;
 }
 
-.default-text-area:focus {
+.blue-orange-default-text-area:focus {
     outline: 1.5px solid black;
 }

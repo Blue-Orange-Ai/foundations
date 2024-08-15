@@ -1,7 +1,13 @@
 import React, {useContext, useState} from "react";
 
 import './Workspace.css'
-import {Avatar as AvatarObj, User, UserState} from "@Blue-Orange-Ai/foundations-clients/lib/Passport";
+import {
+	Address,
+	Avatar as AvatarObj,
+	Telephone,
+	User,
+	UserState
+} from "@Blue-Orange-Ai/foundations-clients/lib/Passport";
 import {ToastContext} from "../../components/alerts/toast/toastcontext/ToastContext";
 import {SideBarState} from "../../components/layouts/sidebar/default/SideBar";
 import {Media} from "@Blue-Orange-Ai/foundations-clients";
@@ -20,7 +26,7 @@ import { Edge, Node as GraphNode } from "@Blue-Orange-Ai/primitives-graph";
 import {BlueOrangeGraphWrapper} from "../../components/graph/BlueOrangeGraphWrapper";
 import {BlueOrangeBlockEditorWrapper} from "../../components/block-editor/BlueOrangeBlockEditorWrapper";
 import {RichText} from "../../components/inputs/richtext/default/RichText";
-import {Avatar, Checkbox} from "../../vite-entry";
+import {AddressInput, Avatar, Checkbox, PhoneInput, TextArea} from "../../vite-entry";
 import Cookies from "js-cookie";
 import {Toggle} from "../../components/inputs/toggle/Toggle";
 import {Table} from "../../components/table/table/Table";
@@ -30,13 +36,15 @@ import {CheckboxCell} from "../../components/table/cells/checkboxcell/CheckboxCe
 import {HeaderCell} from "../../components/table/cells/headercell/HeaderCell";
 import {PrimaryCell} from "../../components/table/cells/primarycell/PrimaryCell";
 import {Cell} from "../../components/table/cells/cell/Cell";
-import {CellAlignment} from "../../interfaces/AppInterfaces";
+import {CellAlignment, DropdownItem, DropdownItemType} from "../../interfaces/AppInterfaces";
 import {TBody} from "../../components/table/tbody/TBody";
 import {Currency} from "../../components/text-decorations/currency/Currency";
 import {Percentage} from "../../components/text-decorations/percentage/Percentage";
 import {TelephoneText} from "../../components/text-decorations/telephone/TelephoneText";
 import {EmailLink} from "../../components/text-decorations/email/EmailLink";
 import {IContextMenuItem} from "../../components/contextmenu/ContextMenu";
+import {Dropdown} from "../../components/inputs/dropdown/basic/Dropdown";
+import {TagInput} from "../../components/inputs/tags/simple/TagInput";
 
 interface Props {
 }
@@ -49,6 +57,8 @@ export const Workspace: React.FC<Props> = ({}) => {
 	const { addToast } = useContext(ToastContext);
 
 	const [isLoading, setIsLoading] = useState(false);
+
+	const [tags, setTags] = useState<Array<string>>([]);
 
 	const [success, setSuccess] = useState(false);
 
@@ -125,52 +135,52 @@ export const Workspace: React.FC<Props> = ({}) => {
 		state: UserState.ACTIVE
 	}
 	//
-	// const dropdownItems: Array<DropdownItem> = [
-	// 	{
-	// 		label: "Names",
-	// 		reference: "5",
-	// 		selected: false,
-	// 		type: DropdownItemType.HEADING
-	// 	},
-	// 	{
-	// 		label: "Lisbeth",
-	// 		reference: "1",
-	// 		selected: false,
-	// 		type: DropdownItemType.TEXT
-	// 	},
-	// 	{
-	// 		label: "Aruna",
-	// 		reference: "2",
-	// 		selected: false,
-	// 		type: DropdownItemType.TEXT
-	// 	},
-	// 	{
-	// 		label: "Lauren",
-	// 		reference: "3",
-	// 		selected: false,
-	// 		disabled: true,
-	// 		type: DropdownItemType.TEXT
-	// 	},
-	// 	{
-	// 		label: "Thomas",
-	// 		reference: "4",
-	// 		selected: true,
-	// 		type: DropdownItemType.TEXT
-	// 	},
-	// 	{
-	// 		label: "Persons",
-	// 		reference: "6",
-	// 		selected: false,
-	// 		type: DropdownItemType.HEADING
-	// 	},
-	// 	{
-	// 		label: "James",
-	// 		reference: "7",
-	// 		selected: false,
-	// 		src: "http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ",
-	// 		type: DropdownItemType.IMAGE
-	// 	}
-	// ]
+	const dropdownItems: Array<DropdownItem> = [
+		{
+			label: "Names",
+			reference: "5",
+			selected: false,
+			type: DropdownItemType.HEADING
+		},
+		{
+			label: "Lisbeth",
+			reference: "1",
+			selected: false,
+			type: DropdownItemType.TEXT
+		},
+		{
+			label: "Aruna",
+			reference: "2",
+			selected: false,
+			type: DropdownItemType.TEXT
+		},
+		{
+			label: "Lauren",
+			reference: "3",
+			selected: false,
+			disabled: true,
+			type: DropdownItemType.TEXT
+		},
+		{
+			label: "Thomas",
+			reference: "4",
+			selected: true,
+			type: DropdownItemType.TEXT
+		},
+		{
+			label: "Persons",
+			reference: "6",
+			selected: false,
+			type: DropdownItemType.HEADING
+		},
+		{
+			label: "James",
+			reference: "7",
+			selected: false,
+			src: "http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ",
+			type: DropdownItemType.IMAGE
+		}
+	]
 
 	const btnClick = () => {
 		setError(true);
@@ -496,43 +506,75 @@ export const Workspace: React.FC<Props> = ({}) => {
 		// </SideBar>
 		<div className="workspace-main-window">
 			<div className="workspace-display-window">
+				<Input label={"Hello world this is label"} placeholder={"This is where you write your input"} onChange={(value: string) => {
+					console.log("Basic Input Change")
+					console.log(value);
+				}}></Input>
+				{/*<AddressInput label={"Please enter you australian address"} onChange={(address: Address) => {*/}
+				{/*	console.log("Address Input Change")*/}
+				{/*	console.log(address);*/}
+				{/*}}></AddressInput>*/}
+				<DateInput label={"Please enter a valid date"} onChange={(date: Date) => {
+					console.log("Date input")
+					console.log(date)
+				}}></DateInput>
+				<PhoneInput label={"This is the default phone input"} onChange={(value: Telephone) => {
+					console.log("Workspace Telephone input")
+					console.log(value)
+				}}></PhoneInput>
 				{/*<Avatar edit={true} user={user} height={50} width={50} tooltip={true}></Avatar>*/}
 				{/*<AvatarList users={[user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user]} overlap={30}></AvatarList>*/}
-				<Table>
-					<THead>
-						<Row>
-							<CheckboxCell state={true}></CheckboxCell>
-							<HeaderCell dropdownItems={[{label: "Sort ASC", icon: "ri-sort-asc", value: "SORT_ASC"}]} onDropdownSelected={(item: IContextMenuItem) => {
-								console.log("Row Item Clicked")
-								console.log(item)
-							}}>Header 2</HeaderCell>
-							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 3</HeaderCell>
-							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 4</HeaderCell>
-							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 5</HeaderCell>
-							<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 6</HeaderCell>
-						</Row>
-					</THead>
-					<TBody>
-						<Row>
-							<CheckboxCell state={true}></CheckboxCell>
-							<PrimaryCell src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} text={"Demonstration Primary Cell"} secondaryText={"This is where the secondary text goes"} style={{paddingLeft: "15px", paddingRight: "15px"}}></PrimaryCell>
-							<Cell>
-								<EmailLink email={"toms126@gmail.com"}></EmailLink>
-							</Cell>
-							<Cell alignment={CellAlignment.LEFT}>
-								<TelephoneText phone={"0402747928"} country={"AU"}></TelephoneText>
-							</Cell>
-							<Cell>
-								<Percentage percent={0.1123456789} decimalPlaces={5}></Percentage>
-							</Cell>
-							<Cell>
-								<Currency amount={123456.55} currency={"aud"}></Currency>
-							</Cell>
-						</Row>
-					</TBody>
-				</Table>
+				{/*<Table>*/}
+				{/*	<THead>*/}
+				{/*		<Row>*/}
+				{/*			<CheckboxCell state={true}></CheckboxCell>*/}
+				{/*			<HeaderCell dropdownItems={[{label: "Sort ASC", icon: "ri-sort-asc", value: "SORT_ASC"}]} onDropdownSelected={(item: IContextMenuItem) => {*/}
+				{/*				console.log("Row Item Clicked")*/}
+				{/*				console.log(item)*/}
+				{/*			}}>Header 2</HeaderCell>*/}
+				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 3</HeaderCell>*/}
+				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 4</HeaderCell>*/}
+				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 5</HeaderCell>*/}
+				{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 6</HeaderCell>*/}
+				{/*		</Row>*/}
+				{/*	</THead>*/}
+				{/*	<TBody>*/}
+				{/*		<Row>*/}
+				{/*			<CheckboxCell state={true}></CheckboxCell>*/}
+				{/*			<PrimaryCell src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} text={"Demonstration Primary Cell"} secondaryText={"This is where the secondary text goes"} style={{paddingLeft: "15px", paddingRight: "15px"}}></PrimaryCell>*/}
+				{/*			<Cell>*/}
+				{/*				<EmailLink email={"toms126@gmail.com"}></EmailLink>*/}
+				{/*			</Cell>*/}
+				{/*			<Cell alignment={CellAlignment.LEFT}>*/}
+				{/*				<TelephoneText phone={"0402747928"} country={"AU"}></TelephoneText>*/}
+				{/*			</Cell>*/}
+				{/*			<Cell>*/}
+				{/*				<Percentage percent={0.1123456789} decimalPlaces={5}></Percentage>*/}
+				{/*			</Cell>*/}
+				{/*			<Cell>*/}
+				{/*				<Currency amount={123456.55} currency={"aud"}></Currency>*/}
+				{/*			</Cell>*/}
+				{/*		</Row>*/}
+				{/*	</TBody>*/}
+				{/*</Table>*/}
 				{/*<div style={{width: "200px"}}>*/}
-				{/*	<DropdownBasic items={dropdownItems} filter={true} allowMultipleSelection={true}></DropdownBasic>*/}
+				{/*<Dropdown label={"Hello dropdown"} items={dropdownItems} filter={true} allowMultipleSelection={true} onItemsSelected={(itemsSelected: Array<DropdownItem>) => {*/}
+				{/*	console.log("Selected items allow multiple")*/}
+				{/*	console.log(itemsSelected)*/}
+				{/*}}></Dropdown>*/}
+				{/*<Dropdown label={"Hello No multiples dropdown"} items={dropdownItems} filter={true} allowMultipleSelection={false} onSelection={(item: DropdownItem) => {*/}
+				{/*	console.log("Selected items single item")*/}
+				{/*	console.log(item)*/}
+				{/*}}></Dropdown>*/}
+				{/*<TagInput label={"Hello world this is a tag input"} initialTags={tags} onChange={(tags) => {*/}
+				{/*	setTags(tags)*/}
+				{/*	console.log("workspace log")*/}
+				{/*	console.log(tags);*/}
+				{/*}}></TagInput>*/}
+				{/*<TextArea label={"Hello text area"} placeholder={"Type anything in the text area"} onChange={(value: string) => {*/}
+				{/*	console.log("Workspace Text Area")*/}
+				{/*	console.log(value);*/}
+				{/*}}></TextArea>*/}
 				{/*</div>*/}
 				{/*<Badge>Hello</Badge>*/}
 				{/*<Tag>Hello</Tag>*/}

@@ -1,4 +1,10 @@
 
+.blue-orange-phone-input-cont {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
 
 .phone-input-group {
     display: flex;
