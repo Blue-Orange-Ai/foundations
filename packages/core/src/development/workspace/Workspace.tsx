@@ -45,6 +45,19 @@ import {EmailLink} from "../../components/text-decorations/email/EmailLink";
 import {IContextMenuItem} from "../../components/contextmenu/ContextMenu";
 import {Dropdown} from "../../components/inputs/dropdown/basic/Dropdown";
 import {TagInput} from "../../components/inputs/tags/simple/TagInput";
+import {TextEditor} from "../../components/inputs/code/text/TextEditor";
+import {YamlEditor} from "../../components/inputs/code/yaml/YamlEditor";
+import {JsonEditor} from "../../components/inputs/code/json/JsonEditor";
+import {DiffEditor} from "../../components/inputs/code/diff/DiffEditor";
+import {LineChart} from "../../components/charts/line/LineChart";
+import {BarChart} from "../../components/charts/bar/BarChart";
+import {Drawer} from "../../components/layouts/drawer/drawer/Drawer";
+import {DrawerHeader} from "../../components/layouts/drawer/drawer-header/DrawerHeader";
+import {DrawerDescription} from "../../components/layouts/drawer/drawer-description/DrawerDescription";
+import {DrawerBody} from "../../components/layouts/drawer/drawer-body/DrawerBody";
+import {DrawerFooter} from "../../components/layouts/drawer/drawer-footer/DrawerFooter";
+import {DrawerFooterLeft} from "../../components/layouts/drawer/drawer-footer-left/DrawerFooterLeft";
+import {DrawerFooterRight} from "../../components/layouts/drawer/drawer-footer-right/DrawerFooterRight";
 
 interface Props {
 }
@@ -506,22 +519,22 @@ export const Workspace: React.FC<Props> = ({}) => {
 		// </SideBar>
 		<div className="workspace-main-window">
 			<div className="workspace-display-window">
-				<Input label={"Hello world this is label"} placeholder={"This is where you write your input"} onChange={(value: string) => {
-					console.log("Basic Input Change")
-					console.log(value);
-				}}></Input>
+				{/*<Input label={"Hello world this is label"} placeholder={"This is where you write your input"} onChange={(value: string) => {*/}
+				{/*	console.log("Basic Input Change")*/}
+				{/*	console.log(value);*/}
+				{/*}}></Input>*/}
 				{/*<AddressInput label={"Please enter you australian address"} onChange={(address: Address) => {*/}
 				{/*	console.log("Address Input Change")*/}
 				{/*	console.log(address);*/}
 				{/*}}></AddressInput>*/}
-				<DateInput label={"Please enter a valid date"} onChange={(date: Date) => {
-					console.log("Date input")
-					console.log(date)
-				}}></DateInput>
-				<PhoneInput label={"This is the default phone input"} onChange={(value: Telephone) => {
-					console.log("Workspace Telephone input")
-					console.log(value)
-				}}></PhoneInput>
+				{/*<DateInput label={"Please enter a valid date"} onChange={(date: Date) => {*/}
+				{/*	console.log("Date input")*/}
+				{/*	console.log(date)*/}
+				{/*}}></DateInput>*/}
+				{/*<PhoneInput label={"This is the default phone input"} onChange={(value: Telephone) => {*/}
+				{/*	console.log("Workspace Telephone input")*/}
+				{/*	console.log(value)*/}
+				{/*}}></PhoneInput>*/}
 				{/*<Avatar edit={true} user={user} height={50} width={50} tooltip={true}></Avatar>*/}
 				{/*<AvatarList users={[user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user, user]} overlap={30}></AvatarList>*/}
 				{/*<Table>*/}
@@ -608,11 +621,31 @@ export const Workspace: React.FC<Props> = ({}) => {
 				{/*	initialTags={[]}*/}
 				{/*	whitelist={["Hello", "world", "basketball"]}*/}
 				{/*	onChange={(tags) => {}}></SimpleTag>*/}
-				{/*<JsonEditor value={""}></JsonEditor>*/}
-				{/*<JsonEditor value={"{a: b}"}></JsonEditor>*/}
-				{/*<TextEditor value={""}></TextEditor>*/}
-				{/*<DiffEditor original={"hello: true"} modified={"hello: false"} language={"yaml"}></DiffEditor>*/}
-
+				{/*<YamlEditor value={""} onChange={(value: string) => {*/}
+				{/*	console.log(value)*/}
+				{/*}}></YamlEditor>*/}
+				{/*<JsonEditor value={"{a: b}"} onChange={(value: string) => {*/}
+				{/*	console.log(value);*/}
+				{/*}}></JsonEditor>*/}
+				{/*<TextEditor value={""} onChange={(value: string) => {*/}
+				{/*	console.log(value);*/}
+				{/*}}></TextEditor>*/}
+				{/*<DiffEditor original={"{\"hello\": true}"} modified={"{\"hello\": false}"} language={"json"}></DiffEditor>*/}
+				<Drawer>
+					<DrawerHeader label={"Hello drawer"}></DrawerHeader>
+					<DrawerDescription description={"This is where the description will go"}></DrawerDescription>
+					<DrawerBody>
+						<div>
+							<Input placeholder={"This is where you write your input"} style={{marginTop: "10px", marginBottom: "10px", marginLeft: "1px", marginRight: "1px"}}></Input>
+							<Input placeholder={"This is the second place you write your input"}></Input>
+						</div>
+					</DrawerBody>
+					<DrawerFooter>
+						<DrawerFooterRight>
+							<Button text={"Submit"} buttonType={ButtonType.PRIMARY}></Button>
+						</DrawerFooterRight>
+					</DrawerFooter>
+				</Drawer>
 			</div>
 
 		</div>
