@@ -1,0 +1,47 @@
+
+.blue-orange-layouts-vertical-split-page {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.blue-orange-layouts-vertical-split-page-main {
+    flex-grow: 1;
+    height: 100%;
+}
+
+.blue-orange-layouts-vertical-split-page-minor-right {
+    position: relative;
+    border-left: 2px solid #e0e1e2;
+    overflow-x: hidden;
+}
+
+.blue-orange-layouts-vertical-split-page-minor-left {
+    position: relative;
+    border-right: 2px solid #e0e1e2;
+    overflow-x: hidden;
+}
+
+.blue-orange-layouts-vertical-split-control-right {
+    position: absolute;
+    height: 100%;
+    width: 4px;
+    left: -2px;
+}
+
+.blue-orange-layouts-vertical-split-control-right:hover {
+    background-color: dodgerblue;
+    cursor: col-resize;
+}
+
+.blue-orange-layouts-vertical-split-control-left {
+    position: absolute;
+    height: 100%;
+    width: 4px;
+    right: -2px;
+}
+
+.blue-orange-layouts-vertical-split-control-left:hover {
+    background-color: dodgerblue;
+    cursor: col-resize;
+}

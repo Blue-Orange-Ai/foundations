@@ -70,6 +70,9 @@ import {SideBarFooter} from "../../components/layouts/sidebar/sidebar-footer/Sid
 import {SideBarBodyItemLink} from "../../components/layouts/sidebar/items/sidebar-body-item-link/SideBarBodyItemLink";
 import {SidebarPage} from "../../components/layouts/pages/sidebar-page/SidebarPage";
 import {PaddedPage} from "../../components/layouts/pages/padded-page/PaddedPage";
+import {VerticalSplitPage} from "../../components/layouts/pages/split-pages/vertical-split-page/VerticalSplitPage";
+import {SplitPageMajor} from "../../components/layouts/pages/split-pages/split-page-major/SplitPageMajor";
+import {SplitPageMinor} from "../../components/layouts/pages/split-pages/split-page-minor/SplitPageMinor";
 
 interface Props {
 }
@@ -538,9 +541,17 @@ export const Workspace: React.FC<Props> = ({}) => {
 					<div style={{color: "white"}}>Hello World</div>
 				</SideBarFooter>
 			</SideBar>
-			<PaddedPage>
-				<div>Hello world</div>
-			</PaddedPage>
+			<VerticalSplitPage maxWidth={"500px"} minWidth={"200px"}>
+				<SplitPageMajor>
+					<PaddedPage>
+						<div>Hello world</div>
+					</PaddedPage>
+				</SplitPageMajor>
+				<SplitPageMinor>
+					<div>Minor split page item</div>
+				</SplitPageMinor>
+			</VerticalSplitPage>
+
 		</SidebarPage>
 
 		// <div className="workspace-main-window">
