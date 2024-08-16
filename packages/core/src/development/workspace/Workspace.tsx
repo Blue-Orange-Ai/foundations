@@ -1,4 +1,5 @@
 import React, {useContext, useState} from "react";
+import { v4 as uuidv4 } from 'uuid';
 
 import './Workspace.css'
 import {
@@ -76,6 +77,8 @@ import {SplitPageMinor} from "../../components/layouts/pages/split-pages/split-p
 import {
 	HorizontalSplitPage
 } from "../../components/layouts/pages/split-pages/horizontal-split-page/HorizontalSplitPage";
+import {Tabs} from "../../components/layouts/tabs/tabs/Tabs";
+import {Tab} from "../../components/layouts/tabs/tab/Tab";
 
 interface Props {
 }
@@ -547,7 +550,14 @@ export const Workspace: React.FC<Props> = ({}) => {
 			<HorizontalSplitPage>
 				<SplitPageMajor>
 					<PaddedPage>
-						<div>Hello world</div>
+						<Tabs>
+							<Tab uuid={uuidv4()} name={"Tab 1"} icon={"ri-wifi-line"}>
+								<div>Tab Wifi Signal</div>
+							</Tab>
+							<Tab uuid={uuidv4()} name={"Tab 2"} icon={"ri-file-paper-2-fill"}>
+								<div>Tab Paper</div>
+							</Tab>
+						</Tabs>
 					</PaddedPage>
 				</SplitPageMajor>
 				<SplitPageMinor>

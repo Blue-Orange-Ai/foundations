@@ -1,0 +1,27 @@
+
+.blue-orange-tabs-group{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.blue-orange-tab {
+    width: 100%;
+}
+
+.blue-orange-tab-hidden {
+    display: none;
+}
+
+.blue-orange-tab-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+
+.blue-orange-tab-header {
+    border-bottom: 2px Solid #e0e1e2;
+}
+

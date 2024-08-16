@@ -24,7 +24,7 @@ interface Props {
 
 export const HorizontalSplitPage: React.FC<Props> = ({
 													   children,
-													   splitDirection=SplitDirectionHorizontalPage.TOP,
+													   splitDirection=SplitDirectionHorizontalPage.BOTTOM,
 													   uuid,
 														 defaultHeight=300,
 													   adjustable=true,
