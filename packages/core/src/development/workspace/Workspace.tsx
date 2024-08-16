@@ -69,6 +69,7 @@ import {SideBarBodyItem} from "../../components/layouts/sidebar/items/sidebar-bo
 import {SideBarFooter} from "../../components/layouts/sidebar/sidebar-footer/SideBarFooter";
 import {SideBarBodyItemLink} from "../../components/layouts/sidebar/items/sidebar-body-item-link/SideBarBodyItemLink";
 import {SidebarPage} from "../../components/layouts/pages/sidebar-page/SidebarPage";
+import {PaddedPage} from "../../components/layouts/pages/padded-page/PaddedPage";
 
 interface Props {
 }
@@ -537,7 +538,9 @@ export const Workspace: React.FC<Props> = ({}) => {
 					<div style={{color: "white"}}>Hello World</div>
 				</SideBarFooter>
 			</SideBar>
-			<div>Hello world</div>
+			<PaddedPage>
+				<div>Hello world</div>
+			</PaddedPage>
 		</SidebarPage>
 
 		// <div className="workspace-main-window">

@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from "react";
 
 import './SidebarPage.css'
-import {v4 as uuidv4} from "uuid";
-import {ModalFooterLeft} from "../../modal/modal-footer-left/ModalFooterLeft";
 import {SideBar} from "../../sidebar/default/SideBar";
 
 interface Props {
