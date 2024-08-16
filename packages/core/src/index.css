@@ -93,6 +93,18 @@
   --blue-orange-light-clear-btn-color: black;
   --blue-orange-dark-clear-btn-color: white;
 
+  --blue-orange-light-btn-icon-border-color: #e0e1e2;
+  --blue-orange-dark-btn-icon-border-color: #28282a;
+
+  --blue-orange-light-chart-tooltip-background: white;
+  --blue-orange-dark-chart-tooltip-background: #28282a;
+  --blue-orange-light-chart-tooltip-title-color: #ABB4BE;
+  --blue-orange-dark-chart-tooltip-title-color: white;
+  --blue-orange-light-chart-tooltip-value-color: #393939;
+  --blue-orange-dark-chart-tooltip-value-color: white;
+  --blue-orange-light-chart-tooltip-general-text-color: black;
+  --blue-orange-dark-chart-tooltip-general-text-color: black;
+
 }
 
 body {

@@ -1,9 +1,9 @@
 
 
 .default-file-upload-btn {
-    border: 1px solid black;
-    background-color: black;
-    color: white;
+    border: 1px solid var(--blue-orange-light-primary-btn-border-color);
+    background-color: var(--blue-orange-light-primary-btn-background-color);
+    color: var(--blue-orange-light-primary-btn-color);
     height: 36px;
     display: flex;
     align-items: center;
@@ -11,6 +11,12 @@
     font-weight: 700;
     cursor: pointer;
     font-size: 0.875rem;
+}
+
+.dark .default-file-upload-btn {
+    border: 1px solid var(--blue-orange-dark-primary-btn-border-color);
+    background-color: var(--blue-orange-dark-primary-btn-background-color);
+    color: var(--blue-orange-dark-primary-btn-color);
 }
 
 .file-upload-margin-right{
