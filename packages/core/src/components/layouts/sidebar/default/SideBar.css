@@ -2,12 +2,17 @@
 .blue-orange-sidebar {
     height: 100vh;
     width: 300px;
-    border-right: 2px solid #e0e1e2;
-    background-color: #f7f7f9;
+    border-right: 2px solid var(--blue-orange-light-sidebar-border-color);
+    background-color: var(--blue-orange-light-sidebar-background-color);
     display: flex;
     flex-direction: column;
     min-width: 250px;
     max-width: 700px;
+}
+
+.dark .blue-orange-sidebar {
+    border-right: 2px solid var(--blue-orange-dark-sidebar-border-color);
+    background-color: var(--blue-orange-dark-sidebar-background-color);
 }
 
 .blue-orange-sidebar-closed {
@@ -23,8 +28,12 @@
 }
 
 .blue-orange-sidebar-control:hover {
-    background-color: dodgerblue;
+    background-color: var(--blue-orange-light-sidebar-control-color);
     cursor: col-resize;
+}
+
+.dark .blue-orange-sidebar-control:hover {
+    background-color: var(--blue-orange-dark-sidebar-control-color);
 }
 
 .blue-orange-sidebar-header {

@@ -14,35 +14,73 @@
 }
 
 .foundations-primary-btn {
-    border: 1px solid black;
-    background-color: black;
+    border: 1px solid var(--blue-orange-light-primary-btn-border-color);
+    background-color: var(--blue-orange-light-primary-btn-background-color);
+    color: var(--blue-orange-light-primary-btn-color);
+}
+
+.dark .foundations-primary-btn {
+    border: 1px solid var(--blue-orange-dark-primary-btn-border-color);
+    background-color: var(--blue-orange-dark-primary-btn-background-color);
+    color: var(--blue-orange-dark-primary-btn-color);
 }
 
 .foundations-secondary-btn {
-    border: 1px solid #e0e1e2;
-    background-color: white;
-    color: black;
+    border: 1px solid var(--blue-orange-light-secondary-btn-border-color);
+    background-color: var(--blue-orange-light-secondary-btn-background-color);
+    color: var(--blue-orange-light-secondary-btn-color);
+}
+
+.dark .foundations-secondary-btn {
+    border: 1px solid var(--blue-orange-dark-secondary-btn-border-color);
+    background-color: var(--blue-orange-dark-secondary-btn-background-color);
+    color: var(--blue-orange-dark-secondary-btn-color);
 }
 
 .foundations-danger-btn {
-    border: 1px solid #e11d48;
-    background-color: #e11d48;
+    border: 1px solid var(--blue-orange-light-danger-btn-border-color);
+    background-color: var(--blue-orange-light-danger-btn-background-color);
+    color: var(--blue-orange-light-danger-btn-color);
+}
+
+.dark .foundations-danger-btn {
+    border: 1px solid var(--blue-orange-dark-danger-btn-border-color);
+    background-color: var(--blue-orange-dark-danger-btn-background-color);
+    color: var(--blue-orange-dark-danger-btn-color);
 }
 
 .foundations-success-btn {
-    border: 1px solid #16a34b;
-    background-color: #16a34b;
+    border: 1px solid var(--blue-orange-light-success-btn-border-color);
+    background-color: var(--blue-orange-light-success-btn-background-color);
+    color: var(--blue-orange-light-success-btn-color);
+}
+
+.dark .foundations-success-btn {
+    border: 1px solid var(--blue-orange-dark-success-btn-border-color);
+    background-color: var(--blue-orange-dark-success-btn-background-color);
+    color: var(--blue-orange-dark-success-btn-color);
 }
 
 .foundations-warning-btn {
-    border: 1px solid #f97317;
-    background-color: #f97317;
+    border: 1px solid var(--blue-orange-light-warning-btn-border-color);
+    background-color: var(--blue-orange-light-warning-btn-background-color);
+    color: var(--blue-orange-light-warning-btn-color);
+}
+
+.dark .foundations-warning-btn {
+    border: 1px solid var(--blue-orange-dark-warning-btn-border-color);
+    background-color: var(--blue-orange-dark-warning-btn-background-color);
+    color: var(--blue-orange-dark-warning-btn-color);
 }
 
 .foundations-clear-btn {
     border: 1px solid transparent;
     background-color: transparent;
-    color: black;
+    color: var(--blue-orange-light-clear-btn-color);
+}
+
+.dark .foundations-clear-btn {
+    color: var(--blue-orange-dark-clear-btn-color);
 }
 
 .foundations-btn-disabled{
@@ -73,34 +111,6 @@
 
 .success-animation { margin:150px auto;}
 
-/*.checkmark {*/
-/*    width: 20px;*/
-/*    height: 20px;*/
-/*    border-radius: 50%;*/
-/*    display: block;*/
-/*    stroke-miterlimit: 10;*/
-/*    animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;*/
-/*    position:relative;*/
-/*}*/
-
-/*@keyframes fill {*/
-/*    from {*/
-/*        fill-opacity: 0;*/
-/*    }*/
-/*    to {*/
-/*        fill-opacity: 1;*/
-/*    }*/
-/*}*/
-
-/*@keyframes scale {*/
-/*    0%, 100% {*/
-/*        transform: none;*/
-/*    }*/
-
-/*    50% {*/
-/*        transform: scale3d(1.1, 1.1, 1);*/
-/*    }*/
-/*}*/
 
 
 

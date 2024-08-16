@@ -6,11 +6,11 @@ interface Props {
 	description?: string
 }
 
-export const ErrorBlockAlert: React.FC<Props> = ({title, description}) => {
+export const SuccessBlockAlert: React.FC<Props> = ({title, description}) => {
 
-	const icon = "ri-alert-fill";
+	const icon = "ri-checkbox-circle-fill";
 
-	const className = "blue-orange-error-alert";
+	const className = "blue-orange-warning-alert";
 
 	return (
 		<DefaultBlockAlert icon={icon} className={className} title={title} description={description}></DefaultBlockAlert>

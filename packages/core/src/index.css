@@ -1,3 +1,100 @@
+:root {
+  --blue-orange-light-sidebar-border-color: #e0e1e2;
+  --blue-orange-light-sidebar-background-color: #f7f7f9;
+  --blue-orange-dark-sidebar-border-color: #28282a;
+  --blue-orange-dark-sidebar-background-color: #393939;
+
+  --blue-orange-light-sidebar-control-color: dodgerblue;
+  --blue-orange-dark-sidebar-control-color: dodgerblue;
+
+  --blue-orange-light-alert-default-border-color: #e0e1e2;
+  --blue-orange-dark-alert-default-border-color: #28282a;
+  --blue-orange-light-alert-default-background-color: #e0e1e2;
+  --blue-orange-dark-alert-default-background-color: #28282a;
+  --blue-orange-light-default-error-color: #393939;
+  --blue-orange-dark-default-error-color: white;
+
+  --blue-orange-light-alert-error-border-color: #F2D7D5;
+  --blue-orange-dark-alert-error-border-color: #F2D7D5;
+  --blue-orange-light-alert-error-background-color: #F2D7D5;
+  --blue-orange-dark-alert-error-background-color: #F2D7D5;
+  --blue-orange-light-alert-error-color: #922B21;
+  --blue-orange-dark-alert-error-color: #922B21;
+
+  --blue-orange-light-alert-success-border-color: #D5F5E3;
+  --blue-orange-dark-alert-success-border-color: #D5F5E3;
+  --blue-orange-light-alert-success-background-color: #D5F5E3;
+  --blue-orange-dark-alert-success-background-color: #D5F5E3;
+  --blue-orange-light-alert-success-color: #186A3B;
+  --blue-orange-dark-alert-success-color: #186A3B;
+
+  --blue-orange-light-alert-warning-border-color: #f9e79f;
+  --blue-orange-dark-alert-warning-border-color: #f9e79f;
+  --blue-orange-light-alert-warning-background-color: #f9e79f;
+  --blue-orange-dark-alert-warning-background-color: #f9e79f;
+  --blue-orange-light-alert-warning-color: #b7950b;
+  --blue-orange-dark-alert-warning-color: #b7950b;
+
+  --blue-orange-light-toaster-background-color: white;
+  --blue-orange-dark-toaster-background-color: #28282a;
+  --blue-orange-light-toaster-color: #393939;
+  --blue-orange-dark-toaster-color: white;
+
+  --blue-orange-light-toaster-error-background-color: #F2D7D5;
+  --blue-orange-dark-toaster-error-background-color: #F2D7D5;
+  --blue-orange-light-toaster-error-color: #922B21;
+  --blue-orange-dark-toaster-error-color: #922B21;
+
+  --blue-orange-light-toaster-success-background-color: #D5F5E3;
+  --blue-orange-dark-toaster-success-background-color: #D5F5E3;
+  --blue-orange-light-toaster-success-color: #186A3B;
+  --blue-orange-dark-toaster-success-color: #186A3B;
+
+  --blue-orange-light-toaster-warning-background-color: #f9e79f;
+  --blue-orange-dark-toaster-warning-background-color: #f9e79f;
+  --blue-orange-light-toaster-warning-color: #b7950b;
+  --blue-orange-dark-toaster-warning-color: #b7950b;
+
+  --blue-orange-light-primary-btn-border-color: black;
+  --blue-orange-dark-primary-btn-border-color: black;
+  --blue-orange-light-primary-btn-background-color: black;
+  --blue-orange-dark-primary-btn-background-color: black;
+  --blue-orange-light-primary-btn-color: white;
+  --blue-orange-dark-primary-btn-color: white;
+
+  --blue-orange-light-secondary-btn-border-color: #e0e1e2;
+  --blue-orange-dark-secondary-btn-border-color: #e0e1e2;
+  --blue-orange-light-secondary-btn-background-color: white;
+  --blue-orange-dark-secondary-btn-background-color: white;
+  --blue-orange-light-secondary-btn-color: black;
+  --blue-orange-dark-secondary-btn-color: black;
+
+  --blue-orange-light-danger-btn-border-color: #e11d48;
+  --blue-orange-dark-danger-btn-border-color: #e11d48;
+  --blue-orange-light-danger-btn-background-color: #e11d48;
+  --blue-orange-dark-danger-btn-background-color: #e11d48;
+  --blue-orange-light-danger-btn-color: white;
+  --blue-orange-dark-danger-btn-color: white;
+
+  --blue-orange-light-success-btn-border-color: #16a34b;
+  --blue-orange-dark-success-btn-border-color: #16a34b;
+  --blue-orange-light-success-btn-background-color: #16a34b;
+  --blue-orange-dark-success-btn-background-color: #16a34b;
+  --blue-orange-light-success-btn-color: white;
+  --blue-orange-dark-success-btn-color: white;
+
+  --blue-orange-light-warning-btn-border-color: #f97317;
+  --blue-orange-dark-warning-btn-border-color: #f97317;
+  --blue-orange-light-warning-btn-background-color: #f97317;
+  --blue-orange-dark-warning-btn-background-color: #f97317;
+  --blue-orange-light-warning-btn-color: white;
+  --blue-orange-dark-warning-btn-color: white;
+
+  --blue-orange-light-clear-btn-color: black;
+  --blue-orange-dark-clear-btn-color: white;
+
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

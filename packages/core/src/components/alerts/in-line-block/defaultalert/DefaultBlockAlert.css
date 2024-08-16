@@ -1,58 +1,94 @@
 
 
-.passport-default-alert{
+.blue-orange-default-alert{
     width: calc(80% - 30px);
     max-width: calc(500px - 30px);
     padding: 15px;
-    border: 2px solid #e0e1e2;
+    border: 2px solid var(--blue-orange-light-alert-default-border-color);
     display: flex;
     flex-direction: row;
-    background-color: #e0e1e2;
+    background-color: var(--blue-orange-light-alert-default-background-color);
     border-radius: 4px;
+    color: var(--blue-orange-light-default-error-color)
 }
 
-.passport-error-alert{
+.dark .blue-orange-default-alert {
+    border: 2px solid var(--blue-orange-dark-alert-default-border-color);
+    background-color: var(--blue-orange-dark-alert-default-background-color);
+    color: var(--blue-orange-dark-default-error-color)
+}
+
+.blue-orange-error-alert{
     width: calc(80% - 30px);
     max-width: calc(500px - 30px);
     padding: 15px;
-    border: 2px solid #F2D7D5;
+    border: 2px solid var(--blue-orange-light-alert-error-border-color);
     display: flex;
     flex-direction: row;
-    background-color: #F2D7D5;
-    color: #922B21;
+    background-color: var(--blue-orange-light-alert-error-background-color);
+    color: var(--blue-orange-light-alert-error-color);
     border-radius: 4px;
 }
 
-.passport-success-alert{
+.dark .blue-orange-error-alert{
+    border: 2px solid var(--blue-orange-dark-alert-error-border-color);
+    background-color: var(--blue-orange-dark-alert-error-background-color);
+    color: var(--blue-orange-dark-alert-error-color);
+}
+
+.blue-orange-success-alert{
     width: calc(80% - 30px);
     max-width: calc(500px - 30px);
     padding: 15px;
-    border: 2px solid #D5F5E3;
+    border: 2px solid var(--blue-orange-light-alert-success-border-color);
     display: flex;
     flex-direction: row;
-    background-color: #D5F5E3;
-    color: #186A3B;
+    background-color: var(--blue-orange-light-alert-success-background-color);
+    color: var(--blue-orange-light-alert-success-color);
     border-radius: 4px;
 }
 
-.passport-default-alert-icon{
+.dark .blue-orange-success-alert{
+    border: 2px solid var(--blue-orange-dark-alert-success-border-color);
+    background-color: var(--blue-orange-dark-alert-success-background-color);
+    color: var(--blue-orange-dark-alert-success-color);
+}
+
+.blue-orange-warning-alert{
+    width: calc(80% - 30px);
+    max-width: calc(500px - 30px);
+    padding: 15px;
+    border: 2px solid var(--blue-orange-light-alert-warning-border-color);
+    display: flex;
+    flex-direction: row;
+    background-color: var(--blue-orange-light-alert-warning-background-color);
+    color: var(--blue-orange-light-alert-warning-color);
+    border-radius: 4px;
+}
+
+.dark .blue-orange-warning-alert{
+    border: 2px solid var(--blue-orange-dark-alert-warning-border-color);
+    background-color: var(--blue-orange-dark-alert-warning-background-color);
+    color: var(--blue-orange-dark-alert-warning-color);
+}
+.blue-orange-default-alert-icon{
     padding-top: 2px;
     width: 40px;
     display: flex;
     justify-content: flex-start;
 }
 
-.passport-default-alert-main-body{
+.blue-orange-default-alert-main-body{
     width: calc(100% - 40px);
     display: flex;
     flex-direction: column;
 }
 
-.passport-default-alert-main-body-title {
+.blue-orange-default-alert-main-body-title {
     font-weight: 700;
     font-size: 1rem;
 }
 
-.passport-default-alert-main-body-description {
+.blue-orange-default-alert-main-body-description {
     margin-top: 10px;
 }

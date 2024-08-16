@@ -10,7 +10,7 @@ export const SuccessBlockAlert: React.FC<Props> = ({title, description}) => {
 
 	const icon = "ri-checkbox-circle-fill";
 
-	const className = "passport-success-alert";
+	const className = "blue-orange-success-alert";
 
 	return (
 		<DefaultBlockAlert icon={icon} className={className} title={title} description={description}></DefaultBlockAlert>
