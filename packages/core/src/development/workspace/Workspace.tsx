@@ -73,6 +73,9 @@ import {PaddedPage} from "../../components/layouts/pages/padded-page/PaddedPage"
 import {VerticalSplitPage} from "../../components/layouts/pages/split-pages/vertical-split-page/VerticalSplitPage";
 import {SplitPageMajor} from "../../components/layouts/pages/split-pages/split-page-major/SplitPageMajor";
 import {SplitPageMinor} from "../../components/layouts/pages/split-pages/split-page-minor/SplitPageMinor";
+import {
+	HorizontalSplitPage
+} from "../../components/layouts/pages/split-pages/horizontal-split-page/HorizontalSplitPage";
 
 interface Props {
 }
@@ -541,7 +544,7 @@ export const Workspace: React.FC<Props> = ({}) => {
 					<div style={{color: "white"}}>Hello World</div>
 				</SideBarFooter>
 			</SideBar>
-			<VerticalSplitPage maxWidth={"500px"} minWidth={"200px"}>
+			<HorizontalSplitPage>
 				<SplitPageMajor>
 					<PaddedPage>
 						<div>Hello world</div>
@@ -550,7 +553,7 @@ export const Workspace: React.FC<Props> = ({}) => {
 				<SplitPageMinor>
 					<div>Minor split page item</div>
 				</SplitPageMinor>
-			</VerticalSplitPage>
+			</HorizontalSplitPage>
 
 		</SidebarPage>
 
