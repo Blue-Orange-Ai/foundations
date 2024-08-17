@@ -3,6 +3,10 @@
 
 .blue-orange-default-help-icon{
     font-size: 0.8rem;
-    color: #2c3e50;
+    color: var(--blue-orange-light-help-icon-color);
 }
 
+.dark .blue-orange-default-help-icon{
+    font-size: 0.8rem;
+    color: var(--blue-orange-dark-help-icon-color);
+}

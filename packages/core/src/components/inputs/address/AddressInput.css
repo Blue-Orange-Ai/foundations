@@ -16,10 +16,10 @@
 }
 
 .address-input-country-group {
-    border: 1px solid #e0e1e2;
+    border: 1px solid var(--blue-orange-light-input-border-color);
     height: 42px;
     width: 20%;
-    background-color: #f7f7f9;
+    background-color: var(--blue-orange-light-input-select-background);
     border-radius: 4px;
     padding-left: 5px;
     padding-right: 5px;
@@ -28,8 +28,13 @@
     justify-content: space-between;
     cursor: pointer;
     position: relative;
-
 }
+
+.dark .address-input-country-group {
+    border: 1px solid var(--blue-orange-dark-input-border-color);
+    background-color: var(--blue-orange-dark-input-select-background);
+}
+
 
 .address-country-name{
     max-width: 80%;

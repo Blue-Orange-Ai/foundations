@@ -1,9 +1,9 @@
 
 .blue-orange-dropdown{
     width: calc(100% - 10px);
-    border: 1px solid #e0e1e2;
+    border: 1px solid var(--blue-orange-light-input-border-color);
     height: 42px;
-    background-color: white;
+    background-color: var(--blue-orange-light-input-background-color);
     border-radius: 4px;
     padding-left: 5px;
     padding-right: 5px;
@@ -14,8 +14,17 @@
     cursor: pointer;
 }
 
+.dark .blue-orange-dropdown{
+    border: 1px solid var(--blue-orange-dark-input-border-color);
+    background-color: var(--blue-orange-dark-input-background-color);
+}
+
 .blue-orange-dropdown-focus {
-    outline: 1.5px solid black;
+    outline: 1.5px solid var(--blue-orange-light-input-focus-border-color);
+}
+
+.dark .blue-orange-dropdown-focus {
+    outline: 1.5px solid var(--blue-orange-dark-input-focus-border-color);
 }
 
 .blue-orange-dropdown-icon {

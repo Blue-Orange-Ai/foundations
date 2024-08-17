@@ -6,5 +6,9 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    border-bottom: 1px solid #dedede;
+    border-bottom: 1px solid var(--blue-orange-light-input-emoji-header-border-bottom-color);
+}
+
+.dark .blue-orange-html-emoji-header{
+    border-bottom: 1px solid var(--blue-orange-dark-input-emoji-header-border-bottom-color);
 }

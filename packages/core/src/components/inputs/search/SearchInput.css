@@ -12,21 +12,37 @@
     align-items: center;
     justify-content: center;
     width: 40px;
-    color: #B2BABB;
+    color: var(--blue-orange-light-input-search-icon-color);
     pointer-events: none;
+}
+
+.dark .passport-search-group-icon {
+    color: var(--blue-orange-dark-input-search-icon-color);
 }
 
 .blue-orange-search-group-input {
     width: calc(100% - 47px);
-    border: 1px solid #e0e1e2;
+    border: 1px solid var(--blue-orange-light-input-border-color);
     height: 32px;
-    background-color: #f7f7f9;
+    background-color: var(--blue-orange-light-input-search-background);
+    color: var(--blue-orange-light-input-color);
     border-radius: 4px;
     padding-left: 42px;
     padding-right: 5px;
     font-size: 0.8rem;
 }
 
-.blue-orange-search-group-input:focus {
-    outline: 1.5px solid black;
+.dark .blue-orange-search-group-input {
+    border: 1px solid var(--blue-orange-dark-input-border-color);
+    background-color: var(--blue-orange-dark-input-search-background);
+    color: var(--blue-orange-dark-input-color);
 }
+
+.blue-orange-search-group-input:focus {
+    outline: 1.5px solid var(--blue-orange-light-input-focus-border-color);
+}
+
+.dark .blue-orange-search-group-input:focus {
+    outline: 1.5px solid var(--blue-orange-dark-input-focus-border-color);
+}
+

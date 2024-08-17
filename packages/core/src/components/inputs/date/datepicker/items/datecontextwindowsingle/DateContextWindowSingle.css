@@ -1,7 +1,12 @@
 .blue-orange-date-picker-context-window-single {
     padding: 4px;
-    border: 1px solid #e0e1e2;
+    border: 1px solid var(--blue-orange-light-date-picker-border-color);
     position: fixed;
-    background-color: white;
+    background-color: var( --blue-orange-light-date-picker-background-color);
     z-index: 100000 !important;
+}
+
+.dark .blue-orange-date-picker-context-window-single {
+    border: 1px solid var(--blue-orange-dark-date-picker-border-color);
+    background-color: 1px solid var(--blue-orange-light-date-picker-background-color);
 }

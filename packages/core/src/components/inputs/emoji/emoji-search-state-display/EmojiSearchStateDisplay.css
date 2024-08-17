@@ -11,7 +11,11 @@
 .blue-orange-html-emoji-filter-cont {
     width: calc(100% - 10px);
     padding: 10px 5px 5px;
-    background-color: white;
+    background-color: var(--blue-orange-light-input-emoji-filter-background-color);
+}
+
+.dark .blue-orange-html-emoji-filter-cont {
+    background-color: var(--blue-orange-dark-input-emoji-filter-background-color);
 }
 
 .blue-orange-html-emoji-body-display {

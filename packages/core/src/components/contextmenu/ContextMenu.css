@@ -4,7 +4,15 @@
 .blue-orange-default-context-menu{
     position: fixed;
     z-index: 10;
-    background-color: white;
+    background-color: var(--blue-orange-light-context-menu-background);
+    min-width: 50px;
+    overflow-y: auto;
+}
+
+.dark .blue-orange-default-context-menu{
+    position: fixed;
+    z-index: 10;
+    background-color: var(--blue-orange-dark-context-menu-background);
     min-width: 50px;
     overflow-y: auto;
 }
@@ -19,8 +27,12 @@
 }
 
 .blue-orange-default-context-menu-row:hover{
-    background-color: #e0e1e2;
+    background-color: var(--blue-orange-light-context-menu-row-hover-background);
     transition: 0.2s;
+}
+
+.dark .blue-orange-default-context-menu-row:hover {
+    background-color: var(--blue-orange-dark-context-menu-row-hover-background);
 }
 
 .blue-orange-default-context-menu-row-icon{

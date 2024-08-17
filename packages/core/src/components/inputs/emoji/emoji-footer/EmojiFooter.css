@@ -4,7 +4,11 @@
     display: flex;
     flex-direction: column;
     min-height: 62px;
-    background-color: #e0e1e2;
+    background-color: var(--blue-orange-light-input-emoji-footer-background-color);
+}
+
+.dark .blue-orange-html-emoji-footer {
+    background-color: var(--blue-orange-dark-input-emoji-footer-background-color);
 }
 
 .blue-orange-html-emoji-footer-selection-cont{

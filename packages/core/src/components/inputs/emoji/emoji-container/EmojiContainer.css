@@ -2,11 +2,15 @@
 .blue-orange-html-emoji {
     height: 400px;
     width: 382px;
-    background-color: white;
+    background-color: var(--blue-orange-light-input-emoji-background-color);
     border-radius: 4px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     position: relative;
+}
+
+.dark .blue-orange-html-emoji {
+    background-color: var(--blue-orange-dark-input-emoji-background-color);
 }
 

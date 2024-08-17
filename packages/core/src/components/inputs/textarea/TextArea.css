@@ -9,12 +9,25 @@
 .blue-orange-default-text-area{
     min-width: calc(100% - 10px);
     max-width: calc(100% - 10px);
-    border: 1px solid #e0e1e2;
-    background-color: white;
+    border: 1px solid var(--blue-orange-light-input-border-color);
+    background-color: var(--blue-orange-light-input-background-color);
+    border-radius: 4px;
+    padding: 10px 5px;
+}
+
+.dark .blue-orange-default-text-area{
+    min-width: calc(100% - 10px);
+    max-width: calc(100% - 10px);
+    border: 1px solid var(--blue-orange-dark-input-border-color);
+    background-color: var(--blue-orange-dark-input-background-color);
     border-radius: 4px;
     padding: 10px 5px;
 }
 
 .blue-orange-default-text-area:focus {
-    outline: 1.5px solid black;
+    outline: 1.5px solid var(--blue-orange-light-input-focus-border-color);
+}
+
+.dark .blue-orange-default-text-area:focus {
+    outline: 1.5px solid var(--blue-orange-dark-input-focus-border-color);
 }

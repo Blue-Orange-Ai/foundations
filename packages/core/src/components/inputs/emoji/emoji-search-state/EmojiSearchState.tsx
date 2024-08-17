@@ -1,12 +1,9 @@
 import React, {ReactNode, useRef, useState} from "react";
 
 import './EmojiSearchState.css'
-import {EmojiHeader} from "../emoji-header/EmojiHeader";
 import {Input} from "../../input/Input";
-import {DropdownItem as DropdownItemObj, DropdownItemType} from "../../../../interfaces/AppInterfaces";
 import Fuse from "fuse.js";
 import {EmojiObj} from "../data/UnicodeEmoji";
-import {EmojiSelection} from "../emoji-selection/EmojiSelection";
 import {EmojiGroupHeaderTxt} from "../emoji-group-header-txt/EmojiGroupHeaderTxt";
 import {EmojiSearchStateDisplay} from "../emoji-search-state-display/EmojiSearchStateDisplay";
 

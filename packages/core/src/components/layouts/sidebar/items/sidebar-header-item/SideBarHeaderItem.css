@@ -4,9 +4,15 @@
     display: flex;
     flex-direction: row;
     height: 42px;
-    border-bottom: 1px solid #e0e1e2;
+    border-bottom: 1px solid var(--blue-orange-light-sidebar-header-item-border-color);
     align-items: center;
     justify-content: center;
+    color: var(--blue-orange-light-sidebar-body-item-text-color)
+}
+
+.dark .blue-orange-sidebar-header-item {
+    border-bottom: 1px solid var(--blue-orange-dark-sidebar-header-item-border-color);
+    color: var(--blue-orange-dark-sidebar-body-item-text-color)
 }
 
 .blue-orange-sidebar-header-item-cont {

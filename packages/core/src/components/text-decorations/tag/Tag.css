@@ -6,9 +6,14 @@
     padding: 5px 10px;
     font-weight: 600;
     border-radius: 4px;
-    background-color: #18181b;
-    color: white;
+    background-color: var(--blue-orange-light-default-tag-background-color);
+    color: var(--blue-orange-light-default-tag-color);
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.dark .blue-orange-tag{
+    background-color: var(--blue-orange-dark-default-tag-background-color);
+    color: var(--blue-orange-dark-default-tag-color);
 }

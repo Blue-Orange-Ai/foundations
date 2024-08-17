@@ -30,7 +30,11 @@
 .blue-orange-modal-card {
     padding: 24px;
     border-radius: 8px;
-    background-color: white;
+    background-color: var(--blue-orange-light-default-card-background);
     display: flex;
     flex-direction: column;
+}
+
+.dark .blue-orange-modal-card {
+    background-color: var(--blue-orange-dark-default-card-background);
 }

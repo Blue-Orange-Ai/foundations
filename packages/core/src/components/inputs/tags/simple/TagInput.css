@@ -1,5 +1,5 @@
 :root {
-    --tagify-dd-color-primary: black;
+    --tagify-dd-color-primary: var(--blue-orange-input-tag-primary-background-color);
 }
 
 .blue-orange-input-tags-cont {
@@ -9,31 +9,54 @@
 }
 
 .blue-orange-tags {
-    --tag-bg: black;
-    --tag-text-color: white;
-    --tag-hover: black;
-    --tag-remove-btn-color: white;
+    --tag-bg: var(--blue-orange-light-input-tag-background-color);
+    --tag-text-color: var(--blue-orange-light-input-tag-text-color);
+    --tag-hover: var(--blue-orange-light-input-tag-hover-color);
+    --tag-remove-btn-color: var(--blue-orange-light-input-tag-remove-color);
     --placeholder-color: #757575;
-    border: 1px solid #e0e1e2;
+    border: 1px solid var(--blue-orange-light-input-border-color);
     width: calc(100% + 2px);
     height: 42px;
-    background-color: white;
+    background-color: var(--blue-orange-light-input-background-color);
+    border-radius: 4px;
+    padding: 4px 5px;
+    font-size: 0.8rem;
+}
+
+.dark .blue-orange-tags {
+    --tag-bg: var(--blue-orange-dark-input-tag-background-color);
+    --tag-text-color: var(--blue-orange-dark-input-tag-text-color);
+    --tag-hover: var(--blue-orange-dark-input-tag-hover-color);
+    --tag-remove-btn-color: var(--blue-orange-dark-input-tag-remove-color);
+    --placeholder-color: #757575;
+    border: 1px solid var(--blue-orange-dark-input-border-color);
+    width: calc(100% + 2px);
+    height: 42px;
+    background-color: var(--blue-orange-dark-input-background-color);
     border-radius: 4px;
     padding: 4px 5px;
     font-size: 0.8rem;
 }
 
 .tagify--focus {
-    border: 1.5px solid black;
+    border: 1.5px solid var(--blue-orange-light-input-focus-border-color);
+}
+
+.dark .tagify--focus {
+    border: 1.5px solid var(--blue-orange-dark-input-focus-border-color);
 }
 
 .tagify__dropdown {
     margin-top: 10px;
-    background-color: #f9f9f9;
+    background-color: var(--blue-orange-light-input-tag-dropdown-background-color);
     border: none;
     box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
     outline: none;
     border-radius: 8px;
+}
+
+.dark .tagify__dropdown {
+    background-color: var(--blue-orange-dark-input-tag-dropdown-background-color);
 }
 
 .tagify__dropdown:focus {
@@ -46,8 +69,15 @@
 }
 
 .tagify__tag {
-    background-color: black;
-    color: white;
+    background-color: var(--blue-orange-light-input-tag-background-color);
+    color: var(--blue-orange-light-input-tag-text-color);
+    font-size: 0.8rem;
+    border-radius: 4px;
+}
+
+.dark .tagify__tag {
+    background-color: var(--blue-orange-dark-input-tag-background-color);
+    color: var(--blue-orange-dark-input-tag-text-color);
     font-size: 0.8rem;
     border-radius: 4px;
 }

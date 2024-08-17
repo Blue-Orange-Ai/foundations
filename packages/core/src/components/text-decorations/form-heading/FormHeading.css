@@ -1,9 +1,13 @@
 
 
-.passport-default-form-heading-cont{
+.blue-orange-default-form-heading-cont{
     font-size: 0.8rem;
     font-weight: 800;
     text-transform: uppercase;
-    color: #393939;
+    color: var(--blue-orange-light-default-text-color);
     margin-bottom: 5px;
+}
+
+.dark .blue-orange-default-form-heading-cont{
+    color: var(--blue-orange-dark-default-text-color);
 }

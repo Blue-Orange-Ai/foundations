@@ -9,9 +9,13 @@
 .blue-orange-date-picker-day-heading {
     font-size: 0.8rem;
     font-weight: 400;
-    color: #71717a;
+    color: var(--blue-orange-light-date-picker-day-heading-color);
     width: 32px;
     height: 32px;
+}
+
+.dark .blue-orange-date-picker-day-heading {
+    color: var(--blue-orange-dark-date-picker-day-heading-color);
 }
 
 .blue-orange-date-picker-cont {

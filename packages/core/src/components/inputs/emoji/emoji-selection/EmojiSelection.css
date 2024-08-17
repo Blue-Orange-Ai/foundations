@@ -20,6 +20,6 @@
 }
 
 .blue-orange-html-emoji-option:hover {
-    background-color: #f7f7f7;
+    background-color: var(--blue-orange-light-input-emoji-option-hover-color);
     transition: 0.2s;
 }

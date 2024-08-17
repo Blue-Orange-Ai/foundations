@@ -1,7 +1,7 @@
 .blue-orange-date-picker-day {
     font-size: 0.8rem;
     font-weight: 700;
-    color: #393939;
+    color: var(--blue-orange-light-date-picker-day-color);
     width: 32px;
     cursor: pointer;
     text-align: center;
@@ -10,18 +10,32 @@
     border: 1px solid transparent;
 }
 
+.dark .blue-orange-date-picker-day {
+    color: var(--blue-orange-dark-date-picker-day-color);
+}
+
 .blue-orange-date-picker-day-in-active{
     opacity: 0.4;
 }
 
 .blue-orange-date-picker-day-current-day {
-    border: 1px solid black;
+    border: 1px solid var(--blue-orange-light-date-picker-day-current-color);
+}
+
+.dark .blue-orange-date-picker-day-current-day {
+    border: 1px solid var(--blue-orange-dark-date-picker-day-current-color);
 }
 
 .blue-orange-date-picker-day-selected {
-    border: 1px solid black;
-    background-color: black;
-    color: white;
+    border: 1px solid var(--blue-orange-light-date-picker-selected-day-border-color);
+    background-color: var(--blue-orange-light-date-picker-selected-day-background-color);
+    color: var(--blue-orange-light-date-picker-selected-day-color);
+}
+
+.dark .blue-orange-date-picker-day-selected {
+    border: 1px solid var(--blue-orange-dark-date-picker-selected-day-border-color);
+    background-color: var(--blue-orange-dark-date-picker-selected-day-background-color);
+    color: var(--blue-orange-dark-date-picker-selected-day-color);
 }
 
 .blue-orange-date-picker-day-hide-in-active {

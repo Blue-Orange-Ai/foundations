@@ -7,6 +7,15 @@
   --blue-orange-light-sidebar-control-color: dodgerblue;
   --blue-orange-dark-sidebar-control-color: dodgerblue;
 
+  --blue-orange-light-sidebar-body-item-text-color: black;
+  --blue-orange-dark-sidebar-body-item-text-color: white;
+
+  --blue-orange-light-sidebar-body-item-hover-color: #e0e1e2;
+  --blue-orange-dark-sidebar-body-item-hover-color: #28282a;
+
+  --blue-orange-light-sidebar-header-item-border-color: #e0e1e2;
+  --blue-orange-dark-sidebar-header-item-border-color: #28282a;
+
   --blue-orange-light-alert-default-border-color: #e0e1e2;
   --blue-orange-dark-alert-default-border-color: #28282a;
   --blue-orange-light-alert-default-background-color: #e0e1e2;
@@ -105,6 +114,167 @@
   --blue-orange-light-chart-tooltip-general-text-color: black;
   --blue-orange-dark-chart-tooltip-general-text-color: black;
 
+  --blue-orange-light-context-menu-background: white;
+  --blue-orange-dark-context-menu-background: #28282a;
+  --blue-orange-light-context-menu-row-hover-background: #e0e1e2;
+  --blue-orange-dark-context-menu-row-hover-background: #47474a;
+
+  --blue-orange-light-input-color: black;
+  --blue-orange-dark-input-color: white;
+  --blue-orange-light-input-border-color: #e0e1e2;
+  --blue-orange-dark-input-border-color: #28282a;
+  --blue-orange-light-input-background-color: white;
+  --blue-orange-dark-input-background-color: black;
+  --blue-orange-light-input-focus-border-color: black;
+  --blue-orange-dark-input-focus-border-color: white;
+  --blue-orange-light-input-select-background: #f7f7f9;
+  --blue-orange-dark-input-select-background: #28282a;
+  --blue-orange-light-input-search-background: #f7f7f9;
+  --blue-orange-dark-input-search-background: #28282a;
+  --blue-orange-light-input-search-icon-color: #f7f7f9;
+  --blue-orange-dark-input-search-icon-color: #28282a;
+  --blue-orange-light-phone-ext-color: #B2BABB;
+  --blue-orange-dark-phone-ext-color: #B2BABB;
+
+  --blue-orange-light-input-toggle-background-color: #ccc;
+  --blue-orange-dark-input-toggle-background-color: #2196F3;
+  --blue-orange-light-input-toggle-background-color-before: white;
+  --blue-orange-dark-input-toggle-background-color-before: black;
+  --blue-orange-light-input-toggle-checked-color: #2196F3;
+  --blue-orange-dark-input-toggle-checked-color: #2196F3;
+
+  --blue-orange-input-tag-primary-background-color: black;
+
+  --blue-orange-light-input-tag-background-color: black;
+  --blue-orange-dark-input-tag-background-color: #28282a;
+  --blue-orange-light-input-tag-text-color: white;
+  --blue-orange-dark-input-tag-text-color: white;
+  --blue-orange-light-input-tag-hover-color: black;
+  --blue-orange-dark-input-tag-hover-color: #28282a;
+  --blue-orange-light-input-tag-remove-color: white;
+  --blue-orange-dark-input-tag-remove-color: #28282a;
+  --blue-orange-light-input-tag-placeholder-color: #757575;
+  --blue-orange-dark-input-tag-placeholder-color: #757575;
+
+  --blue-orange-light-input-dropdown-background-color: #f9f9f9;
+  --blue-orange-dark-input-dropdown-background-color: #28282a;
+  --blue-orange-light-input-dropdown-item-color: black;
+  --blue-orange-dark-input-dropdown-item-color: white;
+  --blue-orange-light-input-dropdown-item-hover-color: #e0e1e2;
+  --blue-orange-dark-input-dropdown-item-hover-color: black;
+
+  --blue-orange-light-input-dropdown-item-focus-color: dodgerblue;
+  --blue-orange-dark-input-dropdown-item-focus-color: dodgerblue;
+  --blue-orange-light-input-dropdown-item-focus-background-color: #ebf0fb;
+  --blue-orange-dark-input-dropdown-item-focus-background-color: #28282a;
+
+  --blue-orange-light-input-emoji-background-color: white;
+  --blue-orange-dark-input-emoji-background-color: black;
+  --blue-orange-light-input-emoji-footer-background-color: #e0e1e2;
+  --blue-orange-dark-input-emoji-footer-background-color: #28282a;
+  --blue-orange-light-input-emoji-header-text-color: #393939;
+  --blue-orange-dark-input-emoji-header-text-color: white;
+  --blue-orange-light-input-emoji-header-border-bottom-color: #dedede;
+  --blue-orange-dark-input-emoji-header-border-bottom-color: #28282a;
+  --blue-orange-light-input-emoji-header-icon-active-color: dodgerblue;
+  --blue-orange-dark-input-emoji-header-icon-active-color: dodgerblue;
+  --blue-orange-light-input-emoji-general-text-color: black;
+  --blue-orange-dark-input-emoji-general-text-color: white;
+  --blue-orange-light-input-emoji-filter-background-color: white;
+  --blue-orange-dark-input-emoji-filter-background-color: black;
+  --blue-orange-light-input-emoji-option-hover-color: #f7f7f7;
+  --blue-orange-dark-input-emoji-option-hover-color: #28282a;
+
+  --blue-orange-light-date-picker-border-color: #e0e1e2;
+  --blue-orange-dark-date-picker-border-color: #28282a;
+  --blue-orange-light-date-picker-background-color: white;
+  --blue-orange-dark-date-picker-background-color: black;
+
+  --blue-orange-light-date-picker-day-color: #393939;
+  --blue-orange-dark-date-picker-day-color: white;
+
+  --blue-orange-light-date-picker-day-current-color: black;
+  --blue-orange-dark-date-picker-day-current-color: white;
+
+  --blue-orange-light-date-picker-selected-day-border-color: black;
+  --blue-orange-dark-date-picker-selected-day-border-color: white;
+  --blue-orange-light-date-picker-selected-day-background-color: black;
+  --blue-orange-dark-date-picker-selected-day-background-color: white;
+  --blue-orange-light-date-picker-selected-day-color: white;
+  --blue-orange-dark-date-picker-selected-day-color: black;
+
+  --blue-orange-light-date-picker-day-heading-color: #71717a;
+  --blue-orange-dark-date-picker-day-heading-color: #71717a;
+
+  --blue-orange-light-help-icon-color: #2c3e50;
+  --blue-orange-dark-help-icon-color: #2c3e50;
+
+  --blue-orange-light-required-icon-color: #e74c3c;
+  --blue-orange-dark-required-icon-color: #e74c3c;
+
+  --blue-orange-light-input-rich-text-editor-background-color: white;
+  --blue-orange-dark-input-rich-text-editor-background-color: black;
+  --blue-orange-light-input-rich-text-editor-border-color: #e0e1e2;
+  --blue-orange-dark-input-rich-text-editor-border-color: #28282a;
+
+  --blue-orange-light-input-rich-text-editor-heading-background-color: #f7f9f8;
+  --blue-orange-dark-input-rich-text-editor-heading-background-color: #28282a;
+  --blue-orange-light-input-rich-text-editor-heading-color: black;
+  --blue-orange-dark-input-rich-text-editor-heading-color: white;
+
+  --blue-orange-light-input-rich-text-editor-heading-sep-color: #e0e1e2;
+  --blue-orange-dark-input-rich-text-editor-heading-sep-color: #28282a;
+
+  --blue-orange-light-input-rich-text-editor-mention-items-background-color: #fff;
+  --blue-orange-dark-input-rich-text-editor-mention-items-background-color: black;
+  --blue-orange-light-input-rich-text-editor-mention-items-color: black;
+  --blue-orange-dark-input-rich-text-editor-mention-items-color: white;
+
+  --blue-orange-light-input-rich-text-editor-mention-item-selected-border-color: black;
+  --blue-orange-dark-input-rich-text-editor-mention-item-selected-border-color: white;
+
+  --blue-orange-light-input-rich-text-editor-mention-tippy-background-color: white;
+  --blue-orange-dark-input-rich-text-editor-mention-tippy-background-color: #28282a;
+
+  --blue-orange-light-input-rich-text-editor-file-upload-background-color: #e0e1e2;
+  --blue-orange-dark-input-rich-text-editor-file-upload-background-color: #28282a;
+  --blue-orange-light-input-rich-text-editor-file-upload-text-color: black;
+  --blue-orange-dark-input-rich-text-editor-file-upload-text-color: white;
+
+  --blue-orange-light-input-rich-text-editor-file-upload-error-background-color: #f5b7b1;
+  --blue-orange-dark-input-rich-text-editor-file-upload-error-background-color: #f5b7b1;
+  --blue-orange-light-input-rich-text-editor-file-upload-error-color: #943126;
+  --blue-orange-dark-input-rich-text-editor-file-upload-error-color: #943126;
+
+  --blue-orange-light-default-card-background: white;
+  --blue-orange-dark-default-card-background: #28282a;
+
+  --blue-orange-light-default-border-color: #e0e1e2;
+  --blue-orange-dark-default-border-color: #28282a;
+
+  --blue-orange-light-active-border-color: dodgerblue;
+  --blue-orange-dark-active-border-color: dodgerblue;
+
+  --blue-orange-light-simple-metric-border-color: #e0e1e2;
+  --blue-orange-dark-simple-metric-border-color: #28282a;
+  --blue-orange-light-simple-metric-color: black;
+  --blue-orange-dark-simple-metric-color: white;
+
+  --blue-orange-light-table-border-color: black;
+  --blue-orange-dark-table-border-color: white;
+
+  --blue-orange-light-badge-background-color: #18181b;
+  --blue-orange-dark-badge-background-color: #18181b;
+  --blue-orange-light-badge-color: white;
+  --blue-orange-dark-badge-color: white;
+
+  --blue-orange-light-default-text-color: black;
+  --blue-orange-dark-default-text-color: black;
+
+  --blue-orange-light-default-tag-background-color: #18181b;
+  --blue-orange-dark-default-tag-background-color: #18181b;
+  --blue-orange-light-default-tag-color: white;
+  --blue-orange-dark-default-tag-color: white;
 }
 
 body {

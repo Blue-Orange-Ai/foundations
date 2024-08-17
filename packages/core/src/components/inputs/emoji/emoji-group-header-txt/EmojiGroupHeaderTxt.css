@@ -4,8 +4,12 @@
     padding-left: 15px;
     padding-right: 15px;
     font-size: 0.7rem;
-    color: #393939;
+    color: var(--blue-orange-light-input-emoji-header-text-color);
     font-weight: 600;
     margin-top: 5px;
     margin-bottom: 5px;
+}
+
+.dark .blue-orange-html-emoji-header-txt{
+    color: var(--blue-orange-dark-input-emoji-header-text-color);
 }

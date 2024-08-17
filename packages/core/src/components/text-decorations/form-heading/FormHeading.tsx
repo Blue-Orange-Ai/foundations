@@ -9,7 +9,7 @@ interface Props {
 
 export const FormHeading: React.FC<Props> = ({label, required}) => {
 	return (
-		<div className="passport-default-form-heading-cont">
+		<div className="blue-orange-default-form-heading-cont">
 			{required && (
 				<span>*</span>
 			)}

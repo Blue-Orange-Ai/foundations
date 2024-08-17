@@ -7,10 +7,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #393939;
+    color: var(--blue-orange-light-input-emoji-general-text-color);
     opacity: 0.6;
     font-size: 1.4rem;
     cursor: pointer;
+}
+
+.dark .blue-orange-html-emoji-header-icon-class {
+    color: var(--blue-orange-dark-input-emoji-general-text-color);
 }
 
 .blue-orange-html-emoji-header-icon-class:hover {
@@ -22,13 +26,18 @@
     opacity: 1;
     height: 38px;
     border-top: 1px solid transparent;
-    border-bottom: 1px solid dodgerblue;
+    border-bottom: 1px solid var(--blue-orange-light-input-emoji-header-icon-active-color);
     width: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #393939;
+    color: var(--blue-orange-light-input-emoji-general-text-color);
     font-size: 1.4rem;
     cursor: pointer;
+}
+
+.dark .blue-orange-html-emoji-header-icon-class-active {
+    border-bottom: 1px solid var(--blue-orange-dark-input-emoji-header-icon-active-color);
+    color: var(--blue-orange-dark-input-emoji-general-text-color);
 }
 

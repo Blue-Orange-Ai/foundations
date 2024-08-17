@@ -10,14 +10,22 @@
     margin-top: 5px;
     margin-bottom: 5px;
     border-radius: 4px;
-    background-color: #e0e1e2;
+    background-color: var(--blue-orange-light-input-rich-text-editor-file-upload-background-color);
     cursor: pointer;
+}
+
+.dark .blue-orange-rich-text-editor-uploaded-file-cont {
+    background-color: var(--blue-orange-dark-input-rich-text-editor-file-upload-background-color);
 }
 
 .blue-orange-rich-text-editor-uploaded-file-name {
     font-size: 0.8rem;
     font-weight: 600;
-    color: #393939;
+    color: var(--blue-orange-light-input-rich-text-editor-file-upload-text-color);
+}
+
+.dark .blue-orange-rich-text-editor-uploaded-file-name {
+    color: var(--blue-orange-dark-input-rich-text-editor-file-upload-text-color);
 }
 
 .blue-orange-rich-text-editor-uploaded-file-cont:hover .blue-orange-rich-text-editor-uploaded-file-name {
@@ -25,6 +33,11 @@
 }
 
 .blue-orange-rich-text-editor-uploaded-errored {
-    background-color: #f5b7b1;
-    color: #943126;
+    background-color: var(--blue-orange-light-input-rich-text-editor-file-upload-error-background-color);
+    color: var(--blue-orange-light-input-rich-text-editor-file-upload-error-color);
+}
+
+.dark .blue-orange-rich-text-editor-uploaded-errored {
+    background-color: var(--blue-orange-dark-input-rich-text-editor-file-upload-error-background-color);
+    color: var(--blue-orange-dark-input-rich-text-editor-file-upload-error-color);
 }

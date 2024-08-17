@@ -9,10 +9,18 @@
 }
 
 .blue-orange-data-table td {
-    border: 1px solid black;
+    border: 1px solid var(--blue-orange-light-table-border-color);
     cursor: pointer;
 }
 
+.dark .blue-orange-data-table td {
+    border: 1px solid var(--blue-orange-dark-table-border-color);
+}
+
 .blue-orange-data-table th {
-    border: 1px solid black;
+    border: 1px solid var(--blue-orange-light-table-border-color);
+}
+
+.blue-orange-data-table th {
+    border: 1px solid var(--blue-orange-dark-table-border-color);
 }

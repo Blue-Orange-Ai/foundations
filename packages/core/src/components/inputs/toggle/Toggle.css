@@ -17,25 +17,37 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: var(--blue-orange-light-input-toggle-background-color);
     transition: 0.4s;
     border-radius: 18px;
+}
+
+.dark .blue-orange-toggle-switch-slider {
+    background-color: var(--blue-orange-dark-input-toggle-background-color);
 }
 
 .blue-orange-toggle-switch-slider:before {
     position: absolute;
     content: "";
-    height: 14px; /* Adjusted height for the smaller switch */
-    width: 14px; /* Adjusted width for the smaller switch */
-    left: 2px; /* Adjusted position for the smaller switch */
-    bottom: 2px; /* Adjusted position for the smaller switch */
-    background-color: white;
+    height: 14px;
+    width: 14px;
+    left: 2px;
+    bottom: 2px;
+    background-color: var(--blue-orange-light-input-toggle-background-color-before);
     transition: 0.4s;
     border-radius: 50%;
 }
 
+.dark .blue-orange-toggle-switch-slider:before {
+    background-color: var(--blue-orange-dark-input-toggle-background-color-before);
+}
+
 .blue-orange-toggle-switch-input:checked + .blue-orange-toggle-switch-slider {
-    background-color: #2196F3;
+    background-color: var(--blue-orange-light-input-toggle-checked-color);
+}
+
+.dark .blue-orange-toggle-switch-input:checked + .blue-orange-toggle-switch-slider {
+    background-color: var(--blue-orange-dark-input-toggle-checked-color);
 }
 
 

@@ -22,6 +22,10 @@
 }
 
 .blue-orange-tab-header {
-    border-bottom: 2px Solid #e0e1e2;
+    border-bottom: 2px Solid var(--blue-orange-light-default-border-color);
+}
+
+.dark .blue-orange-tab-header {
+    border-bottom: 2px Solid var(--blue-orange-dark-default-border-color);
 }
 
