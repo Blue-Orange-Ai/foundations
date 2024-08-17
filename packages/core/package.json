@@ -10,7 +10,7 @@
     "@Blue-Orange-Ai/primitives-block-editor": "^0.28.0",
     "@Blue-Orange-Ai/primitives-graph": "^0.15.0",
     "@Blue-Orange-Ai/primitives-map": "^0.15.0",
-    "@blue-orange-ai/foundations-clients": "^0.0.16",
+    "@blue-orange-ai/foundations-clients": "^0.0.17",
     "@tiptap/extension-code-block": "^2.3.2",
     "@tiptap/extension-link": "^2.3.2",
     "@tiptap/extension-mention": "^2.3.2",
