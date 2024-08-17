@@ -1,7 +1,7 @@
 import React, {useRef, useState} from "react";
 
 import './Week.css';
-import {DatePickerMonth} from "../../../../../../interfaces/AppInterfaces";
+import {DatePickerMonth} from "../../../../../interfaces/AppInterfaces";
 import {Day, DayObj} from "../day/Day";
 
 

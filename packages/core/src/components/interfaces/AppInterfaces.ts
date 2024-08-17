@@ -1,6 +1,6 @@
 import { Instance } from 'tippy.js';
 import {ReactNode} from "react";
-import {IContextMenuItem} from "../components/contextmenu/ContextMenu";
+import {IContextMenuItem} from "../contextmenu/ContextMenu";
 
 export interface TippyInstance extends Instance {
     _tippy?: TippyInstance;
@@ -23,7 +23,7 @@ export enum DropdownItemType {
     IMAGE
 }
 
-export interface DropdownItem {
+export interface DropdownItemObj {
     label: string,
     reference: string,
     selected: boolean,

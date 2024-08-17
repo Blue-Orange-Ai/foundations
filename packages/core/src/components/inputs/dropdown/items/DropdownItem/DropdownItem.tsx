@@ -1,7 +1,7 @@
 import React from "react";
 
 import './DropdownItem.css'
-import {DropdownItem as DropdownItemObj, DropdownItemType} from "../../../../../interfaces/AppInterfaces";
+import {DropdownItemObj, DropdownItemType} from "../../../../interfaces/AppInterfaces";
 import {DropdownItemImage} from "../DropdownItemImage/DropdownItemImage";
 import {DropdownItemIcon} from "../DropdownItemIcon/DropdownItemIcon";
 import {DropdownItemHeading} from "../DropdownItemHeading/DropdownItemHeading";
@@ -19,15 +19,6 @@ export const DropdownItem: React.FC<Props> = ({
 
 	const generateItemStyle = () => {
 		var className = "blue-orange-dropdown-item"
-		// if (item.type != DropdownItemType.HEADING && !item.disabled) {
-		// 	className += " blue-orange-dropdown-item-hoverable"
-		// }
-		// if (item.disabled) {
-		// 	className += " blue-orange-dropdown-item-disabled"
-		// }
-		// if (item.focused) {
-		// 	className += " blue-orange-dropdown-item-focused"
-		// }
 		return className;
 	}
 

@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import tippy from "tippy.js";
-import {TippyHTMLElement} from "../../../interfaces/AppInterfaces";
+import {TippyHTMLElement} from "../../interfaces/AppInterfaces";
 
 import './ButtonIcon.css'
 

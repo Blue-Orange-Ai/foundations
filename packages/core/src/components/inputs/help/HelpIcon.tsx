@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import tippy from "tippy.js";
 
 import './HelpIcon.css'
-import {TippyHTMLElement} from "../../../interfaces/AppInterfaces";
+import {TippyHTMLElement} from "../../interfaces/AppInterfaces";
 
 interface Props {
 	label: string,

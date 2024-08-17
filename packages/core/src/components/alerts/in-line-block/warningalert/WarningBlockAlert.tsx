@@ -6,7 +6,7 @@ interface Props {
 	description?: string
 }
 
-export const SuccessBlockAlert: React.FC<Props> = ({title, description}) => {
+export const WarningBlockAlert: React.FC<Props> = ({title, description}) => {
 
 	const icon = "ri-checkbox-circle-fill";
 

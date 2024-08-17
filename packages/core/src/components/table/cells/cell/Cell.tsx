@@ -1,7 +1,7 @@
 import React, {ReactNode} from "react";
 
 import './Cell.css'
-import {CellAlignment} from "../../../../interfaces/AppInterfaces";
+import {CellAlignment} from "../../../interfaces/AppInterfaces";
 
 interface Props {
 	children: ReactNode;

@@ -1,7 +1,7 @@
 import React, {ReactNode} from "react";
 
 import './CheckboxCell.css'
-import {CellAlignment} from "../../../../interfaces/AppInterfaces";
+import {CellAlignment} from "../../../interfaces/AppInterfaces";
 import {Checkbox} from "../../../inputs/checkbox/Checkbox";
 
 interface Props {

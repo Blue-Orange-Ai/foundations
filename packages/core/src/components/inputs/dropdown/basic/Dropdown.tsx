@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import './Dropdown.css'
-import {DropdownItem as DropdownItemObj, DropdownItemType} from "../../../../interfaces/AppInterfaces";
+import {DropdownItemObj, DropdownItemType} from "../../../interfaces/AppInterfaces";
 import {DropdownItem} from "../items/DropdownItem/DropdownItem";
 import {Input} from "../../input/Input";
 import Fuse from "fuse.js";

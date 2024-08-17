@@ -8,7 +8,7 @@ import {
 	Telephone,
 	User,
 	UserState
-} from "@Blue-Orange-Ai/foundations-clients/lib/Passport";
+} from "@Blue-Orange-Ai/foundations-clients";
 import {ToastContext} from "../../components/alerts/toast/toastcontext/ToastContext";
 import {SideBar, SideBarState} from "../../components/layouts/sidebar/default/SideBar";
 import {Media} from "@Blue-Orange-Ai/foundations-clients";
@@ -37,7 +37,7 @@ import {CheckboxCell} from "../../components/table/cells/checkboxcell/CheckboxCe
 import {HeaderCell} from "../../components/table/cells/headercell/HeaderCell";
 import {PrimaryCell} from "../../components/table/cells/primarycell/PrimaryCell";
 import {Cell} from "../../components/table/cells/cell/Cell";
-import {CellAlignment, DropdownItem, DropdownItemType} from "../../interfaces/AppInterfaces";
+import {CellAlignment, DropdownItemObj, DropdownItemType} from "../../components/interfaces/AppInterfaces";
 import {TBody} from "../../components/table/tbody/TBody";
 import {Currency} from "../../components/text-decorations/currency/Currency";
 import {Percentage} from "../../components/text-decorations/percentage/Percentage";
@@ -169,7 +169,7 @@ export const Workspace: React.FC<Props> = ({}) => {
 		state: UserState.ACTIVE
 	}
 	//
-	const dropdownItems: Array<DropdownItem> = [
+	const dropdownItems: Array<DropdownItemObj> = [
 		{
 			label: "Names",
 			reference: "5",

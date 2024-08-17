@@ -1,7 +1,7 @@
 import React, {ReactNode, useEffect, useRef, useState} from "react";
 
 import './DropdownItemStyle.css'
-import {DropdownItem as DropdownItemObj, DropdownItemType} from "../../../../../interfaces/AppInterfaces";
+import {DropdownItemObj, DropdownItemType} from "../../../../interfaces/AppInterfaces";
 
 interface Props {
 	children: ReactNode;

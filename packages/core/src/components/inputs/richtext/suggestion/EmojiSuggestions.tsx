@@ -1,6 +1,4 @@
-import {MentionItem} from "../default/RichText";
 import {ReactRenderer} from "@tiptap/react";
-import {MentionList} from "../mentionlist/MentionList";
 import tippy from "tippy.js";
 import UnicodeEmoji, {EmojiObj} from "../../emoji/data/UnicodeEmoji";
 import {EmojiList} from "../emojilist/EmojiList";

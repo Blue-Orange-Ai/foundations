@@ -1,7 +1,7 @@
 import React, {ReactNode} from "react";
 
 import './AvatarList.css'
-import {User} from "@Blue-Orange-Ai/foundations-clients/lib/Passport";
+import {User} from "@Blue-Orange-Ai/foundations-clients";
 import {Avatar} from "../avatar/Avatar";
 
 interface Props {

@@ -1,7 +1,7 @@
 import React, {ChangeEvent, ReactEventHandler, useEffect, useRef, useState} from "react";
 
 import './Month.css';
-import {DatePickerMonth} from "../../../../../../interfaces/AppInterfaces";
+import {DatePickerMonth} from "../../../../../interfaces/AppInterfaces";
 import {DayObj} from "../day/Day";
 import {Week, WeekObj} from "../week/Week";
 import {ButtonIcon} from "../../../../../buttons/button-icon/ButtonIcon";

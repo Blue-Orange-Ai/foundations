@@ -9,7 +9,7 @@ export default defineConfig ({
             fileName: "index",
         },
         rollupOptions: {
-            external: ["react"],
+            external: ["react", "@Blue-Orange-Ai/foundations-clients"],
         },
     },
 });

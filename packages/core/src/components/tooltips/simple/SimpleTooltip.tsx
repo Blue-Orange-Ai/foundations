@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from "react";
 
 import './SimpleTooltip.css'
-import {TippyHTMLElement} from "../../../interfaces/AppInterfaces";
+import {TippyHTMLElement} from "../../interfaces/AppInterfaces";
 import tippy from "tippy.js";
 
 interface Props {

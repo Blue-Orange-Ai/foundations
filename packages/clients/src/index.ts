@@ -1,3 +1,3 @@
-export { Passport } from './Passport';
-export { Media } from './BlueOrangeMedia';
-export { Sockets } from './Sockets';
+export * from './Passport';
+export * from './BlueOrangeMedia';
+export * from './Sockets';

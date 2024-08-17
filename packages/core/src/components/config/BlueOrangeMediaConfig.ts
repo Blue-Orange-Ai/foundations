@@ -1,4 +1,4 @@
-import {BlueOrangeMedia} from "@Blue-Orange-Ai/foundations-clients/lib/BlueOrangeMedia";
+import {BlueOrangeMedia} from "@Blue-Orange-Ai/foundations-clients";
 
 
 const blueOrangeMediaInstance = BlueOrangeMedia.getInstance("http://localhost:8086");

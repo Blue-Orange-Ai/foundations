@@ -4,8 +4,8 @@ import './SocketWorkspace.css'
 import {Button, ButtonType} from "../../components/buttons/button/Button";
 import {ToastContext, ToastLocation} from "../../components/alerts/toast/toastcontext/ToastContext";
 import {ToasterType} from "../../components/alerts/toast/toaster/Toaster";
-import Sockets from "@Blue-Orange-Ai/foundations-clients/lib/Sockets";
-import {TippyHTMLElement} from "../../interfaces/AppInterfaces";
+import {Sockets} from "@Blue-Orange-Ai/foundations-clients";
+import {TippyHTMLElement} from "../../components/interfaces/AppInterfaces";
 import tippy from "tippy.js";
 import Cookies from "js-cookie";
 
@@ -31,7 +31,7 @@ export const SocketWorkspace: React.FC<Props> = ({}) => {
 				ttl: 5000
 			})
 
-			sockets.subscribe('/topic/' + topic, (message) => {
+			sockets.subscribe('/topic/' + topic, (message: any) => {
 				console.log('Received message:', message.body);
 			});
 		}

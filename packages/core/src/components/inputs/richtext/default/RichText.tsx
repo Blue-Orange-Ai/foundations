@@ -17,8 +17,8 @@ import {EmojiWrapper} from "../../emoji/emoji-wrapper/EmojiWrapper";
 import {FileInputWrapper} from "../../file-input-wrapper/FileInputWrapper";
 import {RichTextEditorUploadedFile, UploadedFile} from "../uploaded-file/UploadedFile";
 import {Media} from "@Blue-Orange-Ai/foundations-clients";
-import {MediaPermission} from "@Blue-Orange-Ai/foundations-clients/lib/BlueOrangeMedia";
-import {GroupPermission} from "@Blue-Orange-Ai/foundations-clients/lib/Passport";
+import {MediaPermission} from "@Blue-Orange-Ai/foundations-clients";
+import {GroupPermission} from "@Blue-Orange-Ai/foundations-clients";
 import CustomMention from "../mention-extension/MentionExtension";
 
 export interface MentionItem {

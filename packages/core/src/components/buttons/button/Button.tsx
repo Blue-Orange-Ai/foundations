@@ -3,7 +3,7 @@ import tippy from "tippy.js";
 import './Button.css';
 import {SuccessAnimation} from "../utils/successanimation/SuccessAnimation";
 import {ErrorAnimation} from "../utils/erroranimation/ErrorAnimation";
-import {TippyHTMLElement} from "../../../interfaces/AppInterfaces";
+import {TippyHTMLElement} from "../../interfaces/AppInterfaces";
 
 export enum ButtonType {
 	PRIMARY,
