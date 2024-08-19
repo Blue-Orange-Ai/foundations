@@ -1,13 +1,13 @@
 {
   "name": "@blue-orange-ai/foundations-core",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/vite-entry.d.ts",
   "author": "Blue Orange AI",
   "private": false,
   "dependencies": {
-    "@blue-orange-ai/foundations-clients": "^0.0.22",
+    "@blue-orange-ai/foundations-clients": "^0.0.23",
     "@blue-orange-ai/primitives-block-editor": "^0.31.0",
     "@blue-orange-ai/primitives-graph": "^0.31.0",
     "@blue-orange-ai/primitives-map": "^0.31.0",
