@@ -19,10 +19,10 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "declaration": true,
-    "emitDeclarationOnly": true,
-    "outDir": "dist/types"
+    "emitDeclarationOnly": true
   },
   "include": [
     "src/vite-entry.tsx",
+    "src/components",
   ]
 }
