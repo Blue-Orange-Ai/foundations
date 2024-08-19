@@ -2,7 +2,7 @@ import React, {ReactNode, useState} from "react";
 
 import './SideBarHeaderItem.css'
 import {SideBarState} from "../../default/SideBar";
-import {Media} from "@Blue-Orange-Ai/foundations-clients";
+import {Media} from "@blue-orange-ai/foundations-clients";
 import {RenderMedia} from "../../../../media/default/RenderMedia";
 import {ButtonIcon} from "../../../../buttons/button-icon/ButtonIcon";
 

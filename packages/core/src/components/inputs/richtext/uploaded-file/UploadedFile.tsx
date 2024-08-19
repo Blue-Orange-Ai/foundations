@@ -2,11 +2,11 @@ import React, {useEffect, useRef, useState} from "react";
 
 import './UploadedFile.css'
 import {ButtonIcon} from "../../../buttons/button-icon/ButtonIcon";
-import {Media} from "@Blue-Orange-Ai/foundations-clients";
+import {Media} from "@blue-orange-ai/foundations-clients";
 import {SimpleMetric} from "../../../metrics/simple-metric/SimpleMetric";
 import blueOrangeMediaInstance from "../../../config/BlueOrangeMediaConfig";
-import {GroupPermission} from "@Blue-Orange-Ai/foundations-clients";
-import {MediaPermission} from "@Blue-Orange-Ai/foundations-clients";
+import {GroupPermission} from "@blue-orange-ai/foundations-clients";
+import {MediaPermission} from "@blue-orange-ai/foundations-clients";
 
 export interface RichTextEditorUploadedFile {
 	uuid: string,

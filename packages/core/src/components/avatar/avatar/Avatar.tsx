@@ -3,7 +3,6 @@ import React, {useEffect, useRef, useState} from "react";
 import './Avatar.css';
 import {AvatarEmpty} from "../avatarempty/AvatarEmpty";
 import {AvatarImage} from "../avatarimage/AvatarImage";
-// import {Avatar as AvatarObj, GroupPermission, User} from "@Blue-Orange-Ai/foundations-clients";
 import {Button, ButtonType} from "../../buttons/button/Button";
 import {FileUploadBtn} from "../../buttons/file-upload-btn/FileUploadBtn";
 import {TippyHTMLElement} from "../../interfaces/AppInterfaces";
@@ -13,7 +12,7 @@ import {Modal} from "../../layouts/modal/modal/Modal";
 import {ModalHeader} from "../../layouts/modal/modal-header/ModalHeader";
 import {ModalDescription} from "../../layouts/modal/modal-description/ModalDescription";
 import {ModalBody} from "../../layouts/modal/modal-body/ModalBody";
-import {Media, Passport, Avatar as AvatarObj, GroupPermission, User} from "@Blue-Orange-Ai/foundations-clients";
+import {Media, Passport, Avatar as AvatarObj, GroupPermission, User} from "@blue-orange-ai/foundations-clients";
 import passport from "../../config/BlueOrangePassportConfig";
 
 

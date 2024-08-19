@@ -2,7 +2,7 @@ import React, {ChangeEvent, useRef, useState} from "react";
 
 import './AddressInput.css';
 import {Input} from "../input/Input";
-import {Address} from "@Blue-Orange-Ai/foundations-clients";
+import {Address} from "@blue-orange-ai/foundations-clients";
 import {HelpIcon} from "../help/HelpIcon";
 import {RequiredIcon} from "../required-icon/RequiredIcon";
 

@@ -3,7 +3,7 @@ import React, {ReactNode} from "react";
 import parsePhoneNumber from 'libphonenumber-js'
 
 import './TelephoneText.css'
-import {Telephone} from "@Blue-Orange-Ai/foundations-clients";
+import {Telephone} from "@blue-orange-ai/foundations-clients";
 
 interface Props {
 	phone?: string,

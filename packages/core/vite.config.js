@@ -11,7 +11,7 @@ export default defineConfig ({
             fileName: (format) => `index.${format}.js`,
         },
         rollupOptions: {
-            external: ["react", "@Blue-Orange-Ai/foundations-clients"],
+            external: ["react", "@blue-orange-ai/foundations-clients"],
         },
     },
     plugins: [

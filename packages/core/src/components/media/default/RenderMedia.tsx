@@ -4,7 +4,7 @@ import './RenderMedia.css'
 import {Image} from "../image/Image";
 import {Pdf} from "../pdf/Pdf";
 import blueOrangeMediaInstance from "../../config/BlueOrangeMediaConfig";
-import {Media} from "@Blue-Orange-Ai/foundations-clients";
+import {Media} from "@blue-orange-ai/foundations-clients";
 
 interface Props {
 	media: Media,

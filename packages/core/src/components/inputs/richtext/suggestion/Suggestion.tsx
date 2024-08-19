@@ -3,7 +3,7 @@ import {MentionList} from "../mentionlist/MentionList";
 import tippy from 'tippy.js'
 import {MentionItem} from "../default/RichText";
 import passport from "../../../config/BlueOrangePassportConfig";
-import {User, UserSearchResult} from "@Blue-Orange-Ai/foundations-clients";
+import {User, UserSearchResult} from "@blue-orange-ai/foundations-clients";
 
 const getDisplayName = (user: User) => {
     if (user.name == undefined || user.name == "") {

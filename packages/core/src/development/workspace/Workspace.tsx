@@ -8,10 +8,10 @@ import {
 	Telephone,
 	User,
 	UserState
-} from "@Blue-Orange-Ai/foundations-clients";
+} from "@blue-orange-ai/foundations-clients";
 import {ToastContext} from "../../components/alerts/toast/toastcontext/ToastContext";
 import {SideBar, SideBarState} from "../../components/layouts/sidebar/default/SideBar";
-import {Media} from "@Blue-Orange-Ai/foundations-clients";
+import {Media} from "@blue-orange-ai/foundations-clients";
 import {ScatterChart} from "../../components/charts/scatter/ScatterChart";
 import {Modal} from "../../components/layouts/modal/modal/Modal";
 import {ModalHeader} from "../../components/layouts/modal/modal-header/ModalHeader";
