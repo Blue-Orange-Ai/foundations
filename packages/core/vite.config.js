@@ -7,7 +7,8 @@ export default defineConfig ({
         lib: {
             entry: resolve(__dirname, "src/vite-entry.tsx"),
             name: "core",
-            fileName: "index",
+            formats: ["es", "umd"],
+            fileName: (format) => `index.${format}.js`,
         },
         rollupOptions: {
             external: ["react", "@Blue-Orange-Ai/foundations-clients"],
@@ -15,7 +16,8 @@ export default defineConfig ({
     },
     plugins: [
         dts({
-            insertTypesEntry: true
+            insertTypesEntry: true,
+            outputDir: "dist/types",
         }),
     ],
 });

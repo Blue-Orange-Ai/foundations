@@ -3,7 +3,7 @@
   "version": "0.0.23",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
-  "types": "dist/vite-entry.d.ts",
+  "types": "dist/types/vite-entry.d.ts",
   "author": "Blue Orange AI",
   "private": false,
   "dependencies": {
