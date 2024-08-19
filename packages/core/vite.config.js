@@ -16,6 +16,8 @@ export default defineConfig ({
     plugins: [
         dts({
             insertTypesEntry: true,
+            outputDir: "dist/types",
+            entryRoot: "src",
         }),
     ],
 });

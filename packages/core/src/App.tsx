@@ -1,5 +1,5 @@
+// @ts-ignore
 import React from 'react';
-import logo from './logo.svg';
 import 'remixicon/fonts/remixicon.css';
 import 'tippy.js/dist/tippy.css'
 import 'animate.css';
