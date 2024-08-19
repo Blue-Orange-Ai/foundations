@@ -23,6 +23,6 @@
     "outDir": "dist/types"
   },
   "include": [
-    "src/components"
+    "src/vite-entry.tsx",
   ]
 }
