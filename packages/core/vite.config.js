@@ -1,5 +1,6 @@
 import { resolve } from "path";
 import { defineConfig } from "vite";
+import dts from 'vite-plugin-dts';
 
 export default defineConfig ({
     build: {
@@ -12,4 +13,9 @@ export default defineConfig ({
             external: ["react", "@Blue-Orange-Ai/foundations-clients"],
         },
     },
+    plugins: [
+        dts({
+            insertTypesEntry: true,
+        }),
+    ],
 });

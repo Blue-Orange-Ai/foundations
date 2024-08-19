@@ -121,6 +121,7 @@ export const RichText: React.FC<Props> = ({
 	}
 
 
+	// @ts-ignore
 	const mentionExtension = CustomMention.configure({
 		HTMLAttributes: {
 			class: 'mention',
@@ -128,7 +129,7 @@ export const RichText: React.FC<Props> = ({
 		suggestion: {
 			char: '@',
 			startOfLine: false,
-			command: ({ editor, range, props }) => {
+			command: ({ editor, range, props }: any) => {
 				editor
 					.chain()
 					.focus()
@@ -142,7 +143,7 @@ export const RichText: React.FC<Props> = ({
 					.run();
 				editorChanged();
 			},
-			items: ({ query }) => {
+			items: ({ query }: any) => {
 				setQuery(query);
 				return mentionItems;
 			},
@@ -157,7 +158,7 @@ export const RichText: React.FC<Props> = ({
 		suggestion: {
 			char: ':',
 			startOfLine: false,
-			command: ({ editor, range, props }) => {
+			command: ({ editor, range, props }: any) => {
 				const textEmoji = new DOMParser().parseFromString(getEmojiHtml(props), 'text/html').body.textContent;
 				editor
 					.chain()
@@ -166,7 +167,7 @@ export const RichText: React.FC<Props> = ({
 					.run();
 				editorChanged();
 			},
-			items: ({ query }) => {
+			items: ({ query }: any) => {
 				setQuery(query);
 				return emojiItems;
 			},

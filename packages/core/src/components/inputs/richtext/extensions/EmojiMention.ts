@@ -35,7 +35,7 @@ export const EmojiMention = Node.create<EmojiMentionOptions>({
             suggestion: {
                 char: '@',
                 pluginKey: MentionPluginKey,
-                command: ({ editor, range, props }) => {
+                command: ({ editor, range, props }: any) => {
                     // increase range.to by one when the next node is of type "text"
                     // and starts with a space character
                     const nodeAfter = editor.view.state.selection.$to.nodeAfter
@@ -62,7 +62,7 @@ export const EmojiMention = Node.create<EmojiMentionOptions>({
 
                     window.getSelection()?.collapseToEnd()
                 },
-                allow: ({ state, range }) => {
+                allow: ({ state, range }: any) => {
                     const $from = state.doc.resolve(range.from)
                     const type = state.schema.nodes[this.name]
                     const allow = !!$from.parent.type.contentMatch.matchType(type)
