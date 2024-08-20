@@ -1,3 +1,7 @@
 node_modules/
 /packages/core/dist/
 /packages/clients/lib/
+/packages/block-editor/dist/
+/packages/map/dist/
+/packages/graph/dist/
+/packages/code-editors/dist/

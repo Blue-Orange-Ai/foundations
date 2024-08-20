@@ -23,9 +23,8 @@ import {ModalFooterRight} from "../../components/layouts/modal/modal-footer-righ
 import {Button, ButtonType} from "../../components/buttons/button/Button";
 import {DateInput} from "../../components/inputs/date/datepicker/inputs/dateinput/DateInput";
 import {BlueOrangeMapWrapper} from "../../components/map/BlueOrangeMapWrapper";
-import { Edge, Node as GraphNode } from "@Blue-Orange-Ai/primitives-graph";
+import { Edge, Node as GraphNode } from "@blue-orange-ai/primitives-graph";
 import {BlueOrangeGraphWrapper} from "../../components/graph/BlueOrangeGraphWrapper";
-import {BlueOrangeBlockEditorWrapper} from "../../components/block-editor/BlueOrangeBlockEditorWrapper";
 import {RichText} from "../../components/inputs/richtext/default/RichText";
 import {AddressInput, Avatar, Checkbox, PhoneInput, TextArea} from "../../vite-entry";
 import Cookies from "js-cookie";
@@ -46,10 +45,6 @@ import {EmailLink} from "../../components/text-decorations/email/EmailLink";
 import {IContextMenuItem} from "../../components/contextmenu/ContextMenu";
 import {Dropdown} from "../../components/inputs/dropdown/basic/Dropdown";
 import {TagInput} from "../../components/inputs/tags/simple/TagInput";
-import {TextEditor} from "../../components/inputs/code/text/TextEditor";
-import {YamlEditor} from "../../components/inputs/code/yaml/YamlEditor";
-import {JsonEditor} from "../../components/inputs/code/json/JsonEditor";
-import {DiffEditor} from "../../components/inputs/code/diff/DiffEditor";
 import {LineChart} from "../../components/charts/line/LineChart";
 import {BarChart} from "../../components/charts/bar/BarChart";
 import {Drawer} from "../../components/layouts/drawer/drawer/Drawer";
@@ -644,7 +639,6 @@ export const Workspace: React.FC<Props> = ({}) => {
 		// 		{/*<DateInput displayFormat={"ddd, MMMM Do YYYY"}></DateInput>*/}
 		// 		{/*<BlueOrangeMapWrapper></BlueOrangeMapWrapper>*/}
 		// 		{/*<BlueOrangeGraphWrapper nodes={nodes} edges={edges}></BlueOrangeGraphWrapper>*/}
-		// 		{/*<BlueOrangeBlockEditorWrapper></BlueOrangeBlockEditorWrapper>*/}
 		// 		{/*<EmojiContainer></EmojiContainer>*/}
 		// 		{/*<Checkbox></Checkbox>*/}
 		// 		{/*<Toggle></Toggle>*/}

@@ -8,9 +8,6 @@
   "private": false,
   "dependencies": {
     "@blue-orange-ai/foundations-clients": "^0.0.25",
-    "@blue-orange-ai/primitives-block-editor": "^0.31.0",
-    "@blue-orange-ai/primitives-graph": "^0.31.0",
-    "@blue-orange-ai/primitives-map": "^0.31.0",
     "@tiptap/extension-code-block": "^2.3.2",
     "@tiptap/extension-link": "^2.3.2",
     "@tiptap/extension-mention": "^2.3.2",
@@ -20,7 +17,6 @@
     "@tiptap/starter-kit": "^2.3.2",
     "@tiptap/suggestion": "^2.6.4",
     "@types/leaflet": "^1.9.12",
-    "@types/moment": "^2.13.0",
     "@types/yaireo__tagify": "^4.24.0",
     "@yaireo/tagify": "^4.26.5",
     "animate.css": "^4.1.1",
@@ -34,8 +30,6 @@
     "katex": "^0.16.11",
     "leaflet": "^1.9.4",
     "moment": "^2.30.1",
-    "monaco-editor": "^0.48.0",
-    "monaco-editor-webpack-plugin": "^7.1.0",
     "pdfjs-dist": "^4.2.67",
     "plyr": "^3.7.8",
     "remixicon": "^3.5.0",
@@ -68,7 +62,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "react-scripts start",
     "build": "vite build && tsc",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
