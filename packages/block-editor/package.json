@@ -1,6 +1,6 @@
 {
   "name": "@blue-orange-ai/foundations-block-editor",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
