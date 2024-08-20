@@ -14,9 +14,10 @@ interface Props {
 	position?: DrawerPosition,
 	width?: number;
 	height?: number;
+	onClose?: () => void;
 }
 
-export const Drawer: React.FC<Props> = ({children, position = DrawerPosition.TOP, height=375, width=375}) => {
+export const Drawer: React.FC<Props> = ({children, position = DrawerPosition.TOP, height=375, width=375, onClose}) => {
 
 	const [animate, setAnimate] = useState(false);
 
@@ -47,9 +48,15 @@ export const Drawer: React.FC<Props> = ({children, position = DrawerPosition.TOP
 		setAnimate(true);
 	}, []);
 
+	const handleBackdropClicked = () => {
+		if (onClose) {
+			onClose()
+		}
+	}
+
 	return (
 		<div className="blue-orange-drawer-window" style={generateDrawerStyle()}>
-			<div className="blue-orange-drawer-backdrop"></div>
+			<div className="blue-orange-drawer-backdrop" onClick={handleBackdropClicked}></div>
 			<div className="blue-orange-drawer-content">
 				{position == DrawerPosition.RIGHT && <div className={animate ? "blue-orange-drawer-card-right blue-orange-drawer-card-enter" : "blue-orange-drawer-card-right"} style={{width: width + "px"}}>{children}</div>}
 				{position == DrawerPosition.LEFT && <div className={animate ? "blue-orange-drawer-card-left blue-orange-drawer-card-enter" : "blue-orange-drawer-card-left"} style={{width: width + "px"}}>{children}</div>}
