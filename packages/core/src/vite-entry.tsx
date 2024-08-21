@@ -134,6 +134,7 @@ export * from './components/media/pdf/Pdf';
 export * from './components/metrics/simple-metric/SimpleMetric';
 export * from './components/metrics/metric/Metric';
 export * from './components/metrics/metric-card/MetricCard';
+export * from './components/metrics/metric-with-action/MetricWithAction';
 export * from './components/metrics/metric-with-copy/MetricWithCopy';
 
 // Table
