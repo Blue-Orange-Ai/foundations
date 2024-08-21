@@ -311,18 +311,23 @@ export const Dropdown: React.FC<Props> = ({
 	}, [items]);
 
 	const toggleVisibleState = (ev: React.MouseEvent) => {
-		if (!isDescendantOfClassName("blue-orange-dropdown-remove-selection", ev.target as HTMLElement)) {
-			if (visibleRef.current) {
-				setVisible(false);
-			} else {
-				setBlockMouseClick(true);
-				setTimeout(() => {
-					setBlockMouseClick(false);
-				}, 500)
-				setVisible(true);
-				handleFilterChange("");
+		if (!disabled) {
+			if (!isDescendantOfClassName("blue-orange-dropdown-remove-selection", ev.target as HTMLElement)) {
+				if (visibleRef.current) {
+					setVisible(false);
+				} else {
+					setBlockMouseClick(true);
+					setTimeout(() => {
+						setBlockMouseClick(false);
+					}, 500)
+					setVisible(true);
+					handleFilterChange("");
+				}
 			}
+		} else {
+			setVisible(false);
 		}
+
 	}
 
 	const updateModifiedItems = (item: DropdownItemObj, modItems: Array<DropdownItemObj>) => {
@@ -463,14 +468,14 @@ export const Dropdown: React.FC<Props> = ({
 					</>
 				}
 				{allowMultipleSelection && selectedItems.length <= 0 &&
-					<Input placeholder={placeholder} style={{border: "transparent", height: "40px",pointerEvents: "none"}}></Input>
+					<Input placeholder={placeholder} disabled={disabled} style={{border: "transparent", height: "40px",pointerEvents: "none"}}></Input>
 				}
 			</div>
 			{visible &&
 				<div ref={dropdownRef} className="blue-orange-dropdown-window shadow" style={dropdownWindowStyle}>
 					{filter &&
 						<div className="blue-orange-dropdown-window-filter-cont">
-							<Input placeholder={"Filter..."} style={{height: "32px", fontSize: "14px"}} onChange={handleFilterChange} focus={true}></Input>
+							<Input placeholder={"Filter..."} style={{height: "32px", fontSize: "14px"}} disabled={disabled} onChange={handleFilterChange} focus={true}></Input>
 						</div>
 					}
 					<div style={dropdownItemStyle}>

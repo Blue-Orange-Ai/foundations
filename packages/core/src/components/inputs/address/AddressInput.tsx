@@ -9,6 +9,7 @@ import {RequiredIcon} from "../required-icon/RequiredIcon";
 interface Props {
 	address?: Address | undefined;
 	onChange?: (value: Address) => void;
+	disabled?: boolean;
 	label?:string;
 	required?: boolean;
 	help?: string;
@@ -29,6 +30,7 @@ export const AddressInput: React.FC<Props> = ({
 												  onChange,
 												  label,
 												  required=false,
+												  disabled=false,
 												  help,
 												  style = {},
 												  labelStyle={}
@@ -1585,20 +1587,22 @@ export const AddressInput: React.FC<Props> = ({
 				</div>
 			}
 			<div className="address-main-input">
-				<Input placeholder="Address" value={addr.address} onChange={handleMainAddress} style={style}></Input>
+				<Input placeholder="Address" disabled={disabled} value={addr.address} onChange={handleMainAddress} style={style}></Input>
 			</div>
 			<div className="address-sub-input">
 				<div style={{width: "calc(40% - 10px)"}}>
-					<Input placeholder="City" value={addr.city} style={style} onChange={handleCity}></Input>
+					<Input placeholder="City" disabled={disabled} value={addr.city} style={style} onChange={handleCity}></Input>
 				</div>
 				<div style={{width: "calc(15% - 10px)"}}>
-					<Input placeholder="State" value={addr.state} style={style} onChange={handleState}></Input>
+					<Input placeholder="State" disabled={disabled} value={addr.state} style={style} onChange={handleState}></Input>
 				</div>
 				<div style={{width: "calc(15% - 10px)"}}>
-					<Input placeholder="Postcode" value={addr.postcode} style={style} onChange={handlePostcode}></Input>
+					<Input placeholder="Postcode" disabled={disabled} value={addr.postcode} style={style} onChange={handlePostcode}></Input>
 				</div>
 				<div className="address-input-country-group">
-					<select value={getCountryByName(inputAddress.country).code} className="address-input-country-select"
+					<select
+						disabled={disabled}
+						value={getCountryByName(inputAddress.country).code} className="address-input-country-select"
 							onChange={handleSelection}>
 						{countries.map(country => (
 							<option key={country.code} value={country.code}>{country.emoji} {country.name}</option>

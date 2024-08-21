@@ -16,6 +16,7 @@ interface Props {
 	isInvalid?: boolean;
 	onChange?: (value: string) => void;
 	focus?: boolean;
+	disabled?: boolean;
 	focusIn?: () => void;
 	focusOut?: () => void;
 	enterEvent?: () => void;
@@ -36,6 +37,7 @@ export const Input: React.FC<Props> = ({
 										   style={},
 										   labelStyle={},
 										   focus=false,
+										   disabled=false,
 										   focusIn,
 										   focusOut,
 	                                       enterEvent,
@@ -136,6 +138,7 @@ export const Input: React.FC<Props> = ({
 				onFocus={focusInEvent}
 				onBlur={focusOutEvent}
 				type={generateType()}
+				disabled={disabled}
 			/>
 		</div>
 

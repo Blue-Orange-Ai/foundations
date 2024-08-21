@@ -37,6 +37,7 @@ interface Props {
 	allowMentions?: boolean,
 	allowEmojis?: boolean,
 	uploadPermissions?: Array<MediaPermission>,
+	disabled?: boolean,
 	onChange?: (content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean) => void
 }
 
@@ -54,6 +55,7 @@ export const RichText: React.FC<Props> = ({
 											  allowMentions=true,
 											  allowEmojis=true,
 											  uploadPermissions=defaultUploadPermission,
+											  disabled = false,
 											  onChange
 										  }) => {
 
@@ -103,6 +105,8 @@ export const RichText: React.FC<Props> = ({
 	const editorRef = useRef<any>(null);
 
 	const initRef = useRef(false);
+
+	const disabledRef = useRef(disabled);
 
 	const getEmojiHtml = (emoji: EmojiObj) => {
 		const skin_tone = Cookies.get("skinTone")
@@ -307,6 +311,11 @@ export const RichText: React.FC<Props> = ({
 		if (editorContainerRef.current) {
 			editorContainerRef.current.addEventListener("keyup", () => {
 				editorChanged();
+			})
+			editorContainerRef.current.addEventListener("keydown", (ev) => {
+				if (disabledRef.current === true) {
+					ev.preventDefault();
+				}
 			})
 		}
 	}

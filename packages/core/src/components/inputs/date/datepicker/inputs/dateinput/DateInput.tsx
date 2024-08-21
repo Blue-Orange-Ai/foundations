@@ -14,6 +14,7 @@ interface Props {
 	onChange?: (date: Date) => void;
 	label?:string;
 	required?: boolean;
+	disabled?: boolean;
 	help?: string;
 	style?: React.CSSProperties;
 	labelStyle?: React.CSSProperties;
@@ -26,6 +27,7 @@ export const DateInput: React.FC<Props> = ({
 											   onChange,
 											   label,
 											   required=false,
+											   disabled=false,
 											   help,
 											   style = {},
 											   labelStyle={}}) => {
@@ -199,6 +201,7 @@ export const DateInput: React.FC<Props> = ({
 			<Input
 				label={label}
 				style={style}
+				disabled={disabled}
 				labelStyle={labelStyle}
 				required={required}
 				help={help}

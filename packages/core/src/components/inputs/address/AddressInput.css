@@ -17,7 +17,7 @@
 
 .address-input-country-group {
     border: 1px solid var(--blue-orange-light-input-border-color);
-    height: 42px;
+    height: 34px;
     width: 20%;
     background-color: var(--blue-orange-light-input-select-background);
     border-radius: 4px;

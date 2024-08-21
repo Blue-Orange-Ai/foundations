@@ -5,7 +5,7 @@ import './Toggle.css';
 interface Props {
 	checked?:boolean;
 	onChange?: (checked: boolean) => void;
-	readonly?: boolean;
+	disabled?: boolean;
 	update?: Date;
 	style?: React.CSSProperties;
 }
@@ -13,7 +13,7 @@ interface Props {
 export const Toggle: React.FC<Props> = ({
 													 checked=false,
 											         onChange,
-													 readonly=false,
+													 disabled=false,
 													 update,
 													 style={}}) => {
 
@@ -21,7 +21,7 @@ export const Toggle: React.FC<Props> = ({
 
 	const [isCheckedState, setIsCheckedState] = useState(checked);
 
-	const isCheckDisabled = useRef<boolean>(false);
+	const isCheckDisabled = useRef<boolean>(disabled);
 
 	useEffect(() => {
 		saveCheckboxState(checked);

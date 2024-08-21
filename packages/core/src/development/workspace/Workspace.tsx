@@ -1,60 +1,15 @@
 import React, {useContext, useState} from "react";
-import { v4 as uuidv4 } from 'uuid';
 
 import './Workspace.css'
-import {
-	Address,
-	Avatar as AvatarObj,
-	Telephone,
-	User,
-	UserState
-} from "@blue-orange-ai/foundations-clients";
+import {Avatar as AvatarObj, Media, User, UserState} from "@blue-orange-ai/foundations-clients";
 import {ToastContext} from "../../components/alerts/toast/toastcontext/ToastContext";
 import {SideBar, SideBarState} from "../../components/layouts/sidebar/default/SideBar";
-import {Media} from "@blue-orange-ai/foundations-clients";
-import {ScatterChart} from "../../components/charts/scatter/ScatterChart";
-import {Modal} from "../../components/layouts/modal/modal/Modal";
-import {ModalHeader} from "../../components/layouts/modal/modal-header/ModalHeader";
-import {ModalDescription} from "../../components/layouts/modal/modal-description/ModalDescription";
-import {ModalBody} from "../../components/layouts/modal/modal-body/ModalBody";
 import {Input} from "../../components/inputs/input/Input";
-import {ModalFooter} from "../../components/layouts/modal/modal-footer/ModalFooter";
-import {ModalFooterRight} from "../../components/layouts/modal/modal-footer-right/ModalFooterRight";
 import {Button, ButtonType} from "../../components/buttons/button/Button";
-import {DateInput} from "../../components/inputs/date/datepicker/inputs/dateinput/DateInput";
-import {BlueOrangeMapWrapper} from "../../components/map/BlueOrangeMapWrapper";
-import { Edge, Node as GraphNode } from "@blue-orange-ai/primitives-graph";
-import {BlueOrangeGraphWrapper} from "../../components/graph/BlueOrangeGraphWrapper";
-import {RichText} from "../../components/inputs/richtext/default/RichText";
-import {AddressInput, Avatar, Checkbox, PhoneInput, TextArea} from "../../vite-entry";
+import {Edge, Node as GraphNode} from "@blue-orange-ai/primitives-graph";
 import Cookies from "js-cookie";
-import {Toggle} from "../../components/inputs/toggle/Toggle";
-import {Table} from "../../components/table/table/Table";
-import {THead} from "../../components/table/thead/THead";
-import {Row} from "../../components/table/row/Row";
-import {CheckboxCell} from "../../components/table/cells/checkboxcell/CheckboxCell";
-import {HeaderCell} from "../../components/table/cells/headercell/HeaderCell";
-import {PrimaryCell} from "../../components/table/cells/primarycell/PrimaryCell";
-import {Cell} from "../../components/table/cells/cell/Cell";
-import {CellAlignment, DropdownItemObj, DropdownItemType} from "../../components/interfaces/AppInterfaces";
-import {TBody} from "../../components/table/tbody/TBody";
-import {Currency} from "../../components/text-decorations/currency/Currency";
-import {Percentage} from "../../components/text-decorations/percentage/Percentage";
-import {TelephoneText} from "../../components/text-decorations/telephone/TelephoneText";
-import {EmailLink} from "../../components/text-decorations/email/EmailLink";
-import {IContextMenuItem} from "../../components/contextmenu/ContextMenu";
-import {Dropdown} from "../../components/inputs/dropdown/basic/Dropdown";
+import {DropdownItemObj, DropdownItemType} from "../../components/interfaces/AppInterfaces";
 import {TagInput} from "../../components/inputs/tags/simple/TagInput";
-import {LineChart} from "../../components/charts/line/LineChart";
-import {BarChart} from "../../components/charts/bar/BarChart";
-import {Drawer} from "../../components/layouts/drawer/drawer/Drawer";
-import {DrawerHeader} from "../../components/layouts/drawer/drawer-header/DrawerHeader";
-import {DrawerDescription} from "../../components/layouts/drawer/drawer-description/DrawerDescription";
-import {DrawerBody} from "../../components/layouts/drawer/drawer-body/DrawerBody";
-import {DrawerFooter} from "../../components/layouts/drawer/drawer-footer/DrawerFooter";
-import {DrawerFooterLeft} from "../../components/layouts/drawer/drawer-footer-left/DrawerFooterLeft";
-import {DrawerFooterRight} from "../../components/layouts/drawer/drawer-footer-right/DrawerFooterRight";
-import {InputForm} from "../../components/inputs/form/InputForm";
 import {SideBarHeader} from "../../components/layouts/sidebar/sidebar-header/SideBarHeader";
 import {SideBarHeaderItem} from "../../components/layouts/sidebar/items/sidebar-header-item/SideBarHeaderItem";
 import {SideBarBody} from "../../components/layouts/sidebar/sidebar-body/SideBarBody";
@@ -66,14 +21,13 @@ import {SideBarFooter} from "../../components/layouts/sidebar/sidebar-footer/Sid
 import {SideBarBodyItemLink} from "../../components/layouts/sidebar/items/sidebar-body-item-link/SideBarBodyItemLink";
 import {SidebarPage} from "../../components/layouts/pages/sidebar-page/SidebarPage";
 import {PaddedPage} from "../../components/layouts/pages/padded-page/PaddedPage";
-import {VerticalSplitPage} from "../../components/layouts/pages/split-pages/vertical-split-page/VerticalSplitPage";
 import {SplitPageMajor} from "../../components/layouts/pages/split-pages/split-page-major/SplitPageMajor";
 import {SplitPageMinor} from "../../components/layouts/pages/split-pages/split-page-minor/SplitPageMinor";
 import {
 	HorizontalSplitPage
 } from "../../components/layouts/pages/split-pages/horizontal-split-page/HorizontalSplitPage";
-import {Tabs} from "../../components/layouts/tabs/tabs/Tabs";
-import {Tab} from "../../components/layouts/tabs/tab/Tab";
+import {MetricWithCopy} from "../../components/metrics/metric-with-copy/MetricWithCopy";
+import {MetricCard} from "../../components/metrics/metric-card/MetricCard";
 
 interface Props {
 }
@@ -545,14 +499,11 @@ export const Workspace: React.FC<Props> = ({}) => {
 			<HorizontalSplitPage>
 				<SplitPageMajor>
 					<PaddedPage>
-						<Tabs>
-							<Tab uuid={uuidv4()} name={"Tab 1"} icon={"ri-wifi-line"}>
-								<div>Tab Wifi Signal</div>
-							</Tab>
-							<Tab uuid={uuidv4()} name={"Tab 2"} icon={"ri-file-paper-2-fill"}>
-								<div>Tab Paper</div>
-							</Tab>
-						</Tabs>
+						<MetricWithCopy text={"Hello world"}></MetricWithCopy>
+						<Input></Input>
+						<TagInput></TagInput>
+						<Button text={"Hello"} buttonType={ButtonType.PRIMARY}></Button>
+						<MetricCard text={"3 Sensors"} label={"Num. Sensors"} icon={"ri-gradienter-line"}></MetricCard>
 					</PaddedPage>
 				</SplitPageMajor>
 				<SplitPageMinor>

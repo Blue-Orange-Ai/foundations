@@ -16,7 +16,7 @@
     --placeholder-color: #757575;
     border: 1px solid var(--blue-orange-light-input-border-color);
     width: calc(100% + 2px);
-    height: 42px;
+    height: 38px;
     background-color: var(--blue-orange-light-input-background-color);
     border-radius: 4px;
     padding: 4px 5px;
@@ -73,6 +73,12 @@
     color: var(--blue-orange-light-input-tag-text-color);
     font-size: 0.8rem;
     border-radius: 4px;
+    margin-block: 2px;
+}
+
+.tagify__input {
+    margin: 0;
+    margin-top: 2px;
 }
 
 .dark .tagify__tag {

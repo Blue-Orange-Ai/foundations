@@ -23,7 +23,7 @@
 .blue-orange-search-group-input {
     width: calc(100% - 47px);
     border: 1px solid var(--blue-orange-light-input-border-color);
-    height: 32px;
+    height: 34px;
     background-color: var(--blue-orange-light-input-search-background);
     color: var(--blue-orange-light-input-color);
     border-radius: 4px;

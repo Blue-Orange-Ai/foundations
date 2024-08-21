@@ -8,7 +8,7 @@
 .blue-orange-input {
     width: calc(100% - 10px);
     border: 1px solid var(--blue-orange-light-input-border-color);
-    height: 42px;
+    height: 34px;
     background-color: var(--blue-orange-light-input-background-color);
     color: var(--blue-orange-light-input-color);
     border-radius: 4px;

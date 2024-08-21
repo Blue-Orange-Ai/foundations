@@ -26,7 +26,7 @@
 
 .phone-input-display-flag {
     border: 1px solid var(--blue-orange-light-input-border-color);
-    height: 42px;
+    height: 34px;
     width: 49px;
     background-color: var(--blue-orange-light-input-select-background);
     border-radius: 4px;

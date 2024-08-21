@@ -275,6 +275,11 @@
   --blue-orange-dark-default-tag-background-color: #18181b;
   --blue-orange-light-default-tag-color: white;
   --blue-orange-dark-default-tag-color: white;
+
+  --blue-orange-light-metrics-card-background-color: #E0e1e2;
+  --blue-orange-dark-metrics-card-background-color: #28282a;
+  --blue-orange-light-metrics-card-color: black;
+  --blue-orange-dark-metrics-card-color: white;
 }
 
 body {

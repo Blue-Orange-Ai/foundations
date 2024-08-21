@@ -132,6 +132,9 @@ export * from './components/media/pdf/Pdf';
 
 // Metrics
 export * from './components/metrics/simple-metric/SimpleMetric';
+export * from './components/metrics/metric/Metric';
+export * from './components/metrics/metric-card/MetricCard';
+export * from './components/metrics/metric-with-copy/MetricWithCopy';
 
 // Table
 export * from './components/table/cells/cell/Cell';

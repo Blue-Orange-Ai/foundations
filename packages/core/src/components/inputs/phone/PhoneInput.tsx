@@ -9,6 +9,7 @@ interface Props {
 	telephone?: Telephone;
 	onChange?: (value: Telephone) => void;
 	label?:string;
+	disabled?:boolean;
 	required?: boolean;
 	help?: string;
 	style?: React.CSSProperties
@@ -26,6 +27,7 @@ export const PhoneInput: React.FC<Props> = ({
 												telephone,
 												onChange,
 												label,
+												disabled=false,
 												required=false,
 												help,
 												style={},
@@ -1566,6 +1568,7 @@ export const PhoneInput: React.FC<Props> = ({
 			<div className="phone-input-group" style={style}>
 				<div className="phone-input-display-flag">
 					<select
+						disabled={disabled}
 						value={inputTelephone.code === undefined || inputTelephone.code === null ? "AU" : inputTelephone.code}
 						ref={countrySelectElem} className="phone-input-select"
 						onChange={handleSelection}>
@@ -1580,6 +1583,7 @@ export const PhoneInput: React.FC<Props> = ({
 					<input
 						className="phone-input-text"
 						type="tel"
+						disabled={disabled}
 						onKeyDown={handleKeydownEvent}
 						onChange={handleInputChange}
 						value={telNum}/>

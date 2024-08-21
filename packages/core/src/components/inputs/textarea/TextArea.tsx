@@ -11,6 +11,7 @@ interface Props {
 	onChange?: (value: string) => void;
 	label?:string;
 	required?: boolean;
+	disabled?: boolean;
 	help?: string;
 	labelStyle?: React.CSSProperties
 }
@@ -22,6 +23,7 @@ export const TextArea: React.FC<Props> = ({
 											  onChange,
 											  label,
 											  required=false,
+											  disabled=false,
 											  help,
 											  labelStyle={}}) => {
 
@@ -46,6 +48,7 @@ export const TextArea: React.FC<Props> = ({
 				</div>
 			}
 			<textarea
+				disabled={disabled}
 				value={text}
 				className="blue-orange-default-text-area"
 				placeholder={placeholder}
