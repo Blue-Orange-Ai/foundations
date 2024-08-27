@@ -258,6 +258,27 @@ export class Passport {
         this.authCookie = authCookie;
     }
 
+    register(userCreateRequest: UserCreateRequest): Promise<User> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', this.baseUrl + "/api/users/create/public");
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const userResponse: User = JSON.parse(xhr.responseText);
+                    resolve(userResponse);
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response.message);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error during upload');
+            };
+            xhr.send(JSON.stringify(userCreateRequest));
+        });
+    }
+
     login(loginRequest: UserLoginRequest): Promise<UserLoginResponse> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
@@ -276,6 +297,29 @@ export class Passport {
                 reject('Network error during upload');
             };
             xhr.send(JSON.stringify(loginRequest));
+        });
+    }
+
+    create(userCreateRequest: UserCreateRequest): Promise<User> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            var authToken = Cookies.get(this.authCookie)
+            xhr.open('POST', this.baseUrl + "/api/users/create");
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const userResponse: User = JSON.parse(xhr.responseText);
+                    resolve(userResponse);
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response.message);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error during upload');
+            };
+            xhr.send(JSON.stringify(userCreateRequest));
         });
     }
 
