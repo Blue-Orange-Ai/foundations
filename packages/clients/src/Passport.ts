@@ -269,7 +269,7 @@ export class Passport {
                     resolve(userLoginResponse);
                 } else {
                     var response =JSON.parse(xhr.response);
-                    reject(response.details);
+                    reject(response.message);
                 }
             };
             xhr.onerror = function() {
