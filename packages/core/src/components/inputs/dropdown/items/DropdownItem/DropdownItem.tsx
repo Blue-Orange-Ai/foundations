@@ -35,20 +35,24 @@ export const DropdownItem: React.FC<Props> = ({
 					{item.type == DropdownItemType.IMAGE &&
 						<DropdownItemImage
 							src={item.src as string}
+							value={item.reference}
 							label={item.label}
 							selected={false}></DropdownItemImage>}
 					{item.type == DropdownItemType.ICON &&
 						<DropdownItemIcon
 							src={item.src as string}
+							value={item.reference}
 							label={item.label}
 							selected={false}></DropdownItemIcon>}
 					{item.type == DropdownItemType.HEADING &&
 						<DropdownItemHeading
 							label={item.label}
+							value={item.reference}
 							selected={false}></DropdownItemHeading>}
 					{item.type == DropdownItemType.TEXT &&
 						<DropdownItemText
 							label={item.label}
+							value={item.reference}
 							selected={false}></DropdownItemText>}
 				</div>
 			}
@@ -58,19 +62,23 @@ export const DropdownItem: React.FC<Props> = ({
 						<DropdownItemImage
 							src={item.src as string}
 							label={item.label}
+							value={item.reference}
 							selected={item.selected}></DropdownItemImage>}
 					{item.type == DropdownItemType.ICON &&
 						<DropdownItemIcon
 							src={item.src as string}
 							label={item.label}
+							value={item.reference}
 							selected={item.selected}></DropdownItemIcon>}
 					{item.type == DropdownItemType.HEADING &&
 						<DropdownItemHeading
 							label={item.label}
+							value={item.reference}
 							selected={item.selected}></DropdownItemHeading>}
 					{item.type == DropdownItemType.TEXT &&
 						<DropdownItemText
 							label={item.label}
+							value={item.reference}
 							selected={item.selected}></DropdownItemText>}
 				</div>
 			}

@@ -8,9 +8,13 @@ import {Checkbox} from "../../checkbox/Checkbox";
 import {DropdownItemStyle} from "../items/DropdownItemStyle/DropdownItemStyle";
 import {HelpIcon} from "../../help/HelpIcon";
 import {RequiredIcon} from "../../required-icon/RequiredIcon";
+import {DropdownItemHeading} from "../items/DropdownItemHeading/DropdownItemHeading";
+import {DropdownItemIcon} from "../items/DropdownItemIcon/DropdownItemIcon";
+import {DropdownItemImage} from "../items/DropdownItemImage/DropdownItemImage";
+import {DropdownItemText} from "../items/DropdownItemText/DropdownItemText";
 
 interface Props {
-	items: Array<DropdownItemObj>,
+	children: React.ReactNode,
 	placeholder?: string,
 	disabled?: boolean,
 	contextWidth?: number,
@@ -29,7 +33,7 @@ interface Props {
 }
 
 export const Dropdown: React.FC<Props> = ({
-												   items,
+												   children,
 												   disabled,
 												   placeholder="No items selected...",
 												   contextWidth,
@@ -47,6 +51,50 @@ export const Dropdown: React.FC<Props> = ({
 												    labelStyle={}
 											   }) => {
 
+	const items:Array<DropdownItemObj> = []
+
+	React.Children.forEach(children, child => {
+		if (React.isValidElement(child)) {
+			if (child.type === DropdownItemHeading) {
+				items.push({
+					label: child.props.label,
+					reference: child.props.value,
+					selected: child.props.selected,
+					type: DropdownItemType.HEADING,
+					disabled: child.props.disabled,
+					heading: true
+				})
+			} else if (child.type === DropdownItemIcon) {
+				items.push({
+					label: child.props.label,
+					reference: child.props.value,
+					selected: child.props.selected,
+					type: DropdownItemType.ICON,
+					disabled: child.props.disabled,
+					icon: true,
+					src: child.props.src
+				})
+			} else if (child.type === DropdownItemImage) {
+				items.push({
+					label: child.props.label,
+					reference: child.props.value,
+					selected: child.props.selected,
+					type: DropdownItemType.IMAGE,
+					disabled: child.props.disabled,
+					image: true,
+					src: child.props.src
+				})
+			} else if (child.type === DropdownItemText) {
+				items.push({
+					label: child.props.label,
+					reference: child.props.value,
+					selected: child.props.selected,
+					type: DropdownItemType.TEXT,
+					disabled: child.props.disabled,
+				})
+			}
+		}
+	});
 
 	const [visible, setVisible] = useState(false);
 
@@ -306,10 +354,6 @@ export const Dropdown: React.FC<Props> = ({
 		}
 	}, []);
 
-	useEffect(() => {
-		setSelectedValue(getInitialSelectedValue())
-	}, [items]);
-
 	const toggleVisibleState = (ev: React.MouseEvent) => {
 		if (!disabled) {
 			if (!isDescendantOfClassName("blue-orange-dropdown-remove-selection", ev.target as HTMLElement)) {
@@ -411,27 +455,13 @@ export const Dropdown: React.FC<Props> = ({
 		}
 	}
 
-	const generateItemStyle = (item: DropdownItemObj) => {
-		var className = "blue-orange-dropdown-item-cont"
-		if (item.type != DropdownItemType.HEADING && !item.disabled) {
-			className += " blue-orange-dropdown-item-hoverable"
-		}
-		if (item.disabled) {
-			className += " blue-orange-dropdown-item-disabled"
-		}
-		if (item.focused) {
-			className += " blue-orange-dropdown-item-focused"
-		}
-		return className;
-	}
-
 	const removeSelectedItem = (ev: any, selectedItem: DropdownItemObj) => {
 		ev.preventDefault();
 		handleItemClick(selectedItem);
 	}
 
 	return (
-		<div className="blue-orange-dropdown-cont" style={style}>
+		<div className="blue-orange-dropdown-cont">
 			{label &&
 				<div className={"blue-orange-default-input-label-cont"} style={labelStyle}>
 					{label}
@@ -439,7 +469,7 @@ export const Dropdown: React.FC<Props> = ({
 					{required && <RequiredIcon></RequiredIcon>}
 				</div>
 			}
-			<div ref={inputRef} className="blue-orange-dropdown" onClick={(ev) => toggleVisibleState(ev)}>
+			<div ref={inputRef} className="blue-orange-dropdown" style={style} onClick={(ev) => toggleVisibleState(ev)}>
 				{!allowMultipleSelection &&
 					<>
 						<div className="blue-orange-dropdown-selection">
@@ -489,13 +519,17 @@ export const Dropdown: React.FC<Props> = ({
 								<div className="blue-orange-dropdown-item-el-cont">
 									<DropdownItem item={item} onClick={handleItemClick}></DropdownItem>
 								</div>
+								{item.selected &&
+									<div className="blue-orange-dropdown-item-selected-cont">
+										<i className="ri-check-line"></i>
+									</div>
+								}
 							</DropdownItemStyle>
 						))}
 					</div>
 				</div>
 			}
 		</div>
-
 
 
 	)

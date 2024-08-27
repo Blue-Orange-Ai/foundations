@@ -6,9 +6,11 @@ import {Image} from "../../../../media/image/Image";
 
 interface Props {
 	label: string,
-	selected: boolean
+	value: string,
+	selected: boolean,
+	disabled?: boolean
 }
-export const DropdownItemHeading: React.FC<Props> = ({label, selected}) => {
+export const DropdownItemHeading: React.FC<Props> = ({label, value, selected, disabled=false}) => {
 
 	return (
 		<div className="blue-orange-dropdown-item-text-heading no-select">{label}</div>

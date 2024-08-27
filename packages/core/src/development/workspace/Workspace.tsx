@@ -30,6 +30,11 @@ import {
 import {MetricWithCopy} from "../../components/metrics/metric-with-copy/MetricWithCopy";
 import {MetricCard} from "../../components/metrics/metric-card/MetricCard";
 import {InputForm} from "../../components/inputs/form/InputForm";
+import {Dropdown} from "../../components/inputs/dropdown/basic/Dropdown";
+import {DropdownItemHeading} from "../../components/inputs/dropdown/items/DropdownItemHeading/DropdownItemHeading";
+import {DropdownItemText} from "../../components/inputs/dropdown/items/DropdownItemText/DropdownItemText";
+import {DropdownItemIcon} from "../../components/inputs/dropdown/items/DropdownItemIcon/DropdownItemIcon";
+import {DropdownItemImage} from "../../components/inputs/dropdown/items/DropdownItemImage/DropdownItemImage";
 
 interface Props {
 }
@@ -505,6 +510,13 @@ export const Workspace: React.FC<Props> = ({}) => {
 					<PaddedPage>
 						<MetricWithCopy text={"Hello world"}></MetricWithCopy>
 						<InputForm>
+							<Dropdown style={{background: "#e0e1e2"}}>
+								<DropdownItemHeading label={"Hello World"} value={"heading-1"} selected={false}></DropdownItemHeading>
+								<DropdownItemText label={"Option 1"} value={"option-1"} selected={false}></DropdownItemText>
+								<DropdownItemText label={"Option 2"} value={"option-2"} selected={true}></DropdownItemText>
+								<DropdownItemIcon src={"ri-dribbble-line"} label={"Dribble"} value={"option-3"} selected={false}></DropdownItemIcon>
+								<DropdownItemImage src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} label={"James"} value={"option-4"} selected={false}></DropdownItemImage>
+							</Dropdown>
 							<Input
 								placeholder={"Username | Email"}
 								label={"Username"}

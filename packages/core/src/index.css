@@ -160,12 +160,12 @@
   --blue-orange-dark-input-dropdown-background-color: #28282a;
   --blue-orange-light-input-dropdown-item-color: black;
   --blue-orange-dark-input-dropdown-item-color: white;
-  --blue-orange-light-input-dropdown-item-hover-color: #e0e1e2;
+  --blue-orange-light-input-dropdown-item-hover-color: #f7f8f9;
   --blue-orange-dark-input-dropdown-item-hover-color: black;
 
-  --blue-orange-light-input-dropdown-item-focus-color: dodgerblue;
-  --blue-orange-dark-input-dropdown-item-focus-color: dodgerblue;
-  --blue-orange-light-input-dropdown-item-focus-background-color: #ebf0fb;
+  --blue-orange-light-input-dropdown-item-focus-color: #f7f8f9;
+  --blue-orange-dark-input-dropdown-item-focus-color: #28282a;
+  --blue-orange-light-input-dropdown-item-focus-background-color: #f7f8f9;
   --blue-orange-dark-input-dropdown-item-focus-background-color: #28282a;
 
   --blue-orange-light-input-emoji-background-color: white;

@@ -6,12 +6,14 @@ import {Image} from "../../../../media/image/Image";
 
 interface Props {
 	label: string,
-	selected: boolean
+	value: string,
+	selected: boolean,
+	disabled?: boolean
 }
-export const DropdownItemText: React.FC<Props> = ({label, selected}) => {
+export const DropdownItemText: React.FC<Props> = ({label, value, selected, disabled=false}) => {
 
 	var textStyle: React.CSSProperties = {
-		fontWeight: selected ? 700 : 500
+		fontWeight: 500
 	}
 
 	return (
