@@ -105,17 +105,14 @@ export const Input: React.FC<Props> = ({
 		if (focus) {
 			inputRef.current?.focus();
 		}
-	}, []);
+	}, [focus]);
 
 	useEffect(() => {
 		setInputClassName(generateClassname())
 	}, [isInvalid]);
 
 	useEffect(() => {
-		if (inputRef.current && value) {
-			inputRef.current.value = value;
-			setInputValue(value);
-		}
+		setInputValue(value === undefined ? "" : value);
 	}, [value]);
 
 	return (

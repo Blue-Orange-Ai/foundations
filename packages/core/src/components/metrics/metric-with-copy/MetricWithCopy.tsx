@@ -15,8 +15,8 @@ interface Props {
 export const MetricWithCopy: React.FC<Props> = ({
 												text,
 												label,
-													copiedBtnStyle={backgroundColor: "#186A3B", color: "white"},
-													copyBtnStyle={},
+												copiedBtnStyle={backgroundColor: "#186A3B", color: "white"},
+												copyBtnStyle={},
 												valueStyle =  {},
 												labelStyle = {}}) => {
 

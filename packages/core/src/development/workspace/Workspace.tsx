@@ -1,3 +1,4 @@
+// @ts-ignore
 import React, {useContext, useState} from "react";
 
 import './Workspace.css'
@@ -50,6 +51,8 @@ export const Workspace: React.FC<Props> = ({}) => {
 	const [sidebarState, setSidebarState] = useState(SideBarState.OPEN);
 
 	const [sidebarGroupState, setSidebarGroupState] = useState(false);
+
+	const [username, setUsername] = useState("");
 
 	const changeSidebarState = (state: SideBarState) => {
 		setSidebarState(state);
@@ -500,8 +503,9 @@ export const Workspace: React.FC<Props> = ({}) => {
 				<SplitPageMajor>
 					<PaddedPage>
 						<MetricWithCopy text={"Hello world"}></MetricWithCopy>
-						<Input></Input>
+						<Input placeholder={"Testing setting username"} onChange={(value) => {setUsername(value)}}></Input>
 						<TagInput></TagInput>
+						<Input></Input>
 						<Button text={"Hello"} buttonType={ButtonType.PRIMARY}></Button>
 						<MetricCard text={"3 Sensors"} label={"Num. Sensors"} icon={"ri-gradienter-line"}></MetricCard>
 					</PaddedPage>
