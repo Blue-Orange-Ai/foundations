@@ -29,6 +29,7 @@ import {
 } from "../../components/layouts/pages/split-pages/horizontal-split-page/HorizontalSplitPage";
 import {MetricWithCopy} from "../../components/metrics/metric-with-copy/MetricWithCopy";
 import {MetricCard} from "../../components/metrics/metric-card/MetricCard";
+import {InputForm} from "../../components/inputs/form/InputForm";
 
 interface Props {
 }
@@ -503,6 +504,13 @@ export const Workspace: React.FC<Props> = ({}) => {
 				<SplitPageMajor>
 					<PaddedPage>
 						<MetricWithCopy text={"Hello world"}></MetricWithCopy>
+						<InputForm>
+							<Input
+								placeholder={"Username | Email"}
+								label={"Username"}
+								onChange={(value) => setUsername(value)}
+							></Input>
+						</InputForm>
 						<Input placeholder={"Testing setting username"} onChange={(value) => {setUsername(value)}}></Input>
 						<TagInput></TagInput>
 						<Input></Input>

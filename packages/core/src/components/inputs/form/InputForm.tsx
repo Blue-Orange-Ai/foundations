@@ -24,7 +24,7 @@ export const InputForm: React.FC<Props> = ({children, verticalMargin=10, padding
 		<div className="blue-orange-input-form" style={{paddingTop: paddingTop + "px", paddingBottom: paddingBottom + "px"}}>
 			{formRows.map((child, index) => (
 				<div
-					key={uuidv4()}
+					key={index}
 					className="blue-orange-input-form-row"
 					style={{marginBottom: index == formRows.length - 1 ? 0 : verticalMargin + "px"}}>
 					{child}
