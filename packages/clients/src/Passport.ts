@@ -33,8 +33,8 @@ export type Address = {
 
 export type Avatar = {
     id?: string;
-    uri: string;
-    mediaId: number;
+    uri?: string;
+    mediaId?: number;
     enabled: boolean;
 }
 

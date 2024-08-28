@@ -235,7 +235,7 @@ export const Avatar: React.FC<Props> = ({
 			<div className="avatar-group-cont" style={scaleStyle}>
 				{initialised &&
 					<div className="default-avatar-cont" style={scaleStyle} onClick={openAvatarModal}>
-						{(workingUser === undefined || !workingUser.avatar?.enabled) && <AvatarEmpty height={height}></AvatarEmpty>}
+						{(workingUser === undefined || workingUser.avatar == undefined || !workingUser.avatar.enabled) && <AvatarEmpty height={height}></AvatarEmpty>}
 						{workingUser !== undefined && workingUser.avatar?.enabled &&
 							<AvatarImage url={workingUser.avatar?.uri} height={height} width={height}></AvatarImage>
 						}
