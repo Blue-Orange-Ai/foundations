@@ -24,18 +24,18 @@ export type AddRemoveMemberToGroupRequest = {
 
 export type Address = {
     id?: string;
-    country: string;
-    city: string;
-    state: string
-    postcode: string;
-    address: string;
+    country: string | undefined | null;
+    city: string | undefined | null;
+    state: string | undefined | null;
+    postcode: string | undefined | null;
+    address: string | undefined | null;
 };
 
 export type Avatar = {
     id?: string;
-    uri?: string;
-    mediaId?: number;
-    enabled: boolean;
+    uri: string | undefined | null;
+    mediaId: number | undefined | null;
+    enabled: boolean | undefined | null;
 }
 
 export type ExcludeUserRequest = {
@@ -118,11 +118,11 @@ export type SimpleTokenRequest = {
 
 export type Telephone = {
     id?: string;
-    country: string;
-    extension: string;
-    format: string;
-    code: string;
-    number: string;
+    country: string | undefined | null;
+    extension: string | undefined | null;
+    format: string | undefined | null;
+    code: string | undefined | null;
+    number: string | undefined | null;
 }
 
 export type User = {

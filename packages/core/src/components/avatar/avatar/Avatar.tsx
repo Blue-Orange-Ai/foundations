@@ -113,16 +113,19 @@ export const Avatar: React.FC<Props> = ({
 	}
 
 	const getUserAvatarMedia = (user: User) => {
-		if (workingUser.avatar) {
-			blueOrangeMediaInstance.getUrlFromMediaId(workingUser.avatar.mediaId, 120, height).then(url => {
+		if (workingUser.avatar && workingUser.avatar.enabled && user.avatar?.mediaId && user.avatar?.mediaId) {
+			blueOrangeMediaInstance.getUrlFromMediaId(workingUser.avatar?.mediaId as number, 120, height).then(url => {
 				if (workingUser.avatar) {
 					workingUser.avatar.uri = url;
 					setWorkingUser(workingUser);
 				}
 				setInitialised(true);
 			}).catch(error => {
+				setInitialised(true);
 				setLoading(true);
 			});
+		} else {
+			setInitialised(true);
 		}
 
 	}
@@ -198,7 +201,7 @@ export const Avatar: React.FC<Props> = ({
 		if (workingUser.avatar !== undefined) {
 			setLoadingRemove(true);
 			blueOrangeMediaInstance.deleteById(
-				+workingUser.avatar.mediaId
+				(workingUser.avatar.mediaId as number)
 			)
 				.then(response => {
 					setLoadingRemove(false);
