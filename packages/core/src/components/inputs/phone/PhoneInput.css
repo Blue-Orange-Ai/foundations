@@ -72,7 +72,7 @@
 .phone-input-text {
     border: 1px solid var(--blue-orange-light-input-border-color);
     height: 42px;
-    background-color: var(--blue-orange-light-input-select-background);
+    background-color: var(--blue-orange-light-input-background-color);
     border-radius: 4px;
     padding-left: 48px;
     padding-right: 5px;

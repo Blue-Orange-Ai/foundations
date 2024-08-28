@@ -1565,7 +1565,7 @@ export const PhoneInput: React.FC<Props> = ({
 					{required && <RequiredIcon></RequiredIcon>}
 				</div>
 			}
-			<div className="phone-input-group" style={style}>
+			<div className="phone-input-group">
 				<div className="phone-input-display-flag">
 					<select
 						disabled={disabled}
@@ -1581,6 +1581,7 @@ export const PhoneInput: React.FC<Props> = ({
 				<div className="phone-input-text-group">
 					<div className="phone-input-text-extension">{countryCode}</div>
 					<input
+						style={style}
 						className="phone-input-text"
 						type="tel"
 						disabled={disabled}
