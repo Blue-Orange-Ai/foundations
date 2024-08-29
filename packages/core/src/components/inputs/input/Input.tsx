@@ -5,7 +5,7 @@ import {HelpIcon} from "../help/HelpIcon";
 import {RequiredIcon} from "../required-icon/RequiredIcon";
 
 interface Props {
-	value?:string;
+	value?:string | null;
 	label?:string;
 	placeholder?: string;
 	isEmail?: boolean;
@@ -129,7 +129,7 @@ export const Input: React.FC<Props> = ({
 				className={inputClassName}
 				style={style}
 				placeholder={placeholder}
-				value={inputValue === undefined ? "" : inputValue}
+				value={inputValue === undefined || inputValue == null ? "" : inputValue}
 				onKeyDown={handleKeydownChange}
 				onChange={handleInputChange}
 				onFocus={focusInEvent}

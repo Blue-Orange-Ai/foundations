@@ -4,18 +4,12 @@ import './Badge.css'
 
 interface Props {
 	children: ReactNode;
-	backgroundColor?: string;
-	textColor?: string
+	style?: React.CSSProperties;
 }
 
-export const Badge: React.FC<Props> = ({children, backgroundColor="#18181b", textColor="white"}) => {
-
-	const badgeStyle: React.CSSProperties = {
-		backgroundColor: backgroundColor,
-		color: textColor
-	}
+export const Badge: React.FC<Props> = ({children, style={}}) => {
 
 	return (
-		<div className="blue-orange-badge no-select" style={badgeStyle}>{children}</div>
+		<div className="blue-orange-badge no-select" style={style}>{children}</div>
 	)
 }

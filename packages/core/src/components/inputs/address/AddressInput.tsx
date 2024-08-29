@@ -1527,9 +1527,9 @@ export const AddressInput: React.FC<Props> = ({
 		return country;
 	}
 
-	const [countryEmoji, setCountryEmoji] = useState(getCountryByName(inputAddress.country).emoji);
+	const [countryEmoji, setCountryEmoji] = useState(getCountryByName(inputAddress.country == null || inputAddress.country == undefined ? "Australia" : inputAddress.country).emoji);
 
-	const [country, setCountry] = useState(inputAddress.country);
+	const [country, setCountry] = useState(inputAddress.country == null || inputAddress.country == undefined ? "Australia" : inputAddress.country);
 
 	const [addr, setAddr] = useState(inputAddress);
 
@@ -1602,7 +1602,8 @@ export const AddressInput: React.FC<Props> = ({
 				<div className="address-input-country-group">
 					<select
 						disabled={disabled}
-						value={getCountryByName(inputAddress.country).code} className="address-input-country-select"
+						value={getCountryByName(inputAddress.country == null || inputAddress.country == undefined ? "Australia" : inputAddress.country).code}
+						className="address-input-country-select"
 							onChange={handleSelection}>
 						{countries.map(country => (
 							<option key={country.code} value={country.code}>{country.emoji} {country.name}</option>

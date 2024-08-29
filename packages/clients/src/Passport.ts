@@ -346,6 +346,29 @@ export class Passport {
         });
     }
 
+    currentUser(): Promise<User> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            var authToken = Cookies.get(this.authCookie)
+            xhr.open('GET', this.baseUrl + "/api/users/me");
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const user: User = JSON.parse(xhr.responseText);
+                    resolve(user);
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response.details);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error during upload');
+            };
+            xhr.send();
+        });
+    }
+
     get(userId: string): Promise<User> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
@@ -413,6 +436,28 @@ export class Passport {
         });
     }
 
+    deleteCurrentAccount(): Promise<Boolean> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            var authToken = Cookies.get(this.authCookie)
+            xhr.open('DELETE', this.baseUrl + "/api/users/me/delete");
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    resolve(true);
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response.details);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error during upload');
+            };
+            xhr.send();
+        });
+    }
+
     adminDeleteUser(userId: string): Promise<Boolean> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
@@ -432,6 +477,29 @@ export class Passport {
                 reject('Network error during upload');
             };
             xhr.send();
+        });
+    }
+
+    currentUserGetUserGroups(query: UserGroupSearchQuery): Promise<UserGroupSearchResult> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            var authToken = Cookies.get(this.authCookie)
+            xhr.open('POST', this.baseUrl + "/api/users/me/groups");
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const ugsr: UserGroupSearchResult = JSON.parse(xhr.responseText);
+                    resolve(ugsr);
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response.details);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error during upload');
+            };
+            xhr.send(JSON.stringify(query));
         });
     }
 
@@ -545,6 +613,29 @@ export class Passport {
                 reject('Network error during upload');
             };
             xhr.send(JSON.stringify(userSearchQuery));
+        });
+    }
+
+    verifyCurrentUserGroupMembership(userGroupValidationRequest: UserGroupValidationRequest): Promise<Boolean> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            var authToken = Cookies.get(this.authCookie)
+            xhr.open('POST', this.baseUrl + "/api/users/me/verify/group/membership");
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const membership: Boolean = xhr.responseText.toLowerCase() == "true";
+                    resolve(membership);
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response.details);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error during upload');
+            };
+            xhr.send(JSON.stringify(userGroupValidationRequest));
         });
     }
 

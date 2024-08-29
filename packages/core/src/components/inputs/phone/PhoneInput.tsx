@@ -1509,9 +1509,9 @@ export const PhoneInput: React.FC<Props> = ({
 		return country;
 	}
 
-	const [countryEmoji, setCountryEmoji] = useState(getCountryByCode(inputTelephone.code).emoji);
+	const [countryEmoji, setCountryEmoji] = useState(getCountryByCode(inputTelephone.code == undefined || inputTelephone.code == null ? "AU" : inputTelephone.code).emoji);
 
-	const [countryCode, setCountryCode] = useState(getCountryByCode(inputTelephone.code).dial_code);
+	const [countryCode, setCountryCode] = useState(getCountryByCode(inputTelephone.code == undefined || inputTelephone.code == null ? "AU" : inputTelephone.code).dial_code);
 
 	const [tel, setTel] = useState(inputTelephone);
 
@@ -1587,7 +1587,7 @@ export const PhoneInput: React.FC<Props> = ({
 						disabled={disabled}
 						onKeyDown={handleKeydownEvent}
 						onChange={handleInputChange}
-						value={telNum}/>
+						value={telNum == null || telNum == undefined ? "" : telNum}/>
 				</div>
 			</div>
 		</div>
