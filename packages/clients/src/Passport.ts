@@ -235,6 +235,10 @@ export type UserGroup = {
     groupId: string;
     groupName: string;
     inherited: boolean;
+    inheritedGroup: string;
+    externallyManaged: boolean;
+    permission: GroupPermission;
+    inheritance: Array<string>;
 }
 
 export type UserGroupSearchQuery = {

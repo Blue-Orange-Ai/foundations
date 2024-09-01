@@ -11,10 +11,13 @@
     align-items: center;
 }
 
+.blue-orange-primary-data-table-image {
+    margin-right: 15px;
+}
+
 .blue-orange-primary-data-text-body {
     display: flex;
     flex-direction: column;
-    margin-left: 15px;
     font-size: 14px;
 }
 
