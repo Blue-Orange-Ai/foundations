@@ -57,14 +57,14 @@ export type GroupDeleteRequest = {
 }
 
 export enum GroupPermission {
-    OWNER,
-    EDITOR,
-    READ
+    OWNER="OWNER",
+    EDITOR="EDITOR",
+    READ="READ"
 }
 
 export enum GroupSearchField {
-    NAME_DESCRIPTION,
-    SERVICE
+    NAME_DESCRIPTION="NAME_DESCRIPTION",
+    SERVICE="SERVICE"
 }
 
 export type GroupSearchFilter = {
@@ -93,8 +93,8 @@ export type PublicUser = {
 }
 
 export enum SearchDirection {
-    ASC,
-    DESC
+    ASC="ASC",
+    DESC="DESC"
 }
 
 export type ServiceAccount = {
@@ -182,10 +182,10 @@ export type UserLoginResponse = {
 }
 
 export enum UserState {
-    ACTIVE,
-    LOCKED,
-    DISABLED,
-    DELETED
+    ACTIVE="ACTIVE",
+    LOCKED="LOCKED",
+    DISABLED="DISABLED",
+    DELETED="DELETED"
 }
 
 export type UserTokenValidationRequest = {
@@ -196,10 +196,10 @@ export type UserTokenValidationRequest = {
 }
 
 export enum UserSearchField {
-    NAME,
-    DOMAIN,
-    CREATED,
-    LAST_ACTIVE
+    NAME="NAME",
+    DOMAIN="DOMAIN",
+    CREATED="CREATED",
+    LAST_ACTIVE="LAST_ACTIVE"
 }
 
 export type UserSearchFilter = {
