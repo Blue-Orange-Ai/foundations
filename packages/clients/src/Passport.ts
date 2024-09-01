@@ -350,6 +350,29 @@ export class Passport {
         });
     }
 
+    saveCurrentUser(user: User): Promise<User> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            var authToken = Cookies.get(this.authCookie)
+            xhr.open('PUT', this.baseUrl + "/api/users/me/update");
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const returnedUser: User = JSON.parse(xhr.responseText);
+                    resolve(returnedUser);
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response.details);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error during upload');
+            };
+            xhr.send(JSON.stringify(user));
+        });
+    }
+
     currentUser(): Promise<User> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
@@ -418,7 +441,7 @@ export class Passport {
         });
     }
 
-    updatePassword(passwordRequest: UserUpdatePassword): Promise<Boolean> {
+    updateCurrentUserPassword(passwordRequest: UserUpdatePassword): Promise<Boolean> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
