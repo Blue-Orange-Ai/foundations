@@ -1,13 +1,13 @@
 {
   "name": "@blue-orange-ai/foundations-core",
-  "version": "0.0.40",
+  "version": "0.0.41",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
   "author": "Blue Orange AI",
   "private": false,
   "dependencies": {
-    "@blue-orange-ai/foundations-clients": "^0.0.40",
+    "@blue-orange-ai/foundations-clients": "^0.0.41",
     "@tiptap/extension-code-block": "^2.3.2",
     "@tiptap/extension-link": "^2.3.2",
     "@tiptap/extension-mention": "^2.3.2",
