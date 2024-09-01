@@ -6,11 +6,14 @@ import {CellAlignment} from "../../../interfaces/AppInterfaces";
 interface Props {
 	children: ReactNode;
 	alignment?: CellAlignment,
-	onClick?: (rowId: string) => void,
-	hover?: boolean,
-	rowId?: string
+	onClick?: () => void,
+	style?: React.CSSProperties
 }
-export const Cell: React.FC<Props> = ({children, alignment=CellAlignment.LEFT, hover=false,rowId="", onClick}) => {
+export const Cell: React.FC<Props> = ({
+										  children,
+										  alignment=CellAlignment.LEFT,
+										  style= {},
+										  onClick}) => {
 
 
 	const getTextAlignment = () => {
@@ -31,8 +34,17 @@ export const Cell: React.FC<Props> = ({children, alignment=CellAlignment.LEFT, h
 		textAlign: getTextAlignment()
 	}
 
+	const cellClicked = () => {
+		if (onClick) {
+			onClick();
+		}
+	}
+
 	return (
-		<td className='blue-orange-default-data-table-cell' style={cellAlignment}>
+		<td
+			className='blue-orange-default-data-table-cell'
+			onClick={cellClicked}
+			style={{...cellAlignment, ...style}}>
 			{children}
 		</td>
 	)
