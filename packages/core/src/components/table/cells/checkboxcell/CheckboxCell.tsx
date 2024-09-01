@@ -6,17 +6,22 @@ import {Checkbox} from "../../../inputs/checkbox/Checkbox";
 
 interface Props {
 	state?: boolean,
-	onClick?: (state: boolean, rowId: string) => void,
-	hover?: boolean,
+	onClick?: (state: boolean) => void,
 	rowId?: string
 	style?: React.CSSProperties
 }
-export const CheckboxCell: React.FC<Props> = ({state = false, onClick, hover=false,rowId="", style={}}) => {
+export const CheckboxCell: React.FC<Props> = ({state = false, onClick, rowId="", style={}}) => {
+
+	const checkboxClicked = (state: boolean) => {
+		if (onClick) {
+			onClick(state);
+		}
+	}
 
 	return (
 		<td className='blue-orange-checkbox-data-table-cell' style={style}>
 			<div className='blue-orange-checkbox-data-table-cell-inner-cont'>
-				<Checkbox checked={state}></Checkbox>
+				<Checkbox checked={state} onCheckboxChange={checkboxClicked}></Checkbox>
 			</div>
 		</td>
 	)
