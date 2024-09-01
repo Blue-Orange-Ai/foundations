@@ -142,6 +142,9 @@ export type User = {
     notes: string;
     serviceUser: boolean;
     defaultUser: boolean;
+    emailVerified: boolean;
+    phoneVerified: boolean;
+    addressVerified: boolean;
 }
 
 export type UserCreateRequest = {
