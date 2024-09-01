@@ -9,11 +9,12 @@ interface Props {
 	onClick?: (state: boolean, rowId: string) => void,
 	hover?: boolean,
 	rowId?: string
+	style?: React.CSSProperties
 }
-export const CheckboxCell: React.FC<Props> = ({state = false, onClick, hover=false,rowId=""}) => {
+export const CheckboxCell: React.FC<Props> = ({state = false, onClick, hover=false,rowId="", style={}}) => {
 
 	return (
-		<td className='blue-orange-checkbox-data-table-cell'>
+		<td className='blue-orange-checkbox-data-table-cell' style={style}>
 			<div className='blue-orange-checkbox-data-table-cell-inner-cont'>
 				<Checkbox checked={state}></Checkbox>
 			</div>
