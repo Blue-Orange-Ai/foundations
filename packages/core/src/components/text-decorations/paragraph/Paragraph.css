@@ -1,0 +1,9 @@
+
+
+.blue-orange-default-heading-cont{
+    border-bottom: 1px solid var(--blue-orange-light-default-border-color);
+}
+
+.dark .blue-orange-default-heading-cont{
+    border-bottom: 1px solid var(--blue-orange-dark-default-border-color);
+}

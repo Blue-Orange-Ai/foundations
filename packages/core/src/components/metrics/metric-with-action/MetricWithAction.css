@@ -24,4 +24,5 @@
     align-items: center;
     flex-direction: row;
     display: flex;
+    font-size: 0.8rem;
 }

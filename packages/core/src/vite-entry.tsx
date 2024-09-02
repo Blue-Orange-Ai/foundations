@@ -157,6 +157,8 @@ export * from './components/text-decorations/page-heading/PageHeading';
 export * from './components/text-decorations/percentage/Percentage';
 export * from './components/text-decorations/tag/Tag';
 export * from './components/text-decorations/telephone/TelephoneText';
+export * from './components/text-decorations/paragraph/Paragraph';
+export * from './components/text-decorations/description/Description';
 
 // Tooltips
 export * from './components/tooltips/simple/SimpleTooltip';

@@ -1,17 +1,12 @@
-import React from "react";
+import React, {ReactNode} from "react";
 
 import './PageHeading.css'
 interface Props {
-	heading: string,
-	subText?: string
+	children: ReactNode;
+	style?: React.CSSProperties;
 }
-export const PageHeading: React.FC<Props> = ({heading, subText}) => {
+export const PageHeading: React.FC<Props> = ({children, style={}}) => {
 	return (
-		<div className="blue-orange-default-heading-cont">
-			<h1 className="blue-orange-default-heading">{heading}</h1>
-			{subText && (
-				<div className="blue-orange-default-heading-sub-text" dangerouslySetInnerHTML={{__html: subText}}></div>
-			)}
-		</div>
+		<h1 className="blue-orange-default-heading" style={style}>{children}</h1>
 	)
 }
