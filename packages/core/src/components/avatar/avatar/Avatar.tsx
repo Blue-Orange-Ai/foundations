@@ -168,6 +168,9 @@ export const Avatar: React.FC<Props> = ({
 		}
 		setWorkingUser(workingUser);
 		setUri("");
+		if (onChange) {
+			onChange(workingUser.avatar);
+		}
 	}
 
 	const fileUploadRequestReceived = (file: File) => {
