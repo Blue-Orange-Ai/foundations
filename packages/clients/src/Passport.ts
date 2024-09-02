@@ -49,7 +49,7 @@ export type Group = {
     service: string;
     description: string;
     externallyManaged: boolean;
-    excludedUsers: Array<number>;
+    excludedUsers: Array<string>;
 }
 
 export type GroupDeleteRequest = {
@@ -260,6 +260,11 @@ export type UserGroupSearchResult = {
     result: Array<UserGroup>;
     query: UserGroupSearchQuery;
     count: number;
+}
+
+export type GetGroupRequest = {
+    id?: string;
+    name?: string;
 }
 
 export class Passport {
@@ -606,6 +611,29 @@ export class Passport {
         });
     }
 
+    adminGetGroup(getGroupsRequest: GetGroupRequest): Promise<Group> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            var authToken = Cookies.get(this.authCookie)
+            xhr.open('POST', this.baseUrl + "/api/groups/get");
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const group: Group = JSON.parse(xhr.responseText);
+                    resolve(group);
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error during upload');
+            };
+            xhr.send(JSON.stringify(getGroupsRequest));
+        });
+    }
+
     searchGroups(query: GroupSearchQuery): Promise<GroupSearchResult> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
@@ -694,6 +722,50 @@ export class Passport {
                 reject('Network error during upload');
             };
             xhr.send(JSON.stringify(updateUserGroupPermission));
+        });
+    }
+
+    adminExcludeUserFromGroup(groupId: string, excludeUser: ExcludeUserRequest): Promise<Boolean> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            var authToken = Cookies.get(this.authCookie)
+            xhr.open('POST', this.baseUrl + "/api/groups/exclude/" + groupId);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    resolve(true);
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error during upload');
+            };
+            xhr.send(JSON.stringify(excludeUser));
+        });
+    }
+
+    adminIncludeUserFromGroup(groupId: string, include: ExcludeUserRequest): Promise<Boolean> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            var authToken = Cookies.get(this.authCookie)
+            xhr.open('POST', this.baseUrl + "/api/groups/include/" + groupId);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    resolve(true);
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error during upload');
+            };
+            xhr.send(JSON.stringify(include));
         });
     }
 

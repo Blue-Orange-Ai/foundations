@@ -39,6 +39,7 @@ export const ButtonIcon: React.FC<Props> = ({
 			if (current) {
 				tippy(current, {
 					content: label,
+					zIndex: 99999999999999,
 				});
 
 				return () => {

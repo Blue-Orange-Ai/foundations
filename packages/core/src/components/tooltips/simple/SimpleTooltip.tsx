@@ -19,7 +19,7 @@ export const SimpleTooltip: React.FC<Props> = ({children, label}) => {
 			if (current) {
 				tippy(current, {
 					content: label,
-					// Add other tippy options here if desired
+					zIndex: 999999999999999
 				});
 
 				return () => {
