@@ -62,6 +62,11 @@ export enum GroupPermission {
     READ="READ"
 }
 
+export enum GroupMemberType {
+    USER="USER",
+    GROUP="GROUP"
+}
+
 export enum GroupSearchField {
     NAME_DESCRIPTION="NAME_DESCRIPTION",
     SERVICE="SERVICE"
@@ -250,7 +255,22 @@ export type UserGroup = {
     inheritance: Array<string>;
 }
 
+export type GroupMember = {
+    id: string;
+    groupId: string;
+    referenceId: string;
+    type: GroupMemberType;
+    permission: GroupPermission;
+    name: string;
+}
+
 export type UserGroupSearchQuery = {
+    query: string;
+    page: number;
+    size: number;
+}
+
+export type GroupMemberSearchQuery = {
     query: string;
     page: number;
     size: number;
@@ -259,6 +279,12 @@ export type UserGroupSearchQuery = {
 export type UserGroupSearchResult = {
     result: Array<UserGroup>;
     query: UserGroupSearchQuery;
+    count: number;
+}
+
+export type GroupMemberSearchResult = {
+    result: Array<GroupMember>;
+    query: GroupMemberSearchQuery;
     count: number;
 }
 
@@ -769,7 +795,7 @@ export class Passport {
         });
     }
 
-    adminSearchUserGroups(groupId: string, query: UserGroupSearchQuery): Promise<UserGroupSearchResult> {
+    adminSearchGroupMembers(groupId: string, query: GroupMemberSearchQuery): Promise<GroupMemberSearchResult> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
@@ -778,7 +804,7 @@ export class Passport {
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
                 if (xhr.status === 200) {
-                    const userGroupSearchResult: UserGroupSearchResult = JSON.parse(xhr.responseText);
+                    const userGroupSearchResult: GroupMemberSearchResult = JSON.parse(xhr.responseText);
                     resolve(userGroupSearchResult);
                 } else {
                     var response =JSON.parse(xhr.response);
