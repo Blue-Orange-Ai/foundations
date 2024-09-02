@@ -29,5 +29,6 @@
   },
   "publishConfig": {
     "@blue-orange-ai:registry": "https://npm.pkg.github.com"
-  }
+  },
+  "gitHead": "bc7aefef9f321c14fb408b8d92d4670a79e43704"
 }
