@@ -172,6 +172,12 @@ export type UserGroupValidationRequest = {
     permission: GroupPermission;
 }
 
+export type UpdateUserGroupPermission = {
+    groupId: string;
+    userId: string;
+    permission: GroupPermission;
+}
+
 export type UserLoginRequest = {
     username: string;
     password: string;
@@ -320,7 +326,7 @@ export class Passport {
                     resolve(userResponse);
                 } else {
                     var response =JSON.parse(xhr.response);
-                    reject(response.message);
+                    reject(response);
                 }
             };
             xhr.onerror = function() {
@@ -343,7 +349,7 @@ export class Passport {
                     resolve(returnedUser);
                 } else {
                     var response =JSON.parse(xhr.response);
-                    reject(response.details);
+                    reject(response);
                 }
             };
             xhr.onerror = function() {
@@ -366,7 +372,7 @@ export class Passport {
                     resolve(returnedUser);
                 } else {
                     var response =JSON.parse(xhr.response);
-                    reject(response.details);
+                    reject(response);
                 }
             };
             xhr.onerror = function() {
@@ -389,7 +395,7 @@ export class Passport {
                     resolve(user);
                 } else {
                     var response =JSON.parse(xhr.response);
-                    reject(response.details);
+                    reject(response);
                 }
             };
             xhr.onerror = function() {
@@ -412,7 +418,7 @@ export class Passport {
                     resolve(user);
                 } else {
                     var response =JSON.parse(xhr.response);
-                    reject(response.details);
+                    reject(response);
                 }
             };
             xhr.onerror = function() {
@@ -434,7 +440,7 @@ export class Passport {
                     resolve(true);
                 } else {
                     var response =JSON.parse(xhr.response);
-                    reject(response.details);
+                    reject(response);
                 }
             };
             xhr.onerror = function() {
@@ -456,7 +462,7 @@ export class Passport {
                     resolve(true);
                 } else {
                     var response =JSON.parse(xhr.response);
-                    reject(response.details);
+                    reject(response);
                 }
             };
             xhr.onerror = function() {
@@ -478,7 +484,7 @@ export class Passport {
                     resolve(true);
                 } else {
                     var response =JSON.parse(xhr.response);
-                    reject(response.details);
+                    reject(response);
                 }
             };
             xhr.onerror = function() {
@@ -500,7 +506,7 @@ export class Passport {
                     resolve(true);
                 } else {
                     var response =JSON.parse(xhr.response);
-                    reject(response.details);
+                    reject(response);
                 }
             };
             xhr.onerror = function() {
@@ -523,7 +529,7 @@ export class Passport {
                     resolve(ugsr);
                 } else {
                     var response =JSON.parse(xhr.response);
-                    reject(response.details);
+                    reject(response);
                 }
             };
             xhr.onerror = function() {
@@ -546,7 +552,7 @@ export class Passport {
                     resolve(ugsr);
                 } else {
                     var response =JSON.parse(xhr.response);
-                    reject(response.details);
+                    reject(response);
                 }
             };
             xhr.onerror = function() {
@@ -568,7 +574,7 @@ export class Passport {
                     resolve(true);
                 } else {
                     var response =JSON.parse(xhr.response);
-                    reject(response.details);
+                    reject(response);
                 }
             };
             xhr.onerror = function() {
@@ -590,7 +596,7 @@ export class Passport {
                     resolve(true);
                 } else {
                     var response =JSON.parse(xhr.response);
-                    reject(response.details);
+                    reject(response);
                 }
             };
             xhr.onerror = function() {
@@ -613,7 +619,7 @@ export class Passport {
                     resolve(groupSearchResult);
                 } else {
                     var response =JSON.parse(xhr.response);
-                    reject(response.details);
+                    reject(response);
                 }
             };
             xhr.onerror = function() {
@@ -636,7 +642,7 @@ export class Passport {
                     resolve(userSearchResult);
                 } else {
                     var response =JSON.parse(xhr.response);
-                    reject(response.details);
+                    reject(response);
                 }
             };
             xhr.onerror = function() {
@@ -659,13 +665,35 @@ export class Passport {
                     resolve(membership);
                 } else {
                     var response =JSON.parse(xhr.response);
-                    reject(response.details);
+                    reject(response);
                 }
             };
             xhr.onerror = function() {
                 reject('Network error during upload');
             };
             xhr.send(JSON.stringify(userGroupValidationRequest));
+        });
+    }
+
+    updateUserGroupPermission(updateUserGroupPermission: UpdateUserGroupPermission): Promise<Boolean> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            var authToken = Cookies.get(this.authCookie)
+            xhr.open('POST', this.baseUrl + "/api/groups/update/user/group/permission");
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    resolve(true);
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error during upload');
+            };
+            xhr.send(JSON.stringify(updateUserGroupPermission));
         });
     }
 
