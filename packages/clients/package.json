@@ -1,6 +1,6 @@
 {
   "name": "@blue-orange-ai/foundations-clients",
-  "version": "0.0.46",
+  "version": "0.0.47",
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
