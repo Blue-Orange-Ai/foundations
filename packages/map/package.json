@@ -1,6 +1,6 @@
 {
   "name": "@blue-orange-ai/foundations-map",
-  "version": "0.0.48",
+  "version": "0.0.49",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
