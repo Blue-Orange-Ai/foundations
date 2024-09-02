@@ -21,6 +21,7 @@ interface Props {
 	height?: number;
 	width?:number; // Callback prop to send value to parent
 	tooltip?:boolean;
+	modalWidth?: number;
 	onChange?: (avatar: AvatarObj) => void;
 }
 
@@ -29,6 +30,7 @@ export const Avatar: React.FC<Props> = ({
 											edit = false,
 											height=80,
 											width=80,
+											modalWidth=500,
 											tooltip = false,
 											onChange
 										}) => {
@@ -249,42 +251,40 @@ export const Avatar: React.FC<Props> = ({
 			</div>
 
 			{ avatarModalState &&
-				<Modal width={500}>
-					<div ref={avatarModalElem} className="default-avatar-edit-card">
-						<ModalHeader label={"Profile Picture"} onClose={forceCloseAvatarModal}></ModalHeader>
-						<ModalDescription description={"A picture helps people recognize you and lets you know when you’re signed in to your account"}></ModalDescription>
-						<ModalBody>
-							<div className="default-avatar-modal-display">
-								<div className="default-avatar-cont" style={defaultScaleStyle}>
-									{(workingUser === undefined || workingUser.avatar === undefined || !workingUser.avatar.enabled) && !loading &&
-										<AvatarEmpty height={defaultScaleSize}></AvatarEmpty>}
-									{(workingUser !== undefined && workingUser.avatar !== undefined && workingUser.avatar.enabled) && !loading &&
-										<AvatarImage url={workingUser.avatar?.uri} height={defaultScaleSize}
-													 width={defaultScaleSize}></AvatarImage>}
-									{loadingImageUrl === undefined && loading &&
-										<AvatarEmpty height={defaultScaleSize}></AvatarEmpty>}
-									{loadingImageUrl === undefined && loading &&
-										<AvatarImage url={loadingImageUrl} height={defaultScaleSize}
-													 width={defaultScaleSize}></AvatarImage>}
-									{loading &&
-										<div className="default-avatar-overlay">
-											<span>{percentageComplete}%</span>
-										</div>
-									}
-								</div>
+				<Modal width={modalWidth}>
+					<ModalHeader label={"Profile Picture"} onClose={forceCloseAvatarModal}></ModalHeader>
+					<ModalDescription description={"A picture helps people recognize you and lets you know when you’re signed in to your account"}></ModalDescription>
+					<ModalBody>
+						<div className="default-avatar-modal-display">
+							<div className="default-avatar-cont" style={defaultScaleStyle}>
+								{(workingUser === undefined || workingUser.avatar === undefined || !workingUser.avatar.enabled) && !loading &&
+									<AvatarEmpty height={defaultScaleSize}></AvatarEmpty>}
+								{(workingUser !== undefined && workingUser.avatar !== undefined && workingUser.avatar.enabled) && !loading &&
+									<AvatarImage url={workingUser.avatar?.uri} height={defaultScaleSize}
+												 width={defaultScaleSize}></AvatarImage>}
+								{loadingImageUrl === undefined && loading &&
+									<AvatarEmpty height={defaultScaleSize}></AvatarEmpty>}
+								{loadingImageUrl === undefined && loading &&
+									<AvatarImage url={loadingImageUrl} height={defaultScaleSize}
+												 width={defaultScaleSize}></AvatarImage>}
+								{loading &&
+									<div className="default-avatar-overlay">
+										<span>{percentageComplete}%</span>
+									</div>
+								}
 							</div>
-						</ModalBody>
-						<div className="default-avatar-modify-btns">
-							<FileUploadBtn label={"Upload Picture"} style={{width: "150px"}} accept={"image"}
-										   onFileSelect={fileUploadRequestReceived} isLoading={loading}></FileUploadBtn>
-							{workingUser !== undefined && workingUser.avatar && workingUser.avatar.enabled &&
-								<div className="default-avatar-remove-btn">
-									<Button text={"Remove Avatar"} style={{width: "150px"}}
-											onClick={removeAvatarRequest} isLoading={loadingRemove}
-											buttonType={ButtonType.PRIMARY}></Button>
-								</div>
-							}
 						</div>
+					</ModalBody>
+					<div className="default-avatar-modify-btns">
+						<FileUploadBtn label={"Upload Picture"} style={{width: "150px"}} accept={"image"}
+									   onFileSelect={fileUploadRequestReceived} isLoading={loading}></FileUploadBtn>
+						{workingUser !== undefined && workingUser.avatar && workingUser.avatar.enabled &&
+							<div className="default-avatar-remove-btn">
+								<Button text={"Remove Avatar"} style={{width: "150px"}}
+										onClick={removeAvatarRequest} isLoading={loadingRemove}
+										buttonType={ButtonType.PRIMARY}></Button>
+							</div>
+						}
 					</div>
 				</Modal>
 			}
