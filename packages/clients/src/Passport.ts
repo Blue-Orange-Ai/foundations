@@ -769,6 +769,29 @@ export class Passport {
         });
     }
 
+    adminSearchUserGroups(groupId: string, query: UserGroupSearchQuery): Promise<UserGroupSearchResult> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            var authToken = Cookies.get(this.authCookie)
+            xhr.open('POST', this.baseUrl + "/api/groups/search/users/" + groupId);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const userGroupSearchResult: UserGroupSearchResult = JSON.parse(xhr.responseText);
+                    resolve(userGroupSearchResult);
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error during upload');
+            };
+            xhr.send(JSON.stringify(query));
+        });
+    }
+
 }
 
 
