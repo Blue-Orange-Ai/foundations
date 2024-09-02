@@ -12,8 +12,7 @@ import {Modal} from "../../layouts/modal/modal/Modal";
 import {ModalHeader} from "../../layouts/modal/modal-header/ModalHeader";
 import {ModalDescription} from "../../layouts/modal/modal-description/ModalDescription";
 import {ModalBody} from "../../layouts/modal/modal-body/ModalBody";
-import {Media, Passport, Avatar as AvatarObj, GroupPermission, User} from "@blue-orange-ai/foundations-clients";
-import passport from "../../config/BlueOrangePassportConfig";
+import {Media, Avatar as AvatarObj, GroupPermission, User} from "@blue-orange-ai/foundations-clients";
 
 
 interface Props {
@@ -21,7 +20,8 @@ interface Props {
 	edit?: boolean;
 	height?: number;
 	width?:number; // Callback prop to send value to parent
-	tooltip?:boolean
+	tooltip?:boolean;
+	onChange?: (avatar: AvatarObj) => void;
 }
 
 export const Avatar: React.FC<Props> = ({
@@ -29,7 +29,8 @@ export const Avatar: React.FC<Props> = ({
 											edit = false,
 											height=80,
 											width=80,
-											tooltip = false
+											tooltip = false,
+											onChange
 										}) => {
 
 
@@ -145,14 +146,9 @@ export const Avatar: React.FC<Props> = ({
 		}
 		setWorkingUser(workingUser);
 		setUri(media.url)
-		passport.save(workingUser)
-			.then(savedUser => {
-				setWorkingUser(savedUser);
-			})
-			.catch(error => {
-				setLoading(false);
-				setWorkingUser(user);
-			});
+		if (onChange) {
+			onChange(workingUser.avatar);
+		}
 	}
 
 	const removeUserAvatar = () => {
@@ -253,7 +249,7 @@ export const Avatar: React.FC<Props> = ({
 			</div>
 
 			{ avatarModalState &&
-				<Modal>
+				<Modal width={500}>
 					<div ref={avatarModalElem} className="default-avatar-edit-card">
 						<ModalHeader label={"Profile Picture"} onClose={forceCloseAvatarModal}></ModalHeader>
 						<ModalDescription description={"A picture helps people recognize you and lets you know when you’re signed in to your account"}></ModalDescription>
