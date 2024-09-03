@@ -799,7 +799,7 @@ export class Passport {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
-            xhr.open('POST', this.baseUrl + "/api/groups/search/users/" + groupId);
+            xhr.open('POST', this.baseUrl + "/api/groups/search/members/" + groupId);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
