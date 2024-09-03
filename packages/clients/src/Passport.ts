@@ -639,6 +639,28 @@ export class Passport {
         });
     }
 
+    adminRemoveMembersFromGroup(membersToRemove: AddRemoveMemberToGroupRequest): Promise<Boolean> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            var authToken = Cookies.get(this.authCookie)
+            xhr.open('POST', this.baseUrl + "/api/groups/remove/member/group");
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    resolve(true);
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error during upload');
+            };
+            xhr.send(JSON.stringify(membersToRemove));
+        });
+    }
+
     adminGetGroup(getGroupsRequest: GetGroupRequest): Promise<Group> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
