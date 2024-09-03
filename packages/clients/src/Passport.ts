@@ -185,6 +185,13 @@ export type UpdateUserGroupPermission = {
     permission: GroupPermission;
 }
 
+export type UpdateMemberGroupPermission = {
+    groupId: string;
+    memberId: string;
+    type: GroupMemberType;
+    permission: GroupPermission;
+}
+
 export type UserLoginRequest = {
     username: string;
     password: string;
@@ -883,6 +890,28 @@ export class Passport {
                 reject('Network error during upload');
             };
             xhr.send(JSON.stringify(addMembers));
+        });
+    }
+
+    adminUpdateMemberPermission(permissionUpdate: UpdateMemberGroupPermission): Promise<Boolean> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            var authToken = Cookies.get(this.authCookie)
+            xhr.open('POST', this.baseUrl + "/api/groups/update/member/group/permission");
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    resolve(true);
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error during upload');
+            };
+            xhr.send(JSON.stringify(permissionUpdate));
         });
     }
 
