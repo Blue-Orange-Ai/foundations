@@ -113,7 +113,8 @@ export type ServiceAccount = {
 }
 
 export type SimpleGroupMember = {
-    memberId: string
+    memberId: string,
+    permission?: GroupPermission
 }
 
 export type SimpleTokenRequest = {
