@@ -915,6 +915,29 @@ export class Passport {
         });
     }
 
+    createGroup(group: Group): Promise<Group> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            var authToken = Cookies.get(this.authCookie)
+            xhr.open('POST', this.baseUrl + "/api/groups/create");
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const createdGroup: Group = JSON.parse(xhr.responseText);
+                    resolve(createdGroup);
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error during upload');
+            };
+            xhr.send(JSON.stringify(group));
+        });
+    }
+
 }
 
 
