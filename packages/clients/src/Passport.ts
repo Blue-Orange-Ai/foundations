@@ -53,7 +53,8 @@ export type Group = {
 }
 
 export type GroupDeleteRequest = {
-    groupName: string
+    groupId?: string
+    groupName?: string
 }
 
 export enum GroupPermission {
@@ -815,6 +816,28 @@ export class Passport {
                 reject('Network error during upload');
             };
             xhr.send(JSON.stringify(query));
+        });
+    }
+
+    adminDeleteGroup(gdr: GroupDeleteRequest): Promise<Boolean> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            var authToken = Cookies.get(this.authCookie)
+            xhr.open('POST', this.baseUrl + "/api/groups/delete");
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    resolve(true);
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error during upload');
+            };
+            xhr.send(JSON.stringify(gdr));
         });
     }
 
