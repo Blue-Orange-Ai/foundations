@@ -49,7 +49,7 @@ export const Cell: React.FC<Props> = ({
 			style={{...cellAlignment, ...style}}>
 			{alignment == CellAlignment.CENTER && <CenteredDiv>{children}</CenteredDiv>}
 			{alignment == CellAlignment.RIGHT && <RightAlignedDiv>{children}</RightAlignedDiv>}
-			{children}
+			{alignment == CellAlignment.LEFT && {children}}
 		</td>
 	)
 }
