@@ -2,6 +2,8 @@ import React, {ReactNode} from "react";
 
 import './Cell.css'
 import {CellAlignment} from "../../../interfaces/AppInterfaces";
+import {CenteredDiv} from "../../../layouts/centered-div/CenteredDiv";
+import {RightAlignedDiv} from "../../../layouts/right-aligned-div/RightAlignedDiv";
 
 interface Props {
 	children: ReactNode;
@@ -45,6 +47,8 @@ export const Cell: React.FC<Props> = ({
 			className='blue-orange-default-data-table-cell'
 			onClick={cellClicked}
 			style={{...cellAlignment, ...style}}>
+			{alignment == CellAlignment.CENTER && <CenteredDiv>{children}</CenteredDiv>}
+			{alignment == CellAlignment.RIGHT && <RightAlignedDiv>{children}</RightAlignedDiv>}
 			{children}
 		</td>
 	)

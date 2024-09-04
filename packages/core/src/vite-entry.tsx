@@ -121,6 +121,8 @@ export * from './components/layouts/sidebar/sidebar-footer/SideBarFooter';
 export * from './components/layouts/sidebar/sidebar-header/SideBarHeader';
 export * from './components/layouts/tabs/tabs/Tabs';
 export * from './components/layouts/tabs/tab/Tab';
+export * from './components/layouts/centered-div/CenteredDiv';
+export * from './components/layouts/right-aligned-div/RightAlignedDiv';
 
 // Loading
 export * from './components/loading/Loading';

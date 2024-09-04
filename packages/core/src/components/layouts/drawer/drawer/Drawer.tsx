@@ -12,12 +12,12 @@ export enum DrawerPosition {
 interface Props {
 	children: React.ReactNode;
 	position?: DrawerPosition,
-	width?: number;
-	height?: number;
+	height?: string;
+	width?: string;
 	onClose?: () => void;
 }
 
-export const Drawer: React.FC<Props> = ({children, position = DrawerPosition.TOP, height=375, width=375, onClose}) => {
+export const Drawer: React.FC<Props> = ({children, position = DrawerPosition.TOP, height="375px", width="375px", onClose}) => {
 
 	const [animate, setAnimate] = useState(false);
 
@@ -58,10 +58,10 @@ export const Drawer: React.FC<Props> = ({children, position = DrawerPosition.TOP
 		<div className="blue-orange-drawer-window" style={generateDrawerStyle()}>
 			<div className="blue-orange-drawer-backdrop" onClick={handleBackdropClicked}></div>
 			<div className="blue-orange-drawer-content">
-				{position == DrawerPosition.RIGHT && <div className={animate ? "blue-orange-drawer-card-right blue-orange-drawer-card-enter" : "blue-orange-drawer-card-right"} style={{width: width + "px"}}>{children}</div>}
-				{position == DrawerPosition.LEFT && <div className={animate ? "blue-orange-drawer-card-left blue-orange-drawer-card-enter" : "blue-orange-drawer-card-left"} style={{width: width + "px"}}>{children}</div>}
-				{position == DrawerPosition.TOP && <div className={animate ? "blue-orange-drawer-card-top blue-orange-drawer-card-enter" : "blue-orange-drawer-card-top"} style={{height: width + "px"}}>{children}</div>}
-				{position == DrawerPosition.BOTTOM && <div className={animate ? "blue-orange-drawer-card-bottom blue-orange-drawer-card-enter" : "blue-orange-drawer-card-bottom"} style={{height: width + "px"}}>{children}</div>}
+				{position == DrawerPosition.RIGHT && <div className={animate ? "blue-orange-drawer-card-right blue-orange-drawer-card-enter" : "blue-orange-drawer-card-right"} style={{width: width}}>{children}</div>}
+				{position == DrawerPosition.LEFT && <div className={animate ? "blue-orange-drawer-card-left blue-orange-drawer-card-enter" : "blue-orange-drawer-card-left"} style={{width: width}}>{children}</div>}
+				{position == DrawerPosition.TOP && <div className={animate ? "blue-orange-drawer-card-top blue-orange-drawer-card-enter" : "blue-orange-drawer-card-top"} style={{height: height}}>{children}</div>}
+				{position == DrawerPosition.BOTTOM && <div className={animate ? "blue-orange-drawer-card-bottom blue-orange-drawer-card-enter" : "blue-orange-drawer-card-bottom"} style={{height: height}}>{children}</div>}
 			</div>
 		</div>
 	)
