@@ -9,7 +9,10 @@ import {v4 as uuidv4} from "uuid";
 interface Props {
 	dataset: Array<ChartDataset>,
 	gridLines?: boolean,
+	xLabel?: string,
 	xScale?: string,
+	xScaleTimeUnit?: string,
+	yLabel?: string,
 	yScale?: string,
 	height?: string,
 	width?: string,
@@ -23,14 +26,17 @@ interface Props {
 export const ScatterChart: React.FC<Props> = ({
 											   dataset,
 											   gridLines=true,
+											   xLabel,
 											   xScale,
+											   xScaleTimeUnit="minute",
+											   yLabel,
 											   yScale,
 											   height="100%",
 											   width="100%",
 											   interactionType = "nearest",
-												  animationTimeout = 2000,
-												  legend=true,
-												  legendPosition=LegendPosition.BOTTOM}) => {
+											   animationTimeout = 2000,
+											   legend=true,
+											   legendPosition=LegendPosition.BOTTOM}) => {
 
 	const chartRef = useRef<HTMLCanvasElement>(null);
 
@@ -295,6 +301,10 @@ export const ScatterChart: React.FC<Props> = ({
 					},
 					scales: {
 						y: {
+							title: {
+								display: yLabel != undefined,
+								text: yLabel
+							},
 							type: yScale,
 							grid: {
 								display: true
@@ -304,7 +314,14 @@ export const ScatterChart: React.FC<Props> = ({
 							}
 						},
 						x: {
+							title: {
+								display: xLabel != undefined,
+								text: xLabel
+							},
 							type: xScale,
+							time: {
+								unit: xScaleTimeUnit
+							},
 							grid: {
 								display: gridLines
 							},

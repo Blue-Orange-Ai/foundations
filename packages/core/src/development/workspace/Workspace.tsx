@@ -224,6 +224,33 @@ export const Workspace: React.FC<Props> = ({}) => {
 	}, []);
 
 	return (
+		<LineChart
+			height={"100vh"}
+			width={"100%"}
+			gridLines={true}
+			xLabel={"Timestamp"}
+			yLabel={"Value"}
+			xScale={"time"}
+			xScaleTimeUnit={"second"}
+			interactionType={"nearest"}
+			legend={true}
+			dataset={[{
+			label: "Subscribers",
+				backgroundColor: "#BB8FCE",
+				borderColor: "#BB8FCE",
+			data: [{ x: '2024-09-09T10:00:00Z', y: 0 },
+				{ x: '2024-09-09T10:10:00Z', y: 10 }]
+		},{
+				label: "Subscribers 2",
+				 backgroundColor: '#E59866',
+				 borderColor: '#E59866',
+				data: [
+					{ x: '2024-09-09T10:00:00Z', y: 10.5 },
+					{ x: '2024-09-09T10:05:00Z', y: 12.0 },
+					{ x: '2024-09-09T10:10:00Z', y: 9.5 }
+				]
+			}]}></LineChart>
+
 		// <LineChart
 		// 	height={"100vh"}
 		// 	width={"100%"}
@@ -266,30 +293,30 @@ export const Workspace: React.FC<Props> = ({}) => {
 	// 			data: values.current
 	// 		}]}></LineChart>
 	// </>
-				<ScatterChart
-					height={"100vh"}
-					width={"100%"}
-					gridLines={true}
-					xScale={"linear"}
-					dataset={[{
-						label: "Subscribers",
-						backgroundColor: "#BB8FCE",
-						borderColor: "#BB8FCE",
-						data: [{ x: -10, y: 0 },
-							{ x: 0, y: 10 },
-							{ x: 10, y: 5 },
-							{ x: 20, y: -10 },
-							{ x: 25, y: -5 }]
-					},{
-						label: "Subscribers 2",
-						backgroundColor: '#E59866',
-						borderColor: '#E59866',
-						data: [{ x: -30, y: 0 },
-							{ x: 30, y: 20 },
-							{ x: 40, y: -5 },
-							{ x: 50, y: -10 },
-							{ x: 65, y: -50 }]
-					}]}></ScatterChart>
+	// 			<ScatterChart
+	// 				height={"100vh"}
+	// 				width={"100%"}
+	// 				gridLines={true}
+	// 				xScale={"linear"}
+	// 				dataset={[{
+	// 					label: "Subscribers",
+	// 					backgroundColor: "#BB8FCE",
+	// 					borderColor: "#BB8FCE",
+	// 					data: [{ x: -10, y: 0 },
+	// 						{ x: 0, y: 10 },
+	// 						{ x: 10, y: 5 },
+	// 						{ x: 20, y: -10 },
+	// 						{ x: 25, y: -5 }]
+	// 				},{
+	// 					label: "Subscribers 2",
+	// 					backgroundColor: '#E59866',
+	// 					borderColor: '#E59866',
+	// 					data: [{ x: -30, y: 0 },
+	// 						{ x: 30, y: 20 },
+	// 						{ x: 40, y: -5 },
+	// 						{ x: 50, y: -10 },
+	// 						{ x: 65, y: -50 }]
+	// 				}]}></ScatterChart>
 
 	// <BarChart
 	// 	indexAxis={"x"}

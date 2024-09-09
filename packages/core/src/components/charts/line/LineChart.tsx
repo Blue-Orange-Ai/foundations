@@ -5,13 +5,17 @@ import './LineChart.css'
 import Chart from 'chart.js/auto';
 import {ChartDataset, LegendPosition} from "../types/ChartTypes";
 import {v4 as uuidv4} from "uuid";
+import 'chartjs-adapter-moment';
 
 
 interface Props {
 	dataset: Array<ChartDataset>,
 	labels?: Array<string>,
 	gridLines?: boolean,
+	xLabel?: string,
 	xScale?: string,
+	xScaleTimeUnit?: string,
+	yLabel?: string,
 	yScale?: string,
 	height?: string,
 	width?: string,
@@ -27,7 +31,10 @@ export const LineChart: React.FC<Props> = ({
 											   dataset,
 												labels,
 											   gridLines=true,
+											   xLabel,
 											   xScale,
+											   xScaleTimeUnit="minute",
+											   yLabel,
 											   yScale,
 											   height="100%",
 											   width="100%",
@@ -313,6 +320,10 @@ export const LineChart: React.FC<Props> = ({
 					scales: {
 						y: {
 							type: yScale,
+							title: {
+								display: yLabel != undefined,
+								text: yLabel
+							},
 							grid: {
 								display: gridLines
 							},
@@ -321,7 +332,14 @@ export const LineChart: React.FC<Props> = ({
 							}
 						},
 						x: {
+							title: {
+								display: xLabel != undefined,
+								text: xLabel
+							},
 							type: xScale,
+							time: {
+								unit: xScaleTimeUnit
+							},
 							grid: {
 								display: gridLines
 							},

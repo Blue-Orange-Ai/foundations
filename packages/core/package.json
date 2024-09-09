@@ -21,6 +21,7 @@
     "@yaireo/tagify": "^4.26.5",
     "animate.css": "^4.1.1",
     "chart.js": "^4.4.3",
+    "chartjs-adapter-moment": "^1.0.1",
     "chrono-node": "^2.7.5",
     "codemirror": "^5.65.17",
     "dagre": "^0.8.5",

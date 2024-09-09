@@ -11,8 +11,8 @@ interface Props {
 	indexAxis?: string, // x is vertical bar chart y is horizontal bar chart
 	labels?: Array<string>,
 	gridLines?: boolean,
-	xScale?: string,
-	yScale?: string,
+	xLabel?: string,
+	yLabel?: string,
 	height?: string,
 	width?: string,
 	interactionType?: string,  // mode: 'index' or mode: 'nearest'
@@ -23,17 +23,17 @@ interface Props {
 
 export const BarChart: React.FC<Props> = ({
 											   dataset,
-											  indexAxis="x",
-												labels,
+											   indexAxis="x",
+											   labels,
 											   gridLines=true,
-											   xScale,
-											   yScale,
+											   xLabel,
+											   yLabel,
 											   height="100%",
 											   width="100%",
 											   interactionType = "index",
-											  animationTimeout = 2000,
-											  legend=true,
-											  legendPosition=LegendPosition.BOTTOM
+											   animationTimeout = 2000,
+											   legend=true,
+											   legendPosition=LegendPosition.BOTTOM
 										  }) => {
 
 	const chartRef = useRef<HTMLCanvasElement>(null);
@@ -302,11 +302,19 @@ export const BarChart: React.FC<Props> = ({
 					},
 					scales: {
 						y: {
+							title: {
+								display: yLabel != undefined,
+								text: yLabel
+							},
 							grid: {
 								display: gridLines
 							}
 						},
 						x: {
+							title: {
+								display: xLabel != undefined,
+								text: xLabel
+							},
 							grid: {
 								display: gridLines
 							}
