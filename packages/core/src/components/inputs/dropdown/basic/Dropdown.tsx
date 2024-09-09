@@ -265,7 +265,6 @@ export const Dropdown: React.FC<Props> = ({
 		display: visibleRef ? "flex" : "none",
 		flexDirection: "column",
 		width: contextWidth == undefined ? inputRef.current?.clientWidth : contextWidth,
-		paddingBottom: "10px",
 		maxHeight: contextMaxHeight == undefined ? "200px" : contextMaxHeight,
 		left: calculateLeftPosition(),
 		bottom: isPosAbove() ? getClientBottom() + getClientHeight() + 10 + "px" : "unset",

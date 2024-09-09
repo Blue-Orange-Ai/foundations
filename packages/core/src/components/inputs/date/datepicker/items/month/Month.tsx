@@ -13,6 +13,11 @@ interface Props {
 	maxStartingYear?: number,
 	sundayStart?: boolean,
 	showHeader?: boolean,
+	showTime?: boolean,
+	hour?: number,
+	minute?: number,
+	second?: number,
+	millisecond?: number,
 	onSelection?: (date: Date) => void
 }
 
@@ -23,6 +28,11 @@ export const Month: React.FC<Props> = ({
 										   maxStartingYear=2200,
 										   sundayStart  = false,
 										   showHeader = true,
+										   showTime = true,
+										   hour = 0,
+										   minute = 0,
+										   second = 0,
+										   millisecond = 0,
 										   onSelection}) => {
 
 	const todayDate = new Date();
@@ -42,6 +52,14 @@ export const Month: React.FC<Props> = ({
 	const [currentYear, setCurrentYear] = useState(selectedDate ? selectedDate.getFullYear() : todayDate.getFullYear());
 
 	const [yearSelection, setYearSelection] = useState(generateYearSelection());
+
+	const selectedHour = useRef<number>(hour);
+
+	const selectedMinute = useRef<number>(minute);
+
+	const selectedSecond = useRef<number>(second);
+
+	const selectedMillisecond = useRef<number>(millisecond);
 
 	const generateDaysInMonth = (year: number, month: number): Array<WeekObj> => {
 		const daysInMonth: Array<WeekObj> = [];
@@ -86,7 +104,14 @@ export const Month: React.FC<Props> = ({
 		selectedDate ? selectedDate.getMonth() : todayDate.getMonth()));
 
 	const onDaySelected = (day: DayObj) => {
-		const date = new Date(day.year, day.month, day.day);
+		const date = new Date(
+			day.year,
+			day.month,
+			day.day,
+			selectedHour.current,
+			selectedMinute.current,
+			selectedSecond.current,
+			selectedMillisecond.current);
 		if (onSelection) {
 			onSelection(date)
 		}
@@ -142,6 +167,23 @@ export const Month: React.FC<Props> = ({
 		setDaysInMonth(generateDaysInMonth(+event.target.value, currentMonth));
 		setCurrentYear(+event.target.value)
 	}
+
+	useEffect(() => {
+		selectedHour.current = hour;
+	}, [hour]);
+
+	useEffect(() => {
+		selectedMinute.current = minute;
+	}, [minute]);
+
+	useEffect(() => {
+		selectedSecond.current = second;
+	}, [second]);
+
+	useEffect(() => {
+		selectedMillisecond.current = millisecond;
+	}, [millisecond]);
+
 
 	return (
 		<div className="blue-orange-date-picker-cont">

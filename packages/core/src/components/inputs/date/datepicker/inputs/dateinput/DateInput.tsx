@@ -4,7 +4,7 @@ import * as chrono from 'chrono-node';
 import './DateInput.css';
 import {Input} from "../../../../input/Input";
 import moment from 'moment';
-import {DateContextWindowSingle} from "../../items/datecontextwindowsingle/DateContextWindowSingle";
+import {DateContextWindowSingle, TimePrecision} from "../../items/datecontextwindowsingle/DateContextWindowSingle";
 
 
 interface Props {
@@ -18,6 +18,8 @@ interface Props {
 	help?: string;
 	style?: React.CSSProperties;
 	labelStyle?: React.CSSProperties;
+	showTime?: boolean,
+	timePrecision?: TimePrecision
 }
 
 export const DateInput: React.FC<Props> = ({
@@ -30,7 +32,9 @@ export const DateInput: React.FC<Props> = ({
 											   disabled=false,
 											   help,
 											   style = {},
-											   labelStyle={}}) => {
+											   labelStyle={},
+											   showTime=false,
+											   timePrecision=TimePrecision.MINUTE}) => {
 
 	const getFormattedDate = (date: Date | undefined, invalid: boolean) => {
 		if (invalid) {
@@ -210,7 +214,13 @@ export const DateInput: React.FC<Props> = ({
 				onChange={storeInputChange}
 				focusIn={focusIn}
 				enterEvent={validateInputDate}></Input>
-			{showDateSelection && <DateContextWindowSingle style={calculateContextWindowPos()} selectedDate={dateValue} onSelection={onDateSelected}></DateContextWindowSingle>}
+			{showDateSelection &&
+				<DateContextWindowSingle
+					style={calculateContextWindowPos()}
+					selectedDate={dateValue}
+					showTime={showTime}
+					timePrecision={timePrecision}
+					onSelection={onDateSelected}></DateContextWindowSingle>}
 		</div>
 	);
 };

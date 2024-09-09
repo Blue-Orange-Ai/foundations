@@ -4,7 +4,7 @@ export interface ChartDataset {
     data: Array<any>,
     borderColor?: string,
     backgroundColor?: string,
-    borderWidth?: 2,
+    borderWidth?: number,
     fill?: boolean | string,
     axis?: string,
     borderRadius?: number,
