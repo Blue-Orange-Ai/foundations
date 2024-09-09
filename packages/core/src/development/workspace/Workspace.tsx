@@ -1,40 +1,15 @@
 // @ts-ignore
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 
 import './Workspace.css'
-import {Avatar as AvatarObj, Media, User, UserState} from "@blue-orange-ai/foundations-clients";
 import {ToastContext} from "../../components/alerts/toast/toastcontext/ToastContext";
-import {SideBar, SideBarState} from "../../components/layouts/sidebar/default/SideBar";
-import {Input} from "../../components/inputs/input/Input";
-import {Button, ButtonType} from "../../components/buttons/button/Button";
+import {SideBarState} from "../../components/layouts/sidebar/default/SideBar";
 import {Edge, Node as GraphNode} from "@blue-orange-ai/primitives-graph";
 import Cookies from "js-cookie";
-import {DropdownItemObj, DropdownItemType} from "../../components/interfaces/AppInterfaces";
-import {TagInput} from "../../components/inputs/tags/simple/TagInput";
-import {SideBarHeader} from "../../components/layouts/sidebar/sidebar-header/SideBarHeader";
-import {SideBarHeaderItem} from "../../components/layouts/sidebar/items/sidebar-header-item/SideBarHeaderItem";
-import {SideBarBody} from "../../components/layouts/sidebar/sidebar-body/SideBarBody";
-import {SideBarBodyGroup} from "../../components/layouts/sidebar/items/sidebar-body-group/SideBarBodyGroup";
-import {SideBarBodyLabel} from "../../components/layouts/sidebar/items/sidebar-body-label/SideBarBodyLabel";
-import {Badge} from "../../components/text-decorations/badge/Badge";
-import {SideBarBodyItem} from "../../components/layouts/sidebar/items/sidebar-body-item/SideBarBodyItem";
-import {SideBarFooter} from "../../components/layouts/sidebar/sidebar-footer/SideBarFooter";
-import {SideBarBodyItemLink} from "../../components/layouts/sidebar/items/sidebar-body-item-link/SideBarBodyItemLink";
-import {SidebarPage} from "../../components/layouts/pages/sidebar-page/SidebarPage";
-import {PaddedPage} from "../../components/layouts/pages/padded-page/PaddedPage";
-import {SplitPageMajor} from "../../components/layouts/pages/split-pages/split-page-major/SplitPageMajor";
-import {SplitPageMinor} from "../../components/layouts/pages/split-pages/split-page-minor/SplitPageMinor";
-import {
-	HorizontalSplitPage
-} from "../../components/layouts/pages/split-pages/horizontal-split-page/HorizontalSplitPage";
-import {MetricWithCopy} from "../../components/metrics/metric-with-copy/MetricWithCopy";
-import {MetricCard} from "../../components/metrics/metric-card/MetricCard";
-import {InputForm} from "../../components/inputs/form/InputForm";
-import {Dropdown} from "../../components/inputs/dropdown/basic/Dropdown";
-import {DropdownItemHeading} from "../../components/inputs/dropdown/items/DropdownItemHeading/DropdownItemHeading";
-import {DropdownItemText} from "../../components/inputs/dropdown/items/DropdownItemText/DropdownItemText";
-import {DropdownItemIcon} from "../../components/inputs/dropdown/items/DropdownItemIcon/DropdownItemIcon";
-import {DropdownItemImage} from "../../components/inputs/dropdown/items/DropdownItemImage/DropdownItemImage";
+import {LineChart} from "../../components/charts/line/LineChart";
+import {LegendPosition} from "../../components/charts/types/ChartTypes";
+import {BarChart} from "../../components/charts/bar/BarChart";
+import {ScatterChart} from "../../components/charts/scatter/ScatterChart";
 
 interface Props {
 }
@@ -60,119 +35,14 @@ export const Workspace: React.FC<Props> = ({}) => {
 
 	const [username, setUsername] = useState("");
 
+	const labels = useRef<Array<string>>([])
+
+	const values =  useRef<Array<number>>([])
+
 	const changeSidebarState = (state: SideBarState) => {
 		setSidebarState(state);
 	}
 
-	const avatar: AvatarObj = {
-		enabled: true,
-		mediaId: 4,
-		uri: "http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"
-	}
-
-	const testMedia: Media = {
-		"id": 4,
-		"uuid": "zzAA2ixtQEOw6TMafUP6Uw",
-		"location": "FILE",
-		"filename": "jimmy-fermin-bqe0J0b26RQ-unsplash.jpg",
-		"folder": "",
-		"bucketname": "null",
-		"mediaType": "IMAGE",
-		"dateCreated": new Date(),
-		"url": "http://localhost:8086/files/get/presigned/26nErnPuTIqy4zIR2xiaNg",
-		"mediaPublic": false,
-		"fragments": [
-			{
-				"id": 1,
-				"height": 50,
-				"width": 50,
-				"referenceId": 1,
-				"referenceUuid": "irgKuUubRjGlQ3woLsioJQ",
-				"referenceUrl": "http://localhost:8086/files/get/presigned/Z8RzhPfRQvODtQofqKcWLg"
-			},
-			{
-				"id": 2,
-				"height": 250,
-				"width": 250,
-				"referenceId": 2,
-				"referenceUuid": "_EE7afSSSICacYXNeOBJFw",
-				"referenceUrl": "http://localhost:8086/files/get/presigned/JbrgVTagTou-dJ22vMa_XA"
-			},
-			{
-				"id": 3,
-				"height": 500,
-				"width": 500,
-				"referenceId": 3,
-				"referenceUuid": "fYPJeyLRQpy2jDek-taS3A",
-				"referenceUrl": "http://localhost:8086/files/get/presigned/YMua1wMETwCs99r4kvo_CA"
-			}
-		]
-	}
-
-	const user: User = {
-		address: undefined,
-		avatar: avatar,
-		color: "",
-		created: new Date(),
-		defaultUser: false,
-		domain: "internal",
-		email: "tom@blueorange.ai",
-		forcePasswordReset: false,
-		lastActive: new Date(),
-		name: "Tom Seneviratne",
-		notes: "",
-		serviceUser: false,
-		telephone: undefined,
-		username: "tom",
-		state: UserState.ACTIVE
-	}
-	//
-	const dropdownItems: Array<DropdownItemObj> = [
-		{
-			label: "Names",
-			reference: "5",
-			selected: false,
-			type: DropdownItemType.HEADING
-		},
-		{
-			label: "Lisbeth",
-			reference: "1",
-			selected: false,
-			type: DropdownItemType.TEXT
-		},
-		{
-			label: "Aruna",
-			reference: "2",
-			selected: false,
-			type: DropdownItemType.TEXT
-		},
-		{
-			label: "Lauren",
-			reference: "3",
-			selected: false,
-			disabled: true,
-			type: DropdownItemType.TEXT
-		},
-		{
-			label: "Thomas",
-			reference: "4",
-			selected: true,
-			type: DropdownItemType.TEXT
-		},
-		{
-			label: "Persons",
-			reference: "6",
-			selected: false,
-			type: DropdownItemType.HEADING
-		},
-		{
-			label: "James",
-			reference: "7",
-			selected: false,
-			src: "http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ",
-			type: DropdownItemType.IMAGE
-		}
-	]
 
 	const btnClick = () => {
 		setError(true);
@@ -341,12 +211,27 @@ export const Workspace: React.FC<Props> = ({}) => {
 			"deletable": true
 		}]
 
+	useEffect(() => {
+		// setInterval(() => {
+		// 	if (labels.current && values.current) {
+		// 		var label = new Date().toDateString();
+		// 		var value = Math.floor(Math.random() * 100);
+		// 		labels.current.push(label);
+		// 		values.current.push(value);
+		// 		setUsername(value.toString())
+		// 	}
+		// }, 50)
+	}, []);
+
 	return (
 		// <LineChart
 		// 	height={"100vh"}
 		// 	width={"100%"}
 		// 	gridLines={true}
 		// 	xScale={"linear"}
+		// 	interactionType={"nearest"}
+		// 	legend={true}
+		// 	legendPosition={LegendPosition.BOTTOM_RIGHT}
 		// 	dataset={[{
 		// 	label: "Subscribers",
 		// 		backgroundColor: "#BB8FCE",
@@ -366,18 +251,45 @@ export const Workspace: React.FC<Props> = ({}) => {
 		// 			{ x: 50, y: -10 },
 		// 			{ x: 65, y: -50 }]
 		// 	}]}></LineChart>
-	// <LineChart
-	// 	height={"100vh"}
-	// 	width={"50%"}
-	// 	gridLines={true}
-	// 	xScale={"category"}
-	// 	labels={["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]}
-	// 	dataset={[{
-	// 		label: "Subscribers",
-	// 		backgroundColor: "#BB8FCE",
-	// 		borderColor: "#BB8FCE",
-	// 		data: [0, 20, -5, -10, -50]
-	// 	}]}></LineChart>
+	// <>
+	// 	<p>{username}</p>
+	// 	<LineChart
+	// 		height={"100vh"}
+	// 		width={"50%"}
+	// 		gridLines={true}
+	// 		xScale={"category"}
+	// 		labels={labels.current}
+	// 		dataset={[{
+	// 			label: "Subscribers",
+	// 			backgroundColor: "#BB8FCE",
+	// 			borderColor: "#BB8FCE",
+	// 			data: values.current
+	// 		}]}></LineChart>
+	// </>
+				<ScatterChart
+					height={"100vh"}
+					width={"100%"}
+					gridLines={true}
+					xScale={"linear"}
+					dataset={[{
+						label: "Subscribers",
+						backgroundColor: "#BB8FCE",
+						borderColor: "#BB8FCE",
+						data: [{ x: -10, y: 0 },
+							{ x: 0, y: 10 },
+							{ x: 10, y: 5 },
+							{ x: 20, y: -10 },
+							{ x: 25, y: -5 }]
+					},{
+						label: "Subscribers 2",
+						backgroundColor: '#E59866',
+						borderColor: '#E59866',
+						data: [{ x: -30, y: 0 },
+							{ x: 30, y: 20 },
+							{ x: 40, y: -5 },
+							{ x: 50, y: -10 },
+							{ x: 65, y: -50 }]
+					}]}></ScatterChart>
 
 	// <BarChart
 	// 	indexAxis={"x"}
@@ -385,13 +297,14 @@ export const Workspace: React.FC<Props> = ({}) => {
 	// 	width={"50%"}
 	// 	gridLines={true}
 	// 	xScale={"category"}
+	// 	legend={false}
 	// 	labels={["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]}
 	// 	dataset={[{
 	// 		label: "Subscribers",
 	// 		backgroundColor: "#BB8FCE",
 	// 		borderColor: "#BB8FCE",
-	// 		data: [0, 20, -5, -10, -50],
-	// 		borderRadius: 20
+	// 		data: [0, 20, 5, 10, 50],
+	// 		borderRadius: 4
 	// 	}]}></BarChart>
 	// 	<div>
 	// 		{/*<ScatterChart*/}
@@ -435,107 +348,107 @@ export const Workspace: React.FC<Props> = ({}) => {
 	// 		{/*</Modal>*/}
 	// 	</div>
 
-		<SidebarPage>
-			<SideBar state={sidebarState} changeState={changeSidebarState}>
-				<SideBarHeader>
-					<SideBarHeaderItem label="Blue Orange Ai" state={sidebarState} media={testMedia} changeState={changeSidebarState}></SideBarHeaderItem>
-				</SideBarHeader>
-				<SideBarBody>
-					<SideBarBodyGroup opened={sidebarGroupState}>
-						<SideBarBodyLabel
-							icon={sidebarGroupState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
-							label={"Menu"}
-							onClick={() => setSidebarGroupState(!sidebarGroupState)}
-							badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
-						></SideBarBodyLabel>
-						<SideBarBodyItem
-							label={"Search"}
-							active={false}
-							focused={false}
-							defaultStyle={{opacity: "0.6"}}
-							activeStyle={{opacity: "1"}}
-							icon={<i className={"ri-search-line"}></i>}
-						></SideBarBodyItem>
-						<SideBarBodyItem
-							label={"Search 2"}
-							active={false}
-							focused={true}
-							defaultStyle={{opacity: "0.6"}}
-							focusedStyle={{opacity: "1"}}
-							hoverEffects={true}
-							onClick={() => console.log("Main body item clicked")}
-							hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
-							icon={<i className={"ri-search-line"}></i>}
-						></SideBarBodyItem>
-					</SideBarBodyGroup>
-					<SideBarBodyLabel
-						label={"Menu"}
-						badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
-					></SideBarBodyLabel>
-					<SideBarBodyItemLink
-						label={"Search Google"}
-						href={"https://www.google.com"}
-						active={false}
-						focused={false}
-						defaultStyle={{opacity: "0.6"}}
-						activeStyle={{opacity: "1"}}
-						icon={<i className={"ri-search-line"}></i>}
-					></SideBarBodyItemLink>
-					<SideBarBodyItem
-						label={"Search"}
-						active={false}
-						focused={false}
-						defaultStyle={{opacity: "0.6"}}
-						activeStyle={{opacity: "1"}}
-						icon={<i className={"ri-search-line"}></i>}
-					></SideBarBodyItem>
-					<SideBarBodyItem
-						label={"Search 2"}
-						active={false}
-						focused={true}
-						defaultStyle={{opacity: "0.6"}}
-						focusedStyle={{opacity: "1"}}
-						hoverEffects={true}
-						onClick={() => console.log("Main body item clicked")}
-						hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
-						icon={<i className={"ri-search-line"}></i>}
-					></SideBarBodyItem>
-				</SideBarBody>
-				<SideBarFooter>
-					<div style={{color: "white"}}>Hello World</div>
-				</SideBarFooter>
-			</SideBar>
-			<HorizontalSplitPage>
-				<SplitPageMajor>
-					<PaddedPage>
-						<MetricWithCopy text={"Hello world"}></MetricWithCopy>
-						<InputForm>
-							<Dropdown style={{background: "#e0e1e2"}}>
-								<DropdownItemHeading label={"Hello World"} value={"heading-1"} selected={false}></DropdownItemHeading>
-								<DropdownItemText label={"Option 1"} value={"option-1"} selected={false}></DropdownItemText>
-								<DropdownItemText label={"Option 2"} value={"option-2"} selected={true}></DropdownItemText>
-								<DropdownItemIcon src={"ri-dribbble-line"} label={"Dribble"} value={"option-3"} selected={false}></DropdownItemIcon>
-								<DropdownItemImage src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} label={"James"} value={"option-4"} selected={false}></DropdownItemImage>
-							</Dropdown>
-							<Input
-								placeholder={"Username | Email"}
-								label={"Username"}
-								onChange={(value) => setUsername(value)}
-							></Input>
-						</InputForm>
-						<Input placeholder={"Testing setting username"} onChange={(value) => {setUsername(value)}}></Input>
-						<TagInput></TagInput>
-						<Input></Input>
-						<Button text={"Hello"} buttonType={ButtonType.PRIMARY}></Button>
-						<MetricCard text={"3 Sensors"} label={"Num. Sensors"} icon={"ri-gradienter-line"}></MetricCard>
-					</PaddedPage>
-				</SplitPageMajor>
-				<SplitPageMinor>
-					<div>Minor split page item</div>
-				</SplitPageMinor>
-			</HorizontalSplitPage>
-
-		</SidebarPage>
+		// <SidebarPage>
+		// 	<SideBar state={sidebarState} changeState={changeSidebarState}>
+		// 		<SideBarHeader>
+		// 			<SideBarHeaderItem label="Blue Orange Ai" state={sidebarState} media={testMedia} changeState={changeSidebarState}></SideBarHeaderItem>
+		// 		</SideBarHeader>
+		// 		<SideBarBody>
+		// 			<SideBarBodyGroup opened={sidebarGroupState}>
+		// 				<SideBarBodyLabel
+		// 					icon={sidebarGroupState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
+		// 					label={"Menu"}
+		// 					onClick={() => setSidebarGroupState(!sidebarGroupState)}
+		// 					badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
+		// 				></SideBarBodyLabel>
+		// 				<SideBarBodyItem
+		// 					label={"Search"}
+		// 					active={false}
+		// 					focused={false}
+		// 					defaultStyle={{opacity: "0.6"}}
+		// 					activeStyle={{opacity: "1"}}
+		// 					icon={<i className={"ri-search-line"}></i>}
+		// 				></SideBarBodyItem>
+		// 				<SideBarBodyItem
+		// 					label={"Search 2"}
+		// 					active={false}
+		// 					focused={true}
+		// 					defaultStyle={{opacity: "0.6"}}
+		// 					focusedStyle={{opacity: "1"}}
+		// 					hoverEffects={true}
+		// 					onClick={() => console.log("Main body item clicked")}
+		// 					hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
+		// 					icon={<i className={"ri-search-line"}></i>}
+		// 				></SideBarBodyItem>
+		// 			</SideBarBodyGroup>
+		// 			<SideBarBodyLabel
+		// 				label={"Menu"}
+		// 				badge={<Badge backgroundColor={"red"} textColor={"white"}>10</Badge>}
+		// 			></SideBarBodyLabel>
+		// 			<SideBarBodyItemLink
+		// 				label={"Search Google"}
+		// 				href={"https://www.google.com"}
+		// 				active={false}
+		// 				focused={false}
+		// 				defaultStyle={{opacity: "0.6"}}
+		// 				activeStyle={{opacity: "1"}}
+		// 				icon={<i className={"ri-search-line"}></i>}
+		// 			></SideBarBodyItemLink>
+		// 			<SideBarBodyItem
+		// 				label={"Search"}
+		// 				active={false}
+		// 				focused={false}
+		// 				defaultStyle={{opacity: "0.6"}}
+		// 				activeStyle={{opacity: "1"}}
+		// 				icon={<i className={"ri-search-line"}></i>}
+		// 			></SideBarBodyItem>
+		// 			<SideBarBodyItem
+		// 				label={"Search 2"}
+		// 				active={false}
+		// 				focused={true}
+		// 				defaultStyle={{opacity: "0.6"}}
+		// 				focusedStyle={{opacity: "1"}}
+		// 				hoverEffects={true}
+		// 				onClick={() => console.log("Main body item clicked")}
+		// 				hoverItems={<i className={"ri-search-line"} onClick={() => console.log("Hello World")}></i>}
+		// 				icon={<i className={"ri-search-line"}></i>}
+		// 			></SideBarBodyItem>
+		// 		</SideBarBody>
+		// 		<SideBarFooter>
+		// 			<div style={{color: "white"}}>Hello World</div>
+		// 		</SideBarFooter>
+		// 	</SideBar>
+		// 	<HorizontalSplitPage>
+		// 		<SplitPageMajor>
+		// 			<PaddedPage>
+		// 				<MetricWithCopy text={"Hello world"}></MetricWithCopy>
+		// 				<InputForm>
+		// 					<Dropdown style={{background: "#e0e1e2"}}>
+		// 						<DropdownItemHeading label={"Hello World"} value={"heading-1"} selected={false}></DropdownItemHeading>
+		// 						<DropdownItemText label={"Option 1"} value={"option-1"} selected={false}></DropdownItemText>
+		// 						<DropdownItemText label={"Option 2"} value={"option-2"} selected={true}></DropdownItemText>
+		// 						<DropdownItemIcon src={"ri-dribbble-line"} label={"Dribble"} value={"option-3"} selected={false}></DropdownItemIcon>
+		// 						<DropdownItemImage src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} label={"James"} value={"option-4"} selected={false}></DropdownItemImage>
+		// 					</Dropdown>
+		// 					<Input
+		// 						placeholder={"Username | Email"}
+		// 						label={"Username"}
+		// 						onChange={(value) => setUsername(value)}
+		// 					></Input>
+		// 				</InputForm>
+		// 				<Input placeholder={"Testing setting username"} onChange={(value) => {setUsername(value)}}></Input>
+		// 				<TagInput></TagInput>
+		// 				<Input></Input>
+		// 				<Button text={"Hello"} buttonType={ButtonType.PRIMARY}></Button>
+		// 				<MetricCard text={"3 Sensors"} label={"Num. Sensors"} icon={"ri-gradienter-line"}></MetricCard>
+		// 			</PaddedPage>
+		// 		</SplitPageMajor>
+		// 		<SplitPageMinor>
+		// 			<div>Minor split page item</div>
+		// 		</SplitPageMinor>
+		// 	</HorizontalSplitPage>
+		//
+		// </SidebarPage>
 
 		// <div className="workspace-main-window">
 		// 	<div className="workspace-display-window">

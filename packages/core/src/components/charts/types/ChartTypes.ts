@@ -12,4 +12,13 @@ export interface ChartDataset {
     yAxisID?: string,
 }
 
+export enum LegendPosition {
+    TOP,
+    BOTTOM,
+    TOP_LEFT,
+    TOP_RIGHT,
+    BOTTOM_LEFT,
+    BOTTOM_RIGHT
+}
+
 

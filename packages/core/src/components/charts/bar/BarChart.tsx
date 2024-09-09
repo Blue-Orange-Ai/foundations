@@ -1,9 +1,9 @@
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 import './BarChart.css'
 
 import Chart from 'chart.js/auto';
-import {ChartDataset} from "../types/ChartTypes";
+import {ChartDataset, LegendPosition} from "../types/ChartTypes";
 import {v4 as uuidv4} from "uuid";
 
 interface Props {
@@ -15,7 +15,10 @@ interface Props {
 	yScale?: string,
 	height?: string,
 	width?: string,
-	interactionType?: string  // mode: 'index' or mode: 'nearest'
+	interactionType?: string,  // mode: 'index' or mode: 'nearest'
+	animationTimeout?: number,
+	legend?: boolean,
+	legendPosition?: LegendPosition
 }
 
 export const BarChart: React.FC<Props> = ({
@@ -27,14 +30,151 @@ export const BarChart: React.FC<Props> = ({
 											   yScale,
 											   height="100%",
 											   width="100%",
-											   interactionType = "index"}) => {
+											   interactionType = "index",
+											  animationTimeout = 2000,
+											  legend=true,
+											  legendPosition=LegendPosition.BOTTOM
+										  }) => {
 
 	const chartRef = useRef<HTMLCanvasElement>(null);
 
+	const chartInstanceRef = useRef<Chart | null>(null);
+
+	const initRef = useRef<boolean>(false);
+
 	const uuid = uuidv4();
 
+	const floatingLegendTopLeft: React.CSSProperties = {
+		top: "20px",
+		left: "20px",
+	}
+
+	const floatingLegendTopRight: React.CSSProperties = {
+		top: "20px",
+		right: "20px",
+	}
+
+	const floatingLegendBottomLeft: React.CSSProperties = {
+		bottom: "20px",
+		left: "20px",
+	}
+
+	const floatingLegendBottomRight: React.CSSProperties = {
+		bottom: "20px",
+		right: "20px",
+	}
+
+	const setLegendStyleValue = (): React.CSSProperties => {
+		if (legendPosition == LegendPosition.TOP || legendPosition == LegendPosition.BOTTOM) {
+			return {}
+		} else if (legendPosition == LegendPosition.TOP_RIGHT) {
+			return floatingLegendTopRight;
+		} else if (legendPosition == LegendPosition.TOP_LEFT) {
+			return floatingLegendTopLeft;
+		} else if (legendPosition == LegendPosition.BOTTOM_RIGHT) {
+			return floatingLegendBottomRight;
+		}
+		return floatingLegendBottomLeft;
+	}
+
+	const [legendStyle, setLegendStyle] = useState<React.CSSProperties>(setLegendStyleValue());
+
+	const getOrCreateLegendList = (chart: any, id: any) => {
+		const legendContainer = document.getElementById(id);
+		if (!legendContainer) {
+			return null;
+		}
+		let listContainer = legendContainer.querySelector('ul');
+
+		if (!listContainer) {
+			listContainer = document.createElement('ul');
+			listContainer.style.display = 'flex';
+			listContainer.style.flexDirection = legendPosition == LegendPosition.TOP || legendPosition == LegendPosition.BOTTOM ? 'row' : 'column';
+			listContainer.style.margin = "0";
+			listContainer.style.padding = "0";
+			// @ts-ignore
+			legendContainer.appendChild(listContainer);
+		}
+
+		return listContainer;
+	};
+
+	const htmlLegendPlugin = {
+		id: 'htmlLegend',
+		afterUpdate(chart: any, args:any, options:any) {
+			const ul = getOrCreateLegendList(chart, options.containerID);
+			if (ul) {
+				while (ul.firstChild) {
+					ul.firstChild.remove();
+				}
+
+				// Reuse the built-in legendItems generator
+				const items = chart.options.plugins.legend.labels.generateLabels(chart);
+
+				// @ts-ignore
+				items.forEach(item => {
+					const li = document.createElement('li');
+					li.className = "blue-orange-bar-chart-legend-item"
+					li.style.alignItems = 'center';
+					li.style.cursor = 'pointer';
+					li.style.display = 'flex';
+					li.style.flexDirection = 'row';
+					li.style.marginLeft = '10px';
+
+					li.onclick = () => {
+						const {type} = chart.config;
+						if (type === 'pie' || type === 'doughnut') {
+							chart.toggleDataVisibility(item.index);
+						} else {
+							chart.setDatasetVisibility(item.datasetIndex, !chart.isDatasetVisible(item.datasetIndex));
+						}
+						chart.update();
+					};
+
+					// Color box
+					const boxSpan = document.createElement('span');
+					boxSpan.className = "blue-orange-bar-chart-legend-item-color-span"
+					boxSpan.style.background = item.fillStyle;
+					boxSpan.style.borderColor = item.strokeStyle;
+					boxSpan.style.borderWidth = item.lineWidth + 'px';
+					boxSpan.style.display = 'inline-block';
+					boxSpan.style.flexShrink = "0";
+
+					// Text
+					const textContainer = document.createElement('p');
+					textContainer.className = "blue-orange-bar-chart-legend-item-text"
+					textContainer.style.margin = "0";
+					textContainer.style.padding = "0";
+					textContainer.style.textDecoration = item.hidden ? 'line-through' : '';
+
+					const text = document.createTextNode(item.text);
+					textContainer.appendChild(text);
+
+					li.appendChild(boxSpan);
+					li.appendChild(textContainer);
+					ul.appendChild(li);
+				});
+			}
+		}
+	};
+
+	const updateChartData = () => {
+		if (chartInstanceRef.current != null && initRef.current) {
+			dataset.forEach(ds => ds.axis = indexAxis)
+			const data = {
+				labels: labels,
+				datasets: dataset
+			};
+			if (chartInstanceRef.current.data != data) {
+				chartInstanceRef.current.data = data;
+				chartInstanceRef.current.options.animation = false;
+				chartInstanceRef.current.update();
+			}
+
+		}
+	};
+
 	useEffect(() => {
-		var myChart: any = undefined;
 		if (chartRef.current) {
 			const ctx = chartRef.current.getContext('2d');
 			dataset.forEach(ds => ds.axis = indexAxis)
@@ -51,6 +191,10 @@ export const BarChart: React.FC<Props> = ({
 					responsive: true,
 					maintainAspectRatio: false,
 					plugins: {
+						htmlLegend: {
+							// ID of the container to put the legend in
+							containerID: uuid,
+						},
 						legend: {
 							display: false,
 						},
@@ -119,7 +263,6 @@ export const BarChart: React.FC<Props> = ({
 										toolTipDatasetRow.appendChild(tooltipFormattedValue);
 										toolTipDatasets.appendChild(toolTipDatasetRow);
 									}
-									const selectedDatasets = tooltipModel.datasets;
 									var header = '';
 									titleLines.forEach(function(title:any) {
 										header += title;
@@ -138,8 +281,20 @@ export const BarChart: React.FC<Props> = ({
 								const position = context.chart.canvas.getBoundingClientRect();
 								tooltipEl.style.opacity = String(1);
 								tooltipEl.style.position = 'absolute';
-								tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 'px';
-								tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+								if (tooltipModel.caretX > window.innerWidth / 2) {
+									tooltipEl.style.left = "unset"
+									tooltipEl.style.right = position.right - tooltipModel.caretX + 'px';
+								} else {
+									tooltipEl.style.left = position.left + window.scrollX + tooltipModel.caretX + 'px';
+									tooltipEl.style.right = "unset"
+								}
+								if (tooltipModel.caretY > window.innerHeight / 2) {
+									tooltipEl.style.bottom = position.bottom - tooltipModel.caretY + 'px';
+									tooltipEl.style.top = "unset";
+								} else {
+									tooltipEl.style.top = position.top + window.scrollY + tooltipModel.caretY + 'px';
+									tooltipEl.style.bottom = "unset";
+								}
 								tooltipEl.style.padding = tooltipModel.padding + 'px ' + tooltipModel.padding + 'px';
 								tooltipEl.style.pointerEvents = 'none';
 							}
@@ -161,22 +316,33 @@ export const BarChart: React.FC<Props> = ({
 						intersect: false,
 						mode: interactionType,
 					}
-				}
+				},
+				plugins:[htmlLegendPlugin]
 			};
-
-			myChart = new Chart((ctx as CanvasRenderingContext2D), config);
+			chartInstanceRef.current = new Chart((ctx as CanvasRenderingContext2D), config);
+			setTimeout(() => {
+				initRef.current = true;
+				updateChartData();
+			}, animationTimeout)
 		}
 
 		return () => {
-			if (myChart) {
-				myChart.destroy();
+			if (chartInstanceRef.current) {
+				chartInstanceRef.current.destroy();
 			}
 		};
 	}, []);
 
+	useEffect(() => {
+		updateChartData();
+	}, [dataset, labels]);
+
 	return (
-		<div style={{height: height, width: width}}>
+		<div className="blue-orange-bar-chart-cont" style={{height: height, width: width}}>
+			{legend && legendPosition == LegendPosition.TOP && <div id={uuid} className="blue-orange-bar-chart-legend-cont"></div>}
 			<canvas ref={chartRef}/>
+			{legend && legendPosition == LegendPosition.BOTTOM && <div id={uuid} className="blue-orange-bar-chart-legend-cont"></div>}
+			{legend && legendPosition != LegendPosition.BOTTOM && legendPosition != LegendPosition.TOP && <div id={uuid} style={legendStyle} className="blue-orange-bar-chart-floating-legend-cont"></div>}
 		</div>
 
 	)
