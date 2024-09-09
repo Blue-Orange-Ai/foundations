@@ -1,6 +1,6 @@
 {
   "name": "@blue-orange-ai/foundations-graph",
-  "version": "0.0.66",
+  "version": "0.0.67",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
