@@ -169,19 +169,19 @@ export const LineChart: React.FC<Props> = ({
 	};
 
 	const updateChartData = () => {
-		if (chartInstanceRef.current != null && initRef.current) {
-			dataset.forEach(ds => ds.fill = fill)
-			const data = {
-				labels: labels,
-				datasets: dataset
-			};
-			if (chartInstanceRef.current.data != data) {
-				chartInstanceRef.current.data = data;
-				chartInstanceRef.current.options.animation = false;
-				chartInstanceRef.current.update();
-			}
-
-		}
+		// if (chartRef.current && chartInstanceRef.current != null && initRef.current) {
+		// 	dataset.forEach(ds => ds.fill = fill)
+		// 	const data = {
+		// 		labels: labels,
+		// 		datasets: dataset
+		// 	};
+		// 	if (chartInstanceRef.current.data != data) {
+		// 		chartInstanceRef.current.data = data;
+		// 		chartInstanceRef.current.options.animation = false;
+		// 		chartInstanceRef.current.update();
+		// 	}
+		//
+		// }
 	};
 
 	useEffect(() => {
@@ -192,7 +192,6 @@ export const LineChart: React.FC<Props> = ({
 				labels: labels,
 				datasets: dataset
 			};
-
 			const config: any = {
 				type: "line",
 				data: data,
