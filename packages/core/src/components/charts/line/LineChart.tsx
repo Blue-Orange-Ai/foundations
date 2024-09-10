@@ -52,6 +52,8 @@ export const LineChart: React.FC<Props> = ({
 
 	const initRef = useRef<boolean>(false);
 
+	const chartInitRef = useRef<boolean>(false);
+
 	const uuid = uuidv4();
 
 	const floatingLegendTopLeft: React.CSSProperties = {
@@ -187,7 +189,8 @@ export const LineChart: React.FC<Props> = ({
 	};
 
 	useEffect(() => {
-		if (chartRef.current) {
+		if (chartRef.current && !chartInitRef.current && chartInstanceRef.current == null) {
+			chartInitRef.current = true
 			const ctx = chartRef.current.getContext('2d');
 			dataset.forEach(ds => ds.fill = fill)
 			const data = {
