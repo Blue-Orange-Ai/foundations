@@ -379,11 +379,10 @@ export const LineChart: React.FC<Props> = ({
 		}
 
 		return () => {
-			if (animationTimoutEvent.current) {
-				clearTimeout(animationTimoutEvent.current);
-			}
+			initRef.current = false;
 			if (chartInstanceRef.current) {
 				chartInstanceRef.current.destroy();
+				chartInstanceRef.current = null;
 			}
 
 		};
