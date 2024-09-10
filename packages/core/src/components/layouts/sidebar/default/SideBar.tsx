@@ -16,6 +16,7 @@ interface Props {
 	state: SideBarState,
 	closeWidth?: number;
 	openWidth?: number;
+	resizable?: boolean;
 	changeState?: (state: SideBarState) => void;
 }
 
@@ -24,6 +25,7 @@ export const SideBar: React.FC<Props> = ({
 											 state,
 											 closeWidth = 250,
 											 openWidth=250,
+											 resizable=true,
 											 changeState}) => {
 
 	const headerItems: React.ReactNode[] = [];
@@ -65,7 +67,9 @@ export const SideBar: React.FC<Props> = ({
 	}
 
 	const handleMouseDown = () => {
-		moving.current = true;
+		if (resizable) {
+			moving.current = true;
+		}
 	}
 
 	const handleMouseUp = (ev: MouseEvent) => {
@@ -116,7 +120,7 @@ export const SideBar: React.FC<Props> = ({
 			<div className="blue-orange-sidebar-header">{headerItems}</div>
 			<div className="blue-orange-sidebar-body">{bodyItems}</div>
 			<div className="blue-orange-sidebar-footer">{footerItems}</div>
-			<div ref={sidebarControlRef} className="blue-orange-sidebar-control"></div>
+			<div ref={sidebarControlRef} className={resizable ? "blue-orange-sidebar-control" : "blue-orange-sidebar-control-disabled"}></div>
 		</div>
 	)
 }
