@@ -376,7 +376,6 @@ export const LineChart: React.FC<Props> = ({
 			chartInstanceRef.current = new Chart((ctx as CanvasRenderingContext2D), config);
 			animationTimoutEvent.current = setTimeout(() => {
 				initRef.current = true;
-				updateChartData();
 			}, animationTimeout)
 		}
 
