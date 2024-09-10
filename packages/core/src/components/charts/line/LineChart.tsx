@@ -212,6 +212,7 @@ export const LineChart: React.FC<Props> = ({
 				type: "line",
 				data: data,
 				options: {
+					animation: false,
 					responsive: true,
 					maintainAspectRatio: false,
 					plugins: {
