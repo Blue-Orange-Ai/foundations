@@ -54,6 +54,8 @@ export const LineChart: React.FC<Props> = ({
 
 	const chartInitRef = useRef<boolean>(false);
 
+	const animationTimoutEvent = useRef<NodeJS.Timeout | undefined>(undefined);
+
 	const uuid = uuidv4();
 
 	const floatingLegendTopLeft: React.CSSProperties = {
@@ -372,17 +374,20 @@ export const LineChart: React.FC<Props> = ({
 				plugins:[htmlLegendPlugin]
 			};
 			chartInstanceRef.current = new Chart((ctx as CanvasRenderingContext2D), config);
-			const timeout = setTimeout(() => {
+			animationTimoutEvent.current = setTimeout(() => {
 				initRef.current = true;
 				updateChartData();
-				clearTimeout(timeout)
 			}, animationTimeout)
 		}
 
 		return () => {
+			if (animationTimoutEvent.current) {
+				clearTimeout(animationTimoutEvent.current);
+			}
 			if (chartInstanceRef.current) {
 				chartInstanceRef.current.destroy();
 			}
+
 		};
 	}, []);
 
