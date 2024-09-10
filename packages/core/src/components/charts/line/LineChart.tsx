@@ -375,9 +375,7 @@ export const LineChart: React.FC<Props> = ({
 				plugins:[htmlLegendPlugin]
 			};
 			chartInstanceRef.current = new Chart((ctx as CanvasRenderingContext2D), config);
-			animationTimoutEvent.current = setTimeout(() => {
-				initRef.current = true;
-			}, animationTimeout)
+			initRef.current = true;
 		}
 
 		return () => {
