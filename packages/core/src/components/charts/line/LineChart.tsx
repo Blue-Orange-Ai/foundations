@@ -212,7 +212,6 @@ export const LineChart: React.FC<Props> = ({
 				type: "line",
 				data: data,
 				options: {
-					animation: false,
 					responsive: true,
 					maintainAspectRatio: false,
 					plugins: {
@@ -375,14 +374,18 @@ export const LineChart: React.FC<Props> = ({
 				plugins:[htmlLegendPlugin]
 			};
 			chartInstanceRef.current = new Chart((ctx as CanvasRenderingContext2D), config);
-			initRef.current = true;
+			animationTimoutEvent.current = setTimeout(() => {
+				initRef.current = true;
+				updateChartData();
+			}, animationTimeout)
 		}
 
 		return () => {
-			initRef.current = false;
+			if (animationTimoutEvent.current) {
+				clearTimeout(animationTimoutEvent.current);
+			}
 			if (chartInstanceRef.current) {
 				chartInstanceRef.current.destroy();
-				chartInstanceRef.current = null;
 			}
 
 		};

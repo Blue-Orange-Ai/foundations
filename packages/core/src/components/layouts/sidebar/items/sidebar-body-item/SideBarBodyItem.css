@@ -16,11 +16,22 @@
     padding-bottom: 10px;
     border-radius: 8px;
     overflow-x: hidden;
+    opacity: 0.6;
     color: var(--blue-orange-light-sidebar-body-item-text-color);
 }
 
 .dark .blue-orange-sidebar-body-item {
     color: var(--blue-orange-dark-sidebar-body-item-text-color);
+}
+
+.blue-orange-sidebar-body-item-active {
+    background-color: var(--blue-orange-light-sidebar-body-item-hover-color);
+    opacity: 1;
+}
+
+.dark .blue-orange-sidebar-body-item-active {
+    background-color: var(--blue-orange-dark-sidebar-body-item-hover-color);
+    opacity: 1;
 }
 
 .blue-orange-sidebar-closed .blue-orange-sidebar-body-item {

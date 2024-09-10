@@ -54,7 +54,7 @@ export const SideBarBodyItem: React.FC<Props> = ({
 			style={active ? activeStyle : style}
 			onMouseEnter={mouseEntered}
 			onMouseLeave={mouseLeave}
-			className="blue-orange-sidebar-body-item">
+			className={active ? "blue-orange-sidebar-body-item blue-orange-sidebar-body-item-active" : "blue-orange-sidebar-body-item"}>
 			<div
 				className="blue-orange-sidebar-body-item-left"
 				style={focused ? focusedStyle : defaultStyle}
