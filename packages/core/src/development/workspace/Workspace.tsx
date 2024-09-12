@@ -10,6 +10,7 @@ import {DateInput} from "../../components/inputs/date/datepicker/inputs/dateinpu
 import {
 	TimePrecision
 } from "../../components/inputs/date/datepicker/items/datecontextwindowsingle/DateContextWindowSingle";
+import {LineChart} from "../../components/charts/line/LineChart";
 
 interface Props {
 }
@@ -224,33 +225,33 @@ export const Workspace: React.FC<Props> = ({}) => {
 	}, []);
 
 	return (
-		<DateInput displayFormat={"yyyy-MM-DD HH:mm:ss"} showTime={true} timePrecision={TimePrecision.SECOND}></DateInput>
-		// <LineChart
-		// 	height={"100vh"}
-		// 	width={"100%"}
-		// 	gridLines={true}
-		// 	xLabel={"Timestamp"}
-		// 	yLabel={"Value"}
-		// 	xScale={"time"}
-		// 	xScaleTimeUnit={"second"}
-		// 	interactionType={"nearest"}
-		// 	legend={true}
-		// 	dataset={[{
-		// 	label: "Subscribers",
-		// 		backgroundColor: "#BB8FCE",
-		// 		borderColor: "#BB8FCE",
-		// 	data: [{ x: '2024-09-09T10:00:00Z', y: 0 },
-		// 		{ x: '2024-09-09T10:10:00Z', y: 10 }]
-		// },{
-		// 		label: "Subscribers 2",
-		// 		 backgroundColor: '#E59866',
-		// 		 borderColor: '#E59866',
-		// 		data: [
-		// 			{ x: '2024-09-09T10:00:00Z', y: 10.5 },
-		// 			{ x: '2024-09-09T10:05:00Z', y: 12.0 },
-		// 			{ x: '2024-09-09T10:10:00Z', y: 9.5 }
-		// 		]
-		// 	}]}></LineChart>
+		// <DateInput displayFormat={"yyyy-MM-DD HH:mm:ss"} showTime={true} timePrecision={TimePrecision.SECOND}></DateInput>
+		<LineChart
+			height={"100vh"}
+			width={"100%"}
+			gridLines={true}
+			xLabel={"Timestamp"}
+			yLabel={"Value"}
+			xScale={"time"}
+			xScaleTimeUnit={"second"}
+			interactionType={"nearest"}
+			legend={true}
+			dataset={[{
+			label: "Subscribers",
+				backgroundColor: "#BB8FCE",
+				borderColor: "#BB8FCE",
+			data: [{ x: '2024-09-09T10:00:00Z', y: 0 },
+				{ x: '2024-09-09T10:10:00Z', y: 10 }]
+		},{
+				label: "Subscribers 2",
+				 backgroundColor: '#E59866',
+				 borderColor: '#E59866',
+				data: [
+					{ x: '2024-09-09T10:00:00Z', y: 10.5 },
+					{ x: '2024-09-09T10:05:00Z', y: 12.0 },
+					{ x: '2024-09-09T10:10:00Z', y: 9.5 }
+				]
+			}]}></LineChart>
 
 		// <LineChart
 		// 	height={"100vh"}

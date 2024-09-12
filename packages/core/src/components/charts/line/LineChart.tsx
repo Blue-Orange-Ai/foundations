@@ -52,10 +52,6 @@ export const LineChart: React.FC<Props> = ({
 
 	const initRef = useRef<boolean>(false);
 
-	const chartInitRef = useRef<boolean>(false);
-
-	const animationTimoutEvent = useRef<NodeJS.Timeout | undefined>(undefined);
-
 	const uuid = uuidv4();
 
 	const floatingLegendTopLeft: React.CSSProperties = {
@@ -116,98 +112,87 @@ export const LineChart: React.FC<Props> = ({
 	const htmlLegendPlugin = {
 		id: 'htmlLegend',
 		afterUpdate(chart: any, args:any, options:any) {
-			try {
-				if (chart != undefined && chart != null) {
-					const ul = getOrCreateLegendList(chart, options.containerID);
-					if (ul) {
-						while (ul.firstChild) {
-							ul.firstChild.remove();
-						}
-
-						// Reuse the built-in legendItems generator
-						const items = chart.options.plugins.legend.labels.generateLabels(chart);
-
-						// @ts-ignore
-						items.forEach(item => {
-							const li = document.createElement('li');
-							li.className = "blue-orange-line-chart-legend-item"
-							li.style.alignItems = 'center';
-							li.style.cursor = 'pointer';
-							li.style.display = 'flex';
-							li.style.flexDirection = 'row';
-							li.style.marginLeft = '10px';
-
-							li.onclick = () => {
-								const {type} = chart.config;
-								if (type === 'pie' || type === 'doughnut') {
-									chart.toggleDataVisibility(item.index);
-								} else {
-									chart.setDatasetVisibility(item.datasetIndex, !chart.isDatasetVisible(item.datasetIndex));
-								}
-								chart.update();
-							};
-
-							// Color box
-							const boxSpan = document.createElement('span');
-							boxSpan.className = "blue-orange-line-chart-legend-item-color-span"
-							boxSpan.style.background = item.fillStyle;
-							boxSpan.style.borderColor = item.strokeStyle;
-							boxSpan.style.borderWidth = item.lineWidth + 'px';
-							boxSpan.style.display = 'inline-block';
-							boxSpan.style.flexShrink = "0";
-
-							// Text
-							const textContainer = document.createElement('p');
-							textContainer.className = "blue-orange-line-chart-legend-item-text"
-							textContainer.style.margin = "0";
-							textContainer.style.padding = "0";
-							textContainer.style.textDecoration = item.hidden ? 'line-through' : '';
-
-							const text = document.createTextNode(item.text);
-							textContainer.appendChild(text);
-
-							li.appendChild(boxSpan);
-							li.appendChild(textContainer);
-							ul.appendChild(li);
-						});
-					}
+			const ul = getOrCreateLegendList(chart, options.containerID);
+			if (ul) {
+				while (ul.firstChild) {
+					ul.firstChild.remove();
 				}
-			} catch (e) {}
 
+				// Reuse the built-in legendItems generator
+				const items = chart.options.plugins.legend.labels.generateLabels(chart);
+
+				// @ts-ignore
+				items.forEach(item => {
+					const li = document.createElement('li');
+					li.className = "blue-orange-line-chart-legend-item"
+					li.style.alignItems = 'center';
+					li.style.cursor = 'pointer';
+					li.style.display = 'flex';
+					li.style.flexDirection = 'row';
+					li.style.marginLeft = '10px';
+
+					li.onclick = () => {
+						const {type} = chart.config;
+						if (type === 'pie' || type === 'doughnut') {
+							chart.toggleDataVisibility(item.index);
+						} else {
+							chart.setDatasetVisibility(item.datasetIndex, !chart.isDatasetVisible(item.datasetIndex));
+						}
+						chart.update();
+					};
+
+					// Color box
+					const boxSpan = document.createElement('span');
+					boxSpan.className = "blue-orange-line-chart-legend-item-color-span"
+					boxSpan.style.background = item.fillStyle;
+					boxSpan.style.borderColor = item.strokeStyle;
+					boxSpan.style.borderWidth = item.lineWidth + 'px';
+					boxSpan.style.display = 'inline-block';
+					boxSpan.style.flexShrink = "0";
+
+					// Text
+					const textContainer = document.createElement('p');
+					textContainer.className = "blue-orange-line-chart-legend-item-text"
+					textContainer.style.margin = "0";
+					textContainer.style.padding = "0";
+					textContainer.style.textDecoration = item.hidden ? 'line-through' : '';
+
+					const text = document.createTextNode(item.text);
+					textContainer.appendChild(text);
+
+					li.appendChild(boxSpan);
+					li.appendChild(textContainer);
+					ul.appendChild(li);
+				});
+			}
 		}
 	};
 
 	const updateChartData = () => {
-		try {
-			if (chartRef.current && chartInstanceRef.current != null && initRef.current) {
-				dataset.forEach(ds => ds.fill = fill)
-				const data = {
-					labels: labels,
-					datasets: dataset
-				};
-				if (chartInstanceRef.current.data != data) {
-					chartInstanceRef.current.data = data;
-					chartInstanceRef.current.options.animation = false;
-					try {
-						chartInstanceRef.current.update();
-					} catch (e) {}
-
-				}
-
+		if (chartInstanceRef.current != null && initRef.current) {
+			dataset.forEach(ds => ds.fill = fill)
+			const data = {
+				labels: labels,
+				datasets: dataset
+			};
+			if (chartInstanceRef.current.data != data) {
+				chartInstanceRef.current.data = data;
+				chartInstanceRef.current.options.animation = false;
+				chartInstanceRef.current.update();
 			}
-		} catch (e) {}
 
+		}
 	};
 
 	useEffect(() => {
-		if (chartRef.current && !chartInitRef.current && chartInstanceRef.current == null) {
-			chartInitRef.current = true
+		if (chartRef.current) {
 			const ctx = chartRef.current.getContext('2d');
 			dataset.forEach(ds => ds.fill = fill)
 			const data = {
 				labels: labels,
 				datasets: dataset
 			};
+
 			const config: any = {
 				type: "line",
 				data: data,
@@ -227,103 +212,100 @@ export const LineChart: React.FC<Props> = ({
 							intersect: false,
 							mode: interactionType,
 							external: (context: any) => {
-								try {
-									let tooltipEl = document.getElementById('blue-orange-chart-line-js-tooltip-' + uuid);
+								let tooltipEl = document.getElementById('blue-orange-chart-line-js-tooltip-' + uuid);
 
-									if (!tooltipEl) {
-										tooltipEl = document.createElement('div');
-										tooltipEl.id = 'blue-orange-chart-line-js-tooltip-' + uuid;
-										tooltipEl.className = 'blue-orange-chart-line-tooltip';
-										var tooltipBody = document.createElement('div');
-										tooltipBody.id = 'blue-orange-chart-line-js-tooltip-body-' + uuid;
-										tooltipBody.className = 'blue-orange-chart-line-tooltip-body';
-										tooltipEl.appendChild(tooltipBody);
-										document.body.appendChild(tooltipEl);
-									}
+								if (!tooltipEl) {
+									tooltipEl = document.createElement('div');
+									tooltipEl.id = 'blue-orange-chart-line-js-tooltip-' + uuid;
+									tooltipEl.className = 'blue-orange-chart-line-tooltip';
+									var tooltipBody = document.createElement('div');
+									tooltipBody.id = 'blue-orange-chart-line-js-tooltip-body-' + uuid;
+									tooltipBody.className = 'blue-orange-chart-line-tooltip-body';
+									tooltipEl.appendChild(tooltipBody);
+									document.body.appendChild(tooltipEl);
+								}
 
-									const tooltipModel = context.tooltip;
-									if (tooltipModel.opacity === 0) {
-										// @ts-ignore
-										tooltipEl.style.opacity = 0;
-										return;
-									}
-
-									tooltipEl.classList.remove('above', 'below', 'no-transform');
-									if (tooltipModel.yAlign) {
-										tooltipEl.classList.add(tooltipModel.yAlign);
-									} else {
-										tooltipEl.classList.add('no-transform');
-									}
-
+								const tooltipModel = context.tooltip;
+								if (tooltipModel.opacity === 0) {
 									// @ts-ignore
-									function getBody(bodyItem: any) {
-										return bodyItem.lines;
-									}
+									tooltipEl.style.opacity = 0;
+									return;
+								}
 
-									if (tooltipModel.body) {
-										const titleLines = tooltipModel.title || [];
-										const bodyLines = tooltipModel.body.map(getBody);
-										const selectedDataPoints = tooltipModel.dataPoints;
-										var toolTipDatasets = document.createElement("div");
-										toolTipDatasets.className = "blue-orange-charts-line-dataset-container";
-										for (let dataPoint of selectedDataPoints) {
-											const dataset = dataPoint.dataset;
-											const borderColor = dataset.borderColor;
-											const backgroundColor = dataset.backgroundColor;
-											const formattedValue = dataPoint.formattedValue;
-											const yLabel = dataPoint.label;
-											const datasetLabel = dataset.label;
-											var toolTipDatasetRow = document.createElement("div");
-											toolTipDatasetRow.className = "blue-orange-charts-line-dataset-row";
-											var tooltipDatasetColor = document.createElement('div');
-											tooltipDatasetColor.style.height = "10px";
-											tooltipDatasetColor.style.width = "10px";
-											tooltipDatasetColor.style.borderRadius = "50%";
-											tooltipDatasetColor.style.border = "2px solid " + borderColor;
-											tooltipDatasetColor.style.backgroundColor = backgroundColor;
-											tooltipDatasetColor.style.marginRight = "15px";
-											toolTipDatasetRow.appendChild(tooltipDatasetColor);
-											var tooltipFormattedValue = document.createElement('div');
-											tooltipFormattedValue.className = "blue-orange-chart-line-tooltip-value";
-											tooltipFormattedValue.innerHTML = "<span class='blue-orange-chart-line-tooltip-dataset-label'>" + datasetLabel + ":</span>" + formattedValue;
-											toolTipDatasetRow.appendChild(tooltipFormattedValue);
-											toolTipDatasets.appendChild(toolTipDatasetRow);
-										}
-										var header = '';
-										titleLines.forEach(function(title:any) {
-											header += title;
-										});
-										var value = ""
-										bodyLines.forEach(function(body:any, i:any) {
-											var vals = body[0].split(":");
-											var val = vals[1].trim();
-											value += val;
-										});
-										var chartTooltipBody = document.getElementById('blue-orange-chart-line-js-tooltip-body-' + uuid) as HTMLElement;
-										chartTooltipBody.innerHTML = "";
-										chartTooltipBody.appendChild(toolTipDatasets);
-									}
+								tooltipEl.classList.remove('above', 'below', 'no-transform');
+								if (tooltipModel.yAlign) {
+									tooltipEl.classList.add(tooltipModel.yAlign);
+								} else {
+									tooltipEl.classList.add('no-transform');
+								}
 
-									const position = context.chart.canvas.getBoundingClientRect();
-									tooltipEl.style.opacity = String(1);
-									tooltipEl.style.position = 'absolute';
-									if (tooltipModel.caretX > window.innerWidth / 2) {
-										tooltipEl.style.left = "unset"
-										tooltipEl.style.right = position.right - tooltipModel.caretX + 'px';
-									} else {
-										tooltipEl.style.left = position.left + window.scrollX + tooltipModel.caretX + 'px';
-										tooltipEl.style.right = "unset"
+								function getBody(bodyItem: any) {
+									return bodyItem.lines;
+								}
+
+								if (tooltipModel.body) {
+									const titleLines = tooltipModel.title || [];
+									const bodyLines = tooltipModel.body.map(getBody);
+									const selectedDataPoints = tooltipModel.dataPoints;
+									var toolTipDatasets = document.createElement("div");
+									toolTipDatasets.className = "blue-orange-charts-line-dataset-container";
+									for (let dataPoint of selectedDataPoints) {
+										const dataset = dataPoint.dataset;
+										const borderColor = dataset.borderColor;
+										const backgroundColor = dataset.backgroundColor;
+										const formattedValue = dataPoint.formattedValue;
+										const yLabel = dataPoint.label;
+										const datasetLabel = dataset.label;
+										var toolTipDatasetRow = document.createElement("div");
+										toolTipDatasetRow.className = "blue-orange-charts-line-dataset-row";
+										var tooltipDatasetColor = document.createElement('div');
+										tooltipDatasetColor.style.height = "10px";
+										tooltipDatasetColor.style.width = "10px";
+										tooltipDatasetColor.style.borderRadius = "50%";
+										tooltipDatasetColor.style.border = "2px solid " + borderColor;
+										tooltipDatasetColor.style.backgroundColor = backgroundColor;
+										tooltipDatasetColor.style.marginRight = "15px";
+										toolTipDatasetRow.appendChild(tooltipDatasetColor);
+										var tooltipFormattedValue = document.createElement('div');
+										tooltipFormattedValue.className = "blue-orange-chart-line-tooltip-value";
+										tooltipFormattedValue.innerHTML = "<span class='blue-orange-chart-line-tooltip-dataset-label'>" + datasetLabel + ":</span>" + formattedValue;
+										toolTipDatasetRow.appendChild(tooltipFormattedValue);
+										toolTipDatasets.appendChild(toolTipDatasetRow);
 									}
-									if (tooltipModel.caretY > window.innerHeight / 2) {
-										tooltipEl.style.bottom = position.bottom - tooltipModel.caretY + 'px';
-										tooltipEl.style.top = "unset";
-									} else {
-										tooltipEl.style.top = position.top + window.scrollY + tooltipModel.caretY + 'px';
-										tooltipEl.style.bottom = "unset";
-									}
-									tooltipEl.style.padding = tooltipModel.padding + 'px ' + tooltipModel.padding + 'px';
-									tooltipEl.style.pointerEvents = 'none';
-								} catch (e) {}
+									var header = '';
+									titleLines.forEach(function(title:any) {
+										header += title;
+									});
+									var value = ""
+									bodyLines.forEach(function(body:any, i:any) {
+										var vals = body[0].split(":");
+										var val = vals[1].trim();
+										value += val;
+									});
+									var chartTooltipBody = document.getElementById('blue-orange-chart-line-js-tooltip-body-' + uuid) as HTMLElement;
+									chartTooltipBody.innerHTML = "";
+									chartTooltipBody.appendChild(toolTipDatasets);
+								}
+
+								const position = context.chart.canvas.getBoundingClientRect();
+								tooltipEl.style.opacity = String(1);
+								tooltipEl.style.position = 'absolute';
+								if (tooltipModel.caretX > window.innerWidth / 2) {
+									tooltipEl.style.left = "unset"
+									tooltipEl.style.right = position.right - tooltipModel.caretX + 'px';
+								} else {
+									tooltipEl.style.left = position.left + window.scrollX + tooltipModel.caretX + 'px';
+									tooltipEl.style.right = "unset"
+								}
+								if (tooltipModel.caretY > window.innerHeight / 2) {
+									tooltipEl.style.bottom = position.bottom - tooltipModel.caretY + 'px';
+									tooltipEl.style.top = "unset";
+								} else {
+									tooltipEl.style.top = position.top + window.scrollY + tooltipModel.caretY + 'px';
+									tooltipEl.style.bottom = "unset";
+								}
+								tooltipEl.style.padding = tooltipModel.padding + 'px ' + tooltipModel.padding + 'px';
+								tooltipEl.style.pointerEvents = 'none';
 							}
 						}
 					},
@@ -374,16 +356,13 @@ export const LineChart: React.FC<Props> = ({
 				plugins:[htmlLegendPlugin]
 			};
 			chartInstanceRef.current = new Chart((ctx as CanvasRenderingContext2D), config);
-			animationTimoutEvent.current = setTimeout(() => {
+			setTimeout(() => {
 				initRef.current = true;
 				updateChartData();
 			}, animationTimeout)
 		}
 
 		return () => {
-			if (animationTimoutEvent.current) {
-				clearTimeout(animationTimoutEvent.current);
-			}
 			if (chartInstanceRef.current) {
 				chartInstanceRef.current.destroy();
 			}
