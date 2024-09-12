@@ -192,7 +192,6 @@ export const LineChart: React.FC<Props> = ({
 				labels: labels,
 				datasets: dataset
 			};
-
 			const config: any = {
 				type: "line",
 				data: data,
