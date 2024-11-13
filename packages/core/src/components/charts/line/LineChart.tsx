@@ -50,6 +50,8 @@ export const LineChart: React.FC<Props> = ({
 
 	const chartInstanceRef = useRef<Chart | null>(null);
 
+	const [datasetVisibility, setDatasetVisibility] = useState<boolean[]>([]);
+
 	const initRef = useRef<boolean>(false);
 
 	const uuid = uuidv4();
@@ -179,6 +181,12 @@ export const LineChart: React.FC<Props> = ({
 				chartInstanceRef.current.data = data;
 				chartInstanceRef.current.options.animation = false;
 				chartInstanceRef.current.update();
+			}
+			if (chartInstanceRef.current.options.plugins) {
+				// @ts-ignore
+				chartInstanceRef.current.options.plugins.htmlLegend.afterUpdate(chartInstanceRef.current, {}, {
+					containerID: uuid
+				});
 			}
 
 		}

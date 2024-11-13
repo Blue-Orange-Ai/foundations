@@ -1,6 +1,6 @@
 import { Instance } from 'tippy.js';
 import {ReactNode} from "react";
-import {IContextMenuItem} from "../contextmenu/ContextMenu";
+import {IContextMenuItem} from "../contextmenu/contextmenu/ContextMenu";
 
 export interface TippyInstance extends Instance {
     _tippy?: TippyInstance;

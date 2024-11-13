@@ -280,6 +280,13 @@
   --blue-orange-dark-metrics-card-background-color: #28282a;
   --blue-orange-light-metrics-card-color: black;
   --blue-orange-dark-metrics-card-color: white;
+
+  --blue-orange-light-file-system-selected-row-background: black;
+  --blue-orange-dark-file-system-selected-row-background: black;
+  --blue-orange-light-file-system-selected-row-color: white;
+  --blue-orange-dark-file-system-selected-row-color: white;
+
+
 }
 
 body {

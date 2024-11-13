@@ -39,6 +39,23 @@
     margin-right: 15px;
 }
 
+.blue-orange-default-context-menu-row-right-icon{
+    margin-left: 15px;
+}
+
 .blue-orange-default-context-menu-row-general-text{
     font-size: 0.7rem;
+}
+
+.blue-orange-context-menu-general-row {
+    padding: 6px 6px 6px 32px;
+    width: calc(100% - 38px);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    font-size: .8rem;
+    line-height: 1.25rem;
+    font-weight: 500;
 }

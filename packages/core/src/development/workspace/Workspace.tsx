@@ -6,19 +6,63 @@ import {ToastContext} from "../../components/alerts/toast/toastcontext/ToastCont
 import {SideBarState} from "../../components/layouts/sidebar/default/SideBar";
 import {Edge, Node as GraphNode} from "@blue-orange-ai/primitives-graph";
 import Cookies from "js-cookie";
-import {DateInput} from "../../components/inputs/date/datepicker/inputs/dateinput/DateInput";
-import {
-	TimePrecision
-} from "../../components/inputs/date/datepicker/items/datecontextwindowsingle/DateContextWindowSingle";
-import {LineChart} from "../../components/charts/line/LineChart";
+import {FileSystem, IFileSystemItem, IFileSystemType} from "../../components/file-system/file-system/FileSystem";
+import {FileSystemRow} from "../../components/file-system/file-system-row/FileSystemRow";
+import {ContextMenu, IContextMenuItem, IContextMenuType} from "../../components/contextmenu/contextmenu/ContextMenu";
+import {ContextMenuHeading} from "../../components/contextmenu/context-menu-heading/ContextMenuHeading";
+import {ContextMenuItem} from "../../components/contextmenu/context-menu-item/ContextMenuItem";
+import {ContextMenuSeparator} from "../../components/contextmenu/context-menu-separator/ContextMenuSeparator";
 
 interface Props {
 }
 
 
-Cookies.set("authorization","eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMmQ2NTRmNi05NWI3LTQzZTUtOWZjMi0xZThmZWEwZGE2NjEiLCJleHAiOjE3MjYwMTYxMjV9.UQ3pYjrSYKdiZQmSlxqi8HTO5T1gcoQd2QVec4yPIyhW9C8vAiKSheJ6Y4XDoeqMijBi6_Yhsj2phtnJ8-6NfA")
+Cookies.set("authorization","eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZTliNWE3MS1jNjFjLTRiZTgtODliYS0zODI5YjEwNGJkZWMiLCJleHAiOjE3MzM3MjIzNzJ9.o8a74pFYHun6b1axiBAvrP8g2otrxYYcHYG2Am4sr3-6T8HeBfk8wBiBGzq88Oe5ez_vkbPqXINUqlPfNM_42A")
 
 export const Workspace: React.FC<Props> = ({}) => {
+
+	const contextMenuItems: Array<IContextMenuItem> = [
+		{type: IContextMenuType.HEADING, label: "Sort Direction", value:""},
+		{type: IContextMenuType.CONTENT, label: "Sort Asc", icon: "ri-sort-asc", value: "SORT_ASC"},
+		{type: IContextMenuType.CONTENT, label: "Sort Desc", icon: "ri-sort-asc", value: "SORT_DESC"},
+		{type: IContextMenuType.SEPARATOR, label: "Sort Desc", icon: "ri-sort-asc", value: "SORT_DESC"},
+		{type: IContextMenuType.CONTENT, label: "Sort Asc", icon: "ri-sort-asc", value: "SORT_ASC"},
+		{type: IContextMenuType.CONTENT, label: "Sort Desc", icon: "ri-sort-asc", value: "SORT_DESC"},
+	]
+
+	const fileSystemItemSeed: Array<IFileSystemItem> = [
+		{
+			reference: "file-system-reference",
+			indent: 0,
+			type: IFileSystemType.FILE,
+			label: "Hello World",
+			icon: "ri-file-word-fill",
+			showDropdown: false,
+			dropdownOpen: true,
+			size: 13000,
+			selected: false,
+			lastModified: new Date(),
+			fileType: "Word"
+		},
+		{
+			reference: "file-system-reference",
+			indent: 0,
+			type: IFileSystemType.FILE,
+			label: "Hello World",
+			icon: "ri-file-word-fill",
+			showDropdown: false,
+			dropdownOpen: true,
+			size: 13000,
+			selected: false,
+			lastModified: new Date(),
+			fileType: "Word"
+		}
+	]
+
+	// const fileSystemItems = useRef<Array<IFileSystemItem>>(fileSystemItemSeed);
+	const [fileSystemItems, setFileSystemItems] = useState<Array<IFileSystemItem>>(fileSystemItemSeed);
+
+	const [fileSystemRowLastSelected, setFileSystemRowLastSelected] = useState(-1);
 
 	const { addToast } = useContext(ToastContext);
 
@@ -57,229 +101,130 @@ export const Workspace: React.FC<Props> = ({}) => {
 		setError(false);
 	}
 
-	var nodes: Array<GraphNode> =[{
-		id: "123456",
-		x: 80,
-		y: 50,
-		border: "2px solid transparent",
-		borderSelected: "2px solid dodgerblue",
-		borderRadius: 10,
-		backgroundColour: "transparent",
-		movable: true,
-		deletable: true,
-		html: "<div class=\"blue-orange-demo-graph-node\">\n" +
-			"          <div class=\"blue-orange-demo-graph-node-heading\">This is the demo heading</div>\n" +
-			"          <div class=\"blue-orange-demo-graph-node-body\">\n" +
-			"              <div>\n" +
-			"                <span class=\"blue-orange-demo-graph-node-body-item-heading\">Processed:</span>\n" +
-			"                <span class=\"blue-orange-demo-graph-node-body-item-value\">0.00 /s</span>\n" +
-			"              </div>\n" +
-			"              <div>\n" +
-			"                  <span class=\"blue-orange-demo-graph-node-body-item-heading\">Errors:</span>\n" +
-			"                  <span class=\"blue-orange-demo-graph-node-body-item-value\">0.00</span>\n" +
-			"              </div>\n" +
-			"          </div>\n" +
-			"      </div>",
-		width: 250,
-		height: 100
-	},
-		{
-			id: "123457",
-			x: 40,
-			y: 100,
-			border: "2px solid transparent",
-			borderSelected: "2px solid dodgerblue",
-			borderRadius: 10,
-			backgroundColour: "transparent",
-			movable: true,
-			deletable: true,
-			html: "<div class=\"blue-orange-demo-graph-node\">\n" +
-				"          <div class=\"blue-orange-demo-graph-node-heading\">This is the demo heading</div>\n" +
-				"          <div class=\"blue-orange-demo-graph-node-body\">\n" +
-				"              <div>\n" +
-				"                <span class=\"blue-orange-demo-graph-node-body-item-heading\">Processed:</span>\n" +
-				"                <span class=\"blue-orange-demo-graph-node-body-item-value\">0.00 /s</span>\n" +
-				"              </div>\n" +
-				"              <div>\n" +
-				"                  <span class=\"blue-orange-demo-graph-node-body-item-heading\">Errors:</span>\n" +
-				"                  <span class=\"blue-orange-demo-graph-node-body-item-value\">0.00</span>\n" +
-				"              </div>\n" +
-				"          </div>\n" +
-				"      </div>",
-			width: 250,
-			height: 100
-		},
-		{
-			id: "123458",
-			x: 50,
-			y: 250,
-			border: "2px solid transparent",
-			borderSelected: "2px solid #E74C3C",
-			borderRadius: 10,
-			backgroundColour: "transparent",
-			movable: true,
-			deletable: true,
-			html: "<div class=\"blue-orange-demo-graph-node\">\n" +
-				"          <div class=\"blue-orange-demo-graph-node-heading\">This is the demo heading</div>\n" +
-				"          <div class=\"blue-orange-demo-graph-node-body\">\n" +
-				"              <div>\n" +
-				"                <span class=\"blue-orange-demo-graph-node-body-item-heading\">Processed:</span>\n" +
-				"                <span class=\"blue-orange-demo-graph-node-body-item-value\">0.00 /s</span>\n" +
-				"              </div>\n" +
-				"              <div>\n" +
-				"                  <span class=\"blue-orange-demo-graph-node-body-item-heading\">Errors:</span>\n" +
-				"                  <span class=\"blue-orange-demo-graph-node-body-item-value\">0.00</span>\n" +
-				"              </div>\n" +
-				"          </div>\n" +
-				"      </div>",
-			width: 250,
-			height: 100
-		},
-		{
-			id: "123459",
-			x: 577,
-			y: 50,
-			border: "2px solid transparent",
-			borderSelected: "2px solid #2ECC71",
-			borderRadius: 10,
-			backgroundColour: "transparent",
-			movable: true,
-			deletable: true,
-			html: "<div class=\"blue-orange-demo-graph-node\">\n" +
-				"          <div class=\"blue-orange-demo-graph-node-heading\">This is the demo heading</div>\n" +
-				"          <div class=\"blue-orange-demo-graph-node-body\">\n" +
-				"              <div>\n" +
-				"                <span class=\"blue-orange-demo-graph-node-body-item-heading\">Processed:</span>\n" +
-				"                <span class=\"blue-orange-demo-graph-node-body-item-value\">0.00 /s</span>\n" +
-				"              </div>\n" +
-				"              <div>\n" +
-				"                  <span class=\"blue-orange-demo-graph-node-body-item-heading\">Errors:</span>\n" +
-				"                  <span class=\"blue-orange-demo-graph-node-body-item-value\">0.00</span>\n" +
-				"              </div>\n" +
-				"          </div>\n" +
-				"      </div>",
-			width: 250,
-			height: 100
-		}]
+	const clearAllSelectedRows = (items: Array<IFileSystemItem>) => {
+		for (var i=0; i<items.length; i++) {
+			items[i].selected = false;
+		}
+		return items;
+	}
 
+	const rowClickedDefault = (item: IFileSystemItem): Array<IFileSystemItem> => {
+		var newItems = fileSystemItems;
+		const itemIndex = newItems.indexOf(item);
+		newItems = clearAllSelectedRows(newItems);
+		setFileSystemRowLastSelected(itemIndex);
+		newItems[itemIndex].selected = true;
+		return newItems;
+	}
 
-	const edges: Array<Edge> = [{
-		"id": "abcdefg",
-		"sourceX": 180,
-		"sourceY": 190,
-		"sourceAnchorPoint": "right",
-		"sourceArrow": false,
-		"sourceId": "123456",
-		"targetX": 577,
-		"targetY": 90,
-		"targetAnchorPoint": "left",
-		"targetArrow": true,
-		"targetId": "123459",
-		"label": true,
-		"labelMetaData": "cdnsandkla",
-		"labelText": "",
-		"labelBackground": "white",
-		"style": "bezier",
-		"lineType": "solid",
-		"lineColour": "#bdbdbd",
-		"lineWidth": 2,
-		"anchorFixed": false,
-		"arrowHeadScale": 1.2,
-		"deletable": true
-	},
-		{
-			"id": "ghijkidfyhohidty",
-			"sourceX": 140,
-			"sourceY": 140,
-			"sourceAnchorPoint": "right",
-			"sourceArrow": false,
-			"sourceId": "123457",
-			"targetX": 50,
-			"targetY": 290,
-			"targetAnchorPoint": "left",
-			"targetArrow": true,
-			"targetId": "123458",
-			"label": true,
-			"labelMetaData": "cdnsandkla",
-			"labelText": "",
-			"labelBackground": "white",
-			"style": "bezier",
-			"lineType": "animated",
-			"lineColour": "#bdbdbd",
-			"lineWidth": 2,
-			"anchorFixed": false,
-			"arrowHeadScale": 1.2,
-			"deletable": true
-		}]
+	const rowClickedCtrl = (item: IFileSystemItem) => {
+		var newItems: Array<IFileSystemItem> = [];
+		const itemIndex = fileSystemItems.indexOf(item);
+		setFileSystemRowLastSelected(itemIndex);
+		for (var i=0; i < fileSystemItems.length; i++) {
+			if (i == itemIndex) {
+				var item = fileSystemItems[i];
+				item.selected = !item.selected;
+				newItems.push(item);
+			} else {
+				newItems.push(fileSystemItems[i]);
+			}
+		}
+		return newItems;
+	}
 
-	useEffect(() => {
-		// setInterval(() => {
-		// 	if (labels.current && values.current) {
-		// 		var label = new Date().toDateString();
-		// 		var value = Math.floor(Math.random() * 100);
-		// 		labels.current.push(label);
-		// 		values.current.push(value);
-		// 		setUsername(value.toString())
-		// 	}
-		// }, 50)
-	}, []);
+	const rowClickedShift = (item: IFileSystemItem) => {
+		var newItems: Array<IFileSystemItem> = [];
+		const itemIndex = fileSystemItems.indexOf(item);
+		for (var i=0; i < fileSystemItems.length; i++) {
+			if (i == itemIndex || i == setFileSystemRowLastSelected()) {
+				var item = fileSystemItems[i];
+				item.selected = !item.selected;
+				newItems.push(item);
+			}
+		}
+		return newItems;
+	}
+
+	const rowClicked = (item: IFileSystemItem, ctrlKey: boolean, shiftKey: boolean) => {
+		var newItems: Array<IFileSystemItem> = [];
+		if (!ctrlKey && !shiftKey) {
+			newItems = rowClickedDefault(item);
+		} else if (ctrlKey) {
+			newItems = rowClickedCtrl(item);
+		}
+		setFileSystemItems(newItems);
+	}
 
 	return (
-		// <DateInput displayFormat={"yyyy-MM-DD HH:mm:ss"} showTime={true} timePrecision={TimePrecision.SECOND}></DateInput>
-		<LineChart
-			height={"100vh"}
-			width={"100%"}
-			gridLines={true}
-			xLabel={"Timestamp"}
-			yLabel={"Value"}
-			xScale={"time"}
-			xScaleTimeUnit={"second"}
-			interactionType={"nearest"}
-			legend={true}
-			dataset={[{
-			label: "Subscribers",
-				backgroundColor: "#BB8FCE",
-				borderColor: "#BB8FCE",
-			data: [{ x: '2024-09-09T10:00:00Z', y: 0 },
-				{ x: '2024-09-09T10:10:00Z', y: 10 }]
-		},{
-				label: "Subscribers 2",
-				 backgroundColor: '#E59866',
-				 borderColor: '#E59866',
-				data: [
-					{ x: '2024-09-09T10:00:00Z', y: 10.5 },
-					{ x: '2024-09-09T10:05:00Z', y: 12.0 },
-					{ x: '2024-09-09T10:10:00Z', y: 9.5 }
-				]
-			}]}></LineChart>
+		<div className="workspace-main-window">
+			<div className="workspace-display-window">
+				<FileSystem>
+					{fileSystemItems.map((item, index) => (
+						<FileSystemRow key={index} contextMenuItems={contextMenuItems} item={item} onClick={rowClicked}></FileSystemRow>
+					))}
 
-		// <LineChart
-		// 	height={"100vh"}
-		// 	width={"100%"}
-		// 	gridLines={true}
-		// 	xScale={"linear"}
-		// 	interactionType={"nearest"}
-		// 	legend={true}
-		// 	legendPosition={LegendPosition.BOTTOM_RIGHT}
-		// 	dataset={[{
-		// 	label: "Subscribers",
-		// 		backgroundColor: "#BB8FCE",
-		// 		borderColor: "#BB8FCE",
-		// 	data: [{ x: -10, y: 0 },
-		// 		{ x: 0, y: 10 },
-		// 		{ x: 10, y: 5 },
-		// 		{ x: 20, y: -10 },
-		// 		{ x: 25, y: -5 }]
-		// },{
-		// 		label: "Subscribers 2",
-		// 		 backgroundColor: '#E59866',
-		// 		 borderColor: '#E59866',
-		// 		data: [{ x: -30, y: 0 },
-		// 			{ x: 30, y: 20 },
-		// 			{ x: 40, y: -5 },
-		// 			{ x: 50, y: -10 },
-		// 			{ x: 65, y: -50 }]
-		// 	}]}></LineChart>
+				</FileSystem>
+			</div>
+		</div>
+
+
+
+	// 	<DateInput displayFormat={"yyyy-MM-DD HH:mm:ss"} showTime={true} timePrecision={TimePrecision.SECOND} onChange={(value) => console.log(value)}></DateInput>
+	// 	<LineChart
+	// 		height={"100vh"}
+	// 		width={"100%"}
+	// 		gridLines={true}
+	// 		xLabel={"Timestamp"}
+	// 		yLabel={"Value"}
+	// 		xScale={"time"}
+	// 		xScaleTimeUnit={"second"}
+	// 		interactionType={"nearest"}
+	// 		legend={true}
+	// 		dataset={[{
+	// 		label: "Subscribers",
+	// 			backgroundColor: "#BB8FCE",
+	// 			borderColor: "#BB8FCE",
+	// 		data: [{ x: '2024-09-09T10:00:00Z', y: 0 },
+	// 			{ x: '2024-09-09T10:10:00Z', y: 10 }]
+	// 	},{
+	// 			label: "Subscribers 2",
+	// 			 backgroundColor: '#E59866',
+	// 			 borderColor: '#E59866',
+	// 			data: [
+	// 				{ x: '2024-09-09T10:00:00Z', y: 10.5 },
+	// 				{ x: '2024-09-09T10:05:00Z', y: 12.0 },
+	// 				{ x: '2024-09-09T10:10:00Z', y: 9.5 }
+	// 			]
+	// 		}]}></LineChart>
+	//
+	// 	<LineChart
+	// 		height={"100vh"}
+	// 		width={"100%"}
+	// 		gridLines={true}
+	// 		xScale={"linear"}
+	// 		interactionType={"nearest"}
+	// 		legend={true}
+	// 		legendPosition={LegendPosition.BOTTOM_RIGHT}
+	// 		dataset={[{
+	// 		label: "Subscribers",
+	// 			backgroundColor: "#BB8FCE",
+	// 			borderColor: "#BB8FCE",
+	// 		data: [{ x: -10, y: 0 },
+	// 			{ x: 0, y: 10 },
+	// 			{ x: 10, y: 5 },
+	// 			{ x: 20, y: -10 },
+	// 			{ x: 25, y: -5 }]
+	// 	},{
+	// 			label: "Subscribers 2",
+	// 			 backgroundColor: '#E59866',
+	// 			 borderColor: '#E59866',
+	// 			data: [{ x: -30, y: 0 },
+	// 				{ x: 30, y: 20 },
+	// 				{ x: 40, y: -5 },
+	// 				{ x: 50, y: -10 },
+	// 				{ x: 65, y: -50 }]
+	// 		}]}></LineChart>
 	// <>
 	// 	<p>{username}</p>
 	// 	<LineChart
@@ -319,7 +264,7 @@ export const Workspace: React.FC<Props> = ({}) => {
 	// 						{ x: 50, y: -10 },
 	// 						{ x: 65, y: -50 }]
 	// 				}]}></ScatterChart>
-
+	//
 	// <BarChart
 	// 	indexAxis={"x"}
 	// 	height={"100vh"}
@@ -559,14 +504,14 @@ export const Workspace: React.FC<Props> = ({}) => {
 		// 		{/*<EmojiContainer></EmojiContainer>*/}
 		// 		{/*<Checkbox></Checkbox>*/}
 		// 		{/*<Toggle></Toggle>*/}
-		// 		{/*<RichText minEditorHeight={10} onChange={(content: string, mentions: string[], attachments: Media[], filesUploading: boolean) => {*/}
-		// 		{/*	console.log({*/}
-		// 		{/*		content: content,*/}
-		// 		{/*		mentions: mentions,*/}
-		// 		{/*		attachments: attachments,*/}
-		// 		{/*		filesUploading: filesUploading*/}
-		// 		{/*	})*/}
-		// 		{/*}}></RichText>*/}
+		// 		<RichText minEditorHeight={10} onChange={(content: string, mentions: string[], attachments: Media[], filesUploading: boolean) => {
+		// 			console.log({
+		// 				content: content,
+		// 				mentions: mentions,
+		// 				attachments: attachments,
+		// 				filesUploading: filesUploading
+		// 			})
+		// 		}}></RichText>
 		// 		{/*<Pdf src={"https://d8d6949rstsxl.cloudfront.net/public/BO-PDF-499ffd3b-f619-4522-9c4e-bdae1bee9f4c-Academic%20Test%201%20-%20Prompt%203%20-%20Measures%20of%20Poverty.pdf"}></Pdf>*/}
 		// 		{/*<Toaster heading={"Hello world this is a toaster"}></Toaster>*/}
 		// 		{/*<Button text={"Test Toaster"} buttonType={ButtonType.PRIMARY} onClick={() => addToast({*/}

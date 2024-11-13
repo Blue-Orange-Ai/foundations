@@ -1,0 +1,57 @@
+.blue-orange-file-system-row-cont {
+    cursor: pointer;
+    min-height: 42px;
+}
+
+.blue-orange-file-system-row-cont:hover {
+    background-color: #f7f7f9;
+    transition: 0.2s;
+}
+
+.blue-orange-file-system-row-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 10px;
+}
+
+.blue-orange-file-system-row-secondary {
+    opacity: 0.6;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+.blue-orange-file-system-primary-item {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.blue-orange-file-system-row-icon {
+    margin-right: 10px;
+}
+
+.blue-orange-file-system-row-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.blue-orange-file-system-row-content-secondary {
+    margin-top: 2px;
+    font-size: 0.6rem;
+    opacity: 0.6;
+}
+
+.blue-orange-file-system-row-selected-style {
+    background-color: var(--blue-orange-light-file-system-selected-row-background);
+    color: var(--blue-orange-light-file-system-selected-row-color);
+}
+
+.blue-orange-file-system-row-selected-style:hover {
+    background-color: var(--blue-orange-light-file-system-selected-row-background);
+    transition: 0.2s;
+}
+
+

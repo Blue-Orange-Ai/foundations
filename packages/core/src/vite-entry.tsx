@@ -37,10 +37,10 @@ export * from './components/config/BlueOrangePassportConfig';
 
 
 // Context Menu
-export * from './components/contextmenu/ContextMenu';
+export * from './components/contextmenu/contextmenu/ContextMenu';
 
 // Misc
-export * from './components/loading/Loading';
+export * from './components/loading/loading/Loading';
 
 // Inputs
 export * from './components/inputs/address/AddressInput';
@@ -125,7 +125,7 @@ export * from './components/layouts/centered-div/CenteredDiv';
 export * from './components/layouts/right-aligned-div/RightAlignedDiv';
 
 // Loading
-export * from './components/loading/Loading';
+export * from './components/loading/loading/Loading';
 
 // Media
 export * from './components/media/default/RenderMedia';

@@ -1,7 +1,7 @@
 import React, {ReactNode} from "react";
 
 import './HeaderCell.css'
-import {ContextMenu, IContextMenuItem} from "../../../contextmenu/ContextMenu";
+import {ContextMenu, IContextMenuItem} from "../../../contextmenu/contextmenu/ContextMenu";
 
 interface Props {
 	children: ReactNode;
