@@ -5,7 +5,7 @@
 
 .blue-orange-file-system-row-cont:hover {
     background-color: #f7f7f9;
-    transition: 0.2s;
+    transition: 0.1s;
 }
 
 .blue-orange-file-system-row-item {
@@ -51,7 +51,7 @@
 
 .blue-orange-file-system-row-selected-style:hover {
     background-color: var(--blue-orange-light-file-system-selected-row-background);
-    transition: 0.2s;
+    transition: 0.1s;
 }
 
 

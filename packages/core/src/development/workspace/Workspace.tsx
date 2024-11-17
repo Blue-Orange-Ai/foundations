@@ -56,6 +56,84 @@ export const Workspace: React.FC<Props> = ({}) => {
 			selected: false,
 			lastModified: new Date(),
 			fileType: "Word"
+		},
+		{
+			reference: "file-system-reference",
+			indent: 0,
+			type: IFileSystemType.FILE,
+			label: "Hello World",
+			icon: "ri-file-word-fill",
+			showDropdown: false,
+			dropdownOpen: true,
+			size: 13000,
+			selected: false,
+			lastModified: new Date(),
+			fileType: "Word"
+		},
+		{
+			reference: "file-system-reference",
+			indent: 0,
+			type: IFileSystemType.FILE,
+			label: "Hello World",
+			icon: "ri-file-word-fill",
+			showDropdown: false,
+			dropdownOpen: true,
+			size: 13000,
+			selected: false,
+			lastModified: new Date(),
+			fileType: "Word"
+		},
+		{
+			reference: "file-system-reference",
+			indent: 0,
+			type: IFileSystemType.FILE,
+			label: "Hello World",
+			icon: "ri-file-word-fill",
+			showDropdown: false,
+			dropdownOpen: true,
+			size: 13000,
+			selected: false,
+			lastModified: new Date(),
+			fileType: "Word"
+		},
+		{
+			reference: "file-system-reference",
+			indent: 0,
+			type: IFileSystemType.FILE,
+			label: "Hello World",
+			icon: "ri-file-word-fill",
+			showDropdown: false,
+			dropdownOpen: true,
+			size: 13000,
+			selected: false,
+			lastModified: new Date(),
+			fileType: "Word"
+		},
+		{
+			reference: "file-system-reference",
+			indent: 0,
+			type: IFileSystemType.FILE,
+			label: "Hello World",
+			icon: "ri-file-word-fill",
+			showDropdown: false,
+			dropdownOpen: true,
+			size: 13000,
+			selected: false,
+			lastModified: new Date(),
+			fileType: "Word"
+		},
+		{
+			reference: "file-system-reference",
+			indent: 0,
+			type: IFileSystemType.FILE,
+			label: "Hello World",
+			icon: "ri-file-word-fill",
+			showDropdown: false,
+			dropdownOpen: true,
+			size: 13000,
+			selected: false,
+			lastModified: new Date(),
+			fileType: "Word"
 		}
 	]
 
@@ -136,10 +214,18 @@ export const Workspace: React.FC<Props> = ({}) => {
 	const rowClickedShift = (item: IFileSystemItem) => {
 		var newItems: Array<IFileSystemItem> = [];
 		const itemIndex = fileSystemItems.indexOf(item);
+		var started = false;
 		for (var i=0; i < fileSystemItems.length; i++) {
-			if (i == itemIndex || i == setFileSystemRowLastSelected()) {
-				var item = fileSystemItems[i];
-				item.selected = !item.selected;
+			var item = fileSystemItems[i];
+			if (i == itemIndex || i == fileSystemRowLastSelected) {
+				started = !started;
+				item.selected = true;
+				newItems.push(item);
+			} else if (started) {
+				item.selected = true;
+				newItems.push(item);
+			} else {
+				item.selected = false;
 				newItems.push(item);
 			}
 		}
@@ -152,6 +238,8 @@ export const Workspace: React.FC<Props> = ({}) => {
 			newItems = rowClickedDefault(item);
 		} else if (ctrlKey) {
 			newItems = rowClickedCtrl(item);
+		} else if (shiftKey) {
+			newItems = rowClickedShift(item);
 		}
 		setFileSystemItems(newItems);
 	}

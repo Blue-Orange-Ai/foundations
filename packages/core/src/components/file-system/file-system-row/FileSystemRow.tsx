@@ -5,6 +5,7 @@ import {ButtonIcon} from "../../buttons/button-icon/ButtonIcon";
 import {ContextMenu, IContextMenuItem} from "../../contextmenu/contextmenu/ContextMenu";
 import {IFileSystemItem} from "../file-system/FileSystem";
 import moment from 'moment';
+import {Input} from "../../inputs/input/Input";
 
 interface Props {
 	item: IFileSystemItem,
@@ -14,13 +15,25 @@ interface Props {
 	contextMenuItemClicked?: (item: IContextMenuItem) => void,
 	onClick?: (item: IFileSystemItem, ctrlKey: boolean, shiftKey: boolean) => void,
 	onDoubleClick?: (item: IFileSystemItem) => void,
+	onDrop?: () => void,
 	showFileSize?: boolean,
 	showFileType?: boolean,
 	showLastModified?: boolean,
 	style?: React.CSSProperties,
 }
 
-export const FileSystemRow: React.FC<Props> = ({item, indent=0, indentStep=20, contextMenuItems=[], contextMenuItemClicked, onClick, onDoubleClick, showFileSize=true, showFileType=true, showLastModified=true, style={}}) => {
+export const FileSystemRow: React.FC<Props> = ({
+												   item,
+												   indent=0,
+												   indentStep=20,
+												   contextMenuItems=[],
+												   contextMenuItemClicked,
+												   onClick,
+												   onDoubleClick,
+												   onDrop,
+												   showFileSize=true,
+												   showFileType=true,
+												   showLastModified=true, style={}}) => {
 
 	const dropdownBtnStyle: React.CSSProperties = {
 		height: "15px",
@@ -28,6 +41,10 @@ export const FileSystemRow: React.FC<Props> = ({item, indent=0, indentStep=20, c
 		border: "none",
 		marginLeft: "0px",
 		marginRight: "4px",
+	}
+
+	const renameInputStyle: React.CSSProperties = {
+		height: "16px"
 	}
 
 	const paddingLeft = 0 + indent * 20;
@@ -59,6 +76,12 @@ export const FileSystemRow: React.FC<Props> = ({item, indent=0, indentStep=20, c
 		}
 	}
 
+	const rowRightClicked = () => {
+		if (!item.selected && onClick) {
+			onClick(item, false, false);
+		}
+	}
+
 	const rowDoubleClicked = () => {
 		if (onDoubleClick) {
 			onDoubleClick(item);
@@ -69,10 +92,28 @@ export const FileSystemRow: React.FC<Props> = ({item, indent=0, indentStep=20, c
 		return moment(d).format('DD/MM/YY');
 	}
 
+	const contextMenuItemClickedFn = (item: IContextMenuItem) => {
+		if (contextMenuItemClicked) {
+			contextMenuItemClicked(item);
+		}
+	}
+
+	const handleDropEvent = () => {
+		if (onDrop) {
+			onDrop()
+		}
+	}
+
 	return (
-		<tr className={item.selected ? "blue-orange-file-system-row-cont blue-orange-file-system-row-selected-style" : "blue-orange-file-system-row-cont"} onClick={rowClicked} onDoubleClick={rowDoubleClicked} style={style}>
+		<tr
+			className={item.selected ? "blue-orange-file-system-row-cont blue-orange-file-system-row-selected-style" : "blue-orange-file-system-row-cont"}
+			onClick={rowClicked}
+			onDoubleClick={rowDoubleClicked}
+			onContextMenu={rowRightClicked}
+			onMouseUp={handleDropEvent}
+			style={style}>
 			<td>
-				<ContextMenu rightClick={true} items={contextMenuItems}>
+				<ContextMenu rightClick={true} items={contextMenuItems} onClick={contextMenuItemClickedFn}>
 					<div className="blue-orange-file-system-row-item blue-orange-file-system-row-primary" style={{...primaryRowStyle, minHeight: item.rowHeight ? item.rowHeight + "px" : "32px"}}>
 						<div className="blue-orange-file-system-primary-item">
 							{item.showDropdown && <ButtonIcon icon={item.dropdownOpen ? folderOpenIcon : folderClosedIcon} style={dropdownBtnStyle}></ButtonIcon>}
@@ -82,7 +123,10 @@ export const FileSystemRow: React.FC<Props> = ({item, indent=0, indentStep=20, c
 								</div>
 							}
 							<div className="blue-orange-file-system-row-content">
-								<div className="blue-orange-file-system-row-content-title">{item.label} - {item.selected ? "true" : "false"}</div>
+								{item.rename && <Input value={item.label} style={renameInputStyle}></Input>}
+								{!item.rename &&
+									<div className="blue-orange-file-system-row-content-title">{item.label}</div>
+								}
 								{item.description && <div className="blue-orange-file-system-row-content-secondary">{item.description}</div>}
 							</div>
 						</div>
