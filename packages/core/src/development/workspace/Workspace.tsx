@@ -12,6 +12,7 @@ import {ContextMenu, IContextMenuItem, IContextMenuType} from "../../components/
 import {ContextMenuHeading} from "../../components/contextmenu/context-menu-heading/ContextMenuHeading";
 import {ContextMenuItem} from "../../components/contextmenu/context-menu-item/ContextMenuItem";
 import {ContextMenuSeparator} from "../../components/contextmenu/context-menu-separator/ContextMenuSeparator";
+import {LineChart} from "../../components/charts/line/LineChart";
 
 interface Props {
 }
@@ -156,6 +157,12 @@ export const Workspace: React.FC<Props> = ({}) => {
 
 	const [sidebarGroupState, setSidebarGroupState] = useState(false);
 
+	const [dataset1, setDataset1] = useState([]);
+
+	const [dataset2, setDataset2] = useState([]);
+
+	const interval = 5000;
+
 	const [username, setUsername] = useState("");
 
 	const labels = useRef<Array<string>>([])
@@ -244,47 +251,68 @@ export const Workspace: React.FC<Props> = ({}) => {
 		setFileSystemItems(newItems);
 	}
 
-	return (
-		<div className="workspace-main-window">
-			<div className="workspace-display-window">
-				<FileSystem>
-					{fileSystemItems.map((item, index) => (
-						<FileSystemRow key={index} contextMenuItems={contextMenuItems} item={item} onClick={rowClicked}></FileSystemRow>
-					))}
+	useEffect(() => {
+		const intervalId = setInterval(() => {
+			const newDataPoint1 = {
+				x: new Date().toISOString(), // Current timestamp
+				y: (Math.random() * 100).toFixed(2), // Random y value between 0 and 100
+			};
+			const newDataPoint2 = {
+				x: new Date().toISOString(), // Current timestamp
+				y: (Math.random() * 100).toFixed(2), // Random y value between 0 and 100
+			};
+			setDataset1((prevElements) => [
+				...prevElements,
+				newDataPoint1
+			]);
+			setDataset2((prevElements) => [
+				...prevElements,
+				newDataPoint2
+			]);
+		}, interval);
 
-				</FileSystem>
-			</div>
-		</div>
+		// Cleanup interval on component unmount
+		return () => clearInterval(intervalId);
+	}, [interval]);
+
+	return (
+		// <div className="workspace-main-window">
+		// 	<div className="workspace-display-window">
+		// 		<FileSystem>
+		// 			{fileSystemItems.map((item, index) => (
+		// 				<FileSystemRow key={index} contextMenuItems={contextMenuItems} item={item} onClick={rowClicked}></FileSystemRow>
+		// 			))}
+		//
+		// 		</FileSystem>
+		// 	</div>
+		// </div>
 
 
 
 	// 	<DateInput displayFormat={"yyyy-MM-DD HH:mm:ss"} showTime={true} timePrecision={TimePrecision.SECOND} onChange={(value) => console.log(value)}></DateInput>
-	// 	<LineChart
-	// 		height={"100vh"}
-	// 		width={"100%"}
-	// 		gridLines={true}
-	// 		xLabel={"Timestamp"}
-	// 		yLabel={"Value"}
-	// 		xScale={"time"}
-	// 		xScaleTimeUnit={"second"}
-	// 		interactionType={"nearest"}
-	// 		legend={true}
-	// 		dataset={[{
-	// 		label: "Subscribers",
-	// 			backgroundColor: "#BB8FCE",
-	// 			borderColor: "#BB8FCE",
-	// 		data: [{ x: '2024-09-09T10:00:00Z', y: 0 },
-	// 			{ x: '2024-09-09T10:10:00Z', y: 10 }]
-	// 	},{
-	// 			label: "Subscribers 2",
-	// 			 backgroundColor: '#E59866',
-	// 			 borderColor: '#E59866',
-	// 			data: [
-	// 				{ x: '2024-09-09T10:00:00Z', y: 10.5 },
-	// 				{ x: '2024-09-09T10:05:00Z', y: 12.0 },
-	// 				{ x: '2024-09-09T10:10:00Z', y: 9.5 }
-	// 			]
-	// 		}]}></LineChart>
+		<LineChart
+			height={"100vh"}
+			width={"100%"}
+			gridLines={true}
+			xLabel={"Timestamp"}
+			yLabel={"Value"}
+			xScale={"time"}
+			xScaleTimeUnit={"second"}
+			interactionType={"nearest"}
+			legend={true}
+			dataset={[{
+			label: "Subscribers",
+				backgroundColor: "#BB8FCE",
+				borderColor: "#BB8FCE",
+				borderWidth: 2,
+				borderDash: [5, 5],
+			data: dataset1
+		},{
+				label: "Subscribers 2",
+				 backgroundColor: '#E59866',
+				 borderColor: '#E59866',
+				data: dataset2
+			}]}></LineChart>
 	//
 	// 	<LineChart
 	// 		height={"100vh"}

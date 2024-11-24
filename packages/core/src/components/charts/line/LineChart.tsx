@@ -50,7 +50,8 @@ export const LineChart: React.FC<Props> = ({
 
 	const chartInstanceRef = useRef<Chart | null>(null);
 
-	const [datasetVisibility, setDatasetVisibility] = useState<boolean[]>([]);
+	const datasetVisibility = useRef<boolean[]>([]);
+	// const [datasetVisibility, setDatasetVisibility] = useState<boolean[]>([]);
 
 	const initRef = useRef<boolean>(false);
 
@@ -140,6 +141,11 @@ export const LineChart: React.FC<Props> = ({
 						} else {
 							chart.setDatasetVisibility(item.datasetIndex, !chart.isDatasetVisible(item.datasetIndex));
 						}
+						var visibility = datasetVisibility.current;
+						visibility[item.datasetIndex] = !visibility[item.datasetIndex]
+						datasetVisibility.current = visibility;
+						// @ts-ignore
+						li.children[1].style.textDecoration = visibility[item.datasetIndex] ? '' : 'line-through';
 						chart.update();
 					};
 
@@ -172,7 +178,15 @@ export const LineChart: React.FC<Props> = ({
 
 	const updateChartData = () => {
 		if (chartInstanceRef.current != null && initRef.current) {
-			dataset.forEach(ds => ds.fill = fill)
+			dataset.forEach((ds, index) => {
+				ds.fill = fill;
+				if (typeof datasetVisibility.current[index] !== "undefined") {
+					// @ts-ignore
+					ds.hidden = !datasetVisibility.current[index]; // Chart.js uses `hidden` to control visibility
+				}
+			});
+
+			// dataset.forEach(ds => ds.fill = fill)
 			const data = {
 				labels: labels,
 				datasets: dataset
@@ -182,7 +196,8 @@ export const LineChart: React.FC<Props> = ({
 				chartInstanceRef.current.options.animation = false;
 				chartInstanceRef.current.update();
 			}
-			if (chartInstanceRef.current.options.plugins) {
+			// @ts-ignore
+			if (chartInstanceRef.current.options.plugins && chartInstanceRef.current.options.plugins.htmlLegend && chartInstanceRef.current.options.plugins.htmlLegend.afterUpdate) {
 				// @ts-ignore
 				chartInstanceRef.current.options.plugins.htmlLegend.afterUpdate(chartInstanceRef.current, {}, {
 					containerID: uuid
@@ -195,6 +210,11 @@ export const LineChart: React.FC<Props> = ({
 	useEffect(() => {
 		if (chartRef.current) {
 			const ctx = chartRef.current.getContext('2d');
+			if (datasetVisibility.current.length != dataset.length) {
+				var visibility:boolean[] = [];
+				dataset.forEach(ds => visibility.push(true));
+				datasetVisibility.current = visibility;
+			}
 			dataset.forEach(ds => ds.fill = fill)
 			const data = {
 				labels: labels,
