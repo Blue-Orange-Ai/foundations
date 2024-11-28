@@ -110,8 +110,6 @@ export const Dropdown: React.FC<Props> = ({
 
 	const blockMouseClickRef = useRef(blockMouseClick);
 
-
-
 	useEffect(() => {
 		visibleRef.current = visible;
 	}, [visible]);
@@ -123,7 +121,11 @@ export const Dropdown: React.FC<Props> = ({
 	const fuseOptions = {
 		keys: [
 			"label",
-		]
+		],
+		threshold: 0.2, // Lower threshold for stricter matches
+		caseSensitive: false, // Case-insensitive matches
+		distance: 100, // Short distance for stricter matches
+		minMatchCharLength: 1, // Minimum 3 characters must match
 	};
 
 	const getInitialSelectedValue = () => {
@@ -151,6 +153,8 @@ export const Dropdown: React.FC<Props> = ({
 	const [modifiedItems, setModifiedItems] = useState<Array<DropdownItemObj>>(items)
 
 	const [queryItems, setQueryItems] = useState<Array<DropdownItemObj>>(items)
+
+	const queryItemsRef = useRef<Array<DropdownItemObj>>(items);
 
 	useEffect(() => {
 		if (onSelection) {
@@ -287,8 +291,8 @@ export const Dropdown: React.FC<Props> = ({
 	};
 
 	const getFocusedItemIdx = () => {
-		for (var i=0; i < queryItems.length; i++) {
-			if (queryItems[i].focused) {
+		for (var i=0; i < queryItemsRef.current.length; i++) {
+			if (queryItemsRef.current[i].focused) {
 				return i;
 			}
 		}
@@ -297,8 +301,8 @@ export const Dropdown: React.FC<Props> = ({
 
 	const getNextSelectableItem = () => {
 		var focusedItem = getFocusedItemIdx();
-		for (var i= focusedItem + 1; i < queryItems.length; i++) {
-			if (queryItems[i].type != DropdownItemType.HEADING && !queryItems[i].disabled) {
+		for (var i= focusedItem + 1; i < queryItemsRef.current.length; i++) {
+			if (queryItemsRef.current[i].type != DropdownItemType.HEADING && !queryItemsRef.current[i].disabled) {
 				return i;
 			}
 		}
@@ -316,7 +320,7 @@ export const Dropdown: React.FC<Props> = ({
 	}
 
 	const handleKeyDownEvent = (e:KeyboardEvent) => {
-		var modQueryItems = queryItems;
+		var modQueryItems = queryItemsRef.current;
 		if (e.key == "ArrowDown" && visibleRef.current) {
 			e.preventDefault();
 			var nextFocusedItem = getNextSelectableItem();
@@ -325,6 +329,7 @@ export const Dropdown: React.FC<Props> = ({
 				modQueryItems[nextFocusedItem].focused = true;
 			}
 			setQueryItems(modQueryItems);
+			queryItemsRef.current = modQueryItems;
 			setLastUpdated(new Date())
 		} else if (e.key == "ArrowUp" && visibleRef.current) {
 			e.preventDefault();
@@ -334,12 +339,13 @@ export const Dropdown: React.FC<Props> = ({
 				modQueryItems[prevFocusedItem].focused = true;
 			}
 			setQueryItems(modQueryItems);
+			queryItemsRef.current = modQueryItems;
 			setLastUpdated(new Date())
 		} else if (e.key == "Enter" && visibleRef.current) {
 			e.preventDefault();
 			var focusedItemIdx = getFocusedItemIdx();
 			if (focusedItemIdx > -1) {
-				handleItemClick(queryItems[focusedItemIdx]);
+				handleItemClick(queryItemsRef.current[focusedItemIdx]);
 			}
 		}
 	};
@@ -434,6 +440,7 @@ export const Dropdown: React.FC<Props> = ({
 				}
 			}
 			setQueryItems(queryItems);
+			queryItemsRef.current = queryItems;
 		} else {
 			const fuse = new Fuse(modifiedItems.filter(item =>
 				item.type != DropdownItemType.HEADING), fuseOptions);
@@ -446,10 +453,18 @@ export const Dropdown: React.FC<Props> = ({
 					disabled: true,
 					type: DropdownItemType.TEXT
 				}])
+				queryItemsRef.current = [{
+					label: "No items found..",
+					reference: "-1",
+					selected: false,
+					disabled: true,
+					type: DropdownItemType.TEXT
+				}];
 			} else {
 				queryItems.forEach(item => item.focused = false);
 				queryItems[0].focused = true;
 				setQueryItems(queryItems);
+				queryItemsRef.current = queryItems;
 			}
 		}
 	}

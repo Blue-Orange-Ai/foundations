@@ -1,0 +1,10 @@
+
+
+.blue-orange-rule-condition-cont {
+    width: 100%;
+    border: 1px solid var(--blue-orange-light-default-border-color);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}

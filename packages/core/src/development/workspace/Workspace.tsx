@@ -13,6 +13,7 @@ import {ContextMenuHeading} from "../../components/contextmenu/context-menu-head
 import {ContextMenuItem} from "../../components/contextmenu/context-menu-item/ContextMenuItem";
 import {ContextMenuSeparator} from "../../components/contextmenu/context-menu-separator/ContextMenuSeparator";
 import {LineChart} from "../../components/charts/line/LineChart";
+import {RuleContainer} from "../../components/rules/rule-containter/RuleContainer";
 
 interface Props {
 }
@@ -251,29 +252,29 @@ export const Workspace: React.FC<Props> = ({}) => {
 		setFileSystemItems(newItems);
 	}
 
-	useEffect(() => {
-		const intervalId = setInterval(() => {
-			const newDataPoint1 = {
-				x: new Date().toISOString(), // Current timestamp
-				y: (Math.random() * 100).toFixed(2), // Random y value between 0 and 100
-			};
-			const newDataPoint2 = {
-				x: new Date().toISOString(), // Current timestamp
-				y: (Math.random() * 100).toFixed(2), // Random y value between 0 and 100
-			};
-			setDataset1((prevElements) => [
-				...prevElements,
-				newDataPoint1
-			]);
-			setDataset2((prevElements) => [
-				...prevElements,
-				newDataPoint2
-			]);
-		}, interval);
-
-		// Cleanup interval on component unmount
-		return () => clearInterval(intervalId);
-	}, [interval]);
+	// useEffect(() => {
+	// 	const intervalId = setInterval(() => {
+	// 		const newDataPoint1 = {
+	// 			x: new Date().toISOString(), // Current timestamp
+	// 			y: (Math.random() * 100).toFixed(2), // Random y value between 0 and 100
+	// 		};
+	// 		const newDataPoint2 = {
+	// 			x: new Date().toISOString(), // Current timestamp
+	// 			y: (Math.random() * 100).toFixed(2), // Random y value between 0 and 100
+	// 		};
+	// 		setDataset1((prevElements) => [
+	// 			...prevElements,
+	// 			newDataPoint1
+	// 		]);
+	// 		setDataset2((prevElements) => [
+	// 			...prevElements,
+	// 			newDataPoint2
+	// 		]);
+	// 	}, interval);
+	//
+	// 	// Cleanup interval on component unmount
+	// 	return () => clearInterval(intervalId);
+	// }, [interval]);
 
 	return (
 		// <div className="workspace-main-window">
@@ -290,29 +291,32 @@ export const Workspace: React.FC<Props> = ({}) => {
 
 
 	// 	<DateInput displayFormat={"yyyy-MM-DD HH:mm:ss"} showTime={true} timePrecision={TimePrecision.SECOND} onChange={(value) => console.log(value)}></DateInput>
-		<LineChart
-			height={"100vh"}
-			width={"100%"}
-			gridLines={true}
-			xLabel={"Timestamp"}
-			yLabel={"Value"}
-			xScale={"time"}
-			xScaleTimeUnit={"second"}
-			interactionType={"nearest"}
-			legend={true}
-			dataset={[{
-			label: "Subscribers",
-				backgroundColor: "#BB8FCE",
-				borderColor: "#BB8FCE",
-				borderWidth: 2,
-				borderDash: [5, 5],
-			data: dataset1
-		},{
-				label: "Subscribers 2",
-				 backgroundColor: '#E59866',
-				 borderColor: '#E59866',
-				data: dataset2
-			}]}></LineChart>
+	<RuleContainer>
+
+	</RuleContainer>
+	// 	<LineChart
+	// 		height={"100vh"}
+	// 		width={"100%"}
+	// 		gridLines={true}
+	// 		xLabel={"Timestamp"}
+	// 		yLabel={"Value"}
+	// 		xScale={"time"}
+	// 		xScaleTimeUnit={"second"}
+	// 		interactionType={"nearest"}
+	// 		legend={true}
+	// 		dataset={[{
+	// 		label: "Subscribers",
+	// 			backgroundColor: "#BB8FCE",
+	// 			borderColor: "#BB8FCE",
+	// 			borderWidth: 2,
+	// 			borderDash: [5, 5],
+	// 		data: dataset1
+	// 	},{
+	// 			label: "Subscribers 2",
+	// 			 backgroundColor: '#E59866',
+	// 			 borderColor: '#E59866',
+	// 			data: dataset2
+	// 		}]}></LineChart>
 	//
 	// 	<LineChart
 	// 		height={"100vh"}

@@ -11,6 +11,7 @@ import {RequiredIcon} from "../../required-icon/RequiredIcon";
 interface Props {
 	initialTags?: string[];
 	whitelist?: string[];
+	enforceWhitelist?: boolean;
 	blacklist?: string[];
 	maxTags?: number;
 	placeholder?: string;
@@ -24,6 +25,7 @@ interface Props {
 export const TagInput: React.FC<Props> = ({
 											   initialTags = [],
 											   whitelist = [],
+											  enforceWhitelist = false,
 											   blacklist = [],
 											   maxTags = 100000,
 											   placeholder = "Type to add tags",
@@ -45,7 +47,7 @@ export const TagInput: React.FC<Props> = ({
 			whitelist,
 			blacklist,
 			maxTags,
-			enforceWhitelist: false,
+			enforceWhitelist: enforceWhitelist,
 			placeholder,
 			dropdown: {
 				enabled: 0 // Always show suggestions dropdown on focus
@@ -56,7 +58,6 @@ export const TagInput: React.FC<Props> = ({
 		// @ts-ignore
 		tagify.on("add remove", (e) => {
 			setTimeout(() => {
-				console.log("Add Remove")
 				// @ts-ignore
 				const updatedTags = tagify.getTagElms().map(tagEl => tagEl["__tagifyTagData"]["value"] || '');
 				setTags(updatedTags);
