@@ -1,0 +1,33 @@
+
+.workspace-main-window{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.workspace-display-window {
+    width: 80%;
+    height: 80%;
+    max-height: 400px;
+    max-width: 800px;
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.workspace-output-window {
+    width: calc(100% - 30px);
+    padding: 15px;
+    height: calc(100% - 30px);
+    overflow: auto;
+    background-color: #0d0d0d;
+    color: #f7f7f9;
+}
+

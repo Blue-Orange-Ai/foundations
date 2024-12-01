@@ -9,6 +9,7 @@ interface Props {
 	label?:string;
 	placeholder?: string;
 	isEmail?: boolean;
+	isNumber?: boolean;
 	preventSpaces?:boolean;
 	style?: React.CSSProperties;
 	labelStyle?: React.CSSProperties;
@@ -33,6 +34,7 @@ export const Input: React.FC<Props> = ({
 										   isPassword,
 										   isInvalid,
 										   isEmail,
+										   isNumber,
 										   preventSpaces,
 										   style={},
 										   labelStyle={},
@@ -85,6 +87,8 @@ export const Input: React.FC<Props> = ({
 			return "password"
 		} else if (isEmail) {
 			return "email"
+		} else if (isNumber) {
+			return "number"
 		}
 		return "text";
 	}

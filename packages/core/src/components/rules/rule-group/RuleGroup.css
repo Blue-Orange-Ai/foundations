@@ -1,0 +1,44 @@
+
+
+.blue-orange-rule-group-cont{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    position: relative;
+}
+
+.blue-orange-rule-group-header {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.blue-orange-rule-group-operand-selection {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.blue-orange-rule-group-operand-selection {
+    width: 250px;
+    color: white;
+}
+
+.blue-orange-rule-group-cont-vertical-line {
+    height: 100%;
+    z-index: -1;
+    border: 1px solid var(--blue-orange-light-default-border-color);
+    position: absolute;
+    left: 15px;
+}
+
+.blue-orange-rule-group-add-btns {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+

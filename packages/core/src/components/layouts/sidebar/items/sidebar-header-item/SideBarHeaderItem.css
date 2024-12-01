@@ -37,6 +37,10 @@
     margin-right: 15px;
 }
 
+.blue-orange-sidebar-header-item-small-cont .blue-orange-sidebar-header-item-media {
+    margin-right: 0px;
+}
+
 .blue-orange-sidebar-header-item-media-body {
     flex-grow: 1;
     font-size: 1.2rem;

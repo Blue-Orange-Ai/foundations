@@ -1,19 +1,19 @@
 :root {
-  --blue-orange-light-sidebar-border-color: #e0e1e2;
-  --blue-orange-light-sidebar-background-color: #f7f7f9;
+  --blue-orange-light-sidebar-border-color: #393939;
+  --blue-orange-light-sidebar-background-color: #28282a;
   --blue-orange-dark-sidebar-border-color: #28282a;
   --blue-orange-dark-sidebar-background-color: #393939;
 
   --blue-orange-light-sidebar-control-color: dodgerblue;
   --blue-orange-dark-sidebar-control-color: dodgerblue;
 
-  --blue-orange-light-sidebar-body-item-text-color: black;
+  --blue-orange-light-sidebar-body-item-text-color: white;
   --blue-orange-dark-sidebar-body-item-text-color: white;
 
-  --blue-orange-light-sidebar-body-item-hover-color: #e0e1e2;
+  --blue-orange-light-sidebar-body-item-hover-color: #28282a;
   --blue-orange-dark-sidebar-body-item-hover-color: #28282a;
 
-  --blue-orange-light-sidebar-header-item-border-color: #e0e1e2;
+  --blue-orange-light-sidebar-header-item-border-color: #28282a;
   --blue-orange-dark-sidebar-header-item-border-color: #28282a;
 
   --blue-orange-light-alert-default-border-color: #e0e1e2;

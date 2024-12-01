@@ -17,8 +17,8 @@ interface Props {
 	splitDirection?: SplitDirectionHorizontalPage,
 	uuid?: string;
 	adjustable?: boolean;
-	maxHeight?: string;
-	minHeight?: string;
+	maxHeight?: number;
+	minHeight?: number;
 	defaultHeight?: number;
 }
 
@@ -28,8 +28,8 @@ export const HorizontalSplitPage: React.FC<Props> = ({
 													   uuid,
 														 defaultHeight=300,
 													   adjustable=true,
-														 maxHeight="unset",
-														 minHeight = "unset"}) => {
+														 maxHeight,
+														 minHeight }) => {
 
 	const majorItems: React.ReactNode[] = [];
 
@@ -46,6 +46,20 @@ export const HorizontalSplitPage: React.FC<Props> = ({
 	});
 
 
+	const getMaxHeight = (query: number): number => {
+		if (maxHeight == undefined || maxHeight > query) {
+			return query;
+		}
+		return maxHeight;
+	}
+
+	const getMinHeight = (query: number): number => {
+		if (minHeight == undefined || minHeight < query) {
+			return query;
+		}
+		return minHeight;
+	}
+
 	const pageHeightStore = Cookies.get(uuid ?? "");
 
 	const initialHeight = pageHeightStore ? +pageHeightStore : defaultHeight;
@@ -53,6 +67,10 @@ export const HorizontalSplitPage: React.FC<Props> = ({
 	const pageRef = useRef<HTMLDivElement | null>(null);
 
 	const [height, setHeight] = useState(initialHeight);
+
+	const [maxHeightAdjusted, setMaxHeightAdjusted] = useState(maxHeight ? getMaxHeight(maxHeight) : initialHeight);
+
+	const [minHeightAdjusted, setMinHeightAdjusted] = useState(minHeight ? getMinHeight(minHeight) : initialHeight);
 
 	const [pageUuid, setPageUuid] = useState(uuid ?? uuidv4());
 
@@ -78,9 +96,13 @@ export const HorizontalSplitPage: React.FC<Props> = ({
 		if (moving.current && pageRef.current && splitDirection == SplitDirectionHorizontalPage.BOTTOM) {
 			var containerRect = pageRef.current.getBoundingClientRect();
 			setHeight(containerRect.bottom - ev.y);
+			setMaxHeightAdjusted(getMaxHeight(containerRect.bottom - ev.y));
+			setMinHeightAdjusted(getMinHeight(containerRect.bottom - ev.y));
 		} else if (moving.current && pageRef.current && splitDirection == SplitDirectionHorizontalPage.TOP) {
 			var containerRect = pageRef.current.getBoundingClientRect();
 			setHeight(ev.y - containerRect.top);
+			setMaxHeightAdjusted(getMaxHeight(ev.y - containerRect.top));
+			setMinHeightAdjusted(getMinHeight(ev.y - containerRect.top));
 		}
 	}
 
@@ -113,7 +135,7 @@ export const HorizontalSplitPage: React.FC<Props> = ({
 			<div className="blue-orange-layouts-horizontal-split-page-main">{majorItems}</div>
 			{splitDirection == SplitDirectionHorizontalPage.BOTTOM &&
 				<div className="blue-orange-layouts-horizontal-split-page-minor-bottom"
-					 style={{height: height + "px", maxHeight: maxHeight, minHeight: minHeight}}>
+					 style={{height: height + "px", maxHeight: maxHeightAdjusted + "px", minHeight: minHeightAdjusted + 'px'}}>
 					<div ref={minorSplitRef}
 						 className="blue-orange-layouts-horizontal-split-control-bottom"></div>
 					{minorItems}

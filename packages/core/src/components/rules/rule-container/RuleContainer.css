@@ -1,0 +1,30 @@
+.blue-orange-rule-group-condition-cont {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.blue-orange-rule-condition-operand {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.blue-orange-rule-condition-operand-cont {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.blue-orange-rule-condition-operand-text {
+    margin-left: 4px;
+}
+
+.blue-orange-rule-group-condition-block {
+    flex-grow: 1;
+    border: 1px solid var(--blue-orange-light-default-border-color);
+    padding: 20px;
+}

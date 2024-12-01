@@ -7,6 +7,6 @@ interface Props {
 }
 export const Description: React.FC<Props> = ({children, style={}}) => {
 	return (
-		<p className="blue-orange-default-paragraph" style={style}>{children}</p>
+		<p className="blue-orange-default-description" style={style}>{children}</p>
 	)
 }

@@ -17,6 +17,7 @@
     border-radius: 8px;
     overflow-x: hidden;
     opacity: 0.6;
+    flex-shrink: 0;
     color: var(--blue-orange-light-sidebar-body-item-text-color);
 }
 

@@ -4,17 +4,20 @@
     flex-direction: column;
     height: 100%;
     width: 100%;
+    overflow: hidden;
 }
 
 .blue-orange-layouts-horizontal-split-page-main {
     flex-grow: 1;
+    flex-shrink: 1;
     width: 100%;
+    overflow-y: auto;
 }
 
 .blue-orange-layouts-horizontal-split-page-minor-bottom {
     position: relative;
     border-top: 2px solid var(--blue-orange-light-default-border-color);
-    overflow-y: hidden;
+    overflow-y: auto;
 }
 
 .dark .blue-orange-layouts-horizontal-split-page-minor-bottom {
