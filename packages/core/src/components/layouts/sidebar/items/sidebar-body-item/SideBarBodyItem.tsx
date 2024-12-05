@@ -82,7 +82,7 @@ export const SideBarBodyItem: React.FC<Props> = ({
 			className={active ? "blue-orange-sidebar-body-item blue-orange-sidebar-body-item-active" : "blue-orange-sidebar-body-item"}>
 			<div
 				className="blue-orange-sidebar-body-item-left"
-				style={focused ? focusedStyle : defaultStyle}>
+				style={focused ? focusedStyle : (active ? activeStyle : defaultStyle)}>
 				{icon && <div className="blue-orange-sidebar-body-item-icon">{icon}</div>}
 				<div className="blue-orange-sidebar-body-item-label no-select">{label}</div>
 			</div>

@@ -34,7 +34,7 @@ export const SideBarBodyGroup: React.FC<Props> = ({
 	});
 
 	return (
-		<div>
+		<div style={{paddingLeft: "10px", width: "calc(100% - 10px)"}}>
 			<Accordion opened={opened}>
 				<AccordionHeader>{headerItems}</AccordionHeader>
 				<AccordionBody>{bodyItems}</AccordionBody>

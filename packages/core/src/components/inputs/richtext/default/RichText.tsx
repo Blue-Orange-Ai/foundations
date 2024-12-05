@@ -241,6 +241,9 @@ export const RichText: React.FC<Props> = ({
 	const editor = useEditor({
 		extensions,
 		content,
+		onUpdate({ editor }) {
+			editorChanged();
+		}
 	})
 
 	editorRef.current = editor;

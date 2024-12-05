@@ -16,6 +16,7 @@ import {ScatterChartDevelopment} from "../components/charts/scatter/ScatterChart
 import {BarChartDevelopment} from "../components/charts/bar/BarChartDevelopment";
 import {RuleEditorDevelopment} from "../components/rules/rule-editor/RuleEditorDevelopment";
 import {FileSystemDevelopment} from "../components/file-system/FileSystemDevelopment";
+import {RichTextDevelopment} from "../components/inputs/rich-text/RichTextDevelopment";
 
 interface Props {
 }
@@ -297,6 +298,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "charts-scatter" && <ScatterChartDevelopment></ScatterChartDevelopment>}
 			{component == "rules" && <RuleEditorDevelopment></RuleEditorDevelopment>}
 			{component == "file-system" && <FileSystemDevelopment></FileSystemDevelopment>}
+			{component == "inputs-rich-text" && <RichTextDevelopment></RichTextDevelopment>}
 		</SidebarPage>
 	)
 }
