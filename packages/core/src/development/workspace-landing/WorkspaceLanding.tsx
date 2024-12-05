@@ -15,6 +15,7 @@ import {LineChartDevelopment} from "../components/charts/line/LineChartDevelopme
 import {ScatterChartDevelopment} from "../components/charts/scatter/ScatterChartDevelopment";
 import {BarChartDevelopment} from "../components/charts/bar/BarChartDevelopment";
 import {RuleEditorDevelopment} from "../components/rules/rule-editor/RuleEditorDevelopment";
+import {FileSystemDevelopment} from "../components/file-system/FileSystemDevelopment";
 
 interface Props {
 }
@@ -154,7 +155,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						defaultStyle={inactiveStyle}
 						activeStyle={activeStyle}
 						icon={<i className="ri-folder-6-fill"></i>}
-						onClick={() => navigate("/context-menu")}
+						onClick={() => navigate("/file-system")}
 					></SideBarBodyItem>
 					<SideBarBodyGroup opened={sidebarInputState}>
 						<SideBarBodyLabel
@@ -295,6 +296,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "charts-bar" && <BarChartDevelopment></BarChartDevelopment>}
 			{component == "charts-scatter" && <ScatterChartDevelopment></ScatterChartDevelopment>}
 			{component == "rules" && <RuleEditorDevelopment></RuleEditorDevelopment>}
+			{component == "file-system" && <FileSystemDevelopment></FileSystemDevelopment>}
 		</SidebarPage>
 	)
 }

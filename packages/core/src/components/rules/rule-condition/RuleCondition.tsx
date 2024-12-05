@@ -76,7 +76,7 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 		if (schemaProperty.key.endsWith("[]")) {
 			return "ARRAY"
 		} else if (schemaProperty.key.indexOf("[]") < 0 && schemaProperty.value == "String") {
-			return "TEXT"
+			return "STRING"
 		} else if (schemaProperty.key.indexOf("[]") < 0 && schemaProperty.value == "Number") {
 			return "NUMBER"
 		} else if (schemaProperty.key.indexOf("[]") < 0 && schemaProperty.value == "Date") {
