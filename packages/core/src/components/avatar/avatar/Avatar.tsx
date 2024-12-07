@@ -12,11 +12,11 @@ import {Modal} from "../../layouts/modal/modal/Modal";
 import {ModalHeader} from "../../layouts/modal/modal-header/ModalHeader";
 import {ModalDescription} from "../../layouts/modal/modal-description/ModalDescription";
 import {ModalBody} from "../../layouts/modal/modal-body/ModalBody";
-import {Media, Avatar as AvatarObj, GroupPermission, User} from "@blue-orange-ai/foundations-clients";
+import {Avatar as AvatarObj, GroupPermission, Media, User, UserState} from "@blue-orange-ai/foundations-clients";
 
 
 interface Props {
-	user: User;
+	user: User | undefined;
 	edit?: boolean;
 	height?: number;
 	width?:number; // Callback prop to send value to parent
@@ -36,6 +36,27 @@ export const Avatar: React.FC<Props> = ({
 										}) => {
 
 
+	const emptyUser: User = {
+		address: undefined,
+		addressVerified: false,
+		avatar: undefined,
+		color: "",
+		created: new Date(),
+		defaultUser: false,
+		domain: "",
+		email: "",
+		emailVerified: false,
+		forcePasswordReset: false,
+		lastActive: new Date(),
+		name: "",
+		notes: "",
+		phoneVerified: false,
+		serviceUser: false,
+		state: UserState.ACTIVE,
+		telephone: undefined,
+		username: ""
+	}
+
 	const btnRef = useRef<HTMLDivElement | null>(null);
 
 	const avatarModalElem = useRef<HTMLDivElement>(null);
@@ -52,7 +73,7 @@ export const Avatar: React.FC<Props> = ({
 
 	const [percentageComplete, setPercentageComplete] = useState(0);
 
-	const [workingUser, setWorkingUser] = useState(JSON.parse(JSON.stringify(user)) as User);
+	const [workingUser, setWorkingUser] = useState(user ? (JSON.parse(JSON.stringify(user)) as User) : emptyUser);
 
 	const [uri, setUri] = useState("");
 
@@ -115,8 +136,8 @@ export const Avatar: React.FC<Props> = ({
 		setPercentageComplete(percentageComplete);
 	}
 
-	const getUserAvatarMedia = (user: User) => {
-		if (workingUser.avatar && workingUser.avatar.enabled && user.avatar?.mediaId && user.avatar?.mediaId) {
+	const getUserAvatarMedia = (user: User | undefined) => {
+		if (user && workingUser.avatar && workingUser.avatar.enabled && user.avatar?.mediaId && user.avatar?.mediaId) {
 			blueOrangeMediaInstance.getUrlFromMediaId(workingUser.avatar?.mediaId as number, 120, height).then(url => {
 				if (workingUser.avatar) {
 					workingUser.avatar.uri = url;
@@ -223,7 +244,7 @@ export const Avatar: React.FC<Props> = ({
 		const current = btnRef.current as TippyHTMLElement;
 		if (current && tooltip) {
 			tippy(current, {
-				content: user.name,
+				content: user ? user.name : "",
 			});
 			return () => {
 				const tippyInstance = current._tippy;

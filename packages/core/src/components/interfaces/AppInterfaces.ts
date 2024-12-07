@@ -36,6 +36,10 @@ export interface DropdownItemObj {
     focused?: boolean
 }
 
+export interface IComment {
+
+}
+
 export enum DatePickerMonth {
     JAN,
     FEB,

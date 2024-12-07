@@ -17,6 +17,7 @@ import {BarChartDevelopment} from "../components/charts/bar/BarChartDevelopment"
 import {RuleEditorDevelopment} from "../components/rules/rule-editor/RuleEditorDevelopment";
 import {FileSystemDevelopment} from "../components/file-system/FileSystemDevelopment";
 import {RichTextDevelopment} from "../components/inputs/rich-text/RichTextDevelopment";
+import {FullPageCommentsDevelopment} from "../components/comments/full-page-comments/FullPageCommentsDevelopment";
 
 interface Props {
 }
@@ -31,6 +32,8 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 	const [sidebarState, setSidebarState] = useState(SideBarState.OPEN);
 
 	const [sidebarGroupState, setSidebarGroupState] = useState(false);
+
+	const [sidebarCommentState, setSidebarCommentState] = useState(false);
 
 	const [sidebarChartState, setSidebarChartState] = useState(false);
 
@@ -138,6 +141,32 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							activeStyle={activeStyle}
 							icon={<i className="ri-bubble-chart-fill"></i>}
 							onClick={() => navigate("/charts-scatter")}
+						></SideBarBodyItem>
+					</SideBarBodyGroup>
+					<SideBarBodyGroup opened={sidebarCommentState}>
+						<SideBarBodyLabel
+							icon={sidebarCommentState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
+							label={"Comments"}
+							onClick={() => setSidebarCommentState(!sidebarCommentState)}
+						></SideBarBodyLabel>
+						<SideBarBodyItem
+							label={"Full Page"}
+							active={component == "comments-full-page"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-discuss-line"></i>}
+							onClick={() => navigate("/comments-full-page")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Floating"}
+							active={component == "comments-floating"}
+							focused={true}
+							defaultStyle={inactiveStyle}
+							focusedStyle={activeStyle}
+							hoverEffects={true}
+							onClick={() => navigate("/comments-floating")}
+							icon={<i className="ri-chat-4-fill"></i>}
 						></SideBarBodyItem>
 					</SideBarBodyGroup>
 					<SideBarBodyItem
@@ -299,6 +328,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "rules" && <RuleEditorDevelopment></RuleEditorDevelopment>}
 			{component == "file-system" && <FileSystemDevelopment></FileSystemDevelopment>}
 			{component == "inputs-rich-text" && <RichTextDevelopment></RichTextDevelopment>}
+			{component == "comments-full-page" && <FullPageCommentsDevelopment></FullPageCommentsDevelopment>}
 		</SidebarPage>
 	)
 }

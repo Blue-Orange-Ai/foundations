@@ -3,12 +3,10 @@
     display: flex;
     flex-direction: column;
     position: relative;
-    width: calc(100% - 30px);
-    margin-left: 15px;
+    width: 100%;
     border-radius: 8px;
     background-color: var(--blue-orange-light-input-rich-text-editor-background-color);
     border: 1px solid var(--blue-orange-light-input-rich-text-editor-border-color);
-    margin-bottom: 15px;
 }
 
 .dark .blue-orange-rich-text-editor {
