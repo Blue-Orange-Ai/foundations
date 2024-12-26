@@ -163,4 +163,4 @@ export * from './components/text-decorations/paragraph/Paragraph';
 export * from './components/text-decorations/description/Description';
 
 // Tooltips
-export * from './components/tooltips/simple/SimpleTooltip';
+export * from './components/tooltips/simple-tooltip/SimpleTooltip';

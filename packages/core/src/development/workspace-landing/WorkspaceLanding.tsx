@@ -19,6 +19,8 @@ import {FileSystemDevelopment} from "../components/file-system/FileSystemDevelop
 import {RichTextDevelopment} from "../components/inputs/rich-text/RichTextDevelopment";
 import {FullPageCommentsDevelopment} from "../components/comments/full-page-comments/FullPageCommentsDevelopment";
 import {AdvancedTooltipDevelopment} from "../components/tooltips/advanced-tooltip/AdvancedTooltipDevelopment";
+import {SimpleTooltipDevelopment} from "../components/tooltips/simple-tooltip/SimpleTooltipDevelopment";
+import {RichTextPromptDevelopment} from "../components/inputs/rich-text-prompt/RichTextPromptDevelopment";
 
 interface Props {
 }
@@ -39,6 +41,8 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 	const [sidebarChartState, setSidebarChartState] = useState(false);
 
 	const [sidebarInputState, setSidebarInputState] = useState(false);
+
+	const [sidebarTooltipState, setSidebarTooltipState] = useState(false);
 
 	const changeSidebarState = (state: SideBarState) => {
 		setSidebarState(state);
@@ -276,6 +280,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/inputs-rich-text")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
+							label={"Rich Text Prompt Input"}
+							active={component == "inputs-rich-text-prompt"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-terminal-line"></i>}
+							onClick={() => navigate("/inputs-rich-text-prompt")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
 							label={"Search Input"}
 							active={component == "inputs-search"}
 							focused={false}
@@ -321,11 +334,11 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						icon={<i className="ri-ruler-fill"></i>}
 						onClick={() => navigate("/rules")}
 					></SideBarBodyItem>
-					<SideBarBodyGroup opened={sidebarInputState}>
+					<SideBarBodyGroup opened={sidebarTooltipState}>
 						<SideBarBodyLabel
-							icon={sidebarInputState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
+							icon={sidebarTooltipState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
 							label={"Tooltips"}
-							onClick={() => setSidebarInputState(!sidebarInputState)}
+							onClick={() => setSidebarTooltipState(!sidebarTooltipState)}
 						></SideBarBodyLabel>
 						<SideBarBodyItem
 							label={"Advanced Tooltip"}
@@ -336,6 +349,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							icon={<i className="ri-question-fill"></i>}
 							onClick={() => navigate("/tooltips-advanced")}
 						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Simple Tooltip"}
+							active={component == "tooltips-simple"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-question-line"></i>}
+							onClick={() => navigate("/tooltips-simple")}
+						></SideBarBodyItem>
 					</SideBarBodyGroup>
 				</SideBarBody>
 			</SideBar>
@@ -345,8 +367,10 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "rules" && <RuleEditorDevelopment></RuleEditorDevelopment>}
 			{component == "file-system" && <FileSystemDevelopment></FileSystemDevelopment>}
 			{component == "inputs-rich-text" && <RichTextDevelopment></RichTextDevelopment>}
+			{component == "inputs-rich-text-prompt" && <RichTextPromptDevelopment></RichTextPromptDevelopment>}
 			{component == "comments-full-page" && <FullPageCommentsDevelopment></FullPageCommentsDevelopment>}
 			{component == "tooltips-advanced" && <AdvancedTooltipDevelopment></AdvancedTooltipDevelopment>}
+			{component == "tooltips-simple" && <SimpleTooltipDevelopment></SimpleTooltipDevelopment>}
 		</SidebarPage>
 	)
 }

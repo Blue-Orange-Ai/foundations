@@ -128,7 +128,7 @@ export const RuleGroup: React.FC<Props> = ({condition, deletable=true, condition
 			<div className="blue-orange-rule-group-cont-vertical-line"></div>
 			<div className="blue-orange-rule-group-header">
 				<div className="blue-orange-rule-group-operand-selection">
-					<Dropdown style={{backgroundColor: "#283747"}} onSelection={(item: DropdownItemObj) => logicalChange(item.reference)}>
+					<Dropdown style={{backgroundColor: "#283747", paddingLeft: "10px"}} onSelection={(item: DropdownItemObj) => logicalChange(item.reference)}>
 						<DropdownItemText label={"All of the following are true"} value={"AND"}
 										  selected={internalCondition.logic == ILogicalOperand.AND}></DropdownItemText>
 						<DropdownItemText label={"Any of the following are true"} value={"OR"}

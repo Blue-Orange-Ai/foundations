@@ -33,7 +33,7 @@ export const SimpleTooltip: React.FC<Props> = ({children, label}) => {
 	}, []);
 
 	return (
-		<div ref={tooltipRef}>
+		<div className="blue-orange-simple-tooltip" ref={tooltipRef}>
 			{children}
 		</div>
 	)
