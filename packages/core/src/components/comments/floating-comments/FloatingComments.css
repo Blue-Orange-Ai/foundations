@@ -1,0 +1,13 @@
+
+
+.blue-orange-comments-floating-cont {
+    width: 400px;
+    max-height: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid var(--blue-orange-light-default-border-color);
+    overflow-y: auto;
+}

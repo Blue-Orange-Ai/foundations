@@ -48,7 +48,7 @@
 }
 
 .blue-orange-context-menu-general-row {
-    padding: 6px 6px 6px 32px;
+    padding: 6px 32px 6px 32px;
     width: calc(100% - 38px);
     display: flex;
     flex-direction: row;

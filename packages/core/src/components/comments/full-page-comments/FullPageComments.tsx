@@ -11,10 +11,10 @@ export const FullPageComments: React.FC<Props> = ({}) => {
 
 	return (
 		<div className="blue-orange-comments-cont">
-			<RenderComment></RenderComment>
-			<RenderComment></RenderComment>
-			<RenderComment></RenderComment>
-			<RenderComment></RenderComment>
+			{/*<RenderComment></RenderComment>*/}
+			{/*<RenderComment></RenderComment>*/}
+			{/*<RenderComment></RenderComment>*/}
+			{/*<RenderComment></RenderComment>*/}
 			<AddComment></AddComment>
 		</div>
 	)

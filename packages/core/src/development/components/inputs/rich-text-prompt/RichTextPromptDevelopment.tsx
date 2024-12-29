@@ -54,6 +54,7 @@ export const RichTextPromptDevelopment: React.FC<Props> = ({fontSize, color}) =>
 				<PaddedPage>
 					<PageHeading>Rich Text Editor</PageHeading>
 					<RichTextPrompt
+						placeholder={"Add comment ..."}
 						content={richTextContent.content}
 						files={richTextContent.attachments}
 						onChange={processChangeData}

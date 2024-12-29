@@ -42,7 +42,7 @@ type ForwardingRefWrapperProps = {
 export const ContextMenu: React.FC<Props> = ({
 												 children,
 												 items,
-												 width=256,
+												 width,
 												 maxHeight=325,
 												 onClick,
 												 disabled = false,
@@ -139,10 +139,10 @@ export const ContextMenu: React.FC<Props> = ({
 		} else {
 			style.top = (rect.bottom + 10) + "px";
 		}
-		if (buttonCenterWidth + width / 2 > innerWidth - 15) {
+		if (buttonCenterWidth + (width ?? 0) / 2 > innerWidth - 15) {
 			style.right = (innerWidth + 15) + "px";
 		} else {
-			style.left = Math.max(buttonCenterWidth - width / 2, 15) + "px"
+			style.left = Math.max(buttonCenterWidth - (width ?? 0) / 2, 15) + "px"
 		}
 		setStyle(style);
 	}
@@ -151,17 +151,17 @@ export const ContextMenu: React.FC<Props> = ({
 		const innerHeight = window.innerHeight;
 		const innerWidth = window.innerWidth;
 		var style: React.CSSProperties = {}
-		style.width = width + "px";
+		style.width = width == undefined ? "fit-content" : width + "px";
 		style.maxHeight = maxHeight + "px";
 		if (y > innerHeight / 2) {
 			style.bottom = innerHeight - (y - 10) + "px";
 		} else {
 			style.top = (y + 10) + "px";
 		}
-		if ((x - (width / 2)) > innerWidth - 15) {
+		if ((x - ((width ?? 0) / 2)) > innerWidth - 15) {
 			style.right = (innerWidth + 15) + "px";
 		} else {
-			style.left = Math.max((x - (width / 2)), 15) + "px"
+			style.left = Math.max((x - ((width ?? 0) / 2)), 15) + "px"
 		}
 		setStyle(style);
 	}

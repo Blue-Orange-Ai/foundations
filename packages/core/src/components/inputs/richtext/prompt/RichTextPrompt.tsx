@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 
 import {StarterKit} from "@tiptap/starter-kit";
-import {AnyExtension, EditorContent, Extensions, useEditor} from "@tiptap/react";
+import {AnyExtension, EditorContent, useEditor} from "@tiptap/react";
 import {ButtonIcon} from "../../../buttons/button-icon/ButtonIcon";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -13,7 +13,6 @@ import {fetchEmojiItems, renderEmojiSuggestions} from "../suggestion/EmojiSugges
 import {EmojiMention} from "../extensions/EmojiMention";
 import {EmojiObj} from "../../emoji/data/UnicodeEmoji";
 import Cookies from "js-cookie";
-import {EmojiWrapper} from "../../emoji/emoji-wrapper/EmojiWrapper";
 import {FileInputWrapper} from "../../file-input-wrapper/FileInputWrapper";
 import {RichTextEditorUploadedFile, UploadedFile} from "../uploaded-file/UploadedFile";
 import {Media, MediaPermission, GroupPermission} from "@blue-orange-ai/foundations-clients";
@@ -29,17 +28,18 @@ export interface MentionItem {
 
 interface Props {
 	content?: string,
+	focus?: boolean,
 	files?: Array<Media>
 	placeholder?: string,
-	displayFormatting?: boolean,
-	editorHeight?: number,
-	minEditorHeight?: number,
 	allowMentions?: boolean,
 	allowEmojis?: boolean,
+	showClose?: boolean,
 	uploadPermissions?: Array<MediaPermission>,
 	disabled?: boolean,
+	clearState?: string,
 	onChange?: (content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean) => void,
-	onSend?: () => void
+	onSend?: () => void,
+	onClose?: () => void,
 }
 
 const defaultUploadPermission: MediaPermission[] = [{
@@ -49,16 +49,18 @@ const defaultUploadPermission: MediaPermission[] = [{
 
 export const RichTextPrompt: React.FC<Props> = ({
 											  content,
+											  focus=false,
 											  files=[],
 											  placeholder,
-											  displayFormatting= true,
-											  minEditorHeight = 10,
 											  allowMentions=true,
 											  allowEmojis=true,
+											  showClose=false,
 											  uploadPermissions=defaultUploadPermission,
 											  disabled = false,
+											  clearState="",
 											  onChange,
-											  onSend
+											  onSend,
+											  onClose
 										  }) => {
 
 
@@ -110,6 +112,8 @@ export const RichTextPrompt: React.FC<Props> = ({
 
 	const disabledRef = useRef(disabled);
 
+	const initialClearState = useRef(clearState);
+
 	const getEmojiHtml = (emoji: EmojiObj) => {
 		const skin_tone = Cookies.get("skinTone")
 		var skin_tones = ["1F3FB", "1F3FC", "1F3FD", "1F3FE", "1F3FF"]
@@ -124,6 +128,10 @@ export const RichTextPrompt: React.FC<Props> = ({
 		return emojisSplit.join(";")
 	}
 
+
+	const isClassPresent = (className: string) => {
+		return document.querySelector(`.${className}`) !== null;
+	}
 
 	// @ts-ignore
 	const mentionExtension = CustomMention.configure({
@@ -248,14 +256,15 @@ export const RichTextPrompt: React.FC<Props> = ({
 		},
 		editorProps: {
 			handleKeyDown(view, event) {
+				const mentionsVisible = isClassPresent("blue-orange-rich-text-editor-mention-items");
 				if (enterEventBlock.current) {
 					enterEventBlock.current = false;
 					return false;
 				}
-				if (event.key === 'Enter' && !event.shiftKey) {
+				if (!mentionsVisible && event.key === 'Enter' && !event.shiftKey) {
 					event.preventDefault();
 					return true;
-				} else if (event.key === 'Enter' && event.shiftKey) {
+				} else if (!mentionsVisible && event.key === 'Enter' && event.shiftKey) {
 					event.preventDefault();
 					enterEventBlock.current = true;
 					editor.commands.enter();
@@ -289,6 +298,19 @@ export const RichTextPrompt: React.FC<Props> = ({
 		justifyContent: "center",
 		backgroundColor: "#393939",
 		color: "white",
+	}
+
+	const secondaryIconStyle: React.CSSProperties = {
+		marginLeft: "10px",
+		height: "30px",
+		width: "30px",
+		borderRadius: "4px",
+		border: "none",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor: "#e0e1e2",
+		color: "#393939",
 	}
 
 	const generateStoredFileAttachments = () => {
@@ -330,7 +352,7 @@ export const RichTextPrompt: React.FC<Props> = ({
 				const childElements = editorContainerRef.current.querySelectorAll('.tiptap');
 				if (childElements.length > 0) {
 					var tiptapEl: HTMLElement = childElements[0] as HTMLElement;
-					tiptapEl.style.minHeight = minEditorHeight + "px";
+					tiptapEl.style.minHeight =  "10px";
 					clearInterval(intervalId);
 				}
 			}
@@ -354,8 +376,23 @@ export const RichTextPrompt: React.FC<Props> = ({
 		if (!initRef.current) {
 			initRef.current = true
 			initialise();
+			if (content && content != "") {
+				editor.commands.setContent(content);
+			}
+			if (focus) {
+				editor.chain().focus();
+			}
+
 		}
 	}, []);
+
+	useEffect(() => {
+		if (initRef.current && clearState != initialClearState.current) {
+			setStoredFiles([]);
+			editor.chain().clearContent().focus().run();
+			editorContainerRef.current.scrollIntoView(true);
+		}
+	}, [clearState]);
 
 	const emojiSelection = (emoji: string) => {
 		if (editor) {
@@ -399,6 +436,12 @@ export const RichTextPrompt: React.FC<Props> = ({
 		storedFilesRef.current = storedFiles.filter(obj => obj.uuid !== upload.uuid);
 		setStoredFiles(storedFiles.filter(obj => obj.uuid !== upload.uuid));
 		editorChanged();
+	}
+
+	const closePrompt =() => {
+		if (onClose) {
+			onClose();
+		}
 	}
 
 	return (
@@ -445,6 +488,14 @@ export const RichTextPrompt: React.FC<Props> = ({
 						onClick={sendPrompt}
 						label={"Send"}
 					></ButtonIcon>
+					{showClose &&
+						<ButtonIcon
+							icon={"ri-close-line"}
+							style={secondaryIconStyle}
+							onClick={closePrompt}
+							label={"Close"}
+						></ButtonIcon>
+					}
 				</div>
 			</div>
 		</div>

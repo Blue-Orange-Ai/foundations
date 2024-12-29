@@ -7,7 +7,6 @@
     width: 100%;
     border-radius: 8px;
     background-color: var(--blue-orange-light-input-rich-text-editor-background-color);
-    border: 1px solid var(--blue-orange-light-input-rich-text-editor-border-color);
 }
 
 .blue-orange-rich-text-prompt-main-cont {
@@ -18,7 +17,6 @@
 
 .dark .blue-orange-rich-text-prompt-editor {
     background-color: var(--blue-orange-dark-input-rich-text-editor-background-color);
-    border: 1px solid var(--blue-orange-dark-input-rich-text-editor-border-color);
 }
 
 .blue-orange-rich-text-prompt-editor-heading {
@@ -210,5 +208,13 @@
     margin-left: 20px;
     padding-top: 10px;
     padding-bottom: 10px;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+    color: #adb5bd;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
 }
 

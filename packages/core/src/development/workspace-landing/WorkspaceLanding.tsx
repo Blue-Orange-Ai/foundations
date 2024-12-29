@@ -21,10 +21,14 @@ import {FullPageCommentsDevelopment} from "../components/comments/full-page-comm
 import {AdvancedTooltipDevelopment} from "../components/tooltips/advanced-tooltip/AdvancedTooltipDevelopment";
 import {SimpleTooltipDevelopment} from "../components/tooltips/simple-tooltip/SimpleTooltipDevelopment";
 import {RichTextPromptDevelopment} from "../components/inputs/rich-text-prompt/RichTextPromptDevelopment";
+import Cookies from "js-cookie";
+import {FloatingCommentsDevelopment} from "../components/comments/floating-comments/FloatingCommentsDevelopment";
+import {SocketWorkspace} from "../socket-workspace/SocketWorkspace";
 
 interface Props {
 }
 
+Cookies.set("authorization","eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NzU0ZDQ1Mi1lOGYwLTQ5ZDUtYjkzZC02NTEyMDdmZjczMDciLCJleHAiOjE3Mzc4NDg1NjN9.dcqG2rCMAvOFV6mUWGJNtXA-yhRvTX35309uzafP7tVwEQohVtqKuascj9CwTpUrgCiRSagULgoOGWIJRSrC3w")
 
 export const WorkspaceLanding: React.FC<Props> = ({}) => {
 
@@ -359,6 +363,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/tooltips-simple")}
 						></SideBarBodyItem>
 					</SideBarBodyGroup>
+					<SideBarBodyItem
+						label={"Sockets"}
+						active={component == "sockets"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-link"></i>}
+						onClick={() => navigate("/sockets")}
+					></SideBarBodyItem>
 				</SideBarBody>
 			</SideBar>
 			{component == "charts-line" && <LineChartDevelopment></LineChartDevelopment>}
@@ -369,8 +382,10 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "inputs-rich-text" && <RichTextDevelopment></RichTextDevelopment>}
 			{component == "inputs-rich-text-prompt" && <RichTextPromptDevelopment></RichTextPromptDevelopment>}
 			{component == "comments-full-page" && <FullPageCommentsDevelopment></FullPageCommentsDevelopment>}
+			{component == "comments-floating" && <FloatingCommentsDevelopment></FloatingCommentsDevelopment>}
 			{component == "tooltips-advanced" && <AdvancedTooltipDevelopment></AdvancedTooltipDevelopment>}
 			{component == "tooltips-simple" && <SimpleTooltipDevelopment></SimpleTooltipDevelopment>}
+			{component == "sockets" && <SocketWorkspace></SocketWorkspace>}
 		</SidebarPage>
 	)
 }

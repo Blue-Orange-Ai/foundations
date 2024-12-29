@@ -19,7 +19,7 @@ interface Props {
 }
 
 
-Cookies.set("authorization","eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZTliNWE3MS1jNjFjLTRiZTgtODliYS0zODI5YjEwNGJkZWMiLCJleHAiOjE3MzM3MjIzNzJ9.o8a74pFYHun6b1axiBAvrP8g2otrxYYcHYG2Am4sr3-6T8HeBfk8wBiBGzq88Oe5ez_vkbPqXINUqlPfNM_42A")
+Cookies.set("authorization","eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NzU0ZDQ1Mi1lOGYwLTQ5ZDUtYjkzZC02NTEyMDdmZjczMDciLCJleHAiOjE3Mzc4NDg1NjN9.dcqG2rCMAvOFV6mUWGJNtXA-yhRvTX35309uzafP7tVwEQohVtqKuascj9CwTpUrgCiRSagULgoOGWIJRSrC3w")
 
 export const Workspace: React.FC<Props> = ({}) => {
 
