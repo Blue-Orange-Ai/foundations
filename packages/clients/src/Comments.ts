@@ -111,7 +111,7 @@ export class Comments {
         });
     }
 
-    delete(comment: Comment): Promise<Comment> {
+    delete(comment: Comment): Promise<void> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
@@ -120,8 +120,30 @@ export class Comments {
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
                 if (xhr.status === 200) {
-                    const returnedComment: Comment = JSON.parse(xhr.responseText);
-                    resolve(returnedComment);
+                    resolve();
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error while attempting to delete a comment');
+            };
+            xhr.send();
+        });
+    }
+
+    isEditable(comment: Comment): Promise<Boolean> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            var authToken = Cookies.get(this.authCookie)
+            xhr.open('GET', this.baseUrl + "/api/v1/comments/editable/" + comment.id);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const isEditable: boolean = JSON.parse(xhr.responseText);
+                    resolve(isEditable);
                 } else {
                     var response =JSON.parse(xhr.response);
                     reject(response);

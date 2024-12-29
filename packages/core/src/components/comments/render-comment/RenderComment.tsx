@@ -34,6 +34,8 @@ export const RenderComment: React.FC<Props> = ({theme=RenderCommentTheme.LARGE, 
 
 	const [editState, setEditState] = useState<boolean>(false);
 
+	const [editable, setEditable] = useState<boolean>(false);
+
 	const editableComment = useRef<Comment>(comment);
 
 	const generateThemeAvatarHeight = () => {
@@ -105,9 +107,17 @@ export const RenderComment: React.FC<Props> = ({theme=RenderCommentTheme.LARGE, 
 	}
 
 	const deleteComment = () => {
-		commentsInstance.delete(editableComment.current).then((result: Comment) => {
+		commentsInstance.delete(editableComment.current).then(() => {
 		}).catch((reason => console.error(reason)))
 	}
+
+	const isEditable = () => {
+		commentsInstance.isEditable(comment).then((state: boolean) => {
+			setEditable(state)
+		}).catch((reason => console.error(reason)))
+	}
+
+	isEditable();
 
 	useEffect(() => {
 		if (editor != comment.id) {
@@ -146,9 +156,11 @@ export const RenderComment: React.FC<Props> = ({theme=RenderCommentTheme.LARGE, 
 								<div>Contributor</div>
 							</Badge>
 						}
-						<ContextMenu maxHeight={200} items={contextMenuItems} onClick={processContextMenuClick}>
-							<ButtonIcon icon={"ri-more-line"} style={moreButtonStyle}></ButtonIcon>
-						</ContextMenu>
+						{editable &&
+							<ContextMenu maxHeight={200} items={contextMenuItems} onClick={processContextMenuClick}>
+								<ButtonIcon icon={"ri-more-line"} style={moreButtonStyle}></ButtonIcon>
+							</ContextMenu>
+						}
 					</div>
 				</div>
 				<div className="blue-orange-comments-render-body-cont">
