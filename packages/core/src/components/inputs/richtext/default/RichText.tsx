@@ -28,6 +28,7 @@ export interface MentionItem {
 }
 
 interface Props {
+	children?: React.ReactNode,
 	content?: string,
 	files?: Array<Media>
 	placeholder?: string,
@@ -38,6 +39,7 @@ interface Props {
 	allowEmojis?: boolean,
 	uploadPermissions?: Array<MediaPermission>,
 	disabled?: boolean,
+	clearState?: string,
 	onChange?: (content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean) => void
 }
 
@@ -47,6 +49,7 @@ const defaultUploadPermission: MediaPermission[] = [{
 }]
 
 export const RichText: React.FC<Props> = ({
+											  children,
 											  content,
 											  files=[],
 											  placeholder,
@@ -56,6 +59,7 @@ export const RichText: React.FC<Props> = ({
 											  allowEmojis=true,
 											  uploadPermissions=defaultUploadPermission,
 											  disabled = false,
+											  clearState = "",
 											  onChange
 										  }) => {
 
@@ -107,6 +111,8 @@ export const RichText: React.FC<Props> = ({
 	const initRef = useRef(false);
 
 	const disabledRef = useRef(disabled);
+
+	const initialClearState = useRef(clearState);
 
 	const getEmojiHtml = (emoji: EmojiObj) => {
 		const skin_tone = Cookies.get("skinTone")
@@ -368,6 +374,14 @@ export const RichText: React.FC<Props> = ({
 		editorChanged();
 	}
 
+	useEffect(() => {
+		if (editor && editorContainerRef && editorContainerRef.current && initRef.current && clearState != initialClearState.current) {
+			setStoredFiles([]);
+			editor.chain().clearContent().focus().run();
+			editorContainerRef.current.scrollIntoView(true);
+		}
+	}, [clearState]);
+
 	return (
 		<div className='blue-orange-rich-text-editor'>
 			{displayHeading &&
@@ -477,6 +491,11 @@ export const RichText: React.FC<Props> = ({
 						label={"Mention someone"}
 					></ButtonIcon>
 				</div>
+				{children &&
+					<div className="blue-orange-rich-text-editor-heading-footer-right-cont">
+						{children}
+					</div>
+				}
 			</div>
 		</div>
 	);

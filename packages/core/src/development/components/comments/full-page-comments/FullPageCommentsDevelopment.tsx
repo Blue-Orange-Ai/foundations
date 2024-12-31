@@ -15,7 +15,7 @@ export const FullPageCommentsDevelopment: React.FC<Props> = ({}) => {
 	return (
 		<PaddedPage>
 			<PageHeading>Full Page Comments</PageHeading>
-			<FullPageComments></FullPageComments>
+			<FullPageComments topic={"demonstration-comment-topic-full-page"}></FullPageComments>
 		</PaddedPage>
 	)
 }

@@ -10,7 +10,7 @@ import {v4 as uuidv4} from 'uuid';
 
 interface Props {
 	topic: string,
-	referenceId?: string ,
+	referenceId?: string,
 	tags?: Array<string>
 }
 
@@ -33,7 +33,6 @@ export const FloatingComments: React.FC<Props> = ({topic, referenceId="", tags=[
 	const createComment = () => {
 		setEditableCommentLastSent(uuidv4())
 		commentsInstance.create(editableComment.current).then((result: Comment) => {
-			// setComments(comments);
 		}).catch((reason => console.error(reason)))
 	}
 
@@ -89,6 +88,7 @@ export const FloatingComments: React.FC<Props> = ({topic, referenceId="", tags=[
 		}
 	}, []);
 
+	getComments();
 
 	return (
 		<div className="blue-orange-comments-floating-cont">

@@ -320,34 +320,39 @@ export const Dropdown: React.FC<Props> = ({
 	}
 
 	const handleKeyDownEvent = (e:KeyboardEvent) => {
-		var modQueryItems = queryItemsRef.current;
-		if (e.key == "ArrowDown" && visibleRef.current) {
-			e.preventDefault();
-			var nextFocusedItem = getNextSelectableItem();
-			modQueryItems.forEach(item => item.focused = false);
-			if (nextFocusedItem > -1) {
-				modQueryItems[nextFocusedItem].focused = true;
+		try{
+			var modQueryItems = queryItemsRef.current;
+			if (e.key == "ArrowDown" && visibleRef.current) {
+				e.preventDefault();
+				var nextFocusedItem = getNextSelectableItem();
+				modQueryItems.forEach(item => item.focused = false);
+				if (nextFocusedItem > -1) {
+					modQueryItems[nextFocusedItem].focused = true;
+				}
+				setQueryItems(modQueryItems);
+				queryItemsRef.current = modQueryItems;
+				setLastUpdated(new Date())
+			} else if (e.key == "ArrowUp" && visibleRef.current) {
+				e.preventDefault();
+				var prevFocusedItem = getPreviousSelectableItem();
+				modQueryItems.forEach(item => item.focused = false);
+				if (prevFocusedItem < queryItems.length) {
+					modQueryItems[prevFocusedItem].focused = true;
+				}
+				setQueryItems(modQueryItems);
+				queryItemsRef.current = modQueryItems;
+				setLastUpdated(new Date())
+			} else if (e.key == "Enter" && visibleRef.current) {
+				e.preventDefault();
+				var focusedItemIdx = getFocusedItemIdx();
+				if (focusedItemIdx > -1) {
+					handleItemClick(queryItemsRef.current[focusedItemIdx]);
+				}
 			}
-			setQueryItems(modQueryItems);
-			queryItemsRef.current = modQueryItems;
-			setLastUpdated(new Date())
-		} else if (e.key == "ArrowUp" && visibleRef.current) {
-			e.preventDefault();
-			var prevFocusedItem = getPreviousSelectableItem();
-			modQueryItems.forEach(item => item.focused = false);
-			if (prevFocusedItem < queryItems.length) {
-				modQueryItems[prevFocusedItem].focused = true;
-			}
-			setQueryItems(modQueryItems);
-			queryItemsRef.current = modQueryItems;
-			setLastUpdated(new Date())
-		} else if (e.key == "Enter" && visibleRef.current) {
-			e.preventDefault();
-			var focusedItemIdx = getFocusedItemIdx();
-			if (focusedItemIdx > -1) {
-				handleItemClick(queryItemsRef.current[focusedItemIdx]);
-			}
+		} catch (e) {
+			console.error(e);
 		}
+
 	};
 
 	useEffect(() => {

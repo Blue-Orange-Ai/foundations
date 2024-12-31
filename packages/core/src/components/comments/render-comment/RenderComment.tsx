@@ -13,6 +13,8 @@ import {Skeleton} from "../../loading/skeleton/Skeleton";
 import {RichTextPrompt} from "../../inputs/richtext/prompt/RichTextPrompt";
 import {v4 as uuidv4} from "uuid";
 import commentsInstance from "../../config/BlueOrangeCommentsConfig";
+import {RelativeTime} from "../../text-decorations/dates/relative-time/RelativeTime";
+import {TimeDisplay} from "../../text-decorations/dates/time/TimeDisplay";
 
 export enum RenderCommentTheme {
 	LARGE,
@@ -29,6 +31,8 @@ interface Props {
 export const RenderComment: React.FC<Props> = ({theme=RenderCommentTheme.LARGE, comment, editor, onEditing}) => {
 
 	const [user, setUser] = useState<User | undefined>(undefined)
+
+	const [tags, setTags] = useState<Array<string>>(comment.tags ?? [])
 
 	const [loadingUser, setLoadingUser] = useState<boolean>(true);
 
@@ -88,8 +92,6 @@ export const RenderComment: React.FC<Props> = ({theme=RenderCommentTheme.LARGE, 
 			});
 	}
 
-	getUser();
-
 	const processChangeData = (content: string, mentions: string[], attachments: Media[], filesUploading: boolean) => {
 		if (editableComment.current == null) {
 			editableComment.current = comment;
@@ -125,6 +127,10 @@ export const RenderComment: React.FC<Props> = ({theme=RenderCommentTheme.LARGE, 
 		}
 	}, [editor]);
 
+	useEffect(() => {
+		getUser()
+	}, []);
+
 
 	return (
 		<div className={commentClassName}>
@@ -147,14 +153,17 @@ export const RenderComment: React.FC<Props> = ({theme=RenderCommentTheme.LARGE, 
 						{loadingUser &&
 							<Skeleton style={{height: "1rem", width: "100%"}}></Skeleton>
 						}
-
-						<span className="blue-orange-comments-render-body-header-secondary"> commented 5 days ago</span>
+						<span className="blue-orange-comments-render-body-header-secondary"> commented <RelativeTime targetDate={comment.created}></RelativeTime> ago</span>
 					</div>
 					<div className="blue-orange-comments-render-body-header-right">
-						{theme == RenderCommentTheme.LARGE &&
-							<Badge>
-								<div>Contributor</div>
-							</Badge>
+						{theme == RenderCommentTheme.LARGE && tags.length > 0 &&
+							<>
+								{tags.map((item, index) => (
+									<Badge key={index}>
+										<div>{item}</div>
+									</Badge>
+								))}
+							</>
 						}
 						{editable &&
 							<ContextMenu maxHeight={200} items={contextMenuItems} onClick={processContextMenuClick}>

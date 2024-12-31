@@ -49,7 +49,7 @@
 
 .blue-orange-context-menu-general-row {
     padding: 6px 32px 6px 32px;
-    width: calc(100% - 38px);
+    width: calc(100% - 64px);
     display: flex;
     flex-direction: row;
     align-items: center;

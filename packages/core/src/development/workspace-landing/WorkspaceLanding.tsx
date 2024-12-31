@@ -24,6 +24,7 @@ import {RichTextPromptDevelopment} from "../components/inputs/rich-text-prompt/R
 import Cookies from "js-cookie";
 import {FloatingCommentsDevelopment} from "../components/comments/floating-comments/FloatingCommentsDevelopment";
 import {SocketWorkspace} from "../socket-workspace/SocketWorkspace";
+import {ButtonDevelopment} from "../components/buttons/ButtonDevelopment";
 
 interface Props {
 }
@@ -374,6 +375,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 					></SideBarBodyItem>
 				</SideBarBody>
 			</SideBar>
+			{component == "buttons" && <ButtonDevelopment></ButtonDevelopment>}
 			{component == "charts-line" && <LineChartDevelopment></LineChartDevelopment>}
 			{component == "charts-bar" && <BarChartDevelopment></BarChartDevelopment>}
 			{component == "charts-scatter" && <ScatterChartDevelopment></ScatterChartDevelopment>}
