@@ -1,0 +1,9 @@
+.blue-orange-dotify-text {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    line-height: 1.5; /* Adjust based on design */
+    width: 100%; /* Ensure it fills the container */
+}
