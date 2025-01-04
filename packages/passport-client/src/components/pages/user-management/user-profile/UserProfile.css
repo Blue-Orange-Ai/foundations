@@ -1,0 +1,141 @@
+
+.passport-user-profile-top-section {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin-top: 40px;
+}
+
+.passport-user-profile-top-section-avatar-cont {
+    padding-right: 40px;
+}
+
+.passport-user-profile-top-section-name-username {
+    flex-grow: 1;
+}
+
+.passport-user-profile-seperator {
+    color: var(--blue-orange-light-default-border-color);
+    border: none;
+    border-bottom: 1px solid var(--blue-orange-light-default-border-color);
+}
+
+.passport-user-profile-toggle-group {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.passport-user-profile-button-group {
+    margin-top: 20px;
+}
+
+.passport-user-profile-page-heading {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.passport-user-groups-search-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.passport-user-groups-search-cont {
+    flex-grow: 1;
+}
+
+.passport-user-groups-search-controls {
+    width: 60px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.passport-user-profile-header-cell {
+    background-color: #f7f7f9;
+    font-weight: 600;
+}
+
+.passport-user-profile-group-edit-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.passport-user-groups-search-table {
+    margin-bottom: 20px;
+    border: 1px solid #e0e1e2;
+}
+
+.passport-user-groups-primary-cell {
+    display: flex;
+    flex-direction: column;
+}
+
+.passport-user-groups-primary-cell-main {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.passport-user-groups-primary-cell-externally-managed {
+    font-size: 0.6rem;
+    padding: 2px 5px;
+    border-radius: 4px;
+    border: 1px solid #e0e1e2;
+    background-color: #f7f7f9;
+    color: #616161;
+    margin-left: 8px;
+}
+
+.passport-user-groups-primary-cell-secondary {
+    font-size: 0.8rem;
+    opacity: 0.6;
+    font-weight: 500;
+}
+
+.passport-user-profile-add-group-table {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #e0e1e2;
+}
+
+.passport-user-groups-search-table-info {
+    font-size: 0.6rem;
+    opacity: 0.6;
+    font-style: italic;
+}
+
+.passport-user-profile-add-group-table-search-cont {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+.passport-user-profile-add-group-table-search-input {
+    flex-grow: 1;
+}
+
+.passport-user-profile-add-group-table-search-clear-btn {
+    width: 60px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.passport-user-profile-update-email-user-text {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}

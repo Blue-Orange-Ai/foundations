@@ -1,0 +1,46 @@
+
+
+.passport-header-management-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+    border-bottom: 1px solid #e0e1e2;
+}
+
+.passport-header-management-header-left-cont{
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding-left: 2.5vw;
+    width: 33.33%;
+}
+
+.passport-header-management-header-center-cont{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 33.33%;
+}
+
+.passport-header-management-header-right-cont{
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    padding-right: 2.5vw;
+    width: 33.33%;
+}
+
+.passport-header-management-header-title{
+    font-weight: 700;
+    color: #393939;
+    font-size: 1.4rem;
+}
+
+.passport-header-management-header-btn-right-margin{
+    margin-right: 10px;
+}
+
+.passport-header-management-header-download-users {
+    display: none;
+}

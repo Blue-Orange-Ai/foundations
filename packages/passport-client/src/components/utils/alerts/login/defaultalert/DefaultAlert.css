@@ -1,0 +1,58 @@
+
+
+.passport-default-alert{
+    width: calc(80% - 30px);
+    max-width: calc(500px - 30px);
+    padding: 15px;
+    border: 2px solid #e0e1e2;
+    display: flex;
+    flex-direction: row;
+    background-color: #e0e1e2;
+    border-radius: 4px;
+}
+
+.passport-error-alert{
+    width: calc(80% - 30px);
+    max-width: calc(500px - 30px);
+    padding: 15px;
+    border: 2px solid #F2D7D5;
+    display: flex;
+    flex-direction: row;
+    background-color: #F2D7D5;
+    color: #922B21;
+    border-radius: 4px;
+}
+
+.passport-success-alert{
+    width: calc(80% - 30px);
+    max-width: calc(500px - 30px);
+    padding: 15px;
+    border: 2px solid #D5F5E3;
+    display: flex;
+    flex-direction: row;
+    background-color: #D5F5E3;
+    color: #186A3B;
+    border-radius: 4px;
+}
+
+.passport-default-alert-icon{
+    padding-top: 2px;
+    width: 40px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.passport-default-alert-main-body{
+    width: calc(100% - 40px);
+    display: flex;
+    flex-direction: column;
+}
+
+.passport-default-alert-main-body-title {
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.passport-default-alert-main-body-description {
+    margin-top: 10px;
+}

@@ -1,0 +1,14 @@
+
+
+.default-text-area{
+    min-width: calc(100% - 10px);
+    max-width: calc(100% - 10px);
+    border: 1px solid #e0e1e2;
+    background-color: #f7f7f9;
+    border-radius: 4px;
+    padding: 10px 5px;
+}
+
+.default-text-area:focus {
+    outline: 1.5px solid black;
+}

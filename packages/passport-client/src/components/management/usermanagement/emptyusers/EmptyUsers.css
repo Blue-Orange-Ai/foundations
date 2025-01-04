@@ -1,0 +1,36 @@
+
+
+.passport-user-management-empty-users {
+    width: 100%;
+    height: calc(100vh - 122px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+.passport-user-management-empty-users-avatar {
+    width: 120px;
+    height: 120px;
+    background-color: #b0b0b0;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.passport-user-management-empty-users-avatar-icon{
+    font-size: 4rem;
+    color: white;
+}
+
+.passport-user-management-empty-users-message{
+    font-size: 1.4rem;
+    font-weight: 600;
+    opacity: 0.4;
+    color: #393939;
+}

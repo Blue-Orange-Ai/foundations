@@ -13,7 +13,7 @@ import commentsInstance from "../../config/BlueOrangeCommentsConfig";
 interface Props {
 	topic: string,
 	referenceId: string,
-	tage?: Array<string>
+	tags?: Array<string>
 }
 
 export const AddComment: React.FC<Props> = ({topic, referenceId, tags=[]}) => {
@@ -50,7 +50,7 @@ export const AddComment: React.FC<Props> = ({topic, referenceId, tags=[]}) => {
 
 	const createComment = () => {
 		setEditableCommentLastSent(uuidv4())
-		commentsInstance.create(editableComment.current).then((result: Comment) => {
+		commentsInstance.create(editableComment.current as Comment).then((result: Comment) => {
 		}).catch((reason => console.error(reason)))
 	}
 

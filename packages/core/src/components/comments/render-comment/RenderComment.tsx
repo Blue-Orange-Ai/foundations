@@ -73,7 +73,7 @@ export const RenderComment: React.FC<Props> = ({theme=RenderCommentTheme.LARGE, 
 			editableComment.current = comment;
 			setEditState(true);
 			if (onEditing) {
-				onEditing(comment.id);
+				onEditing(comment.id as string);
 			}
 		} else if (item.value == "DELETE") {
 			deleteComment();
@@ -114,8 +114,8 @@ export const RenderComment: React.FC<Props> = ({theme=RenderCommentTheme.LARGE, 
 	}
 
 	const isEditable = () => {
-		commentsInstance.isEditable(comment).then((state: boolean) => {
-			setEditable(state)
+		commentsInstance.isEditable(comment).then((state: Boolean) => {
+			setEditable(state.valueOf())
 		}).catch((reason => console.error(reason)))
 	}
 

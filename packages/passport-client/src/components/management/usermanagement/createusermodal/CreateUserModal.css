@@ -1,0 +1,14 @@
+
+
+.passport-add-user-group-modal{
+    width: 80%;
+    max-width: 700px;
+    background-color: white;
+    position: relative;
+    border-radius: 8px;
+    min-height: 400px;
+    padding: 20px;
+    height: 485px;
+}
+
+

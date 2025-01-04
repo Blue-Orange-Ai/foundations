@@ -1,0 +1,27 @@
+
+
+.passport-search-input{
+    width: calc(80% - 10px);
+    max-width: calc(500px - 10px);
+    border: 1px solid #e0e1e2;
+    height: 42px;
+    background-color: #f7f7f9;
+    border-radius: 4px;
+    padding-left: 5px;
+    padding-right: 5px;
+    min-width: 250px;
+}
+
+.passport-search-input::before {
+    content: '\e617';  /* FontAwesome's search icon Unicode */
+    font-family: 'Remixicon';
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.passport-search-input:focus {
+    outline: none;
+}
+

@@ -264,7 +264,7 @@ export const RichTextPrompt: React.FC<Props> = ({
 				if (!mentionsVisible && event.key === 'Enter' && !event.shiftKey) {
 					event.preventDefault();
 					return true;
-				} else if (!mentionsVisible && event.key === 'Enter' && event.shiftKey) {
+				} else if (!mentionsVisible && event.key === 'Enter' && event.shiftKey && editor) {
 					event.preventDefault();
 					enterEventBlock.current = true;
 					editor.commands.enter();
@@ -376,10 +376,10 @@ export const RichTextPrompt: React.FC<Props> = ({
 		if (!initRef.current) {
 			initRef.current = true
 			initialise();
-			if (content && content != "") {
+			if (content && content != "" && editor) {
 				editor.commands.setContent(content);
 			}
-			if (focus) {
+			if (focus && editor) {
 				editor.chain().focus();
 			}
 
@@ -387,7 +387,7 @@ export const RichTextPrompt: React.FC<Props> = ({
 	}, []);
 
 	useEffect(() => {
-		if (initRef.current && clearState != initialClearState.current) {
+		if (initRef.current && clearState != initialClearState.current && editor && editorContainerRef.current) {
 			setStoredFiles([]);
 			editor.chain().clearContent().focus().run();
 			editorContainerRef.current.scrollIntoView(true);

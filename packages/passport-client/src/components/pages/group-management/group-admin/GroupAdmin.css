@@ -1,0 +1,56 @@
+
+.passport-group-main-heading {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.passport-group-main-heading-txt {
+    flex-grow: 1;
+}
+
+.passport-group-main-heading-btns {
+    width: 60px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.passport-groups-user-search-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.passport-groups-user-search-cont {
+    flex-grow: 1;
+}
+
+.passport-groups-user-search-controls {
+    width: 60px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.passport-groups-users-search-table {
+    margin-bottom: 20px;
+    border: 1px solid #e0e1e2;
+}
+
+.passport-groups-users-search-table-modal {
+    margin-bottom: 20px;
+    border: 1px solid #e0e1e2;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.passport-groups-add-member-search-table-info {
+    font-size: 0.6rem;
+    opacity: 0.6;
+    font-style: italic;
+}

@@ -1,0 +1,89 @@
+.passport-user-management-table-footer{
+    width: 100%;
+    border-top: 1px solid #e0e1e2;
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.passport-user-management-table-footer-left {
+    display: flex;
+    flex-direction: row;
+}
+
+.passport-user-management-table-footer-general-btn{
+    padding-left: 10px;
+    padding-right: 10px;
+    height: 50px;
+    border: none;
+    cursor: pointer;
+}
+
+.passport-user-management-table-footer-batch-size-select{
+    border-right: 1px solid #e0e1e2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.passport-user-management-table-footer-page-select{
+    border-left: 1px solid #e0e1e2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.passport-user-management-table-footer-change-page{
+    border-left: 1px solid #e0e1e2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    width: 40px;
+    cursor: pointer;
+}
+
+.passport-user-management-table-footer-change-page-disabled{
+    cursor: not-allowed;
+}
+
+.passport-user-management-table-footer-change-page-disabled i{
+    opacity: 0.4;
+}
+
+.passport-user-management-table-footer-select-info{
+    margin-right: 10px;
+    font-weight: 500;
+    opacity: 0.8;
+    font-style: italic;
+    font-size: 0.8rem;
+}
+
+.passport-user-management-table-footer-user-info{
+    margin-left: 15px;
+    opacity: 0.8;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    height: 50px;
+    font-size: 0.8rem;
+}
+
+
+.passport-user-management-table-footer-select-control{
+    margin-left: 10px;
+    opacity: 0.8;
+}
+
+
+.passport-user-management-table-footer-right{
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+

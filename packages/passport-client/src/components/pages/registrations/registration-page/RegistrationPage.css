@@ -1,0 +1,166 @@
+
+.passport-login-page-plain {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.passport-login-page-plain-image-cont {
+    position: absolute;
+    z-index: -1;
+    height: 100vh;
+    width: 100vw;
+    top: 0;
+    left: 0;
+}
+
+.passport-login-page-plain-main-image {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+}
+
+.passport-login-page-plain-input-form {
+    width: 80%;
+    max-width: 500px;
+}
+
+.passport-login-page-empty-avatar {
+    height: 80px;
+    width: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.passport-login-avatar-cont {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.passport-login-page-plain-primary-btn-cont {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.passport-login-page-plain-error-message {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.passport-error-alert {
+    width: 100%;
+}
+
+.passport-login-page-plain-password-cont {
+    width: 100%;
+    position: relative;
+}
+
+.passport-login-page-plain-forgot-password-btn {
+    color: #154360;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding-left: 5px;
+    border: none;
+    background-color: transparent;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.passport-login-page-plain-sign-up {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+    font-weight: 600;
+}
+
+.blue-orange-default-heading-cont {
+    border-bottom: 0;
+}
+
+.passport-register-page-empty-avatar {
+    height: 80px;
+    width: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.passport-register-avatar-cont {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.passport-register-main-headings {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.passport-register-main-heading {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 0;
+}
+
+.passport-register-main-headings-description {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.passport-register-primary-btn-cont {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.passport-registration-page-checkbox-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.passport-registration-page-plain-error-message {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.passport-error-alert {
+    width: calc(100% - 30px);
+    max-width: unset;
+}
+
+.passport-registration-terms-of-service-text {
+    font-size: 0.9rem;
+    margin-left: 10px;
+}
+
+.passport-registration-terms-of-service-text a {
+    color: var(--blue-orange-light-default-text-color);
+}
+
+.passport-register-main-headings-description a {
+    color: var(--blue-orange-light-default-text-color);
+    font-weight: 600;
+}

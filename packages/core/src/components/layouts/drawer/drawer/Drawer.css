@@ -7,7 +7,7 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    z-index: 99999999 !important;
+    z-index: 999 !important;
     top: 0;
     left: 0;
 }

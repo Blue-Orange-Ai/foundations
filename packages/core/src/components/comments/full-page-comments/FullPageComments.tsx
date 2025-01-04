@@ -18,11 +18,14 @@ export const FullPageComments: React.FC<Props> = ({topic, referenceId="", tags=[
 
 	const [comments, setComments] = useState<Array<Comment>>([])
 
+	const [initialised, setInitialised] = useState<boolean>(false)
+
 	const [editingPreviousComments, setEditingPreviousComments] = useState<string>("")
 
 	const getComments = () => {
 		commentsInstance.get(topic).then((results: Array<Comment>) => {
-			setComments(comments);
+			setComments(results);
+			setInitialised(true);
 		}).catch((reason) => console.error(reason))
 	}
 
@@ -55,19 +58,23 @@ export const FullPageComments: React.FC<Props> = ({topic, referenceId="", tags=[
 		return () => {
 			sockets.disconnect();
 		}
-	}, []);
+	}, [topic]);
 
 	return (
 		<div className="blue-orange-comments-cont">
-			{comments.map((item, index) => (
-				<RenderComment
-					key={item.id + "-" + index}
-					theme={RenderCommentTheme.LARGE}
-					editor={editingPreviousComments}
-					onEditing={(editor) => setEditingPreviousComments(editor)}
-					comment={item}
-				></RenderComment>
-			))}
+			{initialised &&
+				<>
+					{comments.map((item, index) => (
+						<RenderComment
+							key={item.id + "-" + index}
+							theme={RenderCommentTheme.LARGE}
+							editor={editingPreviousComments}
+							onEditing={(editor) => setEditingPreviousComments(editor)}
+							comment={item}
+						></RenderComment>
+					))}
+				</>
+			}
 			<AddComment topic={topic} referenceId={referenceId} tags={tags}></AddComment>
 		</div>
 	)

@@ -65,6 +65,29 @@ export class Comments {
         });
     }
 
+    count(topic: string): Promise<number> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            var authToken = Cookies.get(this.authCookie)
+            xhr.open('GET', this.baseUrl + "/api/v1/comments/get/" + topic);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const returnedComments: number = JSON.parse(xhr.responseText);
+                    resolve(returnedComments);
+                } else {
+                    var response =JSON.parse(xhr.response);
+                    reject(response);
+                }
+            };
+            xhr.onerror = function() {
+                reject('Network error while attempting to get all comments');
+            };
+            xhr.send();
+        });
+    }
+
     create(comment: Comment): Promise<Comment> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();

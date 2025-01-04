@@ -1,0 +1,23 @@
+
+
+.passport-default-btn {
+    border: 1px solid black;
+    background-color: black;
+    color: white;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+.passport-default-btn-disabled{
+    background-color: black;
+    cursor: not-allowed;
+}
+
+
+
+

@@ -32,7 +32,7 @@ export const FloatingComments: React.FC<Props> = ({topic, referenceId="", tags=[
 
 	const createComment = () => {
 		setEditableCommentLastSent(uuidv4())
-		commentsInstance.create(editableComment.current).then((result: Comment) => {
+		commentsInstance.create(editableComment.current as Comment).then((result: Comment) => {
 		}).catch((reason => console.error(reason)))
 	}
 
@@ -86,9 +86,8 @@ export const FloatingComments: React.FC<Props> = ({topic, referenceId="", tags=[
 		return () => {
 			sockets.disconnect();
 		}
+		getComments();
 	}, []);
-
-	getComments();
 
 	return (
 		<div className="blue-orange-comments-floating-cont">

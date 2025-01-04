@@ -30,6 +30,7 @@ export interface MentionItem {
 interface Props {
 	children?: React.ReactNode,
 	content?: string,
+	focus?: boolean,
 	files?: Array<Media>
 	placeholder?: string,
 	displayFormatting?: boolean,
@@ -51,6 +52,7 @@ const defaultUploadPermission: MediaPermission[] = [{
 export const RichText: React.FC<Props> = ({
 											  children,
 											  content,
+											  focus=false,
 											  files=[],
 											  placeholder,
 											  displayFormatting= true,
@@ -333,6 +335,9 @@ export const RichText: React.FC<Props> = ({
 		if (!initRef.current) {
 			initRef.current = true
 			initialise();
+			if (focus && editor) {
+				editor.chain().focus();
+			}
 		}
 	}, []);
 

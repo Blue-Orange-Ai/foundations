@@ -1,0 +1,85 @@
+
+
+.passport-main-window{
+    width: 100vw;
+    min-height: calc(100vh - 150px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 50px;
+    padding-bottom: 100px;
+}
+
+.passport-application-avatar {
+    margin-bottom: 32px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.passport-main-window-background {
+    position: fixed;
+    z-index: -1;
+    height: 100vh;
+    width: 100vw;
+    top: 0;
+    left: 0;
+}
+
+.passport-main-window-background-img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+}
+
+.passport-login-label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
+    max-width: 500px;
+    margin-bottom: 10px;
+}
+
+.passport-login-label-text {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.passport-login-username-input{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 22px;
+}
+
+.passport-login-password-password{
+    width: 100%;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.passport-login-password-enter-btn{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.passport-forgot-password {
+    color: #154360;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding-left: 5px;
+    padding-top: 5px;
+    border: none;
+    background-color: transparent;
+}

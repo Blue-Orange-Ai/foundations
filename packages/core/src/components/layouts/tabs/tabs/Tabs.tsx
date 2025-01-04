@@ -21,9 +21,10 @@ interface Props {
 	headerStyle?: React.CSSProperties,
 	headerActiveStyle?: React.CSSProperties,
 	headerInActiveStyle?: React.CSSProperties,
+	onClick?: (uuid: string) => void,
 }
 
-export const Tabs: React.FC<Props> = ({children, activeTab, headerStyle = {}, headerActiveStyle, headerInActiveStyle}) => {
+export const Tabs: React.FC<Props> = ({children, activeTab, headerStyle = {}, headerActiveStyle, headerInActiveStyle, onClick}) => {
 
 	const tabs: TabData[] = [];
 
@@ -51,6 +52,7 @@ export const Tabs: React.FC<Props> = ({children, activeTab, headerStyle = {}, he
 		color: "#393939",
 		opacity: "0.6",
 		borderBottom: "2px solid transparent",
+		borderRadius: "0px",
 		marginBottom: "-2px"
 	}
 
@@ -58,7 +60,15 @@ export const Tabs: React.FC<Props> = ({children, activeTab, headerStyle = {}, he
 		color: "#393939",
 		opacity: "1",
 		borderBottom: "2px solid black",
+		borderRadius: "0px",
 		marginBottom: "-2px"
+	}
+
+	const updateActiveTab = (uuid: string) => {
+		if (onClick) {
+			onClick(uuid)
+		}
+		setActive(uuid)
 	}
 
 	return (
@@ -71,7 +81,7 @@ export const Tabs: React.FC<Props> = ({children, activeTab, headerStyle = {}, he
 						icon={metaData.icon}
 						iconPos={ButtonIconPos.LEFT}
 						style={metaData.uuid == active ? tabHeaderActiveStyle : tabHeaderInActiveStyle}
-						onClick={() => {setActive(metaData.uuid)}}
+						onClick={() => {updateActiveTab(metaData.uuid)}}
 					></Button>
 				))}
 			</div>

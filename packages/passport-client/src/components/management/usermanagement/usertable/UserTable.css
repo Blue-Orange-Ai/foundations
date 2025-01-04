@@ -1,0 +1,73 @@
+
+
+.passport-user-management-table-cont {
+    width: 100%;
+    height: calc(100vh - 122px);
+    overflow: auto;
+}
+
+.passport-user-management-table{
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.passport-user-management-table-general-header{
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+}
+
+.passport-user-management-table-general-header-control{
+    margin-left: 10px;
+}
+
+.passport-user-management-check-box-col {
+    width: 40px;
+}
+
+.passport-user-management-check-box-cont {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.passport-user-management-table thead{
+    height: 48px;
+    border-bottom: 1px solid #e0e1e2;
+    background-color: white;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.passport-user-management-table thead th{
+    position: sticky;
+    top: 0;
+}
+
+.passport-user-management-table thead th{
+    border-right: 1px solid #e0e1e2;
+    border-bottom: 1px solid #e0e1e2;
+    border-top: none;
+}
+.passport-user-management-table thead th:first-child{
+    border-left: none;
+}
+
+.passport-user-management-table thead th:last-child{
+    border-right: none;
+}
+
+.passport-user-management-general-col {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.passport-user-management-search-col {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}

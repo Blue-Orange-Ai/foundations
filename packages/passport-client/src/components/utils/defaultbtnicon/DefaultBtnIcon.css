@@ -1,0 +1,24 @@
+
+
+.passport-default-btn-icon {
+    width: 80%;
+    max-width: 500px;
+    border: 1px solid dodgerblue;
+    background-color: dodgerblue;
+    color: white;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.passport-default-btn-icon-disabled{
+    background-color: #0063bd;
+    cursor: not-allowed;
+}
+
+
+
+

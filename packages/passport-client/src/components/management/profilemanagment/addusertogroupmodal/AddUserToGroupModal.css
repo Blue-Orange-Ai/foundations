@@ -1,0 +1,35 @@
+
+
+.passport-add-user-group-modal{
+    width: 80%;
+    max-width: 700px;
+    background-color: white;
+    position: relative;
+    border-radius: 8px;
+    min-height: 400px;
+    padding: 20px;
+    height: 485px;
+}
+
+.add-user-group-modal-table-ctrls{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.toggle-blocker{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1;
+}
+
+.add-user-to-group-submit-btn {
+    margin-top: 22px;
+    margin-bottom: 12px;
+}
+

@@ -39,6 +39,10 @@ export * from './components/config/BlueOrangePassportConfig';
 // Context Menu
 export * from './components/contextmenu/contextmenu/ContextMenu';
 
+// Comments
+export * from './components/comments/floating-comments/FloatingComments';
+export * from './components/comments/full-page-comments/FullPageComments';
+
 // Misc
 export * from './components/loading/loading/Loading';
 
@@ -161,6 +165,11 @@ export * from './components/text-decorations/tag/Tag';
 export * from './components/text-decorations/telephone/TelephoneText';
 export * from './components/text-decorations/paragraph/Paragraph';
 export * from './components/text-decorations/description/Description';
+export * from './components/text-decorations/render-html/RenderHtml';
+export * from './components/text-decorations/dates/time/TimeDisplay';
+export * from './components/text-decorations/dates/relative-time/RelativeTime';
+export * from './components/text-decorations/dotified-text/DotifiedText';
+export * from './components/text-decorations/truncated-text/TruncatedText';
 
 // Tooltips
 export * from './components/tooltips/simple-tooltip/SimpleTooltip';

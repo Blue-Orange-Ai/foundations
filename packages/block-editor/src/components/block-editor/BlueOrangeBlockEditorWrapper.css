@@ -108,3 +108,31 @@
 .blue-orange-editor-emoji-context-row-emoji {
     margin-right: 15px;
 }
+
+.blue-orange-block-editor-comment-floater {
+    position: fixed;
+    width: fit-content;
+    background-color: white;
+    z-index: 2;
+}
+
+.blue-orange-block-editor-full-page-comments-cont {
+    height: calc(100% - 40px);
+    display: flex;
+    flex-direction: column-reverse;
+    overflow-y: auto;
+    padding-top: 40px;
+}
+
+.blue-orange-block-editor-full-page-comments-cont .blue-orange-comments-add-cont {
+    width: calc(100% - 2px)
+}
+
+.blue-orange-block-editor-comment-target {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}

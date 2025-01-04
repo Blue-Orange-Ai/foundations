@@ -1,0 +1,105 @@
+
+.passport-user-management-user-row{
+    border-bottom: 1px solid #e0e1e2;
+    cursor: pointer;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.passport-user-management-user-row:hover {
+    background-color: #f7f7f9;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.passport-user-management-user{
+    display: flex;
+    align-items: center;
+}
+
+.passport-user-management-user-avatar{
+    width: 48px;
+    height: 48px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    margin-left: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.passport-user-management-user-basic-details{
+    display: flex;
+    flex-direction: column;
+    margin-left: 15px;
+}
+
+.passport-user-management-user-basic-details-name{
+    font-weight: 600;
+}
+
+.passport-user-management-user-basic-details-email{
+    opacity: 0.8;
+    font-style: italic;
+    margin-top: 4px;
+}
+
+.passport-user-management-status-block{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.passport-user-management-status-pill{
+    height: 34px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 8px;
+    background-color: #393939;
+    color: white;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+}
+
+.passport-user-management-status-pill-active {
+    background-color: #ABEBC6;
+    color: #186A3B;
+}
+
+.passport-user-management-status-pill-inactive {
+    background-color: #E5E8E8;
+    color: #424949;
+}
+
+.passport-user-management-status-pill-locked {
+    background-color: #E6B0AA;
+    color: #641E16;
+}
+
+.passport-user-management-date-render {
+    padding-left: 15px;
+}
+
+.passport-user-management-general-text {
+    font-weight: 600;
+}
+
+
+
+.passport-user-management-user-row:hover .passport-user-management-user-basic-details-name{
+    text-decoration: underline;
+    transition: 0.2s;
+}
+
+.passport-user-management-user-row:hover .passport-user-management-user-basic-details-name{
+    text-decoration: underline;
+    transition: 0.2s;
+}
+
+.passport-user-management-user-avatar-empty{
+    font-size: 2rem;
+    color: white;
+}

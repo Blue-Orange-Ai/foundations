@@ -1,0 +1,16 @@
+
+
+
+.passport-user-management{
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.passport-user-management-hidden-table {
+    display: none;
+}
+
+
+

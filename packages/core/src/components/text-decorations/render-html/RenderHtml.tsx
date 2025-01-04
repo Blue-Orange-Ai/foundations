@@ -10,6 +10,7 @@ export const RenderHtml: React.FC<Props> = ({html}) => {
 
 	return (
 		<div
+			className="blue-orange-render-html"
 			dangerouslySetInnerHTML={{ __html: html }}
 		/>
 	)

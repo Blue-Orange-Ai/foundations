@@ -1,0 +1,90 @@
+
+
+.avatar-group-cont {
+    background: transparent;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.default-avatar-cont{
+    border-radius: 50%;
+    background-color: #e0e1e2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.avatar-edit-logo{
+    border-radius: 50%;
+    background-color: black;
+    border: 2px solid white;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-edit-logo i {
+    color: white;
+}
+
+.default-avatar-overlay {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    background-color: black;
+    opacity: 0.6;
+    color: white;
+}
+
+.default-avatar-overlay-text {
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+}
+
+.default-avatar-edit-card {
+    border-radius: 8px;
+    background-color: white;
+    min-height: 400px;
+    width: 500px;
+    position: relative;
+    padding: 20px;
+}
+
+.default-avatar-modal-display {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.default-avatar-modal-description {
+    font-size: 0.8rem;
+    opacity: 0.6;
+}
+
+.default-avatar-modify-btns {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+}
+
+.default-avatar-remove-btn {
+    margin-left: 22px;
+}

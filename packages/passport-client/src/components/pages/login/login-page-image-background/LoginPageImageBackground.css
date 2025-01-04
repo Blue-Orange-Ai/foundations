@@ -1,0 +1,89 @@
+
+.passport-login-page-image-background {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.passport-login-page-image-background-image-cont {
+    position: absolute;
+    z-index: -1;
+    height: 100vh;
+    width: 100vw;
+    top: 0;
+    left: 0;
+}
+
+.passport-login-page-image-background-main-image {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+}
+
+.passport-login-page-image-background-input-form {
+    width: 80%;
+    max-width: 500px;
+}
+
+.passport-login-page-empty-avatar {
+    height: 80px;
+    width: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.passport-login-avatar-cont {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.passport-login-page-image-background-primary-btn-cont {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.passport-login-page-image-background-error-message {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.passport-error-alert {
+    width: 100%;
+}
+
+.passport-login-page-image-background-password-cont {
+    width: 100%;
+    position: relative;
+}
+
+.passport-login-page-image-background-forgot-password-btn {
+    color: #154360;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding-left: 5px;
+    border: none;
+    background-color: transparent;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.passport-login-page-image-background-sign-up {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+    font-weight: 600;
+}

@@ -14,10 +14,7 @@ export const Workspace: React.FC<Props> = ({}) => {
 	return (
 
 		<div className="workspace-main-window">
-			<div className="workspace-display-window">
-				<BlueOrangeBlockEditorWrapper></BlueOrangeBlockEditorWrapper>
-			</div>
-
+			<BlueOrangeBlockEditorWrapper></BlueOrangeBlockEditorWrapper>
 		</div>
 	)
 }

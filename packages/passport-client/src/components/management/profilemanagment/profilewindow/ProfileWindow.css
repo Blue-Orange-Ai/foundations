@@ -1,0 +1,120 @@
+
+
+.passport-profile-page-management {
+    width: 100vw;
+    min-height: 100vh;
+}
+
+.passport-header-profile {
+    width: 100vw;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f7f7f9;
+    position: relative;
+}
+
+.passport-header-profile-name{
+    color: #393939;
+}
+
+.passport-profile-header-navigation{
+    position: absolute;
+    width: 80%;
+    max-width: 700px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    bottom: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: auto;
+}
+
+.passport-profile-header-tab{
+    flex-shrink: 0;
+    border-bottom: 2px solid transparent;
+    padding-left: 3px;
+    padding-right: 3px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 700;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+}
+
+.passport-profile-header-tab-active {
+    opacity: 1;
+    border-bottom: 2px solid black;
+}
+
+.passport-profile-header-tab-value{
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+}
+
+.passport-profile-header-tab-value i{
+    margin-right: 5px;
+}
+
+.passport-profile-header-tab:hover .passport-profile-header-tab-value{
+    background-color: #e0e1e2;
+    transition: 0.2s;
+}
+
+.passport-profile-main-page{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+.passport-profile-main-page-cont {
+    width: 80%;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    padding-bottom: 100px;
+}
+
+.passport-profile-input-group{
+    margin-bottom: 22px;
+}
+
+.passport-profile-main-heading{
+    margin-bottom: 28px;
+}
+
+.passport-default-body-text {
+    margin-bottom: 50px;
+}
+
+.passport-profile-toggle-group{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 22px;
+}
+
+.passport-profile-window-loading {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+

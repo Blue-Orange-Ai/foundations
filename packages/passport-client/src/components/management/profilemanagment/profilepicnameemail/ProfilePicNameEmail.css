@@ -1,0 +1,42 @@
+
+
+.passport-profile-pic-name-email-cont{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.passport-profile-pic-name-email-avatar{
+    height: 180px;
+    width: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e0e1e2;
+    border-radius: 50%;
+}
+
+.passport-profile-pic-name-email-ne-group{
+    width: calc(100% - 200px);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.passport-profile-pic-name-email-name-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 40px;
+}
+
+.passport-profile-pic-name-email-email-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
