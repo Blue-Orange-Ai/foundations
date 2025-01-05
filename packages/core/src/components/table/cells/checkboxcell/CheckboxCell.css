@@ -10,3 +10,8 @@
     justify-content: center;
     min-width: 28px;
 }
+
+.blue-orange-data-table-theme-object-list .blue-orange-checkbox-data-table-cell-inner-cont{
+    border: none;
+    border-bottom: 1px solid #e0e1e2;
+}

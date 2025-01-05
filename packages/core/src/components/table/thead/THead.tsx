@@ -9,7 +9,7 @@ export const THead: React.FC<Props> = ({children}) => {
 
 
 	return (
-		<thead>
+		<thead className="blue-orange-table-header-cont">
 			{children}
 		</thead>
 	)

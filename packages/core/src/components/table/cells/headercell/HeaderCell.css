@@ -21,3 +21,9 @@
     border-radius: 2px;
 }
 
+.blue-orange-data-table-theme-object-list .blue-orange-header-data-table-cell {
+    background-color: #f7f8f9;
+    border: none;
+    border-bottom: 1px solid #e0e1e2;
+}
+

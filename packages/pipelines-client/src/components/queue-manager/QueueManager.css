@@ -1,0 +1,33 @@
+
+.blue-orange-pipeline-queue-manager {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.blue-orange-pipeline-queue-manager-internal-cont {
+    width: 80%;
+}
+
+.blue-orange-pipeline-queue-manager-page-heading {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.blue-orange-pipeline-queue-manager-search {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+.blue-orange-pipeline-queue-manager-search-input {
+    min-width: 250px;
+    width: 80%;
+    max-width: 550px;
+}
+

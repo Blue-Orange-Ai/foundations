@@ -7,7 +7,7 @@
   "author": "Blue Orange AI",
   "private": false,
   "dependencies": {
-    "@blue-orange-ai/primitives-graph": "^0.35.0",
+    "@blue-orange-ai/primitives-graph": "^0.47.0",
     "remixicon": "^3.5.0",
     "tippy.js": "^6.3.7",
     "uuid": "^9.0.1"

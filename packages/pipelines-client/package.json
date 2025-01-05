@@ -9,7 +9,7 @@
   "dependencies": {
     "@blue-orange-ai/foundations-core": "^0.0.83",
     "@blue-orange-ai/foundations-graph": "^0.0.83",
-    "@blue-orange-ai/primitives-graph": "^0.35.0",
+    "@blue-orange-ai/primitives-graph": "^0.47.0",
     "remixicon": "^3.5.0",
     "tippy.js": "^6.3.7",
     "uuid": "^9.0.1"
