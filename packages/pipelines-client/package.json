@@ -1,14 +1,14 @@
 {
   "name": "@blue-orange-ai/foundations-pipelines-client",
-  "version": "0.0.83",
+  "version": "0.0.84",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
   "author": "Blue Orange AI",
   "private": false,
   "dependencies": {
-    "@blue-orange-ai/foundations-core": "^0.0.83",
-    "@blue-orange-ai/foundations-graph": "^0.0.83",
+    "@blue-orange-ai/foundations-core": "^0.0.84",
+    "@blue-orange-ai/foundations-graph": "^0.0.84",
     "@blue-orange-ai/primitives-graph": "^0.47.0",
     "remixicon": "^3.5.0",
     "tippy.js": "^6.3.7",
