@@ -1,0 +1,17 @@
+
+
+.blue-orange-deployment-manager-main-cont {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+}
+
+.blue-orange-deployment-manager-main-file-editor {
+    flex-grow: 1;
+}
+
+.blue-orange-deployment-manager-main-history-cont {
+    width: 350px;
+    height: 100%;
+}
