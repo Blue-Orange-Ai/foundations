@@ -1,17 +1,36 @@
 
 
-.blue-orange-deployment-manager-main-cont {
+.blue-orange-deployment-service-home {
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
+}
+
+.blue-orange-deployment-service-home-header {
+    height: 100px;
+    width: 100%;
+    background-color: #f7f7f9;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.blue-orange-deployment-service-home-tabs {
+    width: calc(100% - 32px);
+    padding-left: 16px;
+    padding-right: 16px;
+    border-bottom: 2px solid #e0e1e2;
+}
+
+.blue-orange-deployment-service-home-tabs-cont {
+    margin-bottom: -2px;
+}
+
+.blue-orange-deployment-service-home-top-banner {
+    width: calc(100% - 32px);
+    padding-left: 16px;
+    padding-right: 16px;
     display: flex;
     flex-direction: row;
-}
-
-.blue-orange-deployment-manager-main-file-editor {
-    flex-grow: 1;
-}
-
-.blue-orange-deployment-manager-main-history-cont {
-    width: 350px;
-    height: 100%;
+    align-items: flex-start;
+    justify-content: space-between;
 }

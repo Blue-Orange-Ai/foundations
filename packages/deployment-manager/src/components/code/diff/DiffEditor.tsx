@@ -38,6 +38,6 @@ export const DiffEditor: React.FC<Props> = ({original, modified, language, onCha
 	}, [original, modified]);
 
 	return (
-		<div ref={divRef} style={{ height: '100%', width: '100%', border: '1px solid #ccc' }} />
+		<div ref={divRef} style={{ height: '100%', width: '100%', border: 'none' }} />
 	)
 }

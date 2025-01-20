@@ -39,6 +39,6 @@ export const YamlEditor: React.FC<Props> = ({value, onChange}) => {
 	}, []);
 
 	return (
-		<div ref={divRef} style={{ height: '500px', width: '800px', border: '1px solid #ccc' }} />
+		<div ref={divRef} style={{ height: '100%', width: '100%', border: 'none' }} />
 	)
 }

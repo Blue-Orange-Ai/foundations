@@ -130,6 +130,7 @@ export * from './components/layouts/right-aligned-div/RightAlignedDiv';
 
 // Loading
 export * from './components/loading/loading/Loading';
+export * from './components/loading/skeleton/Skeleton';
 
 // Media
 export * from './components/media/default/RenderMedia';
