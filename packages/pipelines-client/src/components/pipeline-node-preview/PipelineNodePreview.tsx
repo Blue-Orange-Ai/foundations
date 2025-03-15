@@ -43,6 +43,7 @@ export const PipelineNodePreview: React.FC<Props> = ({
 			<div className="blue-orange-pipeline-editor-node-body">
 				<div className="blue-orange-pipeline-editor-node-body-title">{title}</div>
 				<div className="blue-orange-pipeline-editor-node-body-description">{description}</div>
+
 			</div>
 		</div>
 	)

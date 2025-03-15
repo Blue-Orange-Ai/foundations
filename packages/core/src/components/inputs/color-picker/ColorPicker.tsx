@@ -25,7 +25,7 @@ export const ColorPicker: React.FC<Props> = ({
 
 }) => {
 
-	const colorToHex = (color) => {
+	const colorToHex = (color: string) => {
 		let div = document.createElement("div");
 		div.style.color = color;
 		document.body.appendChild(div);

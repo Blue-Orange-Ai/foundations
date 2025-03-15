@@ -92,6 +92,8 @@ export * from './components/inputs/tags/simple/TagInput';
 export * from './components/inputs/textarea/TextArea';
 export * from './components/inputs/toggle/Toggle';
 export * from './components/interfaces/AppInterfaces';
+export * from './components/inputs/color-picker/ColorPicker';
+export * from './components/inputs/icon-selector/IconSelector';
 
 // Layouts
 export * from './components/layouts/drawer/drawer/Drawer';
