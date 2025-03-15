@@ -56,3 +56,14 @@
     text-overflow: ellipsis;
     white-space: normal;
 }
+
+.pipeline-editor-new-node-display-cont {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    width: 100%;
+    background-color: #e0e1e2;
+    min-height: 200px;
+    margin-top: 20px;
+}

@@ -8,7 +8,9 @@ import { Edge as GraphEdge, Node as GraphNode, GraphOptions } from "@blue-orange
 
 
 import '@blue-orange-ai/primitives-graph/dist/css/primitives-graph.min.css'
-import {Drawer, DrawerBody, DrawerHeader, DrawerPosition} from "@blue-orange-ai/foundations-core";
+import {Drawer, DrawerBody, DrawerHeader, DrawerPosition, Input, InputForm} from "@blue-orange-ai/foundations-core";
+import {v4 as uuidv4} from "uuid";
+import {PipelineNodePreview} from "../pipeline-node-preview/PipelineNodePreview";
 
 interface Props {
 }
@@ -17,7 +19,11 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 
 	const [createNodeState, setCreateNodeState] = useState<boolean>(false)
 
+	const createNode = useRef<GraphNode>(undefined);
+
 	const graphInstance = useRef<BlueOrangeGraph | undefined>(undefined);
+
+
 
 	const generateNodeHtml = (icon: string, title: string, description: string) => {
 		var parentElement = document.createElement("div");
@@ -50,7 +56,7 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 	}
 
 	const nodeCreationEvent = (relativePos: GraphRelativePos, scale: number) => {
-		// setCreateNodeState(true)
+		setCreateNodeState(true)
 		var node: GraphNode = {
 			backgroundColour: "white",
 			border: "2px solid transparent",
@@ -63,29 +69,31 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 				"Demonstration Node",
 				"Demonstration Description"
 			),
-			id: "1231231231231231232312312",
+			id: uuidv4(),
 			movable: true,
 			width: 320,
 			x: relativePos.x / scale,
 			y: relativePos.y / scale
 		}
-		if (graphInstance.current) {
-			graphInstance.current.createNode(
-				node.id,
-				node.x,
-				node.y,
-				node.border,
-				node.borderSelected,
-				node.borderRadius,
-				node.backgroundColour,
-				node.width,
-				node.height,
-				node.html,
-				node.movable,
-				node.deletable,
-				true
-			)
-		}
+		createNode.current = node;
+
+		// if (graphInstance.current) {
+		// 	graphInstance.current.createNode(
+		// 		node.id,
+		// 		node.x,
+		// 		node.y,
+		// 		node.border,
+		// 		node.borderSelected,
+		// 		node.borderRadius,
+		// 		node.backgroundColour,
+		// 		node.width,
+		// 		node.height,
+		// 		node.html,
+		// 		node.movable,
+		// 		node.deletable,
+		// 		true
+		// 	)
+		// }
 	}
 
 
@@ -98,7 +106,16 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 			{createNodeState &&
 				<Drawer DrawerPosition={DrawerPosition.TOP} height={"100vh"}>
 					<DrawerHeader label={"Create New Node"} onClose={() => setCreateNodeState(false)}></DrawerHeader>
-					<DrawerBody></DrawerBody>
+					<DrawerBody>
+						<div className="pipeline-editor-new-node-display-cont">
+							<PipelineNodePreview iconHtml={"<i class=\"ri-archive-fill\"></i>"} title={"Demonstration Node"} description={"Demonstration Description"}></PipelineNodePreview>
+						</div>
+						<InputForm verticalMargin={24}>
+							<Input label={"Title"} value={"Demonstration Node"}></Input>
+							<Input label={"Description"} value={"Demonstration Description"}></Input>
+							<Input label={"Icon"} value={"<i class=\"ri-archive-fill\"></i>"}></Input>
+						</InputForm>
+					</DrawerBody>
 				</Drawer>
 			}
 		</div>

@@ -25,6 +25,7 @@ import Cookies from "js-cookie";
 import {FloatingCommentsDevelopment} from "../components/comments/floating-comments/FloatingCommentsDevelopment";
 import {SocketWorkspace} from "../socket-workspace/SocketWorkspace";
 import {ButtonDevelopment} from "../components/buttons/ButtonDevelopment";
+import {ColorPickerDevelopment} from "../components/inputs/color-picker/ColorPickerDevelopment";
 
 interface Props {
 }
@@ -222,6 +223,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/inputs-checkbox")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
+							label={"Color Picker"}
+							active={component == "inputs-color"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={< i className="ri-palette-line"></i>}
+							onClick={() => navigate("/inputs-color")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
 							label={"Date Input"}
 							active={component == "inputs-date"}
 							focused={false}
@@ -381,6 +391,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "charts-scatter" && <ScatterChartDevelopment></ScatterChartDevelopment>}
 			{component == "rules" && <RuleEditorDevelopment></RuleEditorDevelopment>}
 			{component == "file-system" && <FileSystemDevelopment></FileSystemDevelopment>}
+			{component == "inputs-color" && <ColorPickerDevelopment></ColorPickerDevelopment>}
 			{component == "inputs-rich-text" && <RichTextDevelopment></RichTextDevelopment>}
 			{component == "inputs-rich-text-prompt" && <RichTextPromptDevelopment></RichTextPromptDevelopment>}
 			{component == "comments-full-page" && <FullPageCommentsDevelopment></FullPageCommentsDevelopment>}
