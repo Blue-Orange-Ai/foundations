@@ -26,6 +26,7 @@ import {FloatingCommentsDevelopment} from "../components/comments/floating-comme
 import {SocketWorkspace} from "../socket-workspace/SocketWorkspace";
 import {ButtonDevelopment} from "../components/buttons/ButtonDevelopment";
 import {ColorPickerDevelopment} from "../components/inputs/color-picker/ColorPickerDevelopment";
+import {IconSelectorDevelopment} from "../components/inputs/icon-selector/IconSelectorDevelopment";
 
 interface Props {
 }
@@ -232,6 +233,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/inputs-color")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
+							label={"Icon Selector"}
+							active={component == "inputs-icon"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-remixicon-line"></i>}
+							onClick={() => navigate("/inputs-icon")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
 							label={"Date Input"}
 							active={component == "inputs-date"}
 							focused={false}
@@ -392,6 +402,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "rules" && <RuleEditorDevelopment></RuleEditorDevelopment>}
 			{component == "file-system" && <FileSystemDevelopment></FileSystemDevelopment>}
 			{component == "inputs-color" && <ColorPickerDevelopment></ColorPickerDevelopment>}
+			{component == "inputs-icon" && <IconSelectorDevelopment></IconSelectorDevelopment>}
 			{component == "inputs-rich-text" && <RichTextDevelopment></RichTextDevelopment>}
 			{component == "inputs-rich-text-prompt" && <RichTextPromptDevelopment></RichTextPromptDevelopment>}
 			{component == "comments-full-page" && <FullPageCommentsDevelopment></FullPageCommentsDevelopment>}
