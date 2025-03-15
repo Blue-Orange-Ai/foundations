@@ -81,7 +81,7 @@
     width: calc(100vw - 48px);
     transform: translateY(-100%);
     transition: transform 0.2s ease-out;
-    height: calc(100% - 48px);
+    max-height: calc(100vh - 48px);
 }
 
 .dark .blue-orange-drawer-card-top {

@@ -11,6 +11,9 @@ interface Props {
 	title: string,
 	description: string
 	backgroundColor?: string,
+	fontColor?: string,
+	iconColor?: string,
+	iconBackground?: string,
 	borderRadius?: string,
 	height?: string,
 	width?: string,
@@ -22,6 +25,9 @@ export const PipelineNodePreview: React.FC<Props> = ({
 														 title,
 														 description,
 														 backgroundColor="#FFFFFF",
+														 fontColor="#393939",
+														 iconColor="#393939",
+														 iconBackground="#e0e1e2",
 														 borderRadius="4px",
 														 height= "fit-height",
 														 width= "fit-width",
@@ -35,14 +41,19 @@ export const PipelineNodePreview: React.FC<Props> = ({
 		border: border
 	}
 
+	const iconStyle: React.CSSProperties = {
+		color: iconColor,
+		backgroundColor: iconBackground
+	}
+
 	return (
 		<div className="blue-orange-pipeline-editor-node" style={style}>
-			<div className="blue-orange-pipeline-editor-node-icon">
+			<div className="blue-orange-pipeline-editor-node-icon" style={iconStyle}>
 				<RenderHtml html={iconHtml}></RenderHtml>
 			</div>
 			<div className="blue-orange-pipeline-editor-node-body">
-				<div className="blue-orange-pipeline-editor-node-body-title">{title}</div>
-				<div className="blue-orange-pipeline-editor-node-body-description">{description}</div>
+				<div className="blue-orange-pipeline-editor-node-body-title" style={{color: fontColor}}>{title}</div>
+				<div className="blue-orange-pipeline-editor-node-body-description" style={{color: fontColor}}>{description}</div>
 
 			</div>
 		</div>

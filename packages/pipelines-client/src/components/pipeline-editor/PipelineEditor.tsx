@@ -22,6 +22,8 @@ import {
 } from "@blue-orange-ai/foundations-core";
 import {v4 as uuidv4} from "uuid";
 import {PipelineNodePreview} from "../pipeline-node-preview/PipelineNodePreview";
+import {Utilities} from "../utilities/Utilities";
+import {PipelineNodeStyleEditor} from "../pipeline-node-style-editor/PipelineNodeStyleEditor";
 
 interface Props {
 }
@@ -36,31 +38,31 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 
 
 
-	const generateNodeHtml = (icon: string, title: string, description: string) => {
-		var parentElement = document.createElement("div");
-		parentElement.className = "blue-orange-pipeline-editor-node";
-
-		var iconCont = document.createElement("div");
-		iconCont.className = "blue-orange-pipeline-editor-node-icon"
-		iconCont.innerHTML = icon;
-		parentElement.appendChild(iconCont);
-
-		var bodyCont = document.createElement("div");
-		bodyCont.className = "blue-orange-pipeline-editor-node-body";
-
-		var titleCont = document.createElement("div");
-		titleCont.className = "blue-orange-pipeline-editor-node-body-title";
-		titleCont.innerText = title;
-		bodyCont.appendChild(titleCont);
-
-		var descriptionCont = document.createElement("div");
-		descriptionCont.className = "blue-orange-pipeline-editor-node-body-description";
-		descriptionCont.innerText = description;
-		bodyCont.appendChild(descriptionCont);
-
-		parentElement.appendChild(bodyCont);
-		return parentElement.outerHTML;
-	}
+	// const generateNodeHtml = (icon: string, title: string, description: string) => {
+	// 	var parentElement = document.createElement("div");
+	// 	parentElement.className = "blue-orange-pipeline-editor-node";
+	//
+	// 	var iconCont = document.createElement("div");
+	// 	iconCont.className = "blue-orange-pipeline-editor-node-icon"
+	// 	iconCont.innerHTML = icon;
+	// 	parentElement.appendChild(iconCont);
+	//
+	// 	var bodyCont = document.createElement("div");
+	// 	bodyCont.className = "blue-orange-pipeline-editor-node-body";
+	//
+	// 	var titleCont = document.createElement("div");
+	// 	titleCont.className = "blue-orange-pipeline-editor-node-body-title";
+	// 	titleCont.innerText = title;
+	// 	bodyCont.appendChild(titleCont);
+	//
+	// 	var descriptionCont = document.createElement("div");
+	// 	descriptionCont.className = "blue-orange-pipeline-editor-node-body-description";
+	// 	descriptionCont.innerText = description;
+	// 	bodyCont.appendChild(descriptionCont);
+	//
+	// 	parentElement.appendChild(bodyCont);
+	// 	return parentElement.outerHTML;
+	// }
 
 	const updateGraphInstance = (graph: BlueOrangeGraph) => {
 		graphInstance.current = graph;
@@ -75,10 +77,13 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 			borderSelected: "2px solid dodgerblue",
 			deletable: true,
 			height: 100,
-			html: generateNodeHtml(
+			html: Utilities.generateNodeHtml(
 				"<i class=\"ri-archive-fill\"></i>",
+				"#393939",
+				"#e0e1e2",
 				"Demonstration Node",
-				"Demonstration Description"
+				"Demonstration Description",
+				"#393939"
 			),
 			id: uuidv4(),
 			movable: true,
@@ -118,9 +123,10 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 				<Drawer DrawerPosition={DrawerPosition.TOP} height={"100vh"}>
 					<DrawerHeader label={"Create New Node"} onClose={() => setCreateNodeState(false)}></DrawerHeader>
 					<DrawerBody>
-						<div className="pipeline-editor-new-node-display-cont">
-							<PipelineNodePreview iconHtml={"<i class=\"ri-archive-fill\"></i>"} title={"Demonstration Node"} description={"Demonstration Description"}></PipelineNodePreview>
-						</div>
+						<PipelineNodeStyleEditor node={createNode.current}></PipelineNodeStyleEditor>
+						{/*<div className="pipeline-editor-new-node-display-cont">*/}
+						{/*	<PipelineNodePreview iconHtml={"<i class=\"ri-archive-fill\"></i>"} title={"Demonstration Node"} description={"Demonstration Description"}></PipelineNodePreview>*/}
+						{/*</div>*/}
 						{/*<InputForm verticalMargin={24} paddingBottom={80}>*/}
 						{/*	<Input label={"Title"} value={"Demonstration Node"}></Input>*/}
 						{/*	<Input label={"Description"} value={"Demonstration Description"}></Input>*/}
