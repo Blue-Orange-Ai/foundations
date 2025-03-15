@@ -14,7 +14,7 @@ interface Props {
 	deletable?: boolean,
 	conditions?: Array<ICondition>,
 	schema: Array<IRuleSchemaProperty>,
-	logic?: IOperand,
+	logic?: ILogicalOperand,
 	onChange: (condition: ICondition) => void,
 	onDelete?: () => void,
 }
@@ -29,10 +29,10 @@ export const RuleGroup: React.FC<Props> = ({condition, deletable=true, condition
 			cast: "",
 			comparison: "",
 			conditionType: IConditionType.GROUP,
-			groupConditions: conditions,
+			groupConditions: conditions as ICondition[],
 			ignoreCase: false,
 			negation: false,
-			logic: logic,
+			logic: logic as ILogicalOperand,
 			operand: IOperand.EQUALS,
 			sub: undefined,
 			variable: ""
@@ -135,12 +135,11 @@ export const RuleGroup: React.FC<Props> = ({condition, deletable=true, condition
 										  selected={internalCondition.logic == ILogicalOperand.OR}></DropdownItemText>
 					</Dropdown>
 				</div>
-				{deletable && <ButtonIcon icon="ri-close-line" label={"Delete"} onClick={removeCondition}></ButtonIcon>}
+				{deletable && <ButtonIcon icon="ri-close-line" label={"Delete"} onClick={() => removeCondition(condition as ICondition)}></ButtonIcon>}
 			</div>
 			{internalCondition.groupConditions.map((item, index) => (
 				<RuleContainer
 					key={index + "-" + item.id}
-					index={item}
 					condition={item}
 					schema={schema}
 					logicalOperand={internalCondition.logic}

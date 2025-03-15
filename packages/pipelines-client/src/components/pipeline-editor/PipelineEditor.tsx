@@ -3,12 +3,23 @@ import React, {useRef, useState} from "react";
 import './PipelineEditor.css'
 import {BlueOrangeGraphWrapper, GraphRelativePos} from "@blue-orange-ai/foundations-graph";
 
-import { BlueOrangeGraph } from '@blue-orange-ai/primitives-graph'
-import { Edge as GraphEdge, Node as GraphNode, GraphOptions } from "@blue-orange-ai/primitives-graph";
+import {BlueOrangeGraph, Node as GraphNode} from '@blue-orange-ai/primitives-graph'
 
 
 import '@blue-orange-ai/primitives-graph/dist/css/primitives-graph.min.css'
-import {Drawer, DrawerBody, DrawerHeader, DrawerPosition, Input, InputForm} from "@blue-orange-ai/foundations-core";
+import {
+	Button,
+	ButtonType,
+	ColorPicker,
+	Drawer,
+	DrawerBody,
+	DrawerFooter, DrawerFooterLeft,
+	DrawerHeader,
+	DrawerPosition,
+	IconSelector,
+	Input,
+	InputForm
+} from "@blue-orange-ai/foundations-core";
 import {v4 as uuidv4} from "uuid";
 import {PipelineNodePreview} from "../pipeline-node-preview/PipelineNodePreview";
 
@@ -110,12 +121,21 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 						<div className="pipeline-editor-new-node-display-cont">
 							<PipelineNodePreview iconHtml={"<i class=\"ri-archive-fill\"></i>"} title={"Demonstration Node"} description={"Demonstration Description"}></PipelineNodePreview>
 						</div>
-						<InputForm verticalMargin={24}>
-							<Input label={"Title"} value={"Demonstration Node"}></Input>
-							<Input label={"Description"} value={"Demonstration Description"}></Input>
-							<Input label={"Icon"} value={"<i class=\"ri-archive-fill\"></i>"}></Input>
-						</InputForm>
+						{/*<InputForm verticalMargin={24} paddingBottom={80}>*/}
+						{/*	<Input label={"Title"} value={"Demonstration Node"}></Input>*/}
+						{/*	<Input label={"Description"} value={"Demonstration Description"}></Input>*/}
+						{/*	<ColorPicker label={"Background Color"} value={"white"}></ColorPicker>*/}
+						{/*	<ColorPicker label={"Selection Outline Color"} value={"dodgerblue"}></ColorPicker>*/}
+						{/*	<IconSelector label={"Icon"} value={"<i class=\"ri-archive-fill\"></i>"}></IconSelector>*/}
+						{/*	<ColorPicker label={"Icon Color"} value={"#393939"}></ColorPicker>*/}
+						{/*	<ColorPicker label={"Icon Background"} value={"#e0e1e2"}></ColorPicker>*/}
+						{/*</InputForm>*/}
 					</DrawerBody>
+					<DrawerFooter>
+						<DrawerFooterLeft>
+							<Button text={"Save"} buttonType={ButtonType.PRIMARY}></Button>
+						</DrawerFooterLeft>
+					</DrawerFooter>
 				</Drawer>
 			}
 		</div>

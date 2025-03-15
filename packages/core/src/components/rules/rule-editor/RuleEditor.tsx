@@ -79,7 +79,7 @@ export interface ICondition {
 	variable: string,
 	comparison: any,
 	cast: string,
-	sub: ICondition,
+	sub: ICondition | undefined,
 	groupConditions: Array<ICondition>
 }
 

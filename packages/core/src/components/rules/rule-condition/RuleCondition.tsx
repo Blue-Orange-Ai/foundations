@@ -88,6 +88,9 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 	}
 
 	const getNormalizedArrayType = (schemaProperty: IRuleSchemaProperty | undefined): string => {
+		if (schemaProperty == undefined) {
+			return "UNKNOWN";
+		}
 		if (schemaProperty.value == "String") {
 			return "STRING"
 		} else if (schemaProperty.value == "Number") {
@@ -107,7 +110,7 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 		return true;
 	}
 
-	const getSchemaPropertyFromVariableName = (variableName: string): IRuleSchemaProperty => {
+	const getSchemaPropertyFromVariableName = (variableName: string): IRuleSchemaProperty | undefined => {
 		for (var i=0; i < schema.length; i++) {
 			if (schema[i].key == variableName) {
 				return schema[i];
@@ -336,7 +339,7 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 				</div>
 			}
 			<div className={"blue-orange-rule-condition-checkbox"}>
-				<ButtonIcon icon="ri-close-line" label={"Delete"} onClick={removeCondition}></ButtonIcon>
+				<ButtonIcon icon="ri-close-line" label={"Delete"} onClick={() => removeCondition(condition)}></ButtonIcon>
 			</div>
 		</div>
 	)

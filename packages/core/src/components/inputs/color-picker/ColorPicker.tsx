@@ -7,7 +7,7 @@ import {Input} from "../input/Input";
 import {Address} from "node:cluster";
 
 interface Props {
-	value?:string | null,
+	value?:string,
 	label?:string,
 	required?: boolean,
 	help?: string,
@@ -25,7 +25,10 @@ export const ColorPicker: React.FC<Props> = ({
 
 }) => {
 
-	const colorToHex = (color: string) => {
+	const colorToHex = (color: string | null | undefined) => {
+		if (color == undefined || color == null) {
+			return "#000000"
+		}
 		let div = document.createElement("div");
 		div.style.color = color;
 		document.body.appendChild(div);
@@ -41,9 +44,9 @@ export const ColorPicker: React.FC<Props> = ({
 		return `#${r}${g}${b}`.toUpperCase();
 	}
 
-	const [selectedColor, setSelectedColor] = useState<string>(value);
+	const [selectedColor, setSelectedColor] = useState<string>(value ?? "");
 
-	const [hiddenInputColor, setHiddenInputColor] = useState<string>(colorToHex(value));
+	const [hiddenInputColor, setHiddenInputColor] = useState<string>(colorToHex(value) ?? "");
 
 	const [inputFocus, setInputFocus] = useState<boolean>(false);
 
@@ -57,7 +60,7 @@ export const ColorPicker: React.FC<Props> = ({
 
 	const updateColor = (color: string) => {
 		setSelectedColor(color)
-		setHiddenInputColor(colorToHex(color))
+		setHiddenInputColor(colorToHex(color) ?? "")
 		dispatchChange(color)
 	}
 

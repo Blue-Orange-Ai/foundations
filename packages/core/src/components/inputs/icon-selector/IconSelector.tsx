@@ -55,6 +55,7 @@ export const IconSelector: React.FC<Props> = ({
 						key={item.value + "-" + index}
 						label={item.label}
 						value={"<i class=\"" + item.value + "\"></i>"}
+						selected={value == "<i class=\"" + item.value + "\"></i>"}
 						src={item.value}></DropdownItemIcon>
 				))}
 			</Dropdown>
