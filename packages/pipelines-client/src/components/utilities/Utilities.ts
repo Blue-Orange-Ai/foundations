@@ -2,7 +2,7 @@
 
 export class Utilities {
 
-    public static generateNodeHtml(
+    public static generateGeneralNodeHtml(
         icon: string,
         iconColor: string,
         iconBackground: string,

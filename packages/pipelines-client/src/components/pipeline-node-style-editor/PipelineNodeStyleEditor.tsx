@@ -24,7 +24,7 @@ export const PipelineNodeStyleEditor: React.FC<Props> = ({node, onChange}) => {
 
 	const [description, setDescription] = useState<string>(Utilities.getNodeDescription(node.html));
 
-	const [border, setBorder] = useState(node.border);
+	const [border, setBorder] = useState(node.borderSelected);
 
 	const [width, setWidth] = useState(node.width);
 
@@ -42,7 +42,7 @@ export const PipelineNodeStyleEditor: React.FC<Props> = ({node, onChange}) => {
 
 	const handleTitleChange = (t: string) => {
 		setTitle(t);
-		const nodeHtml = Utilities.generateNodeHtml(
+		const nodeHtml = Utilities.generateGeneralNodeHtml(
 			iconHtml,
 			iconColor,
 			iconBackground,
@@ -56,7 +56,7 @@ export const PipelineNodeStyleEditor: React.FC<Props> = ({node, onChange}) => {
 
 	const handleDescriptionChange = (d: string) => {
 		setDescription(d);
-		const nodeHtml = Utilities.generateNodeHtml(
+		const nodeHtml = Utilities.generateGeneralNodeHtml(
 			iconHtml,
 			iconColor,
 			iconBackground,
@@ -76,7 +76,7 @@ export const PipelineNodeStyleEditor: React.FC<Props> = ({node, onChange}) => {
 
 	const handleFontColorChange = (fc: string) => {
 		setFontColor(fc);
-		const nodeHtml = Utilities.generateNodeHtml(
+		const nodeHtml = Utilities.generateGeneralNodeHtml(
 			iconHtml,
 			iconColor,
 			iconBackground,
@@ -90,13 +90,13 @@ export const PipelineNodeStyleEditor: React.FC<Props> = ({node, onChange}) => {
 
 	const handleBorderChange = (b: string) => {
 		setBorder(b);
-		nodeRef.current.border = b;
+		nodeRef.current.borderSelected = b;
 		dispatchChange();
 	}
 
 	const handleIconHtmlChange = (ih: string) => {
 		setIconHtml(ih);
-		const nodeHtml = Utilities.generateNodeHtml(
+		const nodeHtml = Utilities.generateGeneralNodeHtml(
 			ih,
 			iconColor,
 			iconBackground,
@@ -110,7 +110,7 @@ export const PipelineNodeStyleEditor: React.FC<Props> = ({node, onChange}) => {
 
 	const handleIconColorChange = (ic: string) => {
 		setIconColor(ic);
-		const nodeHtml = Utilities.generateNodeHtml(
+		const nodeHtml = Utilities.generateGeneralNodeHtml(
 			iconHtml,
 			ic,
 			iconBackground,
@@ -124,7 +124,7 @@ export const PipelineNodeStyleEditor: React.FC<Props> = ({node, onChange}) => {
 
 	const handleIconBackgroundChange = (ib: string) => {
 		setIconBackground(ib);
-		const nodeHtml = Utilities.generateNodeHtml(
+		const nodeHtml = Utilities.generateGeneralNodeHtml(
 			iconHtml,
 			ib,
 			iconBackground,

@@ -141,7 +141,7 @@ export const BlueOrangeGraphWrapper: React.FC<Props> = ({
 				const x: number = ev.detail.x;
 				const y: number = ev.detail.y;
 				const startingNode: GraphNode = ev.detail.startingNode;
-				const createdNode: GraphNode = ev.detail.destinationNode;
+				const createdNode: GraphNode = ev.detail.createdNode;
 				const createdEdges: Array<GraphEdge> = ev.detail.createdEdge;
 				if (nodeCreated) {
 					nodeCreated(x, y, startingNode, createdNode, createdEdges);

@@ -275,6 +275,8 @@
   --blue-orange-dark-default-tag-background-color: #18181b;
   --blue-orange-light-default-tag-color: white;
   --blue-orange-dark-default-tag-color: white;
+
+  --blue-orange-graph-edge-selection-color: #28B463
 }
 
 body {

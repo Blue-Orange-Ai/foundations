@@ -67,3 +67,7 @@
     min-height: 200px;
     margin-top: 20px;
 }
+
+.pipeline-editor-btn-group {
+    padding-top: 24px;
+}
