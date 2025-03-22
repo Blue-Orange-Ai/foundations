@@ -29,6 +29,7 @@ import {v4 as uuidv4} from "uuid";
 import {PipelineNodePreview} from "../pipeline-node-preview/PipelineNodePreview";
 import {Utilities} from "../utilities/Utilities";
 import {PipelineNodeStyleEditor} from "../pipeline-node-style-editor/PipelineNodeStyleEditor";
+import {PipelineLinkStyleEditor} from "../pipeline-link-editor-style/PipelineLinkStyleEditor";
 
 interface Props {
 }
@@ -253,9 +254,15 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 
 	const [createNodeState, setCreateNodeState] = useState<string | undefined>(undefined)
 
+	const [editLinkModal, setEditLinkModal] = useState<boolean>(false)
+
 	const [focusNode, setFocusNode] = useState<GraphNode>(undefined)
 
+	const [focusEdge, setFocusEdge] = useState<GraphEdge>(undefined)
+
 	const focusNodeDeletableState = useRef<boolean>(true)
+
+	const focusEdgeLabelState = useRef<boolean>(true)
 
 	const graphInstance = useRef<BlueOrangeGraph | undefined>(undefined);
 
@@ -377,6 +384,32 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 		setCreateNodeState(undefined)
 	}
 
+	const openLinkEditModal = (edge: GraphEdge) => {
+		const edgeId = edge.id.replace("-edge-base", "");
+		const edgeObj = graphInstance.current.findEdge(edgeId);
+		focusEdgeLabelState.current = edgeObj.label;
+		setFocusEdge(edgeObj)
+		setEditLinkModal(true)
+	}
+
+	const closeLinkEditModal = () => {
+		setEditLinkModal(false)
+	}
+
+	const updateEdge = () => {
+		if (focusEdge.labelBackground == "") {
+			focusEdge.labelBackground = "white"
+		}
+		if (focusEdgeLabelState.current == focusEdge.label) {
+			graphInstance.current.updateEdge(focusEdge)
+		} else {
+			graphInstance.current.deleteEdge(focusEdge);
+			graphInstance.current.createEdge(focusEdge);
+		}
+
+		setEditLinkModal(false)
+	}
+
 
 	return (
 		<div className="blue-orange-pipeline-editor-cont">
@@ -385,8 +418,25 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 				options={graphOptions}
 				onNodeCreationClick={nodeCreationEvent}
 				nodeCreated={nodeCreated}
+				edgeRightClick={(edge: GraphEdge, clickEvent: any) => openLinkEditModal(edge)}
 				nodeRightClick={(node: GraphNode, clickEvent: any) => updateNodeClick(node)}
 			></BlueOrangeGraphWrapper>
+			{editLinkModal &&
+				<Drawer position={DrawerPosition.BOTTOM} height={"calc(100vh - 48px)"}>
+					<DrawerHeader label={"Edit Link"} onClose={closeLinkEditModal}></DrawerHeader>
+					<DrawerBody>
+						<PipelineLinkStyleEditor edge={focusEdge} labelWhitelist={["Output 1", "Output 2", "Error"]} onChange={setFocusEdge}></PipelineLinkStyleEditor>
+					</DrawerBody>
+					<DrawerFooter>
+						<DrawerFooterLeft>
+							<div className="pipeline-editor-btn-group">
+								<Button text={"Save"} buttonType={ButtonType.PRIMARY} onClick={updateEdge}></Button>
+							</div>
+						</DrawerFooterLeft>
+					</DrawerFooter>
+				</Drawer>
+			}
+
 			{createNodeState &&
 				<Drawer position={DrawerPosition.BOTTOM} height={"calc(100vh - 48px)"}>
 					<DrawerHeader label={"Create New Node"} onClose={closeNodeUpdate}></DrawerHeader>
