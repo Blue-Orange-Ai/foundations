@@ -13,7 +13,7 @@ export const DotifiedText: React.FC<Props> = ({ text, dot = "●", maxLines }) =
 
     return (
         <div
-            className="dotify-text"
+            className="blue-orange-dotify-text"
             style={{
                 WebkitLineClamp: maxLines,
                 maxHeight: maxLines ? `${maxLines * 1.5}em` : undefined, // Adjust line height

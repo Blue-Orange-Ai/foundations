@@ -33,6 +33,7 @@ interface Props {
 	open?: boolean;
 	startingX?: number;
 	startingY?: number;
+	blockingDelayMs?: number;
 }
 
 type ForwardingRefWrapperProps = {
@@ -51,15 +52,24 @@ export const ContextMenu: React.FC<Props> = ({
 												 open=false,
 												 startingX=0,
 												 startingY=0,
+												 blockingDelayMs=500,
 											 }) => {
 
+	const lastChanged = useRef<Date>(new Date())
+
 	const [visible, setVisible] = useState(false);
+
 	const [style, setStyle] = useState<React.CSSProperties>({});
+
 	const childRef = useRef<any | null>(null);
 
 	const contextMenuRef = useRef<HTMLDivElement>(null);
 	const menuRef = useRef(null);
 	const visibleRef = useRef(visible);
+
+	const isDifferenceBelowThreshold = (date1: Date, date2: Date, thresholdMs: number): boolean => {
+		return Math.abs(date1.getTime() - date2.getTime()) < thresholdMs;
+	}
 
 	useEffect(() => {
 		document.addEventListener('click', handleClick);
@@ -79,15 +89,18 @@ export const ContextMenu: React.FC<Props> = ({
 	}, [visible]);
 
 	const handleClick = (e:MouseEvent) => {
-		const target = e.target as HTMLElement;
-		if (!disabled && !rightClick) {
-			if (contextMenuRef && isDescendantOf(contextMenuRef.current, target)) {
-				handleContextMenu(e)
-			} else if (visibleRef.current) {
+		if (!isDifferenceBelowThreshold(new Date(), lastChanged.current, blockingDelayMs)) {
+			lastChanged.current = new Date();
+			const target = e.target as HTMLElement;
+			if (!disabled && !rightClick) {
+				if (contextMenuRef && isDescendantOf(contextMenuRef.current, target)) {
+					handleContextMenu(e)
+				} else if (visibleRef.current) {
+					setVisible(false);
+				}
+			} else if (rightClick && visibleRef.current && !isDescendantOf(contextMenuRef.current, target)) {
 				setVisible(false);
 			}
-		} else if (rightClick && visibleRef.current && !isDescendantOf(contextMenuRef.current, target)) {
-			setVisible(false);
 		}
 	};
 

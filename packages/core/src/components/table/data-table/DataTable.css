@@ -1,0 +1,27 @@
+
+
+.blue-orange-data-table-header-cell-group {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.8rem;
+}
+
+.blue-orange-data-table-header-cell-column-type {
+    margin-top: 4px;
+    font-size: 0.6rem;
+    opacity: 0.6;
+    font-weight: 500;
+}
+
+
+.blue-orange-tables-data-table .blue-orange-table-header-cont {
+    background-color: #e0e1e2;
+}
+
+.blue-orange-header-data-table-cell-control-hidden {
+    opacity: 0;
+}
+
+.blue-orange-header-data-table-cell-control-hidden:hover {
+    opacity: 1;
+}

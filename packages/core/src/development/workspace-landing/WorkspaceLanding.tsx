@@ -27,6 +27,8 @@ import {SocketWorkspace} from "../socket-workspace/SocketWorkspace";
 import {ButtonDevelopment} from "../components/buttons/ButtonDevelopment";
 import {ColorPickerDevelopment} from "../components/inputs/color-picker/ColorPickerDevelopment";
 import {IconSelectorDevelopment} from "../components/inputs/icon-selector/IconSelectorDevelopment";
+import {DataTableDevelopment} from "../components/table/data-table/DataTableDevelopment";
+import {ContextMenuDevelopment} from "../components/contextmenu/ContextMenuDevelopment";
 
 interface Props {
 }
@@ -50,6 +52,8 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 	const [sidebarInputState, setSidebarInputState] = useState(false);
 
 	const [sidebarTooltipState, setSidebarTooltipState] = useState(false);
+
+	const [sidebarTableState, setSidebarTableState] = useState(false);
 
 	const changeSidebarState = (state: SideBarState) => {
 		setSidebarState(state);
@@ -384,6 +388,31 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/tooltips-simple")}
 						></SideBarBodyItem>
 					</SideBarBodyGroup>
+					<SideBarBodyGroup opened={sidebarTableState}>
+						<SideBarBodyLabel
+							icon={sidebarTooltipState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
+							label={"Tables"}
+							onClick={() => setSidebarTableState(!sidebarTableState)}
+						></SideBarBodyLabel>
+						<SideBarBodyItem
+							label={"Data Table"}
+							active={component == "table-data"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-grid-fill"></i>}
+							onClick={() => navigate("/table-data")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Object Table"}
+							active={component == "table-objects"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-square-fill"></i>}
+							onClick={() => navigate("/table-objects")}
+						></SideBarBodyItem>
+					</SideBarBodyGroup>
 					<SideBarBodyItem
 						label={"Sockets"}
 						active={component == "sockets"}
@@ -409,6 +438,8 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "comments-floating" && <FloatingCommentsDevelopment></FloatingCommentsDevelopment>}
 			{component == "tooltips-advanced" && <AdvancedTooltipDevelopment></AdvancedTooltipDevelopment>}
 			{component == "tooltips-simple" && <SimpleTooltipDevelopment></SimpleTooltipDevelopment>}
+			{component == "table-data" && <DataTableDevelopment></DataTableDevelopment>}
+			{component == "context-menu" && <ContextMenuDevelopment></ContextMenuDevelopment>}
 			{component == "sockets" && <SocketWorkspace></SocketWorkspace>}
 		</SidebarPage>
 	)

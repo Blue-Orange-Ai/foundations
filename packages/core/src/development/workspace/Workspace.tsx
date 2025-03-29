@@ -577,26 +577,26 @@ export const Workspace: React.FC<Props> = ({}) => {
 		// 		{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 5</HeaderCell>*/}
 		// 		{/*			<HeaderCell dropdownItems={[{label: "Sort Desc", icon: "ri-sort-desc", value: "SORT_DESC"}]}>Header 6</HeaderCell>*/}
 		// 		{/*		</Row>*/}
-		// 		{/*	</THead>*/}
-		// 		{/*	<TBody>*/}
-		// 		{/*		<Row>*/}
-		// 		{/*			<CheckboxCell state={true}></CheckboxCell>*/}
-		// 		{/*			<PrimaryCell src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} text={"Demonstration Primary Cell"} secondaryText={"This is where the secondary text goes"} style={{paddingLeft: "15px", paddingRight: "15px"}}></PrimaryCell>*/}
-		// 		{/*			<Cell>*/}
-		// 		{/*				<EmailLink email={"toms126@gmail.com"}></EmailLink>*/}
-		// 		{/*			</Cell>*/}
-		// 		{/*			<Cell alignment={CellAlignment.LEFT}>*/}
-		// 		{/*				<TelephoneText phone={"0402747928"} country={"AU"}></TelephoneText>*/}
-		// 		{/*			</Cell>*/}
-		// 		{/*			<Cell>*/}
-		// 		{/*				<Percentage percent={0.1123456789} decimalPlaces={5}></Percentage>*/}
-		// 		{/*			</Cell>*/}
-		// 		{/*			<Cell>*/}
-		// 		{/*				<Currency amount={123456.55} currency={"aud"}></Currency>*/}
-		// 		{/*			</Cell>*/}
-		// 		{/*		</Row>*/}
-		// 		{/*	</TBody>*/}
-		// 		{/*</Table>*/}
+				{/*	</THead>*/}
+				{/*	<TBody>*/}
+				{/*		<Row>*/}
+				{/*			<CheckboxCell state={true}></CheckboxCell>*/}
+				{/*			<PrimaryCell src={"http://localhost:8086/files/get/rqiV_2fhSh-uRcW5I7QTPQ"} text={"Demonstration Primary Cell"} secondaryText={"This is where the secondary text goes"} style={{paddingLeft: "15px", paddingRight: "15px"}}></PrimaryCell>*/}
+				{/*			<Cell>*/}
+				{/*				<EmailLink email={"toms126@gmail.com"}></EmailLink>*/}
+				{/*			</Cell>*/}
+				{/*			<Cell alignment={CellAlignment.LEFT}>*/}
+				{/*				<TelephoneText phone={"0402747928"} country={"AU"}></TelephoneText>*/}
+				{/*			</Cell>*/}
+				{/*			<Cell>*/}
+				{/*				<Percentage percent={0.1123456789} decimalPlaces={5}></Percentage>*/}
+				{/*			</Cell>*/}
+				{/*			<Cell>*/}
+				{/*				<Currency amount={123456.55} currency={"aud"}></Currency>*/}
+				{/*			</Cell>*/}
+				{/*		</Row>*/}
+				{/*	</TBody>*/}
+				{/*</Table>*/}
 		// 		{/*<div style={{width: "200px"}}>*/}
 		// 		{/*<Dropdown label={"Hello dropdown"} items={dropdownItems} filter={true} allowMultipleSelection={true} onItemsSelected={(itemsSelected: Array<DropdownItem>) => {*/}
 		// 		{/*	console.log("Selected items allow multiple")*/}
