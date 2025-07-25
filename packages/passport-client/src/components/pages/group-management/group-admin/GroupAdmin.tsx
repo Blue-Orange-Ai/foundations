@@ -40,6 +40,7 @@ import {
 	GroupPermission, SimpleGroupMember,
 	User
 } from "@blue-orange-ai/foundations-clients";
+import {UserIdToName} from "../../../text-decorations/user-id-to-name/UserIdToName";
 
 interface Props {
 	groupId: string,
@@ -385,7 +386,7 @@ export const GroupAdmin: React.FC<Props> = ({groupId, group, userRedirectUri = "
 							<div>
 								<div className="passport-groups-user-search-header">
 									<div className="passport-groups-user-search-cont">
-										<SearchInput onSearchEvent={searchMembers}></SearchInput>
+										<SearchInput label={"Filter by member id"} onSearchEvent={searchMembers}></SearchInput>
 									</div>
 									<div className="passport-groups-user-search-controls">
 										<ButtonIcon icon={"ri-add-line"} label={"Add Member"} onClick={() => {
@@ -437,6 +438,9 @@ export const GroupAdmin: React.FC<Props> = ({groupId, group, userRedirectUri = "
 													}} onClick={() => memberClicked(item)}>
 														<div className="passport-user-groups-primary-cell">
 															<div className="passport-user-groups-primary-cell-main">
+																<UserIdToName userId={item.referenceId}/>
+															</div>
+															<div className="passport-user-groups-primary-cell-secondary">
 																{item.referenceId}
 															</div>
 														</div>

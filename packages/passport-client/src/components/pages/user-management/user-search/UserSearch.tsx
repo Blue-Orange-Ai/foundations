@@ -186,7 +186,7 @@ export const UserSearch: React.FC<Props> = ({userRedirectUri="/users/"}) => {
 						<PageHeading>System Users</PageHeading>
 					</div>
 					<div className="passport-group-search-main-heading-btns">
-						<ButtonIcon icon={"ri-add-line"} label={"Create Group"} onClick={() => {
+						<ButtonIcon icon={"ri-add-line"} label={"Create User"} onClick={() => {
 							setCreateUserModal(true)}
 						}></ButtonIcon>
 					</div>
@@ -309,7 +309,7 @@ export const UserSearch: React.FC<Props> = ({userRedirectUri="/users/"}) => {
 				</div>
 			</PaddedPage>
 			{createUserModal &&
-				<Drawer height={"90vh"} position={DrawerPosition.BOTTOM} onClose={() => setCreateUserModal(false)}>
+				<Drawer width={"40vw"} position={DrawerPosition.RIGHT} onClose={() => setCreateUserModal(false)}>
 					<DrawerHeader label={"Add Member"} onClose={() => setCreateUserModal(false)}></DrawerHeader>
 					<DrawerBody>
 						<InputForm paddingBottom={20} verticalMargin={15}>

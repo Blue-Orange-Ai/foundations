@@ -115,6 +115,7 @@ export type UserGroupValidationRequest = {
 export type UserLoginRequest = {
     username: string;
     password: string;
+    domain: string;
 }
 
 export type UserLoginResponse = {

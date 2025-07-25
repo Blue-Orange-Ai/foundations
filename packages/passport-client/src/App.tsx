@@ -5,8 +5,8 @@ import 'remixicon/fonts/remixicon.css';
 import 'tippy.js/dist/tippy.css'
 
 import 'animate.css';
-import '../node_modules/@blue-orange-ai/foundations-core/dist/style.css'
-
+// import '../node_modules/@blue-orange-ai/foundations-core/dist/style.css'
+import '@blue-orange-ai/foundations-core/dist/style.css'
 import {LoginWindow} from "./components/login/loginwindow/LoginWindow";
 import {ManagementPage} from "./components/management/usermanagement/managementpage/ManagementPage";
 import {ProfileWindow} from "./components/management/profilemanagment/profilewindow/ProfileWindow";

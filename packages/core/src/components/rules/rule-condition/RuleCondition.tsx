@@ -205,7 +205,7 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 		<div className={"blue-orange-rule-condition-cont"}>
 			<div className={"blue-orange-rule-condition-start-text"}>Value of</div>
 			<div className={"blue-orange-rule-condition-variable-selection"}>
-				<Dropdown filter={true} style={variableSelectionStyle} onSelection={(item) => updateVariable(item.reference)}>
+				<Dropdown filter={true} style={variableSelectionStyle} onSelection={(item) => updateVariable(item.reference)} contextWidth="fit-content">
 					{schema.map((item, index) => (
 						<DropdownItemIcon
 							key={item.key}
@@ -219,7 +219,7 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 			</div>
 			<div className={"blue-orange-rule-condition-match-selection"}>
 				{getNormalizedType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "STRING" &&
-					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)}>
+					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
 						<DropdownItemText label={"Equals"} value={"EQUALS"} selected={"EQUALS" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"Not Equals"} value={"NOT_EQUALS"} selected={"NOT_EQUALS" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"Contains"} value={"CONTAINS"} selected={"CONTAINS" == condition.operand}></DropdownItemText>
@@ -229,7 +229,7 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 					</Dropdown>
 				}
 				{getNormalizedType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "NUMBER" &&
-					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)}>
+					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
 						<DropdownItemText label={"equals"} value={"EQUALS"} selected={"EQUALS" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"does not equal"} value={"NOT_EQUALS"} selected={"NOT_EQUALS" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"is greater than"} value={"GREATER_THAN"} selected={"GREATER_THAN" == condition.operand}></DropdownItemText>
@@ -239,13 +239,13 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 					</Dropdown>
 				}
 				{getNormalizedType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "BOOLEAN" &&
-					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)}>
+					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
 						<DropdownItemText label={"is true"} value={"EQUALS"} selected={"EQUALS" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"is false"} value={"NOT_EQUALS"} selected={"NOT_EQUALS" == condition.operand}></DropdownItemText>
 					</Dropdown>
 				}
 				{getNormalizedType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "DATE" &&
-					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)}>
+					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
 						<DropdownItemText label={"equals"} value={"EQUALS"} selected={"EQUALS" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"does not equal"} value={"NOT_EQUALS"} selected={"NOT_EQUALS" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"is before"} value={"DATE_BEFORE_SPECIFIC"} selected={"DATE_BEFORE_SPECIFIC" == condition.operand}></DropdownItemText>
@@ -256,7 +256,7 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 				}
 				{getNormalizedType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "ARRAY" &&
 					getNormalizedArrayType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "STRING" &&
-					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)}>
+					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
 						<DropdownItemText label={"array length equal to"} value={"ARRAY_LENGTH_EQUAL"} selected={"ARRAY_LENGTH_EQUAL" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"array length greater than"} value={"ARRAY_LENGTH_GREATER_THAN"} selected={"ARRAY_LENGTH_GREATER_THAN" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"array length greater than or equal to"} value={"ARRAY_LENGTH_GREATER_THAN_OR_EQUAL"} selected={"ARRAY_LENGTH_GREATER_THAN_OR_EQUAL" == condition.operand}></DropdownItemText>
@@ -273,7 +273,7 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 				}
 				{getNormalizedType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "ARRAY" &&
 					getNormalizedArrayType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "NUMBER" &&
-					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)}>
+					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
 						<DropdownItemText label={"array length equal to"} value={"ARRAY_LENGTH_EQUAL"} selected={"ARRAY_LENGTH_EQUAL" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"array length greater than"} value={"ARRAY_LENGTH_GREATER_THAN"} selected={"ARRAY_LENGTH_GREATER_THAN" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"array length greater than or equal to"} value={"ARRAY_LENGTH_GREATER_THAN_OR_EQUAL"} selected={"ARRAY_LENGTH_GREATER_THAN_OR_EQUAL" == condition.operand}></DropdownItemText>
@@ -299,7 +299,7 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 				}
 				{getNormalizedType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "ARRAY" &&
 					getNormalizedArrayType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "DATE" &&
-					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)}>
+					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
 						<DropdownItemText label={"array length equal to"} value={"ARRAY_LENGTH_EQUAL"} selected={"ARRAY_LENGTH_EQUAL" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"array length greater than"} value={"ARRAY_LENGTH_GREATER_THAN"} selected={"ARRAY_LENGTH_GREATER_THAN" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"array length greater than or equal to"} value={"ARRAY_LENGTH_GREATER_THAN_OR_EQUAL"} selected={"ARRAY_LENGTH_GREATER_THAN_OR_EQUAL" == condition.operand}></DropdownItemText>

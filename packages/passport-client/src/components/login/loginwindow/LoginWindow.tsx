@@ -72,7 +72,8 @@ export const LoginWindow: React.FC<Props> = ({}) => {
 			var passport = new Passport("http://localhost:8080");
 			var loginRequest: UserLoginRequest = {
 				username: username,
-				password: password
+				password: password,
+				domain: "root",
 			}
 			passport.login(loginRequest)
 				.then(loginResponse => {

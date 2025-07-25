@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useCallback, useContext, useEffect, useState} from "react";
 import {ToastContext, ToasterType, ToastLocation} from "@blue-orange-ai/foundations-core";
 
 
@@ -18,20 +18,19 @@ export const UserProfileMe: React.FC<Props> = ({}) => {
 
 	const [user, setUser] = useState<User | undefined>(undefined);
 
-	const getCurrentUser = () => {
-		passport.currentUser()
-			.then(user => {
-				setUser(user);
-			})
-			.catch(response => {
-				addToast({id: uuidv4(),
-					heading: "An error occurred whilst attempting to retrieve your user object",
-					description: "",
-					location: ToastLocation.TOP_RIGHT,
-					toastType: ToasterType.ERROR,
-					ttl: 5000})
-			})
-	}
+	const getCurrentUser = useCallback(async (): Promise<void> => {
+		try {
+			const user = await passport.currentUser();
+			setUser(user);
+		} catch (e) {
+			addToast({id: uuidv4(),
+				heading: "An error occurred whilst attempting to retrieve your user object",
+				description: "",
+				location: ToastLocation.TOP_RIGHT,
+				toastType: ToasterType.ERROR,
+				ttl: 5000})
+		}
+	}, [])
 
 	useEffect(() => {
 		getCurrentUser();

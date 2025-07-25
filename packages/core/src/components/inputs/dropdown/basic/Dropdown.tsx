@@ -17,7 +17,7 @@ interface Props {
 	children: React.ReactNode,
 	placeholder?: string,
 	disabled?: boolean,
-	contextWidth?: number,
+	contextWidth?: number | string,
 	contextMaxHeight?: number,
 	closeOnClick?: boolean,
 	allowMultipleSelection?: boolean,
@@ -219,13 +219,22 @@ export const Dropdown: React.FC<Props> = ({
 			const rect = inputRef.current?.getBoundingClientRect() as DOMRect;
 			const clientWidth = rect.width;
 			const clientLeft = rect.left;
-			const width = contextWidth ? contextWidth : clientWidth;
+			const width = contextWidth != undefined && typeof contextWidth != "string" ? contextWidth : clientWidth;
 			const offset = (width - clientWidth) / 2;
 			return Math.max(0, clientLeft - offset);
 		} catch (e) {
 			return 0;
 		}
+	}
 
+	const generateFullWidth = () => {
+		try{
+			const rect = inputRef.current?.getBoundingClientRect() as DOMRect;
+			const clientWidth = rect.width;
+			return clientWidth.toString() + "px"
+		} catch (e) {
+			return "fit-content";
+		}
 	}
 
 	const isPosAbove = () => {
@@ -268,7 +277,7 @@ export const Dropdown: React.FC<Props> = ({
 	var dropdownWindowStyle: React.CSSProperties = {
 		display: visibleRef ? "flex" : "none",
 		flexDirection: "column",
-		width: contextWidth == undefined ? "fit-content" : contextWidth,
+		width: contextWidth == undefined ? generateFullWidth() : contextWidth,
 		maxHeight: contextMaxHeight == undefined ? "200px" : contextMaxHeight,
 		left: calculateLeftPosition(),
 		bottom: isPosAbove() ? getClientBottom() + getClientHeight() + 10 + "px" : "unset",
