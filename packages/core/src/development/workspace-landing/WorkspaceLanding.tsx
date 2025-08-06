@@ -29,6 +29,16 @@ import {ColorPickerDevelopment} from "../components/inputs/color-picker/ColorPic
 import {IconSelectorDevelopment} from "../components/inputs/icon-selector/IconSelectorDevelopment";
 import {DataTableDevelopment} from "../components/table/data-table/DataTableDevelopment";
 import {ContextMenuDevelopment} from "../components/contextmenu/ContextMenuDevelopment";
+import {AddressInputDevelopment} from "../components/inputs/address-input/AddressInputDevelopment";
+import {CheckboxInputDevelopment} from "../components/inputs/checkbox-input/CheckboxInputDevelopment";
+import {DateInputDevelopment} from "../components/inputs/date-input/DateInputDevelopment";
+import {DropdownInputDevelopment} from "../components/inputs/dropdown-input/DropdownInputDevelopment";
+import {EmojiInputDevelopment} from "../components/inputs/emoji-input/EmojiInputDevelopment";
+import {PhoneInputDevelopment} from "../components/inputs/phone-input/PhoneInputDevelopment";
+import {TagInputDevelopment} from "../components/inputs/tag-input/TagInputDevelopment";
+import {GeneralInputDevelopment} from "../components/inputs/general-input/GeneralInputDevelopment";
+import {TextAreaDevelopment} from "../components/inputs/textarea/TextAreaDevelopment";
+import {ToggleInputDevelopment} from "../components/inputs/toggle-input/ToggleInputDevelopment";
 
 interface Props {
 }
@@ -246,13 +256,13 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/inputs-icon")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
-							label={"Date Input"}
-							active={component == "inputs-date"}
+							label={"Dropdown Input"}
+							active={component == "inputs-dropdown"}
 							focused={false}
 							defaultStyle={inactiveStyle}
 							activeStyle={activeStyle}
-							icon={<i className="ri-calendar-fill"></i>}
-							onClick={() => navigate("/inputs-date")}
+							icon={<i className="ri-dropdown-list"></i>}
+							onClick={() => navigate("/inputs-dropdown")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
 							label={"Emoji Input"}
@@ -441,6 +451,16 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "table-data" && <DataTableDevelopment></DataTableDevelopment>}
 			{component == "context-menu" && <ContextMenuDevelopment></ContextMenuDevelopment>}
 			{component == "sockets" && <SocketWorkspace></SocketWorkspace>}
+			{component == "inputs-address" && <AddressInputDevelopment></AddressInputDevelopment>}
+			{component == "inputs-checkbox" && <CheckboxInputDevelopment></CheckboxInputDevelopment>}
+			{component == "inputs-date" && <DateInputDevelopment></DateInputDevelopment>}
+			{component == "inputs-dropdown" && <DropdownInputDevelopment></DropdownInputDevelopment>}
+			{component == "inputs-emoji" && <EmojiInputDevelopment></EmojiInputDevelopment>}
+			{component == "inputs-phone" && <PhoneInputDevelopment></PhoneInputDevelopment>}
+			{component == "inputs-tags" && <TagInputDevelopment></TagInputDevelopment>}
+			{component == "inputs-general" && <GeneralInputDevelopment></GeneralInputDevelopment>}
+			{component == "inputs-text-area" && <TextAreaDevelopment></TextAreaDevelopment>}
+			{component == "inputs-toggle" && <ToggleInputDevelopment></ToggleInputDevelopment>}
 		</SidebarPage>
 	)
 }

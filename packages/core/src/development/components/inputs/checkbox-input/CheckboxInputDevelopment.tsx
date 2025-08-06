@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 
-import './ColorPickerDevelopment.css'
+import './CheckboxInputDevelopment.css'
 import {SplitPageMajor} from "../../../../components/layouts/pages/split-pages/split-page-major/SplitPageMajor";
 import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
 import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
@@ -8,48 +8,32 @@ import {SplitPageMinor} from "../../../../components/layouts/pages/split-pages/s
 import {
 	HorizontalSplitPage
 } from "../../../../components/layouts/pages/split-pages/horizontal-split-page/HorizontalSplitPage";
-import {Media} from "@blue-orange-ai/foundations-clients";
-import {ColorPicker} from "../../../../components/inputs/color-picker/ColorPicker";
-
-interface RichTextState {
-	content: string,
-	mentions: string[],
-	attachments: Media[],
-	filesUploading: boolean
-}
+import {Checkbox} from "../../../../components/inputs/checkbox/Checkbox";
 
 interface Props {
 }
 
-export const ColorPickerDevelopment: React.FC<Props> = ({}) => {
+export const CheckboxInputDevelopment: React.FC<Props> = ({}) => {
 
-	const startingState: RichTextState = {
-		attachments: [],
-		content: "",
-		filesUploading: false,
-		mentions: []
-	}
-
-	const generateContentStr = (state: RichTextState) => {
-		return JSON.stringify(state, null, 2);
-	}
-
-	const [color, setColor] = useState("#000000");
+	const [checked, setChecked] = useState(false);
 
 
 	return (
 		<HorizontalSplitPage>
 			<SplitPageMajor>
 				<PaddedPage>
-					<PageHeading>Color Picker Editor</PageHeading>
-					<ColorPicker value={color} onChange={setColor}></ColorPicker>
+					<PageHeading>Checkbox Input</PageHeading>
+					<Checkbox
+						checked={checked}
+						onCheckboxChange={setChecked}
+					></Checkbox>
 				</PaddedPage>
 			</SplitPageMajor>
 			<SplitPageMinor>
 				<div className="workspace-output-window">
 					<div style={{marginBottom: "20px"}}>Output:</div>
 					<div style={{whiteSpace: "pre-wrap", fontFamily: "monospace"}}>
-						{color}
+						{JSON.stringify(checked)}
 					</div>
 				</div>
 			</SplitPageMinor>

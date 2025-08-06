@@ -30,6 +30,7 @@ import {PipelineNodePreview} from "../pipeline-node-preview/PipelineNodePreview"
 import {Utilities} from "../utilities/Utilities";
 import {PipelineNodeStyleEditor} from "../pipeline-node-style-editor/PipelineNodeStyleEditor";
 import {PipelineLinkStyleEditor} from "../pipeline-link-editor-style/PipelineLinkStyleEditor";
+import {PipelineNodeCreation} from "../pipeline-node-creation/PipelineNodeCreation";
 
 interface Props {
 }
@@ -438,19 +439,20 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 			}
 
 			{createNodeState &&
-				<Drawer position={DrawerPosition.BOTTOM} height={"calc(100vh - 48px)"}>
-					<DrawerHeader label={"Create New Node"} onClose={closeNodeUpdate}></DrawerHeader>
-					<DrawerBody>
-						<PipelineNodeStyleEditor node={focusNode} onChange={setFocusNode}></PipelineNodeStyleEditor>
-					</DrawerBody>
-					<DrawerFooter>
-						<DrawerFooterLeft>
-							<div className="pipeline-editor-btn-group">
-								<Button text={"Save"} buttonType={ButtonType.PRIMARY} onClick={saveNodeStyleUpdate}></Button>
-							</div>
-						</DrawerFooterLeft>
-					</DrawerFooter>
-				</Drawer>
+				<PipelineNodeCreation node={focusNode} onNodeChange={setFocusEdge} onClose={closeNodeUpdate}></PipelineNodeCreation>
+				// <Drawer position={DrawerPosition.BOTTOM} height={"calc(100vh - 48px)"}>
+				// 	<DrawerHeader label={"Create New Node"} onClose={closeNodeUpdate}></DrawerHeader>
+				// 	<DrawerBody>
+				// 		<PipelineNodeStyleEditor node={focusNode} onChange={setFocusNode}></PipelineNodeStyleEditor>
+				// 	</DrawerBody>
+				// 	<DrawerFooter>
+				// 		<DrawerFooterLeft>
+				// 			<div className="pipeline-editor-btn-group">
+				// 				<Button text={"Save"} buttonType={ButtonType.PRIMARY} onClick={saveNodeStyleUpdate}></Button>
+				// 			</div>
+				// 		</DrawerFooterLeft>
+				// 	</DrawerFooter>
+				// </Drawer>
 			}
 		</div>
 	)

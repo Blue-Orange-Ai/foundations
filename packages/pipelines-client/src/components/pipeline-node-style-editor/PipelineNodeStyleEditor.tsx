@@ -2,11 +2,10 @@ import React, {useRef, useState} from "react";
 
 import './PipelineNodeStyleEditor.css'
 
-import {BlueOrangeGraph, Node as GraphNode} from '@blue-orange-ai/primitives-graph'
+import {Node as GraphNode} from '@blue-orange-ai/primitives-graph'
 
 
 import '@blue-orange-ai/primitives-graph/dist/css/primitives-graph.min.css'
-import {ColorPicker, IconSelector, Input, InputForm, RenderHtml} from "@blue-orange-ai/foundations-core";
 import {Utilities} from "../utilities/Utilities";
 import {PipelineNodePreview} from "../pipeline-node-preview/PipelineNodePreview";
 import {PipelineNodeStyleEditorForm} from "../pipeline-node-style-editor-form/PipelineNodeStyleEditorForm";

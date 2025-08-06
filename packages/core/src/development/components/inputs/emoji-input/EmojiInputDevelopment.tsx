@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 
-import './ColorPickerDevelopment.css'
+import './EmojiInputDevelopment.css'
 import {SplitPageMajor} from "../../../../components/layouts/pages/split-pages/split-page-major/SplitPageMajor";
 import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
 import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
@@ -8,48 +8,37 @@ import {SplitPageMinor} from "../../../../components/layouts/pages/split-pages/s
 import {
 	HorizontalSplitPage
 } from "../../../../components/layouts/pages/split-pages/horizontal-split-page/HorizontalSplitPage";
-import {Media} from "@blue-orange-ai/foundations-clients";
-import {ColorPicker} from "../../../../components/inputs/color-picker/ColorPicker";
+import {EmojiWrapper} from "../../../../components/inputs/emoji/emoji-wrapper/EmojiWrapper";
+import {RenderHtml} from "../../../../components/text-decorations/render-html/RenderHtml";
 
-interface RichTextState {
-	content: string,
-	mentions: string[],
-	attachments: Media[],
-	filesUploading: boolean
-}
 
 interface Props {
 }
 
-export const ColorPickerDevelopment: React.FC<Props> = ({}) => {
+export const EmojiInputDevelopment: React.FC<Props> = ({}) => {
 
-	const startingState: RichTextState = {
-		attachments: [],
-		content: "",
-		filesUploading: false,
-		mentions: []
-	}
+	const initialEmojiObject: string = "&#x1F600;"
 
-	const generateContentStr = (state: RichTextState) => {
-		return JSON.stringify(state, null, 2);
-	}
-
-	const [color, setColor] = useState("#000000");
+	const [query, setQuery] = useState<string>(initialEmojiObject);
 
 
 	return (
 		<HorizontalSplitPage>
 			<SplitPageMajor>
 				<PaddedPage>
-					<PageHeading>Color Picker Editor</PageHeading>
-					<ColorPicker value={color} onChange={setColor}></ColorPicker>
+					<PageHeading>Emoji Input Editor</PageHeading>
+					<EmojiWrapper onSelection={setQuery}>
+						<div className="workspace-emoji-development">
+							<RenderHtml html={query}></RenderHtml>
+						</div>
+					</EmojiWrapper>
 				</PaddedPage>
 			</SplitPageMajor>
 			<SplitPageMinor>
 				<div className="workspace-output-window">
 					<div style={{marginBottom: "20px"}}>Output:</div>
 					<div style={{whiteSpace: "pre-wrap", fontFamily: "monospace"}}>
-						{color}
+						{JSON.stringify(query, null, 4)}
 					</div>
 				</div>
 			</SplitPageMinor>

@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 
-import './ColorPickerDevelopment.css'
+import './AddressInputDevelopment.css'
 import {SplitPageMajor} from "../../../../components/layouts/pages/split-pages/split-page-major/SplitPageMajor";
 import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
 import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
@@ -8,8 +8,8 @@ import {SplitPageMinor} from "../../../../components/layouts/pages/split-pages/s
 import {
 	HorizontalSplitPage
 } from "../../../../components/layouts/pages/split-pages/horizontal-split-page/HorizontalSplitPage";
-import {Media} from "@blue-orange-ai/foundations-clients";
-import {ColorPicker} from "../../../../components/inputs/color-picker/ColorPicker";
+import {Address, Media} from "@blue-orange-ai/foundations-clients";
+import {AddressInput} from "../../../../components/inputs/address/AddressInput";
 
 interface RichTextState {
 	content: string,
@@ -21,35 +21,46 @@ interface RichTextState {
 interface Props {
 }
 
-export const ColorPickerDevelopment: React.FC<Props> = ({}) => {
+export const AddressInputDevelopment: React.FC<Props> = ({}) => {
 
-	const startingState: RichTextState = {
-		attachments: [],
-		content: "",
-		filesUploading: false,
-		mentions: []
-	}
-
-	const generateContentStr = (state: RichTextState) => {
+	const generateContentStr = (state: Address) => {
 		return JSON.stringify(state, null, 2);
 	}
 
-	const [color, setColor] = useState("#000000");
+	const [address, setAddress] = useState<Address>({
+		address: "4 Kegworth Street",
+		city: "Leichhardt",
+		country: "Australia",
+		id: "",
+		postcode: "2040",
+		state: "NSW"
+	});
+
+	const updateAddress = (address: Address) => {
+		setAddress((prevState) => ({
+			...prevState,
+			...address
+		}))
+	}
 
 
 	return (
 		<HorizontalSplitPage>
 			<SplitPageMajor>
 				<PaddedPage>
-					<PageHeading>Color Picker Editor</PageHeading>
-					<ColorPicker value={color} onChange={setColor}></ColorPicker>
+					<PageHeading>Address Input</PageHeading>
+					<AddressInput
+						address={address}
+						onChange={updateAddress}
+						label="Address Input"
+					></AddressInput>
 				</PaddedPage>
 			</SplitPageMajor>
 			<SplitPageMinor>
 				<div className="workspace-output-window">
 					<div style={{marginBottom: "20px"}}>Output:</div>
 					<div style={{whiteSpace: "pre-wrap", fontFamily: "monospace"}}>
-						{color}
+						{generateContentStr(address)}
 					</div>
 				</div>
 			</SplitPageMinor>

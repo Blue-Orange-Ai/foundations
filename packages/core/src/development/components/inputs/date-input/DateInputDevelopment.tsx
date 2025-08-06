@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 
-import './ColorPickerDevelopment.css'
+import './DateInputDevelopment.css'
 import {SplitPageMajor} from "../../../../components/layouts/pages/split-pages/split-page-major/SplitPageMajor";
 import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
 import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
@@ -10,6 +10,7 @@ import {
 } from "../../../../components/layouts/pages/split-pages/horizontal-split-page/HorizontalSplitPage";
 import {Media} from "@blue-orange-ai/foundations-clients";
 import {ColorPicker} from "../../../../components/inputs/color-picker/ColorPicker";
+import {DateInput} from "../../../../components/inputs/date/datepicker/inputs/dateinput/DateInput";
 
 interface RichTextState {
 	content: string,
@@ -21,7 +22,7 @@ interface RichTextState {
 interface Props {
 }
 
-export const ColorPickerDevelopment: React.FC<Props> = ({}) => {
+export const DateInputDevelopment: React.FC<Props> = ({}) => {
 
 	const startingState: RichTextState = {
 		attachments: [],
@@ -34,22 +35,25 @@ export const ColorPickerDevelopment: React.FC<Props> = ({}) => {
 		return JSON.stringify(state, null, 2);
 	}
 
-	const [color, setColor] = useState("#000000");
+	const [query, setQuery] = useState<Date>(new Date());
 
 
 	return (
 		<HorizontalSplitPage>
 			<SplitPageMajor>
 				<PaddedPage>
-					<PageHeading>Color Picker Editor</PageHeading>
-					<ColorPicker value={color} onChange={setColor}></ColorPicker>
+					<PageHeading>Date Input Editor</PageHeading>
+					<DateInput
+						value={query}
+						onChange={setQuery}
+					></DateInput>
 				</PaddedPage>
 			</SplitPageMajor>
 			<SplitPageMinor>
 				<div className="workspace-output-window">
 					<div style={{marginBottom: "20px"}}>Output:</div>
 					<div style={{whiteSpace: "pre-wrap", fontFamily: "monospace"}}>
-						{color}
+						{query.toISOString()}
 					</div>
 				</div>
 			</SplitPageMinor>
