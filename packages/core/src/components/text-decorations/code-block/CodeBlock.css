@@ -1,0 +1,23 @@
+
+
+.blue-orange-code-block{
+    width: 100%;
+    border: 1px solid var(--blue-orange-light-default-border-color);
+    border-radius: 4px;
+    position: relative;
+}
+
+.blue-orange-code-block-language {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    font-size: 0.6rem;
+    color: var(--blue-orange-light-default-text-color);
+    opacity: 0.4;
+}
+
+.blue-orange-code-block-copy-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+}

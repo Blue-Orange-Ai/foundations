@@ -1,0 +1,10 @@
+
+.blue-orange-accordion-development-header {
+    cursor: pointer;
+}
+
+.blue-orange-accordion-development-body {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}

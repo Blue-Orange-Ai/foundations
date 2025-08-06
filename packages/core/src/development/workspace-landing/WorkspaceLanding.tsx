@@ -39,6 +39,8 @@ import {TagInputDevelopment} from "../components/inputs/tag-input/TagInputDevelo
 import {GeneralInputDevelopment} from "../components/inputs/general-input/GeneralInputDevelopment";
 import {TextAreaDevelopment} from "../components/inputs/textarea/TextAreaDevelopment";
 import {ToggleInputDevelopment} from "../components/inputs/toggle-input/ToggleInputDevelopment";
+import {AccordionDevelopment} from "../components/accordion/AccordionDevelopment";
+import {CodeBlockDevelopment} from "../components/text-decorations/code-block/CodeBlockDevelopment";
 
 interface Props {
 }
@@ -60,6 +62,8 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 	const [sidebarChartState, setSidebarChartState] = useState(false);
 
 	const [sidebarInputState, setSidebarInputState] = useState(false);
+
+	const [sidebarTextDecorationState, setSidebarTextDecorationState] = useState(false);
 
 	const [sidebarTooltipState, setSidebarTooltipState] = useState(false);
 
@@ -432,6 +436,23 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						icon={<i className="ri-link"></i>}
 						onClick={() => navigate("/sockets")}
 					></SideBarBodyItem>
+					<SideBarBodyGroup opened={sidebarTextDecorationState}>
+						<SideBarBodyLabel
+							icon={sidebarTextDecorationState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
+							label={"Text Decorations"}
+							onClick={() => setSidebarTextDecorationState(!sidebarTextDecorationState)}
+						></SideBarBodyLabel>
+						<SideBarBodyItem
+							label={"Code Block"}
+							active={component == "text-decoration-code-block"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-code-box-line"></i>}
+							onClick={() => navigate("/text-decoration-code-block")}
+						></SideBarBodyItem>
+
+					</SideBarBodyGroup>
 				</SideBarBody>
 			</SideBar>
 			{component == "buttons" && <ButtonDevelopment></ButtonDevelopment>}
@@ -461,6 +482,8 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "inputs-general" && <GeneralInputDevelopment></GeneralInputDevelopment>}
 			{component == "inputs-text-area" && <TextAreaDevelopment></TextAreaDevelopment>}
 			{component == "inputs-toggle" && <ToggleInputDevelopment></ToggleInputDevelopment>}
+			{component == "accordion" && <AccordionDevelopment></AccordionDevelopment>}
+			{component == "text-decoration-code-block" && <CodeBlockDevelopment></CodeBlockDevelopment>}
 		</SidebarPage>
 	)
 }
