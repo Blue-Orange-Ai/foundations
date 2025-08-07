@@ -94,6 +94,7 @@ export * from './components/inputs/toggle/Toggle';
 export * from './components/interfaces/AppInterfaces';
 export * from './components/inputs/color-picker/ColorPicker';
 export * from './components/inputs/icon-selector/IconSelector';
+export * from './components/inputs/copy-input/CopyInput';
 
 // Layouts
 export * from './components/layouts/drawer/drawer/Drawer';
@@ -173,6 +174,7 @@ export * from './components/text-decorations/dates/time/TimeDisplay';
 export * from './components/text-decorations/dates/relative-time/RelativeTime';
 export * from './components/text-decorations/dotified-text/DotifiedText';
 export * from './components/text-decorations/truncated-text/TruncatedText';
+export * from './components/text-decorations/code-block/CodeBlock';
 
 // Tooltips
 export * from './components/tooltips/simple-tooltip/SimpleTooltip';

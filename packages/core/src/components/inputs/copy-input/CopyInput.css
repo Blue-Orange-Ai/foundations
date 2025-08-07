@@ -1,12 +1,35 @@
 
 
 
-.blue-orange-default-help-icon{
+
+.blue-orange-copy-input-cont {
+    width: calc(100% - 10px);
+    border: 1px solid var(--blue-orange-light-input-border-color);
+    height: 34px;
+    background-color: var(--blue-orange-light-input-background-color);
+    color: var(--blue-orange-light-input-color);
+    border-radius: 4px;
+    padding-left: 5px;
+    padding-right: 5px;
     font-size: 0.8rem;
-    color: var(--blue-orange-light-help-icon-color);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.dark .blue-orange-default-help-icon{
-    font-size: 0.8rem;
-    color: var(--blue-orange-dark-help-icon-color);
+.dark .blue-orange-copy-input-cont {
+    border: 1px solid var(--blue-orange-dark-input-border-color);
+    background-color: var(--blue-orange-dark-input-background-color);
+    color: var(--blue-orange-dark-input-color);
+}
+
+.blue-orange-copy-input-cont .blue-orange-default-btn-icon {
+    background-color: var(--blue-orange-light-primary-btn-background-color);
+    color: var(--blue-orange-light-primary-btn-color);
+}
+
+.dark .blue-orange-copy-input-cont .blue-orange-default-btn-icon {
+    background-color: var(--blue-orange-dark-primary-btn-background-color);
+    color: var(--blue-orange-dark-primary-btn-color);
 }

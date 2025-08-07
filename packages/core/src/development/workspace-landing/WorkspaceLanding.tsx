@@ -41,6 +41,7 @@ import {TextAreaDevelopment} from "../components/inputs/textarea/TextAreaDevelop
 import {ToggleInputDevelopment} from "../components/inputs/toggle-input/ToggleInputDevelopment";
 import {AccordionDevelopment} from "../components/accordion/AccordionDevelopment";
 import {CodeBlockDevelopment} from "../components/text-decorations/code-block/CodeBlockDevelopment";
+import {CopyInputDevelopment} from "../components/inputs/copy-input/CopyInputDevelopment";
 
 interface Props {
 }
@@ -249,6 +250,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							activeStyle={activeStyle}
 							icon={< i className="ri-palette-line"></i>}
 							onClick={() => navigate("/inputs-color")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Copy Input"}
+							active={component == "inputs-copy"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={< i className="ri-file-copy-fill"></i>}
+							onClick={() => navigate("/inputs-copy")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
 							label={"Icon Selector"}
@@ -484,6 +494,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "inputs-toggle" && <ToggleInputDevelopment></ToggleInputDevelopment>}
 			{component == "accordion" && <AccordionDevelopment></AccordionDevelopment>}
 			{component == "text-decoration-code-block" && <CodeBlockDevelopment></CodeBlockDevelopment>}
+			{component == "inputs-copy" && <CopyInputDevelopment></CopyInputDevelopment>}
 		</SidebarPage>
 	)
 }
