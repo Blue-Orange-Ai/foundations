@@ -12,6 +12,7 @@ import {
 import {PipelineNodeStyleEditor} from "../pipeline-node-style-editor/PipelineNodeStyleEditor";
 import {Node as GraphNode} from "@blue-orange-ai/primitives-graph";
 import {PipelineNodeSettings} from "../pipeline-node-settings/PipelineNodeSettings";
+import {PipelineNodeRules} from "../pipeline-node-rules/PipelineNodeRules";
 
 interface Props {
     node: GraphNode,
@@ -37,6 +38,9 @@ export const PipelineNodeCreation: React.FC<Props> = ({node, onClose, onNodeChan
                     </Tab>
                     <Tab uuid={"settings-tab"} name={"Settings"}>
                         <PipelineNodeSettings></PipelineNodeSettings>
+                    </Tab>
+                    <Tab uuid={"rules-tab"} name={"Rules"}>
+                        <PipelineNodeRules></PipelineNodeRules>
                     </Tab>
                 </Tabs>
             </DrawerBody>

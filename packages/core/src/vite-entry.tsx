@@ -176,5 +176,8 @@ export * from './components/text-decorations/dotified-text/DotifiedText';
 export * from './components/text-decorations/truncated-text/TruncatedText';
 export * from './components/text-decorations/code-block/CodeBlock';
 
+// Rules
+export * from './components/rules/rule-editor/RuleEditor';
+
 // Tooltips
 export * from './components/tooltips/simple-tooltip/SimpleTooltip';
