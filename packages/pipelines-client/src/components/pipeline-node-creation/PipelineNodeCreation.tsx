@@ -5,22 +5,21 @@ import {
     Button, ButtonType, Drawer,
     DrawerBody,
     DrawerFooter,
-    DrawerFooterLeft,
+    DrawerFooterLeft, DrawerFooterRight,
     DrawerHeader,
     DrawerPosition, Tab, Tabs
 } from "@blue-orange-ai/foundations-core";
 import {PipelineNodeStyleEditor} from "../pipeline-node-style-editor/PipelineNodeStyleEditor";
 import {Node as GraphNode} from "@blue-orange-ai/primitives-graph";
-import {PipelineNodeSettings} from "../pipeline-node-settings/PipelineNodeSettings";
-import {PipelineNodeRules} from "../pipeline-node-rules/PipelineNodeRules";
 
 interface Props {
     node: GraphNode,
     onClose: () => void,
+    onSave: () => void,
     onNodeChange: (node: GraphNode) => void,
 }
 
-export const PipelineNodeCreation: React.FC<Props> = ({node, onClose, onNodeChange}) => {
+export const PipelineNodeCreation: React.FC<Props> = ({node, onClose, onSave, onNodeChange}) => {
 
 
 
@@ -29,38 +28,20 @@ export const PipelineNodeCreation: React.FC<Props> = ({node, onClose, onNodeChan
         <Drawer position={DrawerPosition.BOTTOM} height={"calc(100vh - 48px)"}>
             <DrawerHeader label={"Create New Node"} onClose={onClose}></DrawerHeader>
             <DrawerBody>
-                <Tabs activeTab="settings-tab">
-                    <Tab uuid={"usage-tab"} name={"Usage"}>
-                        <div>Hello World Usage</div>
-                    </Tab>
-                    <Tab uuid={"style-tab"} name={"Style"}>
-                        <PipelineNodeStyleEditor node={node} onChange={onNodeChange}></PipelineNodeStyleEditor>
-                    </Tab>
-                    <Tab uuid={"settings-tab"} name={"Settings"}>
-                        <PipelineNodeSettings></PipelineNodeSettings>
-                    </Tab>
-                    <Tab uuid={"rules-tab"} name={"Rules"}>
-                        <PipelineNodeRules></PipelineNodeRules>
-                    </Tab>
-                </Tabs>
+                <PipelineNodeStyleEditor node={node} onChange={onNodeChange}></PipelineNodeStyleEditor>
             </DrawerBody>
             <DrawerFooter>
                 <DrawerFooterLeft>
                     <div className="pipeline-editor-btn-group">
-                        <Button text={"Save"} buttonType={ButtonType.PRIMARY}></Button>
+                        <Button text={"Save"} buttonType={ButtonType.PRIMARY} onClick={onSave}></Button>
                     </div>
                 </DrawerFooterLeft>
+                <DrawerFooterRight>
+                    <div className="pipeline-editor-btn-group">
+                        <Button text={"Cancel"} buttonType={ButtonType.SECONDARY} onClick={onClose}></Button>
+                    </div>
+                </DrawerFooterRight>
             </DrawerFooter>
-            {/*<DrawerBody>*/}
-            {/*    <PipelineNodeStyleEditor node={focusNode} onChange={setFocusNode}></PipelineNodeStyleEditor>*/}
-            {/*</DrawerBody>*/}
-            {/*<DrawerFooter>*/}
-            {/*    <DrawerFooterLeft>*/}
-            {/*        <div className="pipeline-editor-btn-group">*/}
-            {/*            <Button text={"Save"} buttonType={ButtonType.PRIMARY} onClick={saveNodeStyleUpdate}></Button>*/}
-            {/*        </div>*/}
-            {/*    </DrawerFooterLeft>*/}
-            {/*</DrawerFooter>*/}
         </Drawer>
     )
 }

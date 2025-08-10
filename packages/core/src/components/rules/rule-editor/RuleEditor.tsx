@@ -123,10 +123,12 @@ export interface IRule {
 interface Props {
 	rule: IRule,
 	schema: Array<IRuleSchemaProperty>,
+	showHeader?: boolean,
+	headerEditable?: boolean,
 	onChange?: (rule: IRule) => void
 }
 
-export const RuleEditor: React.FC<Props> = ({rule, schema, onChange}) => {
+export const RuleEditor: React.FC<Props> = ({rule, schema, showHeader=true, headerEditable=true, onChange}) => {
 
 	const [internalRule, setInternalRule] = useState(rule);
 
@@ -142,17 +144,22 @@ export const RuleEditor: React.FC<Props> = ({rule, schema, onChange}) => {
 
 	return (
 		<div className="blue-orange-rule-container">
-			<div className="blue-orange-rule-header">
-				<div className="blue-orange-rule-header-left-cont">
-					<GeneralHeading>{rule.name}</GeneralHeading>
-					<Description>{rule.description}</Description>
+			{showHeader &&
+				<div className="blue-orange-rule-header">
+					<div className="blue-orange-rule-header-left-cont">
+						<GeneralHeading>{rule.name}</GeneralHeading>
+						<Description>{rule.description}</Description>
+					</div>
+					{headerEditable &&
+						<div className="blue-orange-rule-header-controls">
+							<ButtonIcon icon={"ri-edit-fill"} label={"Edit"}></ButtonIcon>
+							<ButtonIcon icon={"ri-delete-bin-7-fill"} label={"Delete"}></ButtonIcon>
+						</div>
+					}
 				</div>
-				<div className="blue-orange-rule-header-controls">
-					<ButtonIcon icon={"ri-edit-fill"} label={"Edit"}></ButtonIcon>
-					<ButtonIcon icon={"ri-delete-bin-7-fill"} label={"Delete"}></ButtonIcon>
-				</div>
-			</div>
-			<RuleGroup conditions={rule.conditions} deletable={false} logic={rule.logic} schema={schema} onChange={updateRule}></RuleGroup>
+			}
+			<RuleGroup conditions={rule.conditions} deletable={false} logic={rule.logic} schema={schema}
+					   onChange={updateRule}></RuleGroup>
 		</div>
 	)
 }

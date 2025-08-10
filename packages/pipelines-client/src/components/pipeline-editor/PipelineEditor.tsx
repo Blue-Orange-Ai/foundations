@@ -437,22 +437,12 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 					</DrawerFooter>
 				</Drawer>
 			}
-
 			{createNodeState &&
-				<PipelineNodeCreation node={focusNode} onNodeChange={setFocusEdge} onClose={closeNodeUpdate}></PipelineNodeCreation>
-				// <Drawer position={DrawerPosition.BOTTOM} height={"calc(100vh - 48px)"}>
-				// 	<DrawerHeader label={"Create New Node"} onClose={closeNodeUpdate}></DrawerHeader>
-				// 	<DrawerBody>
-				// 		<PipelineNodeStyleEditor node={focusNode} onChange={setFocusNode}></PipelineNodeStyleEditor>
-				// 	</DrawerBody>
-				// 	<DrawerFooter>
-				// 		<DrawerFooterLeft>
-				// 			<div className="pipeline-editor-btn-group">
-				// 				<Button text={"Save"} buttonType={ButtonType.PRIMARY} onClick={saveNodeStyleUpdate}></Button>
-				// 			</div>
-				// 		</DrawerFooterLeft>
-				// 	</DrawerFooter>
-				// </Drawer>
+				<PipelineNodeCreation
+					node={focusNode}
+					onNodeChange={setFocusNode}
+					onSave={saveNodeStyleUpdate}
+					onClose={closeNodeUpdate}></PipelineNodeCreation>
 			}
 		</div>
 	)

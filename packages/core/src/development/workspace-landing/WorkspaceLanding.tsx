@@ -42,6 +42,7 @@ import {ToggleInputDevelopment} from "../components/inputs/toggle-input/ToggleIn
 import {AccordionDevelopment} from "../components/accordion/AccordionDevelopment";
 import {CodeBlockDevelopment} from "../components/text-decorations/code-block/CodeBlockDevelopment";
 import {CopyInputDevelopment} from "../components/inputs/copy-input/CopyInputDevelopment";
+import {ComboChartDevelopment} from "../components/charts/combo/ComboChartDevelopment";
 
 interface Props {
 }
@@ -154,6 +155,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							activeStyle={activeStyle}
 							icon={<i className="ri-bar-chart-fill"></i>}
 							onClick={() => navigate("/charts-bar")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Combo"}
+							active={component == "charts-combo"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-bar-chart-fill"></i>}
+							onClick={() => navigate("/charts-combo")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
 							label={"Line"}
@@ -468,6 +478,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "buttons" && <ButtonDevelopment></ButtonDevelopment>}
 			{component == "charts-line" && <LineChartDevelopment></LineChartDevelopment>}
 			{component == "charts-bar" && <BarChartDevelopment></BarChartDevelopment>}
+			{component == "charts-combo" && <ComboChartDevelopment></ComboChartDevelopment>}
 			{component == "charts-scatter" && <ScatterChartDevelopment></ScatterChartDevelopment>}
 			{component == "rules" && <RuleEditorDevelopment></RuleEditorDevelopment>}
 			{component == "file-system" && <FileSystemDevelopment></FileSystemDevelopment>}
