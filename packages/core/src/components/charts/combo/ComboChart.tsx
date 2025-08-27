@@ -25,6 +25,15 @@ interface Props {
     legend?: boolean;
     legendPosition?: LegendPosition;
 
+    // Stacking configuration
+    stackedBars?: boolean;      // enable stacked bar charts
+    stackedAreas?: boolean;     // enable stacked area charts
+    stackId?: string;           // stack identifier for grouping datasets
+
+    // Tooltip configuration
+    showXValueInTooltip?: boolean;  // show x-value in tooltip
+    xValueFormatter?: (value: any) => string;  // custom formatter for x-value
+
     // Range selection
     rangeSelect?: boolean;
     onRangeSelected?: (startValue: any, endValue: any) => void;
@@ -56,6 +65,13 @@ export const ComboChart: React.FC<Props> = ({
                                                 animationTimeout = 2000,
                                                 legend = true,
                                                 legendPosition = LegendPosition.BOTTOM,
+
+                                                stackedBars = false,
+                                                stackedAreas = false,
+                                                stackId = "default",
+
+                                                showXValueInTooltip = false,
+                                                xValueFormatter,
 
                                                 rangeSelect = false,
                                                 onRangeSelected,
@@ -280,8 +296,21 @@ export const ComboChart: React.FC<Props> = ({
 
                 const boxSpan = document.createElement("span");
                 boxSpan.className = "blue-orange-line-chart-legend-item-color-span";
-                boxSpan.style.background = item.fillStyle;
-                boxSpan.style.borderColor = item.strokeStyle;
+                
+                // Get the dataset to determine chart type
+                const dataset = chart.data.datasets[item.datasetIndex];
+                const isLineChart = dataset?.type === 'line';
+                
+                // For line charts (including stacked areas), always use stroke color
+                // For other chart types (bars, scatter), use fill color
+                if (isLineChart) {
+                    boxSpan.style.background = item.strokeStyle;
+                    boxSpan.style.borderColor = item.strokeStyle;
+                } else {
+                    boxSpan.style.background = item.fillStyle;
+                    boxSpan.style.borderColor = item.strokeStyle;
+                }
+                
                 boxSpan.style.borderWidth = item.lineWidth + "px";
                 boxSpan.style.display = "inline-block";
                 boxSpan.style.flexShrink = "0";
@@ -391,6 +420,37 @@ export const ComboChart: React.FC<Props> = ({
             const container = document.createElement("div");
             container.className = "blue-orange-charts-line-dataset-container";
 
+            // Add x-value header if enabled
+            if (showXValueInTooltip && selected.length > 0) {
+                // Get x-value from Chart.js tooltip model
+                let xValue;
+                
+                // Chart.js provides the label in tooltipModel.title
+                if (tooltipModel.title && tooltipModel.title.length > 0) {
+                    xValue = tooltipModel.title[0];
+                } else {
+                    // Fallback: try to get from dataPoint
+                    const dataPoint = selected[0];
+                    xValue = dataPoint.parsed?.x || dataPoint.label;
+                }
+                
+                // Only create header if we have a valid x-value
+                if (xValue !== undefined && xValue !== null && xValue !== '') {
+                    const formattedXValue = xValueFormatter ? xValueFormatter(xValue) : String(xValue);
+                    
+                    const xValueHeader = document.createElement("div");
+                    xValueHeader.className = "blue-orange-chart-line-tooltip-x-value";
+                    xValueHeader.style.fontWeight = "bold";
+                    xValueHeader.style.marginBottom = "6px";
+                    xValueHeader.style.paddingBottom = "3px";
+                    xValueHeader.style.borderBottom = "1px solid rgba(0,0,0,0.1)";
+                    xValueHeader.style.fontSize = "12px";
+                    xValueHeader.style.color = "white";
+                    xValueHeader.textContent = formattedXValue;
+                    container.appendChild(xValueHeader);
+                }
+            }
+
             for (const dp of selected) {
                 const dataset = dp.dataset;
                 const borderColor = dataset.borderColor;
@@ -472,10 +532,29 @@ export const ComboChart: React.FC<Props> = ({
         if (out.type === "line" && out.order === undefined) out.order = 1;
         if (out.type === "scatter" && out.order === undefined) out.order = 2;
 
+        // Handle stacked bar charts
+        if (out.type === "bar" && stackedBars) {
+            out.stack = out.stack || stackId;
+        }
+
         if (out.type === "line") {
-            out.fill = fill;
+            // Handle stacked area charts
+            if (stackedAreas) {
+                out.fill = out.fill !== undefined ? out.fill : 'origin';
+                out.stack = out.stack || stackId;
+            } else {
+                out.fill = fill;
+            }
+            // Configure hover points for line charts
             if (out.pointRadius === undefined) out.pointRadius = 0;
-            if (out.pointHoverRadius === undefined) out.pointHoverRadius = 0;
+            if (out.pointHoverRadius === undefined) out.pointHoverRadius = 5;
+            if (out.pointHoverBorderWidth === undefined) out.pointHoverBorderWidth = 2;
+            if (out.pointHoverBackgroundColor === undefined) {
+                out.pointHoverBackgroundColor = out.backgroundColor || out.borderColor || '#fff';
+            }
+            if (out.pointHoverBorderColor === undefined) {
+                out.pointHoverBorderColor = out.borderColor || '#333';
+            }
         }
 
         if (out.type === "scatter") {
@@ -559,6 +638,7 @@ export const ComboChart: React.FC<Props> = ({
                         title: { display: yLabel !== undefined, text: yLabel },
                         grid: { display: gridLines },
                         ticks: { display: true },
+                        stacked: stackedBars || stackedAreas,
                     },
                     x: {
                         title: { display: xLabel !== undefined, text: xLabel },
@@ -566,6 +646,7 @@ export const ComboChart: React.FC<Props> = ({
                         time: { unit: xScaleTimeUnit },
                         grid: { display: gridLines },
                         ticks: { display: true },
+                        stacked: stackedBars,
                     },
                 },
                 interaction: {

@@ -48,37 +48,133 @@ export const ComboChartDevelopment: React.FC<Props> = ({}) => {
 	return (
 		<PaddedPage>
 			<PageHeading>Combo Chart</PageHeading>
-			<ComboChart
-				height={"100vh"}
-				width={"100%"}
-				dataset={[
-					{ type: 'line', label: 'CPU %', parsing: false, data: [
-							{x: 1719705600000, y: 12}, {x: 1719709200000, y: 18}
-						], borderColor: '#2d88ff' },
-					{ type: 'scatter', label: 'Events', parsing: false, data: [
-							{x: 1719707000000, y: 20}, {x: 1719708200000, y: 35}
-						], borderColor: '#ff7a00', backgroundColor: '#ff7a00' },
-				]}
-				xScale="time"
-				xScaleTimeUnit="minute"
-				yScale="linear"
-				legend
-				rangeSelect
-			/>
-			{/*<ComboChart*/}
-			{/*	height={"100vh"}*/}
-			{/*	width={"100%"}*/}
-			{/*	dataset={[*/}
-			{/*		{ type: 'bar', label: 'Volume', data: dataset1, backgroundColor: 'rgba(0,0,0,0.2)', borderColor: '#888', borderRadius: 4 },*/}
-			{/*		{ type: 'line', label: 'Price', data: dataset2, borderColor: '#2d88ff', backgroundColor: 'rgba(45,136,255,0.2)' }*/}
-			{/*	]}*/}
-			{/*	xScale="category"*/}
-			{/*	yScale="linear"*/}
-			{/*	interactionType={"nearest"}*/}
-			{/*	legend*/}
-			{/*	rangeSelect*/}
-			{/*	onRangeSelected={(a,b)=>console.log('range', a, b)}*/}
-			{/*/>*/}
+			{/* Regular Combo Chart with Basic X-Value Tooltip */}
+			<div>
+				<h3>Regular Combo Chart with Basic X-Value Tooltip</h3>
+				<ComboChart
+					height={"50vh"}
+					width={"100%"}
+					dataset={[
+						{ type: 'line', label: 'CPU %', parsing: false, data: [
+								{x: 1719705600000, y: 12}, {x: 1719709200000, y: 18}
+							], borderColor: '#2d88ff' },
+						{ type: 'scatter', label: 'Events', parsing: false, data: [
+								{x: 1719707000000, y: 20}, {x: 1719708200000, y: 35}
+							], borderColor: '#ff7a00', backgroundColor: '#ff7a00' },
+					]}
+					xScale="time"
+					xScaleTimeUnit="minute"
+					yScale="linear"
+					showXValueInTooltip={true}
+					legend
+					rangeSelect
+				/>
+			</div>
+
+			{/* Stacked Area Chart with X-Value Tooltip */}
+			<div style={{marginTop: '40px'}}>
+				<h3>Stacked Area Chart with X-Value in Tooltip</h3>
+				<ComboChart
+					height={"50vh"}
+					width={"100%"}
+					dataset={[
+						{ type: 'line', label: 'Network In', parsing: false, data: [
+								{x: 1719705600000, y: 10}, {x: 1719706500000, y: 15}, {x: 1719707400000, y: 12}, {x: 1719708300000, y: 18}, {x: 1719709200000, y: 20}
+							], borderColor: '#2d88ff', backgroundColor: 'rgba(45, 136, 255, 0.3)' },
+						{ type: 'line', label: 'Network Out', parsing: false, data: [
+								{x: 1719705600000, y: 8}, {x: 1719706500000, y: 12}, {x: 1719707400000, y: 10}, {x: 1719708300000, y: 14}, {x: 1719709200000, y: 16}
+							], borderColor: '#ff7a00', backgroundColor: 'rgba(255, 122, 0, 0.3)' },
+						{ type: 'line', label: 'Disk I/O', parsing: false, data: [
+								{x: 1719705600000, y: 5}, {x: 1719706500000, y: 8}, {x: 1719707400000, y: 6}, {x: 1719708300000, y: 9}, {x: 1719709200000, y: 11}
+							], borderColor: '#28a745', backgroundColor: 'rgba(40, 167, 69, 0.3)' },
+					]}
+					xScale="time"
+					xScaleTimeUnit="minute"
+					yScale="linear"
+					stackedAreas={true}
+					showXValueInTooltip={true}
+					xValueFormatter={(value) => new Date(value).toLocaleString()}
+					legend
+					rangeSelect
+				/>
+			</div>
+
+			{/* Stacked Bar Chart with Custom X-Value Format */}
+			<div style={{marginTop: '40px'}}>
+				<h3>Stacked Bar Chart with Custom X-Value Format</h3>
+				<ComboChart
+					height={"50vh"}
+					width={"100%"}
+					dataset={[
+						{ type: 'bar', label: 'Sales Q1', data: [
+								{x: 'Jan', y: 100}, {x: 'Feb', y: 120}, {x: 'Mar', y: 110}, {x: 'Apr', y: 140}
+							], backgroundColor: 'rgba(45, 136, 255, 0.7)', borderColor: '#2d88ff' },
+						{ type: 'bar', label: 'Sales Q2', data: [
+								{x: 'Jan', y: 80}, {x: 'Feb', y: 90}, {x: 'Mar', y: 95}, {x: 'Apr', y: 105}
+							], backgroundColor: 'rgba(255, 122, 0, 0.7)', borderColor: '#ff7a00' },
+						{ type: 'bar', label: 'Sales Q3', data: [
+								{x: 'Jan', y: 60}, {x: 'Feb', y: 70}, {x: 'Mar', y: 75}, {x: 'Apr', y: 85}
+							], backgroundColor: 'rgba(40, 167, 69, 0.7)', borderColor: '#28a745' },
+					]}
+					xScale="category"
+					yScale="linear"
+					stackedBars={true}
+					showXValueInTooltip={true}
+					xValueFormatter={(value) => `Month: ${value}`}
+					legend
+					rangeSelect
+				/>
+			</div>
+
+			{/* Mixed Stacked Chart */}
+			<div style={{marginTop: '40px'}}>
+				<h3>Mixed Chart with Stacked Areas and Regular Line</h3>
+				<ComboChart
+					height={"50vh"}
+					width={"100%"}
+					dataset={[
+						{ type: 'line', label: 'Memory Base', parsing: false, data: [
+								{x: 1719705600000, y: 20}, {x: 1719706500000, y: 25}, {x: 1719707400000, y: 22}, {x: 1719708300000, y: 28}, {x: 1719709200000, y: 30}
+							], borderColor: '#6f42c1', backgroundColor: 'rgba(111, 66, 193, 0.3)', stack: 'memory' },
+						{ type: 'line', label: 'Memory Cache', parsing: false, data: [
+								{x: 1719705600000, y: 15}, {x: 1719706500000, y: 18}, {x: 1719707400000, y: 16}, {x: 1719708300000, y: 20}, {x: 1719709200000, y: 22}
+							], borderColor: '#e83e8c', backgroundColor: 'rgba(232, 62, 140, 0.3)', stack: 'memory' },
+						{ type: 'line', label: 'CPU Usage', parsing: false, data: [
+								{x: 1719705600000, y: 45}, {x: 1719706500000, y: 52}, {x: 1719707400000, y: 48}, {x: 1719708300000, y: 55}, {x: 1719709200000, y: 60}
+							], borderColor: '#fd7e14', backgroundColor: 'transparent', fill: false },
+					]}
+					xScale="time"
+					xScaleTimeUnit="minute"
+					yScale="linear"
+					stackedAreas={true}
+					showXValueInTooltip={true}
+					xValueFormatter={(value) => `Time: ${new Date(value).toLocaleTimeString()}`}
+					legend
+					rangeSelect
+				/>
+			</div>
+
+			{/* Simple Line Chart without X-Value Tooltip for Comparison */}
+			<div style={{marginTop: '40px'}}>
+				<h3>Comparison: Chart without X-Value Tooltip</h3>
+				<ComboChart
+					height={"40vh"}
+					width={"100%"}
+					dataset={[
+						{ type: 'line', label: 'Temperature', parsing: false, data: [
+								{x: 1719705600000, y: 22}, {x: 1719706500000, y: 25}, {x: 1719707400000, y: 23}, {x: 1719708300000, y: 27}, {x: 1719709200000, y: 24}
+							], borderColor: '#17a2b8', backgroundColor: 'transparent' },
+					]}
+					xScale="time"
+					xScaleTimeUnit="minute"
+					yScale="linear"
+					showXValueInTooltip={false}
+					legend
+				/>
+				<p style={{fontSize: '14px', color: '#666', marginTop: '10px'}}>
+					<em>This chart shows the tooltip without x-value display for comparison</em>
+				</p>
+			</div>
 
 		</PaddedPage>
 	)
