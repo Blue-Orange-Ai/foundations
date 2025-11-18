@@ -38,6 +38,11 @@ interface Props {
     rangeSelect?: boolean;
     onRangeSelected?: (startValue: any, endValue: any) => void;
 
+    // Persistent range selection
+    persistentRangeSelect?: boolean;
+    onPersistentRangeChange?: (startValue: any, endValue: any) => void;
+    initialRange?: { start: any; end: any };
+
     // Scatter visibility/UX
     scatterPointRadius?: number;       // default 3
     scatterPointHoverRadius?: number;  // default 5
@@ -76,6 +81,10 @@ export const ComboChart: React.FC<Props> = ({
                                                 rangeSelect = false,
                                                 onRangeSelected,
 
+                                                persistentRangeSelect = false,
+                                                onPersistentRangeChange,
+                                                initialRange,
+
                                                 scatterPointRadius = 3,
                                                 scatterPointHoverRadius = 5,
 
@@ -96,11 +105,45 @@ export const ComboChart: React.FC<Props> = ({
         endX: null,
     });
 
+    // ---- Persistent range selection state ----
+    const [persistentRange, setPersistentRange] = useState<{ start: any; end: any } | null>(
+        initialRange || null
+    );
+    const persistentDragRef = useRef<{
+        active: boolean;
+        dragType: 'start' | 'end' | 'range' | null;
+        startOffset: number;
+    }>({
+        active: false,
+        dragType: null,
+        startOffset: 0,
+    });
+
     // ---- Pinned scatter point state ----
     const pinnedRef = useRef<{ datasetIndex: number; index: number } | null>(null);
 
+    // Convert value to pixel position
+    const valueToPixel = (value: any) => {
+        const chart = chartInstanceRef.current as any;
+        if (!chart?.scales?.x) return null;
+        return chart.scales.x.getPixelForValue(value);
+    };
+
+    // Convert pixel position to value
+    const pixelToValue = (pixel: number) => {
+        const chart = chartInstanceRef.current as any;
+        if (!chart?.scales?.x) return null;
+        return chart.scales.x.getValueForPixel(pixel);
+    };
+
     const clearSelection = () => {
         dragRef.current = { active: false, startX: null, endX: null };
+        chartInstanceRef.current?.draw();
+    };
+
+    const clearPersistentRange = () => {
+        setPersistentRange(null);
+        onPersistentRangeChange?.(null, null);
         chartInstanceRef.current?.draw();
     };
 
@@ -136,26 +179,171 @@ export const ComboChart: React.FC<Props> = ({
         return x >= ca.left && x <= ca.right && y >= ca.top && y <= ca.bottom;
     };
 
+    // ---- Persistent range handlers ----
+    const getPersistentRangePixels = () => {
+        if (!persistentRange) return null;
+        const startPx = valueToPixel(persistentRange.start);
+        const endPx = valueToPixel(persistentRange.end);
+        if (startPx === null || endPx === null) return null;
+        return {
+            start: Math.min(startPx, endPx),
+            end: Math.max(startPx, endPx)
+        };
+    };
+
+    const getHandleHitTest = (x: number, y: number) => {
+        if (!persistentRangeSelect || !persistentRange) return null;
+        const chart = chartInstanceRef.current as any;
+        const ca = chart?.chartArea;
+        if (!ca) return null;
+        
+        // Allow some tolerance outside chart area for handles
+        if (y < ca.top - 10 || y > ca.bottom + 10) return null;
+        
+        const pixels = getPersistentRangePixels();
+        if (!pixels) return null;
+        
+        const HANDLE_SIZE = 8;
+        const HANDLE_TOLERANCE = 12; // Increased tolerance for easier interaction
+        
+        // Check start handle first (higher priority)
+        if (Math.abs(x - pixels.start) <= HANDLE_TOLERANCE) {
+            return 'start';
+        }
+        
+        // Check end handle
+        if (Math.abs(x - pixels.end) <= HANDLE_TOLERANCE) {
+            return 'end';
+        }
+        
+        // Check range area (for moving entire range) - only if not near handles
+        if (x >= pixels.start + HANDLE_TOLERANCE && x <= pixels.end - HANDLE_TOLERANCE) {
+            return 'range';
+        }
+        
+        return null;
+    };
+
     // ---- Range select handlers ----
     const onPointerDown = (e: PointerEvent) => {
-        if (!rangeSelect) return;
         const coords = getPixelFromEvent(e);
         if (!coords) return;
         const { x, y } = coords;
-        if (!isInsideChartArea(x, y)) return;
-        dragRef.current.active = true;
-        dragRef.current.startX = clampToChartAreaX(x);
-        dragRef.current.endX = clampToChartAreaX(x);
-        (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
-        chartInstanceRef.current?.draw();
+        
+        // Handle persistent range selection first
+        if (persistentRangeSelect) {
+            const handleType = getHandleHitTest(x, y);
+            if (handleType) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                persistentDragRef.current.active = true;
+                persistentDragRef.current.dragType = handleType;
+                
+                if (handleType === 'range' && persistentRange) {
+                    const pixels = getPersistentRangePixels();
+                    if (pixels) {
+                        persistentDragRef.current.startOffset = x - pixels.start;
+                    }
+                }
+                
+                (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
+                return;
+            }
+            
+            // Start new range selection if clicking in chart area and no existing range interaction
+            if (isInsideChartArea(x, y)) {
+                const clampedX = clampToChartAreaX(x);
+                const value = pixelToValue(clampedX);
+                if (value !== null) {
+                    setPersistentRange({ start: value, end: value });
+                    persistentDragRef.current.active = true;
+                    persistentDragRef.current.dragType = 'end';
+                    (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
+                }
+                return;
+            }
+        }
+        
+        // Handle regular range selection
+        if (rangeSelect && isInsideChartArea(x, y)) {
+            dragRef.current.active = true;
+            dragRef.current.startX = clampToChartAreaX(x);
+            dragRef.current.endX = clampToChartAreaX(x);
+            (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
+            chartInstanceRef.current?.draw();
+        }
     };
 
     const onPointerMove = (e: PointerEvent) => {
-        if (!rangeSelect || !dragRef.current.active) return;
         const coords = getPixelFromEvent(e);
         if (!coords) return;
-        dragRef.current.endX = clampToChartAreaX(coords.x);
-        chartInstanceRef.current?.draw();
+        
+        // Handle persistent range dragging
+        if (persistentRangeSelect && persistentDragRef.current.active && persistentRange) {
+            e.preventDefault();
+            const clampedX = clampToChartAreaX(coords.x);
+            const dragType = persistentDragRef.current.dragType;
+            
+            if (dragType === 'start') {
+                const newStart = pixelToValue(clampedX);
+                if (newStart !== null) {
+                    setPersistentRange(prev => prev ? { ...prev, start: newStart } : null);
+                }
+            } else if (dragType === 'end') {
+                const newEnd = pixelToValue(clampedX);
+                if (newEnd !== null) {
+                    setPersistentRange(prev => prev ? { ...prev, end: newEnd } : null);
+                }
+            } else if (dragType === 'range') {
+                const pixels = getPersistentRangePixels();
+                if (pixels) {
+                    const rangeWidth = pixels.end - pixels.start;
+                    const newStartPx = clampedX - persistentDragRef.current.startOffset;
+                    const newEndPx = newStartPx + rangeWidth;
+                    
+                    // Clamp the entire range to chart area
+                    const chart = chartInstanceRef.current as any;
+                    const ca = chart?.chartArea;
+                    if (ca) {
+                        const clampedStartPx = Math.max(ca.left, Math.min(newStartPx, ca.right - rangeWidth));
+                        const clampedEndPx = clampedStartPx + rangeWidth;
+                        
+                        const newStart = pixelToValue(clampedStartPx);
+                        const newEnd = pixelToValue(clampedEndPx);
+                        
+                        if (newStart !== null && newEnd !== null) {
+                            setPersistentRange({ start: newStart, end: newEnd });
+                        }
+                    }
+                }
+            }
+            
+            chartInstanceRef.current?.draw();
+            return;
+        }
+        
+        // Handle regular range selection
+        if (rangeSelect && dragRef.current.active) {
+            dragRef.current.endX = clampToChartAreaX(coords.x);
+            chartInstanceRef.current?.draw();
+            return;
+        }
+        
+        // Update cursor for persistent range handles (only when not dragging)
+        if (persistentRangeSelect && !persistentDragRef.current.active && !dragRef.current.active) {
+            const canvas = chartInstanceRef.current?.canvas;
+            if (canvas) {
+                const handleType = getHandleHitTest(coords.x, coords.y);
+                if (handleType === 'start' || handleType === 'end') {
+                    canvas.style.cursor = 'ew-resize';
+                } else if (handleType === 'range') {
+                    canvas.style.cursor = 'move';
+                } else {
+                    canvas.style.cursor = 'default';
+                }
+            }
+        }
     };
 
     const finalizeSelection = () => {
@@ -173,13 +361,36 @@ export const ComboChart: React.FC<Props> = ({
     };
 
     const onPointerUp = () => {
-        if (!rangeSelect || !dragRef.current.active) return;
-        finalizeSelection();
+        // Handle persistent range selection
+        if (persistentRangeSelect && persistentDragRef.current.active) {
+            persistentDragRef.current.active = false;
+            persistentDragRef.current.dragType = null;
+            persistentDragRef.current.startOffset = 0;
+            
+            if (persistentRange) {
+                onPersistentRangeChange?.(persistentRange.start, persistentRange.end);
+            }
+            return;
+        }
+        
+        // Handle regular range selection
+        if (rangeSelect && dragRef.current.active) {
+            finalizeSelection();
+        }
     };
 
     const onPointerCancel = () => {
-        if (!rangeSelect) return;
-        clearSelection();
+        if (persistentRangeSelect && persistentDragRef.current.active) {
+            persistentDragRef.current.active = false;
+            persistentDragRef.current.dragType = null;
+            persistentDragRef.current.startOffset = 0;
+            chartInstanceRef.current?.draw();
+            return;
+        }
+        
+        if (rangeSelect) {
+            clearSelection();
+        }
     };
 
     const onDblClick = () => {
@@ -191,6 +402,9 @@ export const ComboChart: React.FC<Props> = ({
         if (e.key === "Escape") {
             clearSelection();
             clearPinned();
+            if (persistentRangeSelect) {
+                clearPersistentRange();
+            }
         }
     };
 
@@ -333,16 +547,17 @@ export const ComboChart: React.FC<Props> = ({
     const selectionOverlayPlugin = {
         id: "xRangeSelectionOverlay",
         beforeEvent: (chart: any) => {
-            if (dragRef.current.active) {
+            if (dragRef.current.active || persistentDragRef.current.active) {
                 chart.setActiveElements([]);
                 chart.tooltip?.setActiveElements?.([], { x: 0, y: 0 });
             }
         },
         afterDraw: (chart: any) => {
-            // draw selection band
+            const { ctx, chartArea } = chart;
+            
+            // Draw regular selection band
             const { active, startX, endX } = dragRef.current;
             if (active && startX != null && endX != null) {
-                const { ctx, chartArea } = chart;
                 const x1 = Math.max(Math.min(startX, endX), chartArea.left);
                 const x2 = Math.min(Math.max(startX, endX), chartArea.right);
                 const w = Math.max(0, x2 - x1);
@@ -356,8 +571,91 @@ export const ComboChart: React.FC<Props> = ({
                     ctx.restore();
                 }
             }
+            
+            // Draw persistent range selection
+            if (persistentRangeSelect && persistentRange) {
+                const pixels = getPersistentRangePixels();
+                if (pixels && pixels.end > pixels.start) {
+                    const x1 = Math.max(pixels.start, chartArea.left);
+                    const x2 = Math.min(pixels.end, chartArea.right);
+                    const w = Math.max(0, x2 - x1);
+                    
+                    if (w > 0) {
+                        ctx.save();
+                        
+                        // Draw range background
+                        ctx.fillStyle = "rgba(45, 136, 255, 0.1)";
+                        ctx.fillRect(x1, chartArea.top, w, chartArea.bottom - chartArea.top);
+                        
+                        // Draw range border
+                        ctx.strokeStyle = "rgba(45, 136, 255, 0.6)";
+                        ctx.lineWidth = 1;
+                        ctx.strokeRect(x1, chartArea.top, w, chartArea.bottom - chartArea.top);
+                        
+                        // Draw drag handles
+                        const HANDLE_WIDTH = 10;
+                        const HANDLE_HEIGHT = 30;
+                        const centerY = chartArea.top + (chartArea.bottom - chartArea.top) / 2;
+                        
+                        // Start handle
+                        ctx.fillStyle = "rgba(45, 136, 255, 0.9)";
+                        ctx.fillRect(
+                            pixels.start - HANDLE_WIDTH / 2,
+                            centerY - HANDLE_HEIGHT / 2,
+                            HANDLE_WIDTH,
+                            HANDLE_HEIGHT
+                        );
+                        
+                        // End handle
+                        ctx.fillRect(
+                            pixels.end - HANDLE_WIDTH / 2,
+                            centerY - HANDLE_HEIGHT / 2,
+                            HANDLE_WIDTH,
+                            HANDLE_HEIGHT
+                        );
+                        
+                        // Handle borders
+                        ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(
+                            pixels.start - HANDLE_WIDTH / 2,
+                            centerY - HANDLE_HEIGHT / 2,
+                            HANDLE_WIDTH,
+                            HANDLE_HEIGHT
+                        );
+                        ctx.strokeRect(
+                            pixels.end - HANDLE_WIDTH / 2,
+                            centerY - HANDLE_HEIGHT / 2,
+                            HANDLE_WIDTH,
+                            HANDLE_HEIGHT
+                        );
+                        
+                        // Add grip lines to handles
+                        ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
+                        ctx.lineWidth = 1;
+                        
+                        // Start handle grip lines
+                        for (let i = -1; i <= 1; i++) {
+                            ctx.beginPath();
+                            ctx.moveTo(pixels.start + i * 2, centerY - 8);
+                            ctx.lineTo(pixels.start + i * 2, centerY + 8);
+                            ctx.stroke();
+                        }
+                        
+                        // End handle grip lines
+                        for (let i = -1; i <= 1; i++) {
+                            ctx.beginPath();
+                            ctx.moveTo(pixels.end + i * 2, centerY - 8);
+                            ctx.lineTo(pixels.end + i * 2, centerY + 8);
+                            ctx.stroke();
+                        }
+                        
+                        ctx.restore();
+                    }
+                }
+            }
 
-            // draw pinned scatter ring
+            // Draw pinned scatter ring
             if (pinnedRef.current) {
                 const { datasetIndex, index } = pinnedRef.current;
                 const meta = chart.getDatasetMeta(datasetIndex);
@@ -695,6 +993,19 @@ export const ComboChart: React.FC<Props> = ({
     useEffect(() => {
         updateChartData();
     }, [dataset, labels]);
+
+    // Handle initial range and range changes
+    useEffect(() => {
+        if (initialRange && !persistentRange) {
+            setPersistentRange(initialRange);
+        }
+    }, [initialRange]);
+
+    useEffect(() => {
+        if (persistentRange) {
+            chartInstanceRef.current?.draw();
+        }
+    }, [persistentRange]);
 
     return (
         <div className="blue-orange-line-chart-cont" style={{ height, width }}>

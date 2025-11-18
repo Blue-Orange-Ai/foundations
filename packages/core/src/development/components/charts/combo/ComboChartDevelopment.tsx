@@ -176,6 +176,96 @@ export const ComboChartDevelopment: React.FC<Props> = ({}) => {
 				</p>
 			</div>
 
+			{/* Persistent Range Selection Examples */}
+			<div style={{marginTop: '40px'}}>
+				<h3>Persistent Range Selection - With Initial Range</h3>
+				<ComboChart
+					height={"50vh"}
+					width={"100%"}
+					dataset={[
+						{ type: 'line', label: 'CPU %', parsing: false, data: [
+								{x: 1719705600000, y: 12}, {x: 1719706500000, y: 18}, {x: 1719707400000, y: 15}, 
+								{x: 1719708300000, y: 22}, {x: 1719709200000, y: 25}, {x: 1719710100000, y: 20}
+							], borderColor: '#2d88ff' },
+						{ type: 'scatter', label: 'Events', parsing: false, data: [
+								{x: 1719707000000, y: 20}, {x: 1719708200000, y: 35}, {x: 1719709800000, y: 28}
+							], borderColor: '#ff7a00', backgroundColor: '#ff7a00' },
+					]}
+					xScale="time"
+					xScaleTimeUnit="minute"
+					yScale="linear"
+					showXValueInTooltip={true}
+					xValueFormatter={(value) => new Date(value).toLocaleString()}
+					legend
+					persistentRangeSelect={true}
+					initialRange={{ start: 1719707000000, end: 1719708500000 }}
+					onPersistentRangeChange={(start, end) => {
+						console.log('Persistent range changed:', { start, end });
+					}}
+				/>
+				<p style={{fontSize: '14px', color: '#666', marginTop: '10px'}}>
+					<em>This chart starts with a predefined range. Drag the blue handles to resize or drag the area to move it.</em>
+				</p>
+			</div>
+
+			<div style={{marginTop: '40px'}}>
+				<h3>Persistent Range Selection - User Initiated</h3>
+				<ComboChart
+					height={"50vh"}
+					width={"100%"}
+					dataset={[
+						{ type: 'line', label: 'Memory Usage', parsing: false, data: [
+								{x: 1719705600000, y: 45}, {x: 1719706500000, y: 52}, {x: 1719707400000, y: 48}, 
+								{x: 1719708300000, y: 55}, {x: 1719709200000, y: 60}, {x: 1719710100000, y: 58}
+							], borderColor: '#28a745' },
+						{ type: 'bar', label: 'Disk I/O', parsing: false, data: [
+								{x: 1719705600000, y: 15}, {x: 1719706500000, y: 22}, {x: 1719707400000, y: 18}, 
+								{x: 1719708300000, y: 25}, {x: 1719709200000, y: 30}, {x: 1719710100000, y: 28}
+							], backgroundColor: 'rgba(255, 122, 0, 0.7)', borderColor: '#ff7a00' },
+					]}
+					xScale="time"
+					xScaleTimeUnit="minute"
+					yScale="linear"
+					showXValueInTooltip={true}
+					xValueFormatter={(value) => new Date(value).toLocaleString()}
+					legend
+					persistentRangeSelect={true}
+					onPersistentRangeChange={(start, end) => {
+						console.log('User-initiated range:', { start, end });
+					}}
+				/>
+				<p style={{fontSize: '14px', color: '#666', marginTop: '10px'}}>
+					<em>No initial range - click and drag on the chart to create a persistent range selection.</em>
+				</p>
+			</div>
+
+			<div style={{marginTop: '40px'}}>
+				<h3>Persistent Range Selection - Category Data</h3>
+				<ComboChart
+					height={"50vh"}
+					width={"100%"}
+					dataset={[
+						{ type: 'bar', label: 'Sales', data: [
+								{x: 'Jan', y: 100}, {x: 'Feb', y: 120}, {x: 'Mar', y: 110}, 
+								{x: 'Apr', y: 140}, {x: 'May', y: 130}, {x: 'Jun', y: 150}
+							], backgroundColor: 'rgba(45, 136, 255, 0.7)', borderColor: '#2d88ff' },
+					]}
+					xScale="category"
+					yScale="linear"
+					showXValueInTooltip={true}
+					xValueFormatter={(value) => `Month: ${value}`}
+					legend
+					persistentRangeSelect={true}
+					initialRange={{ start: 'Feb', end: 'Apr' }}
+					onPersistentRangeChange={(start, end) => {
+						console.log('Category range changed:', { start, end });
+					}}
+				/>
+				<p style={{fontSize: '14px', color: '#666', marginTop: '10px'}}>
+					<em>Persistent range selection also works with category scales.</em>
+				</p>
+			</div>
+
 		</PaddedPage>
 	)
 }

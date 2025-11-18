@@ -1,9 +1,9 @@
 import React, {useEffect, useRef, useState} from "react";
 import './ChatWindow.css';
-import {RenderMessages} from "../rendermessages/RenderMessages";
 import {Prompt} from "../prompt/Prompt";
 import {IMessage, RenderMessagesHandles} from "../../interfaces/AppInterfaces";
 import {v4} from "uuid";
+import {RenderMessages} from "../render-messages/RenderMessages";
 
 interface Props {
     subPromptText?: string
@@ -69,7 +69,11 @@ export const ChatWindow: React.FC<Props> = ({subPromptText}) => {
     return (
         <div ref={chatWindowRef} className='blue-orange-main-chat-window'>
             <div className='blue-orange-main-chat-window-cont'>
-                <RenderMessages ref={messageRef} followBottom={followBottom} setFollowBlock={handleFollowBlock} messages={messages}></RenderMessages>
+                <RenderMessages
+                    ref={messageRef}
+                    followBottom={followBottom}
+                    setFollowBlock={handleFollowBlock}
+                    messages={messages}></RenderMessages>
                 <div className='blue-orange-main-chat-prompt'>
                     <Prompt onSend={handleSend}></Prompt>
                     {subPromptText !== undefined

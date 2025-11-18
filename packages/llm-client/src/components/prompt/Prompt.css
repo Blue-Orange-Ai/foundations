@@ -16,6 +16,10 @@
     justify-content: center;
 }
 
+.blue-orange-prompt:focus {
+    outline: none;
+}
+
 @media screen and (min-width: 1041px) {
     .blue-orange-prompt {
         margin-left: 40px;
@@ -48,6 +52,10 @@
 
 .blue-orange-prompt-text-area::-webkit-scrollbar {
     display: none;
+}
+
+.blue-orange-prompt-text-area:focus {
+    outline: none;
 }
 
 .blue-orange-prompt-send-btn{

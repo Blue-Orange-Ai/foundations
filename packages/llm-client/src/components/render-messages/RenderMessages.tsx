@@ -12,6 +12,7 @@ import rehypeStringify from 'rehype-stringify'
 import './RenderMessages.css';
 import 'highlight.js/styles/atom-one-dark.css';
 import {
+    IChatMessage,
     IEndpointHeader,
     IMessage,
     IModelConfig,
@@ -19,7 +20,7 @@ import {
     IModelRequest,
     IModelResponse, IModelStreamMessage, IModelStreamResult, RenderMessagesHandles
 } from "../../interfaces/AppInterfaces";
-import {chatRequest, chatStream} from "../messageService/MessageService";
+import {chatRequest, chatStream} from "../message-service/MessageService";
 
 interface Props {
     followBottom: boolean,
@@ -57,7 +58,7 @@ export const RenderMessagesComponent: React.ForwardRefRenderFunction<RenderMessa
                     "value": "application/json"
                 }
             ],
-            uri: "http://localhost:8000/v1/chat/completions"
+            uri: "http://localhost:6012/chat"
         }
     };
 
@@ -81,7 +82,7 @@ export const RenderMessagesComponent: React.ForwardRefRenderFunction<RenderMessa
 
     var componentId: string = v4();
 
-    var _messages: Array<IMessage> = [];
+    const _messages = useRef<IChatMessage[]>([]);
 
     useEffect(() => {
         // Function to execute on component creation
@@ -211,8 +212,8 @@ export const RenderMessagesComponent: React.ForwardRefRenderFunction<RenderMessa
         return elem;
     }
 
-    const addCursorModifier = (message: IMessage, elem: HTMLDivElement):HTMLDivElement => {
-        var modifier = message.complete ? "" : "<span class='blue-orange-message-cursor'></span>";
+    const addCursorModifier = (message: IChatMessage, elem: HTMLDivElement):HTMLDivElement => {
+        var modifier = !message.streaming ? "" : "<span class='blue-orange-message-cursor'></span>";
         const lastChild:HTMLElement = elem.lastChild as HTMLElement;
         if (lastChild !== undefined && lastChild !== null && (
             lastChild.nodeName.toString().toLowerCase() === "p" ||
@@ -222,7 +223,7 @@ export const RenderMessagesComponent: React.ForwardRefRenderFunction<RenderMessa
             lastChild.nodeName.toString().toLowerCase() === "h4" ||
             lastChild.nodeName.toString().toLowerCase() === "h5" ||
             lastChild.nodeName.toString().toLowerCase() === "h6")) {
-            modifier = message.complete ? "" : "<span class='blue-orange-message-cursor blue-orange-message-cursor-left'></span>";
+            modifier = !message.streaming ? "" : "<span class='blue-orange-message-cursor blue-orange-message-cursor-left'></span>";
             lastChild.innerHTML = lastChild.innerHTML + modifier;
             return elem;
         }
@@ -230,7 +231,7 @@ export const RenderMessagesComponent: React.ForwardRefRenderFunction<RenderMessa
         return elem;
     }
 
-    const addMessageMarkup = (message: IMessage, markdown: string) => {
+    const addMessageMarkup = (message: IChatMessage, markdown: string) => {
         var elem: HTMLDivElement = document.createElement("div");
         elem.innerHTML = markdown;
         elem = addCursorModifier(message, elem);
@@ -239,18 +240,18 @@ export const RenderMessagesComponent: React.ForwardRefRenderFunction<RenderMessa
         return elem.innerHTML;
     }
 
-    const renderImg = (avatar: HTMLDivElement, message: IMessage) => {
-        if (message.avatar !== undefined && message.avatar !== '') {
-            var avatarImg: HTMLImageElement = document.createElement("img");
-            avatarImg.style.height = "100%";
-            avatarImg.style.width = "100%";
-            avatarImg.style.objectFit = "contain";
-            avatarImg.src = message.avatar;
-            avatar.appendChild(avatarImg);
-        }
+    const renderImg = (avatar: HTMLDivElement, message: IChatMessage) => {
+        // if (message.avatar !== undefined && message.avatar !== '') {
+        //     var avatarImg: HTMLImageElement = document.createElement("img");
+        //     avatarImg.style.height = "100%";
+        //     avatarImg.style.width = "100%";
+        //     avatarImg.style.objectFit = "contain";
+        //     avatarImg.src = "";
+        //     avatar.appendChild(avatarImg);
+        // }
     }
 
-    const createMessageAvatar = (message: IMessage) => {
+    const createMessageAvatar = (message: IChatMessage) => {
             var avatar:HTMLDivElement = document.createElement("div");
             avatar.id = "avatar-" + message.uuid;
             avatar.className = "blue-orange-message-avatar";
@@ -258,7 +259,7 @@ export const RenderMessagesComponent: React.ForwardRefRenderFunction<RenderMessa
             return avatar;
     }
 
-    const updateMessageAvatar = (message: IMessage) => {
+    const updateMessageAvatar = (message: IChatMessage) => {
         var avatar: HTMLDivElement = document.getElementById("avatar-" + message.uuid) as HTMLDivElement;
         avatar.innerHTML = "";
         renderImg(avatar, message);
@@ -284,34 +285,40 @@ export const RenderMessagesComponent: React.ForwardRefRenderFunction<RenderMessa
         return "";
     }
 
-    const createMessageText = (message: IMessage) => {
+    const createMessageText = (message: IChatMessage) => {
         var msg: HTMLDivElement = document.createElement("div");
         msg.id = "message-" + message.uuid;
         msg.className = "blue-orange-message-txt";
-        renderMarkdown(message.message).then(m => {
-            msg.innerHTML = createMessageHtmlAbove(message) + addMessageMarkup(message, m)
-                + createMessageHtmlBelow(message);
+        renderMarkdown(message.content).then(m => {
+            msg.innerHTML = addMessageMarkup(message, m);
         });
         return msg;
     }
 
-    const updateStoredMessage = (message: IMessage) => {
-        _messages = _messages.map(obj => obj.uuid === message.uuid ? message : obj);
+    const updateStoredMessage = (message: IChatMessage) => {
+        _messages.current = _messages.current.map(obj => obj.uuid === message.uuid ? message : obj);
     }
 
-    const updateMessageText = (message: IMessage) => {
+    const updateMessageText = (message: IChatMessage) => {
         var msg: HTMLDivElement = document.getElementById("message-" + message.uuid) as HTMLDivElement;
-        renderMarkdown(message.message).then(m => {
-            msg.innerHTML = createMessageHtmlAbove(message)
-                + addMessageMarkup(message, m) + createMessageHtmlBelow(message);
+        renderMarkdown(message.content).then(m => {
+            msg.innerHTML = addMessageMarkup(message, m);
         });
     }
 
-    const createMessageGroup = (message: IMessage) => {
+    const finishStreamingMessage = (uuid: string) => {
+        const message = _messages.current.find(obj => obj.uuid === uuid);
+        if (message !== undefined) {
+            message.streaming = false;
+            update(message);
+        }
+    }
+
+    const createMessageGroup = (message: IChatMessage) => {
         var msgGroup: HTMLDivElement = document.createElement("div");
         msgGroup.id = message.uuid;
         msgGroup.className = "blue-orange-message-group";
-        msgGroup.style.background = message.backgroundLight;
+        // msgGroup.style.background = message.backgroundLight;
 
         var msgCont: HTMLDivElement = document.createElement("div");
         msgCont.id = message.uuid;
@@ -323,20 +330,20 @@ export const RenderMessagesComponent: React.ForwardRefRenderFunction<RenderMessa
 
         var messageBody: HTMLDivElement = messagesRef.current as HTMLDivElement;
         messageBody.prepend(msgGroup);
-        _messages.push(message);
+        _messages.current.push(message);
     }
 
-    const updateMessageGroup = (message: IMessage) => {
+    const updateMessageGroup = (message: IChatMessage) => {
         updateMessageAvatar(message);
         updateMessageText(message);
         updateStoredMessage(message);
     }
 
-    const messageExists = (message: IMessage) => {
+    const messageExists = (message: IChatMessage) => {
         return document.getElementById(message.uuid) !== null;
     }
 
-    const update = (message: IMessage) => {
+    const update = (message: IChatMessage) => {
         if (messageExists(message)) {
             updateMessageGroup(message);
         } else {
@@ -352,71 +359,17 @@ export const RenderMessagesComponent: React.ForwardRefRenderFunction<RenderMessa
         }
     }
 
-    const transformStreamResponse = (uuid: string, message: string, complete: boolean) : IMessage => {
-        return {
-            avatar: modelConfig?.avatar,
-            role: modelConfig?.role,
-            backgroundDark: modelConfig?.backgroundDark,
-            backgroundLight: modelConfig?.backgroundLight,
-            complete: complete,
-            helpful: false,
-            helpfulResponded: false,
-            htmlAbove: "",
-            htmlBelow: "",
-            js: "",
-            message: message,
-            robot: true,
-            showHtmlAfterComplete: false,
-            time: new Date(),
-            username: "",
-            uuid: uuid
-        } as IMessage
-    }
-    const transformModelResponse = (response: IModelResponse, complete: boolean) : IMessage => {
-        return {
-            avatar: modelConfig?.avatar,
-            role: response.choices[0].message.role,
-            backgroundDark: modelConfig?.backgroundDark,
-            backgroundLight: modelConfig?.backgroundLight,
-            complete: complete,
-            helpful: false,
-            helpfulResponded: false,
-            htmlAbove: "",
-            htmlBelow: "",
-            js: "",
-            message: response.choices[0].message.content,
-            robot: true,
-            showHtmlAfterComplete: false,
-            time: new Date(),
-            username: "",
-            uuid: response.id
-        } as IMessage
-    }
-
-    const receiveRobotResponse = (response: IModelResponse, complete: boolean) => {
-        var message: IMessage = transformModelResponse(response, complete);
-        update(message);
-    }
-
-    const generateContext = (): Array<IModelMessage> => {
-        if (messages !== undefined) {
-            const context: Array<IModelMessage> = _messages.map((message) => {
-                const modelMessage: IModelMessage = {
-                    content: message.message,
-                    role: message.role
-                };
-                return modelMessage;
-            });
-            return context;
-        }
-        return [];
-    }
-
     const streamRequest = async (requestData: IModelRequest) => {
         if (modelConfig !== undefined) {
             var uuid = v4();
             var m = "";
-            update(transformStreamResponse(uuid, m, false));
+            update({
+                content: "",
+                created_at: new Date(),
+                message_type: "RESPONSE",
+                streaming: true,
+                uuid: uuid
+            });
             const response = await chatStream(modelConfig?.endpoint, requestData);
             if (response !== undefined && response.body) {
                 const reader = response.body.getReader();
@@ -424,27 +377,24 @@ export const RenderMessagesComponent: React.ForwardRefRenderFunction<RenderMessa
                     const { done, value } = await reader.read();
                     var data = new TextDecoder('utf-8').decode(value);
                     console.log("Chunk Received")
-                    console.log(data);
-                    const lines = data
-                        .split("\n")
-                        .filter((line: string) => line.trim() !== "");
-                    for (const line of lines) {
-                        const message = line.replace(/^data: /, "");
-                        if (message.startsWith("[DONE]")) {
-                            update(transformStreamResponse(uuid, m, true));
+                    try {
+                        var responseData = JSON.parse(data) as IChatMessage;
+                        if (responseData.content.startsWith("[STREAM_COMPLETE]")) {
+                            finishStreamingMessage(uuid);
                             break;
                         }
-                        try {
-                            const parsed = JSON.parse(message) as IModelStreamResult;
-                            if (parsed.choices[0].delta.content !== undefined) {
-                                m += parsed.choices[0].delta.content;
-                                update(transformStreamResponse(uuid, m, false));
-                            }
-                        } catch (error) {
-                            console.error("Could not JSON parse stream message", message, error);
-                        }
+                        responseData.uuid = uuid;
+                        responseData.streaming = true;
+                        update(responseData);
+                        console.log(JSON.stringify(responseData));
+
+                    } catch(e) {
+                        console.error()
                     }
-                    if (done) break;
+                    if (done) {
+                        finishStreamingMessage(uuid);
+                        break
+                    };
                 }
             }
 
@@ -455,328 +405,36 @@ export const RenderMessagesComponent: React.ForwardRefRenderFunction<RenderMessa
     const staticRequest = async (requestData: IModelRequest) => {
         if (modelConfig !== undefined) {
             const result = await chatRequest(modelConfig?.endpoint, requestData);
-            update(transformModelResponse(result, true));
+            // update(transformModelResponse(result, true));
         }
 
     }
 
-    const queryModel = () => {
-        var requestData: IModelRequest = {
-            messages: generateContext(),
-            max_tokens: modelConfig?.max_tokens,
-            stream: modelConfig?.stream
-        }
+    const queryModel = (message: IModelRequest) => {
         if (modelConfig?.stream) {
-            streamRequest(requestData);
+            streamRequest(message);
         } else {
-            staticRequest(requestData);
+            staticRequest(message);
         }
 
+    }
+
+    const generateContext = (uuid: string): IChatMessage[] => {
+        return _messages.current.filter(item => item.uuid != uuid);
     }
 
     const sendRequest = (request: string) => {
-        var message: IMessage = {
-            avatar: "",
-            role: "user",
-            backgroundDark: "#FFFFFF",
-            backgroundLight: "",
-            complete: true,
-            helpful: false,
-            helpfulResponded: false,
-            htmlAbove: "",
-            htmlBelow: "",
-            js: "",
-            message: request,
-            robot: false,
-            showHtmlAfterComplete: false,
-            time: new Date(),
-            username: "",
+        var userMessage: IChatMessage = {
+            content: request,
+            created_at: new Date(),
+            message_type: "PROMPT",
             uuid: v4()
         }
-        update(message);
-        queryModel();
-    }
-
-    const streamTest = () => {
-        var markdown = getTestString();
-        var message: IMessage = {
-            role: "",
-            avatar: "",
-            backgroundDark: "#FFFFFF",
-            backgroundLight: "",
-            complete: false,
-            helpful: false,
-            helpfulResponded: false,
-            htmlAbove: "",
-            htmlBelow: "",
-            js: "",
-            message: "",
-            robot: false,
-            showHtmlAfterComplete: false,
-            time: new Date(),
-            username: "",
-            uuid: v4()
-        }
-        let currentIndex = 0;
-        update(message);
-        const interval = setInterval(() => {
-            try{
-                if (currentIndex >= markdown.length) {
-                    clearInterval(interval);
-                    message.complete = true;
-                    update(message);
-                    return;
-                }
-                message.message += markdown[currentIndex];
-                update(message);
-                currentIndex++;
-            } catch (e) {
-                clearInterval(interval);
-            }
-
-        }, 5);
-        setIntervalIdTestRef(interval);
-    }
-
-    const getTestString = () => {
-        return `
-# My Markdown Document
-
-## Table of Contents
-
-| Heading |
-| ------- |
-| [Section 1](#section-1) |
-| [Section 2](#section-2) |
-| [Section 3](#section-3) |
-
-## Section 1
-
-This is some text in section 1.
-
-\`\`\`javascript
-function helloWorld() {
-  console.log('Hello, World!');
-}
-\`\`\`
-
-## Section 2
-
-This is some text in section 2.
-
-\`\`\`python
-def greet():
-  print("Hello, World!")
-\`\`\`
-
-## Section 3
-
-This is some text in section 3.
-
-| Name | Age |
-| ---- | --- |
-| John | 25  |
-| Jane | 30  |
-# My Markdown Document
-
-## Table of Contents
-
-| Heading |
-| ------- |
-| [Section 1](#section-1) |
-| [Section 2](#section-2) |
-| [Section 3](#section-3) |
-
-## Section 1
-
-This is some text in section 1.
-
-\`\`\`javascript
-function helloWorld() {
-  console.log('Hello, World!');
-}
-\`\`\`
-
-## Section 2
-
-This is some text in section 2.
-
-\`\`\`python
-def greet():
-  print("Hello, World!")
-\`\`\`
-
-## Section 3
-
-This is some text in section 3.
-
-| Name | Age |
-| ---- | --- |
-| John | 25  |
-| Jane | 30  |
-# My Markdown Document
-
-## Table of Contents
-
-| Heading |
-| ------- |
-| [Section 1](#section-1) |
-| [Section 2](#section-2) |
-| [Section 3](#section-3) |
-
-## Section 1
-
-This is some text in section 1.
-
-\`\`\`javascript
-function helloWorld() {
-  console.log('Hello, World!');
-}
-\`\`\`
-
-## Section 2
-
-This is some text in section 2.
-
-\`\`\`python
-def greet():
-  print("Hello, World!")
-\`\`\`
-
-## Section 3
-
-This is some text in section 3.
-
-| Name | Age |
-| ---- | --- |
-| John | 25  |
-| Jane | 30  |
-# My Markdown Document
-
-## Table of Contents
-
-| Heading |
-| ------- |
-| [Section 1](#section-1) |
-| [Section 2](#section-2) |
-| [Section 3](#section-3) |
-
-## Section 1
-
-This is some text in section 1.
-
-\`\`\`javascript
-function helloWorld() {
-  console.log('Hello, World!');
-}
-\`\`\`
-
-## Section 2
-
-This is some text in section 2.
-
-\`\`\`python
-def greet():
-  print("Hello, World!")
-\`\`\`
-
-## Section 3
-
-This is some text in section 3.
-
-| Name | Age |
-| ---- | --- |
-| John | 25  |
-| Jane | 30  |
-# My Markdown Document
-
-## Table of Contents
-
-| Heading |
-| ------- |
-| [Section 1](#section-1) |
-| [Section 2](#section-2) |
-| [Section 3](#section-3) |
-
-## Section 1
-
-This is some text in section 1.
-
-\`\`\`javascript
-function helloWorld() {
-  console.log('Hello, World!');
-}
-\`\`\`
-
-## Section 2
-
-This is some text in section 2.
-
-\`\`\`python
-def greet():
-  print("Hello, World!")
-\`\`\`
-
-## Section 3
-
-This is some text in section 3.
-
-| Name | Age |
-| ---- | --- |
-| John | 25  |
-| Jane | 30  |
-# My Markdown Document
-
-## Table of Contents
-
-| Heading |
-| ------- |
-| [Section 1](#section-1) |
-| [Section 2](#section-2) |
-| [Section 3](#section-3) |
-
-## Section 1
-
-This is some text in section 1.
-
-\`\`\`javascript
-function helloWorld() {
-  console.log('Hello, World!');
-}
-\`\`\`
-
-## Section 2
-
-This is some text in section 2.
-
-\`\`\`python
-def greet():
-  print("Hello, World!")
-\`\`\`
-
-## Section 3
-
-This is some text in section 3.
-
-| Name | Age |
-| ---- | --- |
-| John | 25  |
-| Jane | 30  |
-`;
-    }
-
-    const isDescendantAttribute = (child: HTMLElement, attribute: string) => {
-        if (child.hasAttribute(attribute)) {
-            return true;
-        }
-        var node = child.parentElement;
-        while (node != null){
-            if (node.hasAttribute(attribute)){
-                return true;
-            }
-            node = node.parentElement;
-        }
-        return false;
+        update(userMessage);
+        queryModel({
+            prompt: request,
+            history: generateContext(userMessage.uuid)
+        });
     }
 
     const getParentElementWithAttribute = (child: HTMLElement, attribute: string) => {

@@ -79,16 +79,24 @@ export interface IModelStreamMessage {
     content: string
 }
 
-export interface IModelRequest {
+export interface IChatMessage {
+    content: string,
+    attachments?: string[],
+    created_at: Date,
+    message_type: "RESPONSE" | "PROMPT",
+    request_tokens?: number,
+    reponse_tokens?: number,
+    total_tokens?: number,
+    provider?: string,
     model?: string,
-    messages: Array<IModelMessage>
-    temperature?: number,
-    top_p?: number,
-    n?: number,
-    stream?: boolean,
-    max_tokens?: number,
-    presence_penalty?: number,
-    frequency_penalty?: number
+    uuid?: string,
+    streaming?: boolean,
+}
+
+export interface IModelRequest {
+    prompt: string,
+    attachments?: string[],
+    history?: IChatMessage[]
 }
 
 export interface IModelUsage {
