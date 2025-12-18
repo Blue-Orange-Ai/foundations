@@ -37,7 +37,7 @@ export const SideBarBodyGroup: React.FC<Props> = ({
 		if (React.isValidElement(child)) {
 			if (child.type === SideBarBodyLabel) {
 				headerItems.push(child);
-			} else if (child.type === SideBarBodyItem || child.type === SideBarBodyItemLink) {
+			} else if (child.type === SideBarBodyItem || child.type === SideBarBodyItemLink || child.type === SideBarBodyGroup) {
 				bodyItems.push(child);
 			}
 		}
@@ -48,7 +48,9 @@ export const SideBarBodyGroup: React.FC<Props> = ({
 	const sortableItems: React.ReactNode[] = [];
 
 	bodyItems.forEach((item) => {
-		if (React.isValidElement(item) && item.props?.sortable === false) {
+		if (React.isValidElement<any>(item) && item.type === SideBarBodyGroup) {
+			pinned.push(item);
+		} else if (React.isValidElement<any>(item) && item.props?.sortable === false) {
 			pinned.push(item);
 		} else {
 			sortableItems.push(item);
@@ -56,7 +58,7 @@ export const SideBarBodyGroup: React.FC<Props> = ({
 	});
 
 	sortableItems.sort((a, b) => {
-		if (React.isValidElement(a) && React.isValidElement(b)) {
+		if (React.isValidElement<any>(a) && React.isValidElement<any>(b)) {
 			return compareLabels(String(a.props?.label ?? ''), String(b.props?.label ?? ''));
 		}
 		return 0;
@@ -64,9 +66,29 @@ export const SideBarBodyGroup: React.FC<Props> = ({
 
 	const sortedBodyItems = [...pinned, ...sortableItems];
 
-	const hasActiveChild = bodyItems.some((item) =>
-		React.isValidElement(item) && Boolean(item.props?.active)
-	);
+	const hasActiveChild = (() => {
+		const nodeHasActive = (node: React.ReactNode): boolean => {
+			if (node == null) {
+				return false;
+			}
+
+			if (Array.isArray(node)) {
+				return node.some(nodeHasActive);
+			}
+
+			if (!React.isValidElement(node)) {
+				return false;
+			}
+
+			if (node.type === SideBarBodyItem || node.type === SideBarBodyItemLink) {
+				return Boolean((node as any).props?.active);
+			}
+
+			return nodeHasActive((node as any).props?.children);
+		};
+
+		return nodeHasActive(children);
+	})();
 
 	useEffect(() => {
 		if (initialisedRef.current) {
