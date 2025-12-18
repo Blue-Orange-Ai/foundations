@@ -1,0 +1,20 @@
+.blue-orange-file-input-development-drop-zone {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	border: 2px dashed #c5c6c7;
+	border-radius: 10px;
+	padding: 22px;
+	max-width: 520px;
+	cursor: pointer;
+	user-select: none;
+}
+
+.blue-orange-file-input-development-drop-zone-heading {
+	font-weight: 600;
+}
+
+.blue-orange-file-input-development-drop-zone-sub {
+	opacity: 0.8;
+	font-family: monospace;
+}

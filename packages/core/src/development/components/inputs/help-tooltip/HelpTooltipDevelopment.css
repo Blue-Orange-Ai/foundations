@@ -1,0 +1,11 @@
+.blue-orange-help-tooltip-development {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.blue-orange-help-tooltip-development-row {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+}

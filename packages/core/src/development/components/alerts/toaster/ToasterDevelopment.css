@@ -1,0 +1,12 @@
+.blue-orange-toaster-development-grid {
+	display: grid;
+	grid-template-columns: repeat(2, max-content);
+	gap: 12px;
+	align-items: center;
+}
+
+.blue-orange-toaster-development-action {
+	font-weight: 600;
+	cursor: pointer;
+	user-select: none;
+}

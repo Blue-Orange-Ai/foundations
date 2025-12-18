@@ -45,6 +45,12 @@ import {CopyInputDevelopment} from "../components/inputs/copy-input/CopyInputDev
 import {ComboChartDevelopment} from "../components/charts/combo/ComboChartDevelopment";
 import {SearchInput} from "../../components/inputs/search/SearchInput";
 import {SearchInputDevelopment} from "../components/inputs/search-input/SearchInputDevelopment";
+import {ToasterDevelopment} from "../components/alerts/toaster/ToasterDevelopment";
+import {InLineAlertsDevelopment} from "../components/alerts/in-line/InLineAlertsDevelopment";
+import {AvatarDevelopment} from "../components/avatar/AvatarDevelopment";
+import {FileInputDevelopment} from "../components/inputs/file-input/FileInputDevelopment";
+import {HelpTooltipDevelopment} from "../components/inputs/help-tooltip/HelpTooltipDevelopment";
+import {ObjectTableDevelopment} from "../components/table/object-table/ObjectTableDevelopment";
 
 interface Props {
 }
@@ -509,6 +515,12 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "text-decoration-code-block" && <CodeBlockDevelopment></CodeBlockDevelopment>}
 			{component == "inputs-copy" && <CopyInputDevelopment></CopyInputDevelopment>}
             {component == "inputs-search" && <SearchInputDevelopment></SearchInputDevelopment>}
+			{component == "alerts-toaster" && <ToasterDevelopment></ToasterDevelopment>}
+			{component == "alerts-in-line" && <InLineAlertsDevelopment></InLineAlertsDevelopment>}
+			{component == "avatar" && <AvatarDevelopment></AvatarDevelopment>}
+			{component == "inputs-file" && <FileInputDevelopment></FileInputDevelopment>}
+			{component == "inputs-help" && <HelpTooltipDevelopment></HelpTooltipDevelopment>}
+			{component == "table-objects" && <ObjectTableDevelopment></ObjectTableDevelopment>}
 		</SidebarPage>
 	)
 }
