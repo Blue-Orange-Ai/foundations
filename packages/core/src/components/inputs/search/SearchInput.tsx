@@ -6,6 +6,8 @@ interface Props {
 	value?: string;
 	label?: string;
 	icon?: string;
+    deletable?: boolean,
+    timeout?: number,
 	style?: React.CSSProperties;
 	onSearchEvent?: (value: string) => void;
 }
@@ -14,6 +16,8 @@ export const SearchInput: React.FC<Props> = ({
 												 value="",
 												 label="Filter by keyword",
 												 icon,
+                                                 deletable=false,
+                                                 timeout=500,
 												 style={},
 												 onSearchEvent}) => {
 
@@ -28,7 +32,7 @@ export const SearchInput: React.FC<Props> = ({
 		}
 		timeoutRef.current = setTimeout(() => {
 			sendInputChange(value);
-		}, 500);
+		}, timeout);
 	};
 
 	const cancelTimeout = () => {
@@ -50,7 +54,11 @@ export const SearchInput: React.FC<Props> = ({
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const newValue = event.target.value;
 		setInputValue(newValue);
-		startTimeout(newValue);
+		if (timeout > 0) {
+            startTimeout(newValue);
+        } else {
+            sendInputChange(newValue);
+        }
 	};
 
 	const sendInputChange = (value: string) => {
@@ -59,10 +67,14 @@ export const SearchInput: React.FC<Props> = ({
 		}
 	}
 
-
+    const handleDelete = () => {
+        setInputValue("");
+        sendInputChange("");
+    }
 
 	const inputStyle: React.CSSProperties = {
 		paddingLeft: icon === undefined ? "5px" : "42px",
+        paddingRight: !deletable ? "5px" : "42px",
 		width: icon === undefined ? "calc(100% - 10px)" : "calc(100% - 47px)",
 	}
 
@@ -80,6 +92,13 @@ export const SearchInput: React.FC<Props> = ({
 				placeholder={label}
 				onKeyDown={handleKeydownChange}
 				onChange={handleInputChange}/>
+            {deletable &&
+                <div
+                    onClick={handleDelete}
+                    className="blue-orange-search-group-icon blue-orange-search-group-icon-deletable">
+                    <i className="ri-close-line"></i>
+                </div>
+            }
 		</div>
 	)
 }

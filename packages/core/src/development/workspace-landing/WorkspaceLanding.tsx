@@ -43,6 +43,8 @@ import {AccordionDevelopment} from "../components/accordion/AccordionDevelopment
 import {CodeBlockDevelopment} from "../components/text-decorations/code-block/CodeBlockDevelopment";
 import {CopyInputDevelopment} from "../components/inputs/copy-input/CopyInputDevelopment";
 import {ComboChartDevelopment} from "../components/charts/combo/ComboChartDevelopment";
+import {SearchInput} from "../../components/inputs/search/SearchInput";
+import {SearchInputDevelopment} from "../components/inputs/search-input/SearchInputDevelopment";
 
 interface Props {
 }
@@ -506,6 +508,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "accordion" && <AccordionDevelopment></AccordionDevelopment>}
 			{component == "text-decoration-code-block" && <CodeBlockDevelopment></CodeBlockDevelopment>}
 			{component == "inputs-copy" && <CopyInputDevelopment></CopyInputDevelopment>}
+            {component == "inputs-search" && <SearchInputDevelopment></SearchInputDevelopment>}
 		</SidebarPage>
 	)
 }

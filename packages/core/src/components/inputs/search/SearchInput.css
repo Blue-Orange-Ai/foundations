@@ -46,3 +46,32 @@
     outline: 1.5px solid var(--blue-orange-dark-input-focus-border-color);
 }
 
+.blue-orange-search-group {
+    position: relative;
+}
+
+.blue-orange-search-group-icon {
+    position: absolute;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    top: 0;
+    left: 0;
+}
+
+.blue-orange-search-group-icon-deletable {
+    cursor: pointer;
+    left: unset;
+    width: 38px;
+    right: -38px;
+    height: calc(100% - 2px);
+    top: 1px;
+}
+
+.blue-orange-search-group-icon-deletable:hover {
+    background-color: var(--blue-orange-light-input-dropdown-item-hover-color);
+    transition: 0.2s;
+}
+

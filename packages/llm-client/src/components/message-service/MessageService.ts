@@ -14,6 +14,8 @@ export const chatStream = async (endpoint: IEndpoint, requestData: IModelRequest
     try {
         var headers = generateHeaders(endpoint);
         headers["accept"] = "application/json";
+        headers["Authorization"] = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YjZiZmRlYi1hMjIzLTRmOWMtODJlYy01MTY3MmUyYzY2NGUiLCJleHAiOjE3NjcyNjEyNDR9.47oAqZSYCC2gs-RZbo1XbGxthG-7L_rE5csGY0alYwsFa86LRrP-U_JZ3aTbw1qzMlsZCkO4z_2vUVM-QxGIVw"
+        // headers["Authorization"] = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YjZiZmRlYi1hMjIzLTRmOWMtODJlYy01MTY3MmUyYzY2NGUiLCJleHAiOjE3NjcyNjEyNDR9.47oAqZSYCC2gs-RZbo1XbGxthG-7L_rE5csGY0alYwsFa86LRrP-U_JZ3aTbw1qzMlsZCkO4z_2vUVM-QxGIV"
         return fetch(endpoint.uri, {
             method: 'POST',
             headers: headers,
