@@ -5,8 +5,9 @@
     position: fixed;
     z-index: 10;
     background-color: var(--blue-orange-light-context-menu-background);
-    min-width: 50px;
+    min-width: 200px;
     overflow-y: auto;
+    border-radius: 4px;
 }
 
 .dark .blue-orange-default-context-menu{
