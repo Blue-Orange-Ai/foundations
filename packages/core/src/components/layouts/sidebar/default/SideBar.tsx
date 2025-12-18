@@ -5,6 +5,10 @@ import Cookies from "js-cookie";
 import {SideBarHeader} from "../sidebar-header/SideBarHeader";
 import {SideBarBody} from "../sidebar-body/SideBarBody";
 import {SideBarFooter} from "../sidebar-footer/SideBarFooter";
+import {SideBarBodyGroup} from "../items/sidebar-body-group/SideBarBodyGroup";
+import {SideBarBodyItem} from "../items/sidebar-body-item/SideBarBodyItem";
+import {SideBarBodyItemLink} from "../items/sidebar-body-item-link/SideBarBodyItemLink";
+import {SideBarBodyLabel} from "../items/sidebar-body-label/SideBarBodyLabel";
 
 export enum SideBarState {
 	CLOSED,
@@ -39,12 +43,55 @@ export const SideBar: React.FC<Props> = ({
 			if (child.type === SideBarHeader) {
 				headerItems.push(child.props.children);
 			} else if (child.type === SideBarBody) {
-				bodyItems.push(child.props.children);
+				React.Children.forEach(child.props.children, (bodyChild) => {
+					bodyItems.push(bodyChild);
+				});
 			} else if (child.type === SideBarFooter) {
 				footerItems.push(child.props.children);
 			}
 		}
 	});
+
+	const compareLabels = (a: string, b: string) => a.localeCompare(b, undefined, {sensitivity: 'base'});
+	const getElementLabel = (element: React.ReactElement): string => {
+		if (element.type === SideBarBodyItem || element.type === SideBarBodyItemLink || element.type === SideBarBodyLabel) {
+			return String(element.props?.label ?? '');
+		}
+
+		if (element.type === SideBarBodyGroup) {
+			const groupChildren = React.Children.toArray(element.props?.children);
+			const labelEl = groupChildren.find((c) => React.isValidElement(c) && c.type === SideBarBodyLabel) as React.ReactElement | undefined;
+			return String(labelEl?.props?.label ?? '');
+		}
+
+		return '';
+	};
+
+	const pinnedBodyItems: React.ReactNode[] = [];
+	const sortableBodyItems: React.ReactElement[] = [];
+
+	bodyItems.forEach((item) => {
+		if (!React.isValidElement(item)) {
+			pinnedBodyItems.push(item);
+			return;
+		}
+
+		if (item.props?.sortable === false) {
+			pinnedBodyItems.push(item);
+			return;
+		}
+
+		if (item.type === SideBarBodyItem || item.type === SideBarBodyItemLink || item.type === SideBarBodyGroup) {
+			sortableBodyItems.push(item);
+			return;
+		}
+
+		pinnedBodyItems.push(item);
+	});
+
+	sortableBodyItems.sort((a, b) => compareLabels(getElementLabel(a), getElementLabel(b)));
+
+	const sortedBodyItems = [...pinnedBodyItems, ...sortableBodyItems];
 
 	const sidebarCookie = Cookies.get("sidebar-width");
 
@@ -118,7 +165,7 @@ export const SideBar: React.FC<Props> = ({
 			className={state == SideBarState.OPEN ? "blue-orange-sidebar" : "blue-orange-sidebar blue-orange-sidebar-closed"}
 			style={{width: width + "px"}}>
 			<div className="blue-orange-sidebar-header">{headerItems}</div>
-			<div className="blue-orange-sidebar-body">{bodyItems}</div>
+			<div className="blue-orange-sidebar-body">{sortedBodyItems}</div>
 			<div className="blue-orange-sidebar-footer">{footerItems}</div>
 			<div ref={sidebarControlRef} className={resizable ? "blue-orange-sidebar-control" : "blue-orange-sidebar-control-disabled"}></div>
 		</div>

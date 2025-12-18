@@ -4,6 +4,7 @@ import './SideBarBodyItem.css'
 
 interface Props {
 	label: string,
+	sortable?: boolean,
 	active: boolean,
 	focused: boolean,
 	hoverEffects?: boolean,

@@ -4,6 +4,7 @@ import './SideBarBodyItemLink.css'
 
 interface Props {
 	label: string,
+	sortable?: boolean,
 	href: string,
 	active: boolean,
 	focused: boolean,
