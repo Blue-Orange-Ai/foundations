@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 
 import './SideBar.css'
 import Cookies from "js-cookie";
+import Fuse from "fuse.js";
 import {SideBarHeader} from "../sidebar-header/SideBarHeader";
 import {SideBarBody} from "../sidebar-body/SideBarBody";
 import {SideBarFooter} from "../sidebar-footer/SideBarFooter";
@@ -9,6 +10,7 @@ import {SideBarBodyGroup} from "../items/sidebar-body-group/SideBarBodyGroup";
 import {SideBarBodyItem} from "../items/sidebar-body-item/SideBarBodyItem";
 import {SideBarBodyItemLink} from "../items/sidebar-body-item-link/SideBarBodyItemLink";
 import {SideBarBodyLabel} from "../items/sidebar-body-label/SideBarBodyLabel";
+import {Input} from "../../../inputs/input/Input";
 
 export enum SideBarState {
 	CLOSED,
@@ -21,6 +23,7 @@ interface Props {
 	closeWidth?: number;
 	openWidth?: number;
 	resizable?: boolean;
+	filter?: boolean;
 	changeState?: (state: SideBarState) => void;
 }
 
@@ -30,6 +33,7 @@ export const SideBar: React.FC<Props> = ({
 											 closeWidth = 250,
 											 openWidth=250,
 											 resizable=true,
+											 filter = true,
 											 changeState}) => {
 
 	const headerItems: React.ReactNode[] = [];
@@ -92,6 +96,84 @@ export const SideBar: React.FC<Props> = ({
 	sortableBodyItems.sort((a, b) => compareLabels(getElementLabel(a), getElementLabel(b)));
 
 	const sortedBodyItems = [...pinnedBodyItems, ...sortableBodyItems];
+
+	const [bodySearchQuery, setBodySearchQuery] = useState<string>("");
+
+	type SearchEntry = { label: string; groupPath: string; searchText: string; element: React.ReactElement<any> };
+	const searchEntries: SearchEntry[] = [];
+
+	const collectSearchEntries = (node: React.ReactNode, groupPathParts: string[] = []) => {
+		React.Children.forEach(node, (child) => {
+			if (!React.isValidElement(child)) {
+				return;
+			}
+
+			if (child.type === SideBarBodyGroup) {
+				const groupLabel = getElementLabel(child);
+				const nextParts = groupLabel ? [...groupPathParts, groupLabel] : groupPathParts;
+				collectSearchEntries(child.props?.children, nextParts);
+				return;
+			}
+
+			if (child.type === SideBarBodyItem || child.type === SideBarBodyItemLink) {
+				const groupPath = groupPathParts.join(" / ");
+				const label = String(child.props?.label ?? '');
+				searchEntries.push({
+					label,
+					groupPath,
+					searchText: groupPath ? `${groupPath} ${label}` : label,
+					element: child,
+				});
+				return;
+			}
+
+			if ((child as any).props?.children) {
+				collectSearchEntries((child as any).props.children, groupPathParts);
+			}
+		});
+	};
+
+	collectSearchEntries(sortedBodyItems);
+
+	const fuseOptions = {
+		keys: ["searchText"],
+		threshold: 0.2,
+		caseSensitive: false,
+		distance: 100,
+		minMatchCharLength: 1,
+	};
+
+	const normalizedQuery = filter && state == SideBarState.OPEN ? bodySearchQuery.trim() : "";
+	const searchedBodyItems: React.ReactNode[] = (() => {
+		if (normalizedQuery === "") {
+			return sortedBodyItems;
+		}
+
+		const fuse = new Fuse(searchEntries, fuseOptions);
+		const results = fuse.search(normalizedQuery).map((r, idx) => {
+			const {element: el, groupPath} = r.item;
+			type SearchableSidebarElementProps = {
+				label?: React.ReactNode;
+			};
+			if (!React.isValidElement<SearchableSidebarElementProps>(el)) {
+				return el;
+			}
+			const originalLabel = String(el.props.label ?? "");
+			const prefixedLabel = groupPath ? `${groupPath} → ${originalLabel}` : originalLabel;
+			return React.cloneElement(el, {
+				key: `blue-orange-sidebar-body-search-${idx}-${String(el.props.label ?? "")}`,
+				label: prefixedLabel,
+			});
+		});
+		if (results.length <= 0) {
+			return [
+				<div key="blue-orange-sidebar-body-empty" className="blue-orange-sidebar-body-empty">
+					No items found..
+				</div>,
+			];
+		}
+		return results;
+	})();
 
 	const sidebarCookie = Cookies.get("sidebar-width");
 
@@ -165,7 +247,21 @@ export const SideBar: React.FC<Props> = ({
 			className={state == SideBarState.OPEN ? "blue-orange-sidebar" : "blue-orange-sidebar blue-orange-sidebar-closed"}
 			style={{width: width + "px"}}>
 			<div className="blue-orange-sidebar-header">{headerItems}</div>
-			<div className="blue-orange-sidebar-body">{sortedBodyItems}</div>
+			<div className="blue-orange-sidebar-body">
+				{filter && state == SideBarState.OPEN &&
+					<div className="blue-orange-sidebar-body-filter">
+						<Input
+							value={bodySearchQuery}
+							placeholder={"Filter..."}
+							style={{height: "32px", fontSize: "14px"}}
+							onChange={setBodySearchQuery}
+						></Input>
+					</div>
+				}
+				<div className="blue-orange-sidebar-body-list">
+					{searchedBodyItems}
+				</div>
+			</div>
 			<div className="blue-orange-sidebar-footer">{footerItems}</div>
 			<div ref={sidebarControlRef} className={resizable ? "blue-orange-sidebar-control" : "blue-orange-sidebar-control-disabled"}></div>
 		</div>
