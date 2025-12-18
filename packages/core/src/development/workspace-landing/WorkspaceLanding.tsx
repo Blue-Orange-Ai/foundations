@@ -97,7 +97,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						icon={<i className="ri-expand-up-down-line"></i>}
 						onClick={() => navigate("/accordion")}
 					></SideBarBodyItem>
-					<SideBarBodyGroup opened={sidebarGroupState}>
+					<SideBarBodyGroup opened={sidebarGroupState} onOpenedChange={setSidebarGroupState}>
 						<SideBarBodyLabel
 							icon={sidebarGroupState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
 							label={"Alerts"}
@@ -143,7 +143,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						onClick={() => navigate("/buttons")}
 						icon={<i className="ri-radio-button-line"></i>}
 					></SideBarBodyItem>
-					<SideBarBodyGroup opened={sidebarChartState}>
+					<SideBarBodyGroup opened={sidebarChartState} openOnActiveChild={true} onOpenedChange={setSidebarChartState}>
 						<SideBarBodyLabel
 							icon={sidebarChartState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
 							label={"Charts"}
@@ -186,7 +186,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/charts-scatter")}
 						></SideBarBodyItem>
 					</SideBarBodyGroup>
-					<SideBarBodyGroup opened={sidebarCommentState}>
+					<SideBarBodyGroup opened={sidebarCommentState} openOnActiveChild={true} onOpenedChange={setSidebarCommentState}>
 						<SideBarBodyLabel
 							icon={sidebarCommentState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
 							label={"Comments"}
@@ -230,7 +230,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						icon={<i className="ri-folder-6-fill"></i>}
 						onClick={() => navigate("/file-system")}
 					></SideBarBodyItem>
-					<SideBarBodyGroup opened={sidebarInputState}>
+					<SideBarBodyGroup opened={sidebarInputState} openOnActiveChild={true} onOpenedChange={setSidebarInputState}>
 						<SideBarBodyLabel
 							icon={sidebarInputState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
 							label={"Inputs"}
@@ -399,7 +399,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						icon={<i className="ri-ruler-fill"></i>}
 						onClick={() => navigate("/rules")}
 					></SideBarBodyItem>
-					<SideBarBodyGroup opened={sidebarTooltipState}>
+					<SideBarBodyGroup opened={sidebarTooltipState} openOnActiveChild={true} onOpenedChange={setSidebarTooltipState}>
 						<SideBarBodyLabel
 							icon={sidebarTooltipState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
 							label={"Tooltips"}
@@ -424,9 +424,9 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/tooltips-simple")}
 						></SideBarBodyItem>
 					</SideBarBodyGroup>
-					<SideBarBodyGroup opened={sidebarTableState}>
+					<SideBarBodyGroup opened={sidebarTableState} openOnActiveChild={true} onOpenedChange={setSidebarTableState}>
 						<SideBarBodyLabel
-							icon={sidebarTooltipState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
+							icon={sidebarTableState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
 							label={"Tables"}
 							onClick={() => setSidebarTableState(!sidebarTableState)}
 						></SideBarBodyLabel>
@@ -458,7 +458,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						icon={<i className="ri-link"></i>}
 						onClick={() => navigate("/sockets")}
 					></SideBarBodyItem>
-					<SideBarBodyGroup opened={sidebarTextDecorationState}>
+					<SideBarBodyGroup opened={sidebarTextDecorationState} openOnActiveChild={true} onOpenedChange={setSidebarTextDecorationState}>
 						<SideBarBodyLabel
 							icon={sidebarTextDecorationState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
 							label={"Text Decorations"}

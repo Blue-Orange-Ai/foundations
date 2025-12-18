@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 import './SideBarBodyGroup.css'
 import {SideBarBodyLabel} from "../sidebar-body-label/SideBarBodyLabel";
@@ -14,14 +14,22 @@ interface Props {
 	children: React.ReactNode;
 	opened: boolean;
 	sortable?: boolean;
+	openOnActiveChild?: boolean;
+	onOpenedChange?: (opened: boolean) => void;
 }
 
 export const SideBarBodyGroup: React.FC<Props> = ({
 											 children,
-											opened
+											opened,
+											openOnActiveChild=true,
+											onOpenedChange
 											 }) => {
 
-	const headerItems: React.ReactNode[] = [];
+	const initialisedRef = useRef<boolean>(false);
+
+    const [internalOpened, setInternalOpened] = useState<boolean>(opened);
+
+    const headerItems: React.ReactNode[] = [];
 
 	const bodyItems: React.ReactNode[] = [];
 
@@ -56,9 +64,34 @@ export const SideBarBodyGroup: React.FC<Props> = ({
 
 	const sortedBodyItems = [...pinned, ...sortableItems];
 
+	const hasActiveChild = bodyItems.some((item) =>
+		React.isValidElement(item) && Boolean(item.props?.active)
+	);
+
+	useEffect(() => {
+		if (initialisedRef.current) {
+			return;
+		}
+
+		if (openOnActiveChild && hasActiveChild && !opened) {
+			setInternalOpened(true);
+            if (onOpenedChange) {
+                onOpenedChange(true);
+            }
+		}
+        initialisedRef.current = true;
+	}, [openOnActiveChild,
+        hasActiveChild,
+        opened,
+        onOpenedChange]);
+
+    useEffect(() => {
+        setInternalOpened(opened);
+    }, [opened]);
+
 	return (
 		<div style={{paddingLeft: "10px", width: "calc(100% - 10px)"}}>
-			<Accordion opened={opened}>
+			<Accordion opened={internalOpened}>
 				<AccordionHeader>{headerItems}</AccordionHeader>
 				<AccordionBody>{sortedBodyItems}</AccordionBody>
 			</Accordion>
