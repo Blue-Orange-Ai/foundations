@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect, ReactNode} from 'react';
+import React, {useState, useRef, useEffect, ReactNode, useLayoutEffect} from 'react';
 
 import './ContextMenu.css'
 import {ContextMenuHeading} from "../context-menu-heading/ContextMenuHeading";
@@ -8,7 +8,8 @@ import {ContextMenuSeparator} from "../context-menu-separator/ContextMenuSeparat
 export enum IContextMenuType {
 	CONTENT=0,
 	SEPARATOR=1,
-	HEADING=2
+	HEADING=2,
+	GROUP=3
 }
 
 export interface IContextMenuItem {
@@ -18,7 +19,7 @@ export interface IContextMenuItem {
 	checked?: boolean,
 	rightIcon?: string,
 	children?: Array<IContextMenuItem>,
-	value: any
+	value?: any
 }
 
 interface Props {
@@ -60,11 +61,16 @@ export const ContextMenu: React.FC<Props> = ({
 	const [visible, setVisible] = useState(false);
 
 	const [style, setStyle] = useState<React.CSSProperties>({});
+	const [openSubmenus, setOpenSubmenus] = useState<Array<{anchorRect: DOMRect, items: Array<IContextMenuItem>}>>([]);
+	const [activeGroupIndexes, setActiveGroupIndexes] = useState<Array<number>>([]);
+	const [pinned, setPinned] = useState<boolean>(false);
+	const closeSubmenuTimerRef = useRef<number | null>(null);
+	const [panelSizes, setPanelSizes] = useState<Record<number, {width: number, height: number}>>({});
 
 	const childRef = useRef<any | null>(null);
 
 	const contextMenuRef = useRef<HTMLDivElement>(null);
-	const menuRef = useRef(null);
+	const menuRef = useRef<HTMLDivElement>(null);
 	const visibleRef = useRef(visible);
 
 	const isDifferenceBelowThreshold = (date1: Date, date2: Date, thresholdMs: number): boolean => {
@@ -84,6 +90,12 @@ export const ContextMenu: React.FC<Props> = ({
 		}
 	}, []);
 
+	useLayoutEffect(() => {
+		if (!visible) {
+			setPanelSizes({});
+		}
+	}, [visible]);
+
 	useEffect(() => {
 		visibleRef.current = visible;
 	}, [visible]);
@@ -97,9 +109,15 @@ export const ContextMenu: React.FC<Props> = ({
 					handleContextMenu(e)
 				} else if (visibleRef.current) {
 					setVisible(false);
+					setOpenSubmenus([]);
+					setActiveGroupIndexes([]);
+					setPinned(false);
 				}
 			} else if (rightClick && visibleRef.current && !isDescendantOf(contextMenuRef.current, target)) {
 				setVisible(false);
+				setOpenSubmenus([]);
+				setActiveGroupIndexes([]);
+				setPinned(false);
 			}
 		}
 	};
@@ -112,6 +130,9 @@ export const ContextMenu: React.FC<Props> = ({
 				handleContextMenu(e)
 			} else if (visibleRef.current) {
 				setVisible(false);
+				setOpenSubmenus([]);
+				setActiveGroupIndexes([]);
+				setPinned(false);
 			}
 		}
 	};
@@ -145,7 +166,7 @@ export const ContextMenu: React.FC<Props> = ({
 		const buttonCenterHeight = rect.top + (rect.height / 2);
 		const buttonCenterWidth = rect.left + (rect.width / 2);
 		var style: React.CSSProperties = {}
-		style.width = width + "px";
+		style.width = width == undefined ? "fit-content" : width + "px";
 		style.maxHeight = maxHeight + "px";
 		if (buttonCenterHeight > innerHeight / 2) {
 			style.bottom = innerHeight - (rect.top - 10) + "px";
@@ -183,6 +204,9 @@ export const ContextMenu: React.FC<Props> = ({
 		const target = e.target as HTMLElement;
 		if (visibleRef.current && isDescendantOf(menuRef.current, target) == null) {
 			setVisible(false);
+			setOpenSubmenus([]);
+			setActiveGroupIndexes([]);
+			setPinned(false);
 		} else if (!visibleRef.current) {
 			e.preventDefault();
 			var button = childRef.current as HTMLElement;
@@ -194,6 +218,9 @@ export const ContextMenu: React.FC<Props> = ({
 			} else {
 				setContextMenuStyle(button);
 			}
+			setOpenSubmenus([]);
+			setActiveGroupIndexes([]);
+			setPinned(false);
 			setVisible(true);
 		}
 	};
@@ -206,6 +233,98 @@ export const ContextMenu: React.FC<Props> = ({
 
 	const close = () => {
 		setVisible(false);
+		setOpenSubmenus([]);
+		setActiveGroupIndexes([]);
+		setPinned(false);
+	}
+
+	const getMenuWidthPx = () => {
+		return width ?? 200;
+	}
+
+	const updatePanelSize = (level: number, el: HTMLDivElement | null) => {
+		if (!el) {
+			return;
+		}
+		const rect = el.getBoundingClientRect();
+		setPanelSizes((prev) => {
+			const existing = prev[level];
+			const nextWidth = Math.round(rect.width);
+			const nextHeight = Math.round(rect.height);
+			if (existing && existing.width === nextWidth && existing.height === nextHeight) {
+				return prev;
+			}
+			return {
+				...prev,
+				[level]: {width: nextWidth, height: nextHeight}
+			};
+		});
+	}
+
+	const getSubmenuStyle = (anchorRect: DOMRect, level: number): React.CSSProperties => {
+		const innerHeight = window.innerHeight;
+		const innerWidth = window.innerWidth;
+		const margin = 8;
+		const overlap = 6;
+		const alignTopOffset = 4;
+		const measured = panelSizes[level];
+		const expectedWidth = width ?? measured?.width ?? 200;
+
+		const maxHeightPx = Math.min(maxHeight, innerHeight - margin * 2);
+		const panelHeightPx = Math.min(measured?.height ?? maxHeightPx, maxHeightPx);
+		let left = anchorRect.right - overlap;
+		if (left + expectedWidth > innerWidth - margin) {
+			left = anchorRect.left - expectedWidth + overlap;
+		}
+		left = Math.max(margin, Math.min(left, innerWidth - margin - expectedWidth));
+
+		let top = anchorRect.top - alignTopOffset;
+		top = Math.max(margin, Math.min(top, innerHeight - margin - panelHeightPx));
+
+		return {
+			position: 'fixed',
+			left: left + 'px',
+			top: top + 'px',
+			width: width == undefined ? 'fit-content' : expectedWidth + 'px',
+			maxHeight: maxHeightPx + 'px',
+			zIndex: 10 + level,
+		};
+	}
+
+	const closeSubmenusFromLevel = (panelLevel: number) => {
+		setOpenSubmenus((prev) => prev.slice(0, panelLevel));
+		setActiveGroupIndexes((prev) => prev.slice(0, panelLevel));
+	}
+
+	const clearSubmenuCloseTimer = () => {
+		if (closeSubmenuTimerRef.current != null) {
+			window.clearTimeout(closeSubmenuTimerRef.current);
+			closeSubmenuTimerRef.current = null;
+		}
+	}
+
+	const scheduleSubmenuCloseFromLevel = (panelLevel: number) => {
+		if (pinned) {
+			return;
+		}
+		clearSubmenuCloseTimer();
+		closeSubmenuTimerRef.current = window.setTimeout(() => {
+			closeSubmenusFromLevel(panelLevel);
+		}, 150);
+	}
+
+	const openGroup = (panelLevel: number, itemIndex: number, anchorRect: DOMRect, groupItems: Array<IContextMenuItem>) => {
+		clearSubmenuCloseTimer();
+		setOpenSubmenus((prev) => {
+			const next = prev.slice(0, panelLevel);
+			next[panelLevel] = {anchorRect, items: groupItems};
+			return next;
+		});
+		setActiveGroupIndexes((prev) => {
+			const next = prev.slice(0, panelLevel);
+			next[panelLevel] = itemIndex;
+			return next;
+		});
 	}
 
 	const handleItemClick = (item: IContextMenuItem) => {
@@ -215,6 +334,69 @@ export const ContextMenu: React.FC<Props> = ({
 		close();
 	};
 
+	const renderPanel = (panelItems: Array<IContextMenuItem>, panelLevel: number, panelStyle: React.CSSProperties) => {
+		return (
+			<div
+				className="blue-orange-default-context-menu shadow"
+				style={{...panelStyle, zIndex: 10 + panelLevel}}
+				ref={(el) => updatePanelSize(panelLevel, el)}
+				onMouseEnter={() => clearSubmenuCloseTimer()}
+				onMouseLeave={() => scheduleSubmenuCloseFromLevel(panelLevel)}
+			>
+				{panelItems.map((item, index) => (
+					<div
+						key={index}
+						onMouseEnter={() => {
+							if (!pinned && item.type !== IContextMenuType.GROUP) {
+								closeSubmenusFromLevel(panelLevel);
+							}
+						}}
+					>
+						{item.type == IContextMenuType.HEADING && (
+							<ContextMenuHeading item={item} onClick={handleItemClick}></ContextMenuHeading>
+						)}
+						{item.type == IContextMenuType.CONTENT && (
+							<ContextMenuItem item={item} onClick={handleItemClick}></ContextMenuItem>
+						)}
+						{item.type == IContextMenuType.SEPARATOR && (
+							<ContextMenuSeparator item={item} onClick={handleItemClick}></ContextMenuSeparator>
+						)}
+						{item.type == IContextMenuType.GROUP && (
+							<div
+								className={
+									activeGroupIndexes[panelLevel] === index
+										? "blue-orange-context-menu-general-row blue-orange-context-menu-item blue-orange-context-menu-group blue-orange-context-menu-group-active"
+										: "blue-orange-context-menu-general-row blue-orange-context-menu-item blue-orange-context-menu-group"
+								}
+								onMouseEnter={(ev) => {
+									const rect = (ev.currentTarget as HTMLElement).getBoundingClientRect();
+									openGroup(panelLevel, index, rect, item.children ?? []);
+								}}
+								onClick={(ev) => {
+									ev.stopPropagation();
+								setPinned(true);
+								const rect = (ev.currentTarget as HTMLElement).getBoundingClientRect();
+								openGroup(panelLevel, index, rect, item.children ?? []);
+							}}
+								onMouseLeave={() => scheduleSubmenuCloseFromLevel(panelLevel)}
+							>
+								<div className="blue-orange-context-menu-item-left-cont">
+									{item.icon && (
+										<div className="blue-orange-default-context-menu-row-icon"><i className={item.icon}></i></div>
+									)}
+									<div>{item.label}</div>
+								</div>
+								<div className="blue-orange-context-menu-group-arrow">
+									<i className={item.rightIcon ?? "ri-arrow-right-s-line"}></i>
+								</div>
+							</div>
+						)}
+					</div>
+				))}
+			</div>
+		);
+	}
+
 	return (
 		<div ref={contextMenuRef}>
 			<ForwardingRefWrapper ref={childRef}>
@@ -222,23 +404,16 @@ export const ContextMenu: React.FC<Props> = ({
 			</ForwardingRefWrapper>
 			{visible && (
 				<div
-					className="blue-orange-default-context-menu shadow"
 					ref={menuRef}
-					style={style}
 				>
-					{items.map((item, index) => (
-						<div key={index}>
-							{item.type == IContextMenuType.HEADING && (
-								<ContextMenuHeading item={item} onClick={handleItemClick}></ContextMenuHeading>
-							)}
-							{item.type == IContextMenuType.CONTENT && (
-								<ContextMenuItem item={item} onClick={handleItemClick}></ContextMenuItem>
-							)}
-							{item.type == IContextMenuType.SEPARATOR && (
-								<ContextMenuSeparator item={item} onClick={handleItemClick}></ContextMenuSeparator>
-							)}
-						</div>
-					))}
+					{renderPanel(items, 0, style)}
+					{openSubmenus.map((submenu, idx) => {
+						return (
+							<div key={idx}>
+								{renderPanel(submenu.items, idx + 1, getSubmenuStyle(submenu.anchorRect, idx + 1))}
+							</div>
+						);
+					})}
 				</div>
 			)}
 		</div>

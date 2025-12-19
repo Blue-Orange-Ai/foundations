@@ -60,3 +60,18 @@
     line-height: 1.25rem;
     font-weight: 500;
 }
+
+.blue-orange-context-menu-group-arrow {
+    margin-left: 12px;
+    display: flex;
+    align-items: center;
+    opacity: 0.8;
+}
+
+.blue-orange-context-menu-group-active {
+    background-color: var(--blue-orange-light-input-dropdown-item-hover-color);
+}
+
+.dark .blue-orange-context-menu-group-active {
+    background-color: var(--blue-orange-dark-context-menu-row-hover-background);
+}
