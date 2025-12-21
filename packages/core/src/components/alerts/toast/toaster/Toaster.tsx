@@ -2,6 +2,7 @@ import React, {ReactNode} from "react";
 
 import './Toaster.css'
 import {ToastLocation} from "../toastcontext/ToastContext";
+import {ButtonIcon} from "../../../buttons/button-icon/ButtonIcon";
 
 export enum ToasterType {
 	DEFAULT,
@@ -11,9 +12,10 @@ export enum ToasterType {
 }
 
 interface Props {
-	heading: string,
+	heading?: string,
 	toastType: ToasterType,
 	location: ToastLocation,
+	ttl?: number,
 	icon?: ReactNode,
 	description?: string,
 	action?: ReactNode,
@@ -24,6 +26,7 @@ export const Toaster: React.FC<Props> = ({
 											 heading,
 											 toastType,
 											 location,
+											 ttl,
 											 icon,
 											 description,
 											 action,
@@ -32,6 +35,9 @@ export const Toaster: React.FC<Props> = ({
 
 	const generateClassName = () => {
 		var classname = 'blue-orange-toaster shadow'
+		if (!ttl) {
+			classname += " blue-orange-toaster-persistent"
+		}
 		if (toastType == ToasterType.SUCCESS) {
 			classname += " blue-orange-toaster-success"
 		} else if (toastType == ToasterType.WARNING) {
@@ -48,20 +54,32 @@ export const Toaster: React.FC<Props> = ({
 	}
 
 	const handleClick = () => {
-		if (closeOnClick && onClose) {
+		if (ttl && closeOnClick && onClose) {
 			onClose()
+		}
+	}
+
+	const handleCloseClick = (e: React.MouseEvent) => {
+		e.stopPropagation();
+		if (onClose) {
+			onClose();
 		}
 	}
 
 	return (
 		<div className={generateClassName()} onClick={handleClick}>
+			{!ttl && (
+				<div className="blue-orange-toaster-close" onClick={handleCloseClick}>
+					<ButtonIcon icon={"ri-close-line"} label={"Close"} />
+				</div>
+			)}
 			{icon &&
 				<div className="blue-orange-toaster-icon">
 					{icon}
 				</div>
 			}
-			<div className="blue-orange-toaster-text-group">
-				<div className="blue-orange-toaster-text-group-heading">{heading}</div>
+			<div className={!heading && description ? "blue-orange-toaster-text-group-description-only" : "blue-orange-toaster-text-group"}>
+                {heading && <div className="blue-orange-toaster-text-group-heading">{heading}</div>}
 				{description && <div className="blue-orange-toaster-text-group-description">{description}</div>}
 			</div>
 			{action &&
@@ -69,6 +87,14 @@ export const Toaster: React.FC<Props> = ({
 					{action}
 				</div>
 			}
+			{ttl && (
+				<div className="blue-orange-toaster-progress">
+					<div
+						className="blue-orange-toaster-progress-bar"
+						style={{ animationDuration: `${ttl}ms` }}
+					></div>
+				</div>
+			)}
 		</div>
 	)
 }

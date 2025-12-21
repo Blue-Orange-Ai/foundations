@@ -1,4 +1,4 @@
-import React, {createContext, ReactNode, useContext, useState} from 'react';
+import React, {createContext, ReactNode, useEffect, useRef, useState} from 'react';
 import {Toaster, ToasterType} from "../toaster/Toaster";
 
 import './ToastContext.css'
@@ -28,7 +28,7 @@ export interface Toast {
     id: string,
     location: ToastLocation,
     ttl?: number,
-    heading: string,
+    heading?: string,
     toastType: ToasterType,
     icon?: ReactNode,
     description?: string,
@@ -41,7 +41,7 @@ interface Props {
 
 const ToastProvider: React.FC<Props> = ({ children }) => {
 
-    const [toasts, setToasts] = useState<Toast[]>([]);
+    const [, setToasts] = useState<Toast[]>([]);
 
     const [topLeftToasts, setTopLeftToasts] = useState<Toast[]>([]);
 
@@ -51,31 +51,48 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
 
     const [bottomRightToasts, setBottomRightToasts] = useState<Toast[]>([]);
 
+    const timeoutsRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+
+    useEffect(() => {
+        return () => {
+            Object.values(timeoutsRef.current).forEach((timeoutId) => clearTimeout(timeoutId));
+            timeoutsRef.current = {};
+        };
+    }, []);
+
     const addToast = (toast: Toast) => {
-        setToasts([...toasts, toast]);
+        setToasts((prevToasts) => [...prevToasts, toast]);
         if (toast.location == ToastLocation.TOP_LEFT) {
-            setTopLeftToasts([...topLeftToasts, toast])
+            setTopLeftToasts((prevToasts) => [...prevToasts, toast])
         } else if (toast.location == ToastLocation.TOP_RIGHT) {
-            setTopRightToasts([...topRightToasts, toast])
+            setTopRightToasts((prevToasts) => [...prevToasts, toast])
         } else if (toast.location == ToastLocation.BOTTOM_LEFT) {
-            setBottomLeftToasts([...bottomLeftToasts, toast])
+            setBottomLeftToasts((prevToasts) => [...prevToasts, toast])
         } else {
-            setBottomRightToasts([...bottomRightToasts, toast])
+            setBottomRightToasts((prevToasts) => [...prevToasts, toast])
         }
         if (toast.ttl) {
-            var timeOut = setTimeout(() => {
+            const existingTimeout = timeoutsRef.current[toast.id];
+            if (existingTimeout) {
+                clearTimeout(existingTimeout);
+            }
+            timeoutsRef.current[toast.id] = setTimeout(() => {
                 removeToast(toast.id);
-                clearTimeout(timeOut);
             }, toast.ttl);
         }
     };
 
     const removeToast = (id: string) => {
-        setToasts(toasts.filter(toast => toast.id !== id));
-        setTopLeftToasts(topLeftToasts.filter(toast => toast.id !== id));
-        setTopRightToasts(topRightToasts.filter(toast => toast.id !== id));
-        setBottomLeftToasts(bottomLeftToasts.filter(toast => toast.id !== id));
-        setBottomRightToasts(bottomRightToasts.filter(toast => toast.id !== id));
+        const existingTimeout = timeoutsRef.current[id];
+        if (existingTimeout) {
+            clearTimeout(existingTimeout);
+            delete timeoutsRef.current[id];
+        }
+        setToasts((prevToasts) => prevToasts.filter(toast => toast.id !== id));
+        setTopLeftToasts((prevToasts) => prevToasts.filter(toast => toast.id !== id));
+        setTopRightToasts((prevToasts) => prevToasts.filter(toast => toast.id !== id));
+        setBottomLeftToasts((prevToasts) => prevToasts.filter(toast => toast.id !== id));
+        setBottomRightToasts((prevToasts) => prevToasts.filter(toast => toast.id !== id));
     };
 
     return (
@@ -90,7 +107,9 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
                         heading={toast.heading}
                         description={toast.description}
                         action={toast.action}
-                        toastType={toast.toastType} onClose={() => removeToast(toast.id)} />
+                        toastType={toast.toastType}
+                        ttl={toast.ttl}
+                        onClose={() => removeToast(toast.id)} />
                 ))}
             </div>
             <div className="blue-orange-toast-container blue-orange-toast-container-top-right">
@@ -102,7 +121,9 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
                         heading={toast.heading}
                         description={toast.description}
                         action={toast.action}
-                        toastType={toast.toastType} onClose={() => removeToast(toast.id)} />
+                        toastType={toast.toastType}
+                        ttl={toast.ttl}
+                        onClose={() => removeToast(toast.id)} />
                 ))}
             </div>
             <div className="blue-orange-toast-container blue-orange-toast-container-bottom-left">
@@ -114,7 +135,9 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
                         heading={toast.heading}
                         description={toast.description}
                         action={toast.action}
-                        toastType={toast.toastType} onClose={() => removeToast(toast.id)} />
+                        toastType={toast.toastType}
+                        ttl={toast.ttl}
+                        onClose={() => removeToast(toast.id)} />
                 ))}
             </div>
             <div className="blue-orange-toast-container blue-orange-toast-container-bottom-right">
@@ -126,7 +149,9 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
                         heading={toast.heading}
                         description={toast.description}
                         action={toast.action}
-                        toastType={toast.toastType} onClose={() => removeToast(toast.id)} />
+                        toastType={toast.toastType}
+                        ttl={toast.ttl}
+                        onClose={() => removeToast(toast.id)} />
                 ))}
             </div>
         </ToastContext.Provider>

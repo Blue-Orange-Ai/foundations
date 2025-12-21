@@ -20,14 +20,23 @@ export const ToasterDevelopment: React.FC<Props> = ({}) => {
 			id: uuidv4(),
 			location,
 			ttl: 4000,
-			heading: "Toast Heading",
 			toastType,
 			description: "This is a toast description",
-			icon: <i className={toastType === ToasterType.ERROR ? "ri-error-warning-line" : "ri-information-line"}></i>,
-			action: <div className="blue-orange-toaster-development-action">UNDO</div>
+			icon: <i className={toastType === ToasterType.ERROR ? "ri-error-warning-line" : "ri-information-line"}></i>
 		}
 		addToast(toast);
 	}
+
+    const createToastPersistent = (location: ToastLocation, toastType: ToasterType) => {
+        const toast: Toast = {
+            id: uuidv4(),
+            location,
+            toastType,
+            description: "This is a toast description",
+            icon: <i className={toastType === ToasterType.ERROR ? "ri-error-warning-line" : "ri-information-line"}></i>,
+        }
+        addToast(toast);
+    }
 
 	return (
 		<PaddedPage>
@@ -54,6 +63,28 @@ export const ToasterDevelopment: React.FC<Props> = ({}) => {
 					onClick={() => createToast(ToastLocation.BOTTOM_RIGHT, ToasterType.ERROR)}
 				></Button>
 			</div>
+            <div className="blue-orange-toaster-development-grid">
+                <Button
+                    text={"Top Left Persistent (Success)"}
+                    buttonType={ButtonType.SUCCESS}
+                    onClick={() => createToastPersistent(ToastLocation.TOP_LEFT, ToasterType.SUCCESS)}
+                ></Button>
+                <Button
+                    text={"Top Right Persistent (Default)"}
+                    buttonType={ButtonType.PRIMARY}
+                    onClick={() => createToastPersistent(ToastLocation.TOP_RIGHT, ToasterType.DEFAULT)}
+                ></Button>
+                <Button
+                    text={"Bottom Left Persistent (Warning)"}
+                    buttonType={ButtonType.WARNING}
+                    onClick={() => createToastPersistent(ToastLocation.BOTTOM_LEFT, ToasterType.WARNING)}
+                ></Button>
+                <Button
+                    text={"Bottom Right Persistent (Error)"}
+                    buttonType={ButtonType.DANGER}
+                    onClick={() => createToastPersistent(ToastLocation.BOTTOM_RIGHT, ToasterType.ERROR)}
+                ></Button>
+            </div>
 		</PaddedPage>
 	)
 }
