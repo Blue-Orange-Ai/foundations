@@ -20,7 +20,8 @@ interface Props {
 	description?: string,
 	action?: ReactNode,
 	onClose?: () => void,
-	closeOnClick?: boolean
+	closeOnClick?: boolean,
+	showCloseButton?: boolean
 }
 export const Toaster: React.FC<Props> = ({
 											 heading,
@@ -31,7 +32,8 @@ export const Toaster: React.FC<Props> = ({
 											 description,
 											 action,
 										     onClose,
-											 closeOnClick=true}) => {
+											 closeOnClick=true,
+											 showCloseButton=true}) => {
 
 	const generateClassName = () => {
 		var classname = 'blue-orange-toaster shadow'
@@ -72,7 +74,7 @@ export const Toaster: React.FC<Props> = ({
 
 	return (
 		<div className={generateClassName()} onClick={handleClick}>
-			{!ttl && (
+			{!ttl && showCloseButton && (
 				<div className="blue-orange-toaster-close" onClick={handleCloseClick}>
 					<ButtonIcon icon={"ri-close-line"} label={"Close"} />
 				</div>

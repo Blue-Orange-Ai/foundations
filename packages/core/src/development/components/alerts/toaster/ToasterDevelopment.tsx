@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {useContext, useRef} from "react";
 
 import './ToasterDevelopment.css'
 import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
@@ -13,7 +13,8 @@ interface Props {
 
 export const ToasterDevelopment: React.FC<Props> = ({}) => {
 
-	const {addToast} = useContext(ToastContext);
+	const {addToast, addPromiseToast} = useContext(ToastContext);
+	const promiseToastRef = useRef<ReturnType<typeof addPromiseToast> | null>(null);
 
 	const createToast = (location: ToastLocation, toastType: ToasterType) => {
 		const toast: Toast = {
@@ -38,9 +39,71 @@ export const ToasterDevelopment: React.FC<Props> = ({}) => {
         addToast(toast);
     }
 
+	const createPromiseToast = (location: ToastLocation) => {
+		const handle = addPromiseToast({
+			location,
+			heading: "Working...",
+			description: "Starting job",
+			toastType: ToasterType.DEFAULT,
+			icon: <i className={"ri-loader-4-line"}></i>
+		});
+		promiseToastRef.current = handle;
+
+		setTimeout(() => {
+			handle.update({
+				heading: "Still working...",
+				description: "Half way there"
+			});
+		}, 1500);
+
+		setTimeout(() => {
+			handle.update({
+				heading: "Done",
+				description: "Completed successfully",
+				toastType: ToasterType.SUCCESS,
+				icon: <i className={"ri-checkbox-circle-line"}></i>
+			});
+			setTimeout(() => {
+				handle.close();
+				if (promiseToastRef.current?.id === handle.id) {
+					promiseToastRef.current = null;
+				}
+			}, 2000);
+		}, 3000);
+	}
+
+	const updatePromiseToast = () => {
+		promiseToastRef.current?.update({
+			heading: "Updated programmatically",
+			description: `Updated at ${new Date().toLocaleTimeString()}`
+		});
+	}
+
+	const closePromiseToast = () => {
+		promiseToastRef.current?.close();
+		promiseToastRef.current = null;
+	}
+
 	return (
 		<PaddedPage>
 			<PageHeading>Toaster</PageHeading>
+			<div className="blue-orange-toaster-development-grid">
+				<Button
+					text={"Promise Toast (Start - Top Right)"}
+					buttonType={ButtonType.PRIMARY}
+					onClick={() => createPromiseToast(ToastLocation.TOP_RIGHT)}
+				></Button>
+				<Button
+					text={"Promise Toast (Update)"}
+					buttonType={ButtonType.PRIMARY}
+					onClick={updatePromiseToast}
+				></Button>
+				<Button
+					text={"Promise Toast (Close)"}
+					buttonType={ButtonType.DANGER}
+					onClick={closePromiseToast}
+				></Button>
+			</div>
 			<div className="blue-orange-toaster-development-grid">
 				<Button
 					text={"Top Left (Success)"}

@@ -5,14 +5,24 @@ import './ToastContext.css'
 
 export interface ToastContextType {
     addToast: (toast: Toast) => void;
+    updateToast: (id: string, updates: ToastUpdate) => void;
     removeToast: (id: string) => void;
+    addPromiseToast: (options: PromiseToastOptions) => PromiseToastHandle;
 }
 
 const defaultContextValue: ToastContextType = {
     addToast: (toast: Toast) => {
         console.log("ADD toast default")
     },
-    removeToast: (id: string) => {}
+    updateToast: (id: string, updates: ToastUpdate) => {},
+    removeToast: (id: string) => {},
+    addPromiseToast: (options: PromiseToastOptions) => {
+        return {
+            id: "",
+            update: (updates: ToastUpdate) => {},
+            close: () => {}
+        }
+    }
 };
 
 const ToastContext = createContext<ToastContextType>(defaultContextValue);
@@ -34,7 +44,26 @@ export interface Toast {
     toastType: ToasterType,
     icon?: ReactNode,
     description?: string,
+    action?: ReactNode,
+    closeOnClick?: boolean,
+    showCloseButton?: boolean
+}
+
+export type ToastUpdate = Partial<Omit<Toast, 'id' | 'location'>>;
+
+export interface PromiseToastOptions {
+    location: ToastLocation,
+    heading?: string,
+    toastType?: ToasterType,
+    icon?: ReactNode,
+    description?: string,
     action?: ReactNode
+}
+
+export interface PromiseToastHandle {
+    id: string,
+    update: (updates: ToastUpdate) => void,
+    close: () => void
 }
 
 interface Props {
@@ -92,6 +121,40 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
         }
     };
 
+    const updateToast = (id: string, updates: ToastUpdate) => {
+        const hasTtlUpdate = Object.prototype.hasOwnProperty.call(updates, 'ttl');
+        if (hasTtlUpdate) {
+            const existingTimeout = timeoutsRef.current[id];
+            if (existingTimeout) {
+                clearTimeout(existingTimeout);
+                delete timeoutsRef.current[id];
+            }
+            if (typeof updates.ttl === 'number') {
+                timeoutsRef.current[id] = setTimeout(() => {
+                    removeToast(id);
+                }, updates.ttl);
+            }
+        }
+
+        const applyUpdates = (toast: Toast) => {
+            if (toast.id !== id) {
+                return toast;
+            }
+            return {
+                ...toast,
+                ...updates
+            };
+        };
+
+        setToasts((prevToasts) => prevToasts.map(applyUpdates));
+        setTopLeftToasts((prevToasts) => prevToasts.map(applyUpdates));
+        setTopRightToasts((prevToasts) => prevToasts.map(applyUpdates));
+        setBottomLeftToasts((prevToasts) => prevToasts.map(applyUpdates));
+        setBottomRightToasts((prevToasts) => prevToasts.map(applyUpdates));
+        setCentreTopToasts((prevToasts) => prevToasts.map(applyUpdates));
+        setCentreBottomToasts((prevToasts) => prevToasts.map(applyUpdates));
+    }
+
     const removeToast = (id: string) => {
         const existingTimeout = timeoutsRef.current[id];
         if (existingTimeout) {
@@ -107,8 +170,37 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
         setCentreBottomToasts((prevToasts) => prevToasts.filter(toast => toast.id !== id));
     };
 
+    const generateToastId = () => {
+        if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+            return (crypto as any).randomUUID();
+        }
+        return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    }
+
+    const addPromiseToast = (options: PromiseToastOptions): PromiseToastHandle => {
+        const id = generateToastId();
+        const toast: Toast = {
+            id,
+            location: options.location,
+            toastType: options.toastType ?? ToasterType.DEFAULT,
+            heading: options.heading,
+            icon: options.icon,
+            description: options.description,
+            action: options.action,
+            showCloseButton: false,
+            closeOnClick: false
+        }
+        addToast(toast);
+
+        return {
+            id,
+            update: (updates: ToastUpdate) => updateToast(id, updates),
+            close: () => removeToast(id)
+        }
+    }
+
     return (
-        <ToastContext.Provider value={{ addToast, removeToast }}>
+        <ToastContext.Provider value={{ addToast, updateToast, removeToast, addPromiseToast }}>
             {children}
             <div className="blue-orange-toast-container blue-orange-toast-container-top-left">
                 {topLeftToasts.map(toast => (
@@ -121,6 +213,8 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
                         action={toast.action}
                         toastType={toast.toastType}
                         ttl={toast.ttl}
+                        closeOnClick={toast.closeOnClick}
+                        showCloseButton={toast.showCloseButton}
                         onClose={() => removeToast(toast.id)} />
                 ))}
             </div>
@@ -135,6 +229,8 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
                         action={toast.action}
                         toastType={toast.toastType}
                         ttl={toast.ttl}
+                        closeOnClick={toast.closeOnClick}
+                        showCloseButton={toast.showCloseButton}
                         onClose={() => removeToast(toast.id)} />
                 ))}
             </div>
@@ -149,6 +245,8 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
                         action={toast.action}
                         toastType={toast.toastType}
                         ttl={toast.ttl}
+                        closeOnClick={toast.closeOnClick}
+                        showCloseButton={toast.showCloseButton}
                         onClose={() => removeToast(toast.id)} />
                 ))}
             </div>
@@ -163,6 +261,8 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
                         action={toast.action}
                         toastType={toast.toastType}
                         ttl={toast.ttl}
+                        closeOnClick={toast.closeOnClick}
+                        showCloseButton={toast.showCloseButton}
                         onClose={() => removeToast(toast.id)} />
                 ))}
             </div>
@@ -177,6 +277,8 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
                         action={toast.action}
                         toastType={toast.toastType}
                         ttl={toast.ttl}
+                        closeOnClick={toast.closeOnClick}
+                        showCloseButton={toast.showCloseButton}
                         onClose={() => removeToast(toast.id)} />
                 ))}
             </div>
@@ -191,6 +293,8 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
                         action={toast.action}
                         toastType={toast.toastType}
                         ttl={toast.ttl}
+                        closeOnClick={toast.closeOnClick}
+                        showCloseButton={toast.showCloseButton}
                         onClose={() => removeToast(toast.id)} />
                 ))}
             </div>
