@@ -62,6 +62,16 @@ export const ToasterDevelopment: React.FC<Props> = ({}) => {
 					buttonType={ButtonType.DANGER}
 					onClick={() => createToast(ToastLocation.BOTTOM_RIGHT, ToasterType.ERROR)}
 				></Button>
+                <Button
+                    text={"Centre Top (Default)"}
+                    buttonType={ButtonType.PRIMARY}
+                    onClick={() => createToast(ToastLocation.CENTRE_TOP, ToasterType.DEFAULT)}
+                ></Button>
+                <Button
+                    text={"Centre Bottom (Default)"}
+                    buttonType={ButtonType.PRIMARY}
+                    onClick={() => createToast(ToastLocation.CENTRE_BOTTOM, ToasterType.DEFAULT)}
+                ></Button>
 			</div>
             <div className="blue-orange-toaster-development-grid">
                 <Button
@@ -83,6 +93,16 @@ export const ToasterDevelopment: React.FC<Props> = ({}) => {
                     text={"Bottom Right Persistent (Error)"}
                     buttonType={ButtonType.DANGER}
                     onClick={() => createToastPersistent(ToastLocation.BOTTOM_RIGHT, ToasterType.ERROR)}
+                ></Button>
+                <Button
+                    text={"Centre Top Persistent (Default)"}
+                    buttonType={ButtonType.PRIMARY}
+                    onClick={() => createToastPersistent(ToastLocation.CENTRE_TOP, ToasterType.DEFAULT)}
+                ></Button>
+                <Button
+                    text={"Centre Bottom Persistent (Default)"}
+                    buttonType={ButtonType.PRIMARY}
+                    onClick={() => createToastPersistent(ToastLocation.CENTRE_BOTTOM, ToasterType.DEFAULT)}
                 ></Button>
             </div>
 		</PaddedPage>

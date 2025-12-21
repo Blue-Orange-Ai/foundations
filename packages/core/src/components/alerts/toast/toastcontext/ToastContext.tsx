@@ -21,7 +21,9 @@ export enum ToastLocation {
     TOP_LEFT,
     TOP_RIGHT,
     BOTTOM_LEFT,
-    BOTTOM_RIGHT
+    BOTTOM_RIGHT,
+    CENTRE_TOP,
+    CENTRE_BOTTOM
 }
 
 export interface Toast {
@@ -51,6 +53,10 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
 
     const [bottomRightToasts, setBottomRightToasts] = useState<Toast[]>([]);
 
+    const [centreTopToasts, setCentreTopToasts] = useState<Toast[]>([]);
+
+    const [centreBottomToasts, setCentreBottomToasts] = useState<Toast[]>([]);
+
     const timeoutsRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
 
     useEffect(() => {
@@ -68,8 +74,12 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
             setTopRightToasts((prevToasts) => [...prevToasts, toast])
         } else if (toast.location == ToastLocation.BOTTOM_LEFT) {
             setBottomLeftToasts((prevToasts) => [...prevToasts, toast])
-        } else {
+        } else if (toast.location == ToastLocation.BOTTOM_RIGHT) {
             setBottomRightToasts((prevToasts) => [...prevToasts, toast])
+        } else if (toast.location == ToastLocation.CENTRE_TOP) {
+            setCentreTopToasts((prevToasts) => [...prevToasts, toast])
+        } else if (toast.location == ToastLocation.CENTRE_BOTTOM) {
+            setCentreBottomToasts((prevToasts) => [...prevToasts, toast])
         }
         if (toast.ttl) {
             const existingTimeout = timeoutsRef.current[toast.id];
@@ -93,6 +103,8 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
         setTopRightToasts((prevToasts) => prevToasts.filter(toast => toast.id !== id));
         setBottomLeftToasts((prevToasts) => prevToasts.filter(toast => toast.id !== id));
         setBottomRightToasts((prevToasts) => prevToasts.filter(toast => toast.id !== id));
+        setCentreTopToasts((prevToasts) => prevToasts.filter(toast => toast.id !== id));
+        setCentreBottomToasts((prevToasts) => prevToasts.filter(toast => toast.id !== id));
     };
 
     return (
@@ -126,6 +138,20 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
                         onClose={() => removeToast(toast.id)} />
                 ))}
             </div>
+            <div className="blue-orange-toast-container blue-orange-toast-container-centre-top">
+                {centreTopToasts.map(toast => (
+                    <Toaster
+                        key={toast.id}
+                        location={toast.location}
+                        icon={toast.icon}
+                        heading={toast.heading}
+                        description={toast.description}
+                        action={toast.action}
+                        toastType={toast.toastType}
+                        ttl={toast.ttl}
+                        onClose={() => removeToast(toast.id)} />
+                ))}
+            </div>
             <div className="blue-orange-toast-container blue-orange-toast-container-bottom-left">
                 {bottomLeftToasts.map(toast => (
                     <Toaster
@@ -142,6 +168,20 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
             </div>
             <div className="blue-orange-toast-container blue-orange-toast-container-bottom-right">
                 {bottomRightToasts.map(toast => (
+                    <Toaster
+                        key={toast.id}
+                        location={toast.location}
+                        icon={toast.icon}
+                        heading={toast.heading}
+                        description={toast.description}
+                        action={toast.action}
+                        toastType={toast.toastType}
+                        ttl={toast.ttl}
+                        onClose={() => removeToast(toast.id)} />
+                ))}
+            </div>
+            <div className="blue-orange-toast-container blue-orange-toast-container-centre-bottom">
+                {centreBottomToasts.map(toast => (
                     <Toaster
                         key={toast.id}
                         location={toast.location}

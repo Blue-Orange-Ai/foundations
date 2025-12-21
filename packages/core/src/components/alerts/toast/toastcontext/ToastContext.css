@@ -30,3 +30,19 @@
     flex-direction: column-reverse;
 }
 
+.blue-orange-toast-container-centre-top {
+    left: 50%;
+    top: 10px;
+    transform: translateX(-50%);
+    flex-direction: column;
+    align-items: center;
+}
+
+.blue-orange-toast-container-centre-bottom {
+    left: 50%;
+    bottom: 10px;
+    transform: translateX(-50%);
+    flex-direction: column-reverse;
+    align-items: center;
+}
+
