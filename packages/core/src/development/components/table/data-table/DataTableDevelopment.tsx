@@ -64,7 +64,6 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 	return (
 		<PaddedPage>
 			<PageHeading>Data Table</PageHeading>
-			<JsonObjectText obj={displaySchema}></JsonObjectText>
 			<DataTable></DataTable>
 		</PaddedPage>
 	)
