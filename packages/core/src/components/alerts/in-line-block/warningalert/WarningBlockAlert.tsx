@@ -8,7 +8,7 @@ interface Props {
 
 export const WarningBlockAlert: React.FC<Props> = ({title, description}) => {
 
-	const icon = "ri-checkbox-circle-fill";
+	const icon = "ri-alarm-warning-fill";
 
 	const className = "blue-orange-warning-alert";
 
