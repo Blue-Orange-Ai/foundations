@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 
 import './ContextMenuDevelopment.css'
 
@@ -7,6 +7,12 @@ import {ContextMenu, IContextMenuItem, IContextMenuType} from "../../../componen
 import {Button, ButtonType} from "../../../components/buttons/button/Button";
 import {PaddedPage} from "../../../components/layouts/pages/padded-page/PaddedPage";
 import {PageHeading} from "../../../components/text-decorations/page-heading/PageHeading";
+import {SplitPageMajor} from "../../../components/layouts/pages/split-pages/split-page-major/SplitPageMajor";
+import {RichText} from "../../../components/inputs/richtext/default/RichText";
+import {SplitPageMinor} from "../../../components/layouts/pages/split-pages/split-page-minor/SplitPageMinor";
+import {
+    HorizontalSplitPage
+} from "../../../components/layouts/pages/split-pages/horizontal-split-page/HorizontalSplitPage";
 
 
 interface Props {
@@ -14,7 +20,9 @@ interface Props {
 
 export const ContextMenuDevelopment: React.FC<Props> = ({}) => {
 
-	const contextMenuItems: Array<IContextMenuItem> = [
+	const [selection, setSelection] = useState<IContextMenuItem>()
+
+    const contextMenuItems: Array<IContextMenuItem> = [
 		{type: IContextMenuType.HEADING, label: "Sort Direction", value:""},
 		{type: IContextMenuType.CONTENT, label: "Sort Asc", icon: "ri-sort-asc", value: "SORT_ASC"},
 		{type: IContextMenuType.CONTENT, label: "Sort Desc", icon: "ri-sort-asc", value: "SORT_DESC"},
@@ -41,12 +49,27 @@ export const ContextMenuDevelopment: React.FC<Props> = ({}) => {
 	]
 
 	return (
-		<PaddedPage>
-			<PageHeading>Context Menu</PageHeading>
-			<ContextMenu items={contextMenuItems} onClick={(item) => console.log(item)}>
-				<Button text={"Click to Display Context Menu"} buttonType={ButtonType.PRIMARY}></Button>
-			</ContextMenu>
+        <HorizontalSplitPage>
+            <SplitPageMajor>
+                <PaddedPage>
+                    <PageHeading>Context Menu</PageHeading>
+                    <ContextMenu items={contextMenuItems} onClick={setSelection}>
+                        <Button text={"Click to Display Context Menu"} buttonType={ButtonType.PRIMARY}></Button>
+                    </ContextMenu>
+                </PaddedPage>
+            </SplitPageMajor>
+            <SplitPageMinor>
+                <div className="workspace-output-window">
+                    <div style={{marginBottom: "20px"}}>Output:</div>
+                    <div style={{whiteSpace: "pre-wrap", fontFamily: "monospace"}}>
+                        {JSON.stringify(selection, null, 2)}
+                    </div>
+                </div>
+            </SplitPageMinor>
+        </HorizontalSplitPage>
 
-		</PaddedPage>
+
+
+
 	)
 }

@@ -63,7 +63,7 @@ export const ContextMenu: React.FC<Props> = ({
 	const [style, setStyle] = useState<React.CSSProperties>({});
 	const [openSubmenus, setOpenSubmenus] = useState<Array<{anchorRect: DOMRect, items: Array<IContextMenuItem>}>>([]);
 	const [activeGroupIndexes, setActiveGroupIndexes] = useState<Array<number>>([]);
-	const [pinned, setPinned] = useState<boolean>(false);
+	const [pinned, setPinned] = useState<{panelLevel: number, itemIndex: number} | null>(null);
 	const closeSubmenuTimerRef = useRef<number | null>(null);
 	const [panelSizes, setPanelSizes] = useState<Record<number, {width: number, height: number}>>({});
 
@@ -111,13 +111,13 @@ export const ContextMenu: React.FC<Props> = ({
 					setVisible(false);
 					setOpenSubmenus([]);
 					setActiveGroupIndexes([]);
-					setPinned(false);
+					setPinned(null);
 				}
 			} else if (rightClick && visibleRef.current && !isDescendantOf(contextMenuRef.current, target)) {
 				setVisible(false);
 				setOpenSubmenus([]);
 				setActiveGroupIndexes([]);
-				setPinned(false);
+				setPinned(null);
 			}
 		}
 	};
@@ -132,7 +132,7 @@ export const ContextMenu: React.FC<Props> = ({
 				setVisible(false);
 				setOpenSubmenus([]);
 				setActiveGroupIndexes([]);
-				setPinned(false);
+				setPinned(null);
 			}
 		}
 	};
@@ -206,7 +206,7 @@ export const ContextMenu: React.FC<Props> = ({
 			setVisible(false);
 			setOpenSubmenus([]);
 			setActiveGroupIndexes([]);
-			setPinned(false);
+			setPinned(null);
 		} else if (!visibleRef.current) {
 			e.preventDefault();
 			var button = childRef.current as HTMLElement;
@@ -220,7 +220,7 @@ export const ContextMenu: React.FC<Props> = ({
 			}
 			setOpenSubmenus([]);
 			setActiveGroupIndexes([]);
-			setPinned(false);
+			setPinned(null);
 			setVisible(true);
 		}
 	};
@@ -235,7 +235,7 @@ export const ContextMenu: React.FC<Props> = ({
 		setVisible(false);
 		setOpenSubmenus([]);
 		setActiveGroupIndexes([]);
-		setPinned(false);
+		setPinned(null);
 	}
 
 	const getMenuWidthPx = () => {
@@ -304,7 +304,7 @@ export const ContextMenu: React.FC<Props> = ({
 	}
 
 	const scheduleSubmenuCloseFromLevel = (panelLevel: number) => {
-		if (pinned) {
+		if (pinned != null) {
 			return;
 		}
 		clearSubmenuCloseTimer();
@@ -347,7 +347,11 @@ export const ContextMenu: React.FC<Props> = ({
 					<div
 						key={index}
 						onMouseEnter={() => {
-							if (!pinned && item.type !== IContextMenuType.GROUP) {
+							if (pinned != null && pinned.panelLevel === panelLevel && pinned.itemIndex !== index) {
+								setPinned(null);
+								closeSubmenusFromLevel(panelLevel);
+							}
+							if (item.type !== IContextMenuType.GROUP) {
 								closeSubmenusFromLevel(panelLevel);
 							}
 						}}
@@ -374,8 +378,13 @@ export const ContextMenu: React.FC<Props> = ({
 								}}
 								onClick={(ev) => {
 									ev.stopPropagation();
-								setPinned(true);
 								const rect = (ev.currentTarget as HTMLElement).getBoundingClientRect();
+								const isAlreadyPinned = pinned != null && pinned.panelLevel === panelLevel && pinned.itemIndex === index;
+								if (isAlreadyPinned) {
+									setPinned(null);
+								} else {
+									setPinned({panelLevel, itemIndex: index});
+								}
 								openGroup(panelLevel, index, rect, item.children ?? []);
 							}}
 								onMouseLeave={() => scheduleSubmenuCloseFromLevel(panelLevel)}
