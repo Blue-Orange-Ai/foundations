@@ -64,7 +64,7 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 	return (
 		<PaddedPage>
 			<PageHeading>Data Table</PageHeading>
-			<DataTable></DataTable>
+			<DataTable loading={true} loadingPlaceholderRows={2}></DataTable>
 		</PaddedPage>
 	)
 }

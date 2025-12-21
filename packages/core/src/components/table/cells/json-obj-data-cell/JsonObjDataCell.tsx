@@ -2,22 +2,25 @@ import React, {ReactNode} from "react";
 
 import './JsonObjDataCell.css'
 import {CellAlignment} from "../../../interfaces/AppInterfaces";
-import {TextDataCell} from "../text-data-cell/TextDataCell";
 import {CenteredDiv} from "../../../layouts/centered-div/CenteredDiv";
-import {TruncatedText} from "../../../text-decorations/truncated-text/TruncatedText";
 import {RightAlignedDiv} from "../../../layouts/right-aligned-div/RightAlignedDiv";
 import {JsonObjectText} from "../../../text-decorations/json-object-text/JsonObjectText";
 import {TruncatedTextWrapper} from "../../../text-decorations/truncated-text-wrapper/TruncatedTextWrapper";
+import {ContextMenu, IContextMenuItem} from "../../../contextmenu/contextmenu/ContextMenu";
 
 interface Props {
 	obj: any,
 	alignment?: CellAlignment,
 	onClick?: () => void,
+    dropdownItems?: Array<IContextMenuItem>,
+    onDropdownSelected?: (arg0: IContextMenuItem) => void,
 	style?: React.CSSProperties
 }
 export const JsonObjDataCell: React.FC<Props> = ({
 										  obj,
 										  alignment=CellAlignment.LEFT,
+                                         dropdownItems,
+                                         onDropdownSelected,
 										  style= {},
 										  onClick}) => {
 
@@ -46,31 +49,70 @@ export const JsonObjDataCell: React.FC<Props> = ({
 	}
 
 	return (
-		<td
-			className='blue-orange-data-table-text-cell'
-			onClick={cellClicked}
-			style={{...cellAlignment, ...style}}>
-			{alignment == CellAlignment.CENTER &&
-				<CenteredDiv>
-					<TruncatedTextWrapper maxLines={1}>
-						<JsonObjectText obj={obj}></JsonObjectText>
-					</TruncatedTextWrapper>
-				</CenteredDiv>
-			}
-			{alignment == CellAlignment.RIGHT &&
-				<RightAlignedDiv>
-					<TruncatedTextWrapper maxLines={1}>
-						<JsonObjectText obj={obj}></JsonObjectText>
-					</TruncatedTextWrapper>
-				</RightAlignedDiv>
-			}
-			{alignment == CellAlignment.LEFT &&
-				<>
-					<TruncatedTextWrapper maxLines={1}>
-						<JsonObjectText obj={obj}></JsonObjectText>
-					</TruncatedTextWrapper>
-				</>
-			}
-		</td>
+		<>
+            {dropdownItems && dropdownItems.length > 0 &&
+                <td
+                    className='blue-orange-data-table-text-cell'
+                    onClick={cellClicked}
+                    style={{...cellAlignment, ...style}}>
+                    {alignment == CellAlignment.CENTER &&
+                        <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
+                            <CenteredDiv>
+                                <TruncatedTextWrapper maxLines={1}>
+                                    <JsonObjectText obj={obj}></JsonObjectText>
+                                </TruncatedTextWrapper>
+                            </CenteredDiv>
+                        </ContextMenu>
+                    }
+                    {alignment == CellAlignment.RIGHT &&
+                        <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
+                            <RightAlignedDiv>
+                                <TruncatedTextWrapper maxLines={1}>
+                                    <JsonObjectText obj={obj}></JsonObjectText>
+                                </TruncatedTextWrapper>
+                            </RightAlignedDiv>
+                        </ContextMenu>
+                    }
+                    {alignment == CellAlignment.LEFT &&
+                        <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
+                            <>
+                                <TruncatedTextWrapper maxLines={1}>
+                                    <JsonObjectText obj={obj}></JsonObjectText>
+                                </TruncatedTextWrapper>
+                            </>
+                        </ContextMenu>
+                    }
+                </td>
+            }
+            {(!dropdownItems || dropdownItems.length <= 0) &&
+                <td
+                    className='blue-orange-data-table-text-cell'
+                    onClick={cellClicked}
+                    style={{...cellAlignment, ...style}}>
+                    {alignment == CellAlignment.CENTER &&
+                        <CenteredDiv>
+                            <TruncatedTextWrapper maxLines={1}>
+                                <JsonObjectText obj={obj}></JsonObjectText>
+                            </TruncatedTextWrapper>
+                        </CenteredDiv>
+                    }
+                    {alignment == CellAlignment.RIGHT &&
+                        <RightAlignedDiv>
+                            <TruncatedTextWrapper maxLines={1}>
+                                <JsonObjectText obj={obj}></JsonObjectText>
+                            </TruncatedTextWrapper>
+                        </RightAlignedDiv>
+                    }
+                    {alignment == CellAlignment.LEFT &&
+                        <>
+                            <TruncatedTextWrapper maxLines={1}>
+                                <JsonObjectText obj={obj}></JsonObjectText>
+                            </TruncatedTextWrapper>
+                        </>
+                    }
+                </td>
+            }
+        </>
+
 	)
 }

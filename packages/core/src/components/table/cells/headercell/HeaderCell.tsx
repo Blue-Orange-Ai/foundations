@@ -66,30 +66,6 @@ export const HeaderCell: React.FC<Props> = ({
                         </div>
                     </div>
                 }
-
-
-                {/*<div className="blue-orange-header-data-table-cell">*/}
-				{/*	{children}*/}
-				{/*	{dropdownItems.length > 0 &&*/}
-				{/*		<ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected}>*/}
-				{/*			<div className='blue-orange-header-data-table-cell-control'>*/}
-				{/*				{sorted && !sortAsc &&*/}
-				{/*					<i className="ri-arrow-down-s-line"></i>*/}
-				{/*				}*/}
-				{/*				{sorted && sortAsc &&*/}
-				{/*					<i className="ri-arrow-up-s-line"></i>*/}
-				{/*				}*/}
-				{/*				{!sorted &&*/}
-				{/*					<div className="blue-orange-header-data-table-cell-control-hidden">*/}
-				{/*						<i className="ri-arrow-down-s-line"></i>*/}
-				{/*					</div>*/}
-
-				{/*				}*/}
-				{/*			</div>*/}
-				{/*		</ContextMenu>*/}
-				{/*	}*/}
-				{/*</div>*/}
-
 			</td>
 	)
 }

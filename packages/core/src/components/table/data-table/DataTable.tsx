@@ -172,7 +172,8 @@ export const DataTable: React.FC<Props> = ({loading=false, loadingPlaceholderRow
 							{!loading &&
 								<Row hoverEffect={false}>
 									<TextDataCell style={{width: "50px"}}
-												  text={"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."}></TextDataCell>
+												  dropdownItems={contextMenuItems}
+                                                  text={"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."}></TextDataCell>
 									<NumberDataCell style={{width: "50px"}} value={15000.3338907}></NumberDataCell>
 									<DateDataCell date={new Date()} style={{width: "50px"}} dateformat={"YYYY-MM-DD"}></DateDataCell>
 									<CurrencyDataCell amount={10000} currency={"AUD"} style={{width: "50px"}}></CurrencyDataCell>
