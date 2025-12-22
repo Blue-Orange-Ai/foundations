@@ -1,4 +1,4 @@
-import React, {ReactNode} from "react";
+import React from "react";
 
 import './DateDataCell.css'
 import {CellAlignment} from "../../../interfaces/AppInterfaces";
@@ -8,7 +8,8 @@ import {DateDisplay} from "../../../text-decorations/dates/date-display/DateDisp
 import {ContextMenu, IContextMenuItem} from "../../../contextmenu/contextmenu/ContextMenu";
 
 interface Props {
-	date: Date,
+	date: any,
+	multipleValues?: boolean,
 	dateformat?: string,
 	alignment?: CellAlignment,
 	onClick?: () => void,
@@ -17,14 +18,41 @@ interface Props {
 	style?: React.CSSProperties
 }
 export const DateDataCell: React.FC<Props> = ({
-										  date,
-										  dateformat,
+								  date,
+								  multipleValues=false,
+								  dateformat,
                                           dropdownItems,
                                           onDropdownSelected,
-										  alignment=CellAlignment.CENTER,
-										  style= {},
-										  onClick}) => {
+								  alignment=CellAlignment.CENTER,
+								  style= {},
+								  onClick}) => {
 
+	const toDate = (d: any) => {
+		if (d instanceof Date) {
+			return d;
+		}
+		const parsed = new Date(d);
+		if (Number.isNaN(parsed.getTime())) {
+			return null;
+		}
+		return parsed;
+	}
+
+	const getDisplayText = () => {
+		if (multipleValues && Array.isArray(date)) {
+			return date
+				.map((d) => toDate(d))
+				.filter((d) => d)
+				.map((d) => (d as Date).toLocaleDateString())
+				.join(", ");
+		}
+		return null;
+	}
+
+	const getSingleDate = () => {
+		const d = toDate(date);
+		return d;
+	}
 
 	const getTextAlignment = () => {
 		try{
@@ -50,6 +78,18 @@ export const DateDataCell: React.FC<Props> = ({
 		}
 	}
 
+	const renderValue = () => {
+		const multi = getDisplayText();
+		if (multi) {
+			return multi;
+		}
+		const single = getSingleDate();
+		if (single) {
+			return <DateDisplay targetDate={single as Date} dateFormat={dateformat}></DateDisplay>;
+		}
+		return "";
+	}
+
 	return (
 		<>
             {dropdownItems && dropdownItems.length > 0 &&
@@ -60,24 +100,24 @@ export const DateDataCell: React.FC<Props> = ({
                     {alignment == CellAlignment.CENTER &&
                         <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
                             <CenteredDiv>
-                                <DateDisplay targetDate={date} dateFormat={dateformat}></DateDisplay>
+															{renderValue()}
                             </CenteredDiv>
                         </ContextMenu>
                     }
                     {alignment == CellAlignment.RIGHT &&
-                        <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
-                            <RightAlignedDiv>
-                                <DateDisplay targetDate={date} dateFormat={dateformat}></DateDisplay>
-                            </RightAlignedDiv>
-                        </ContextMenu>
-                    }
-                    {alignment == CellAlignment.LEFT &&
-                        <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
-                            <>
-                                <DateDisplay targetDate={date} dateFormat={dateformat}></DateDisplay>
-                            </>
-                        </ContextMenu>
-                    }
+															<ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
+																<RightAlignedDiv>
+																	{renderValue()}
+																</RightAlignedDiv>
+															</ContextMenu>
+													}
+													{alignment == CellAlignment.LEFT &&
+														<ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
+															<>
+																{renderValue()}
+															</>
+														</ContextMenu>
+													}
                 </td>
             }
             {(!dropdownItems || dropdownItems.length <= 0) &&
@@ -85,21 +125,21 @@ export const DateDataCell: React.FC<Props> = ({
                     className='blue-orange-data-table-text-cell'
                     onClick={cellClicked}
                     style={{...cellAlignment, ...style}}>
-                    {alignment == CellAlignment.CENTER &&
-                        <CenteredDiv>
-                            <DateDisplay targetDate={date} dateFormat={dateformat}></DateDisplay>
-                        </CenteredDiv>
-                    }
-                    {alignment == CellAlignment.RIGHT &&
-                        <RightAlignedDiv>
-                            <DateDisplay targetDate={date} dateFormat={dateformat}></DateDisplay>
-                        </RightAlignedDiv>
-                    }
-                    {alignment == CellAlignment.LEFT &&
-                        <>
-                            <DateDisplay targetDate={date} dateFormat={dateformat}></DateDisplay>
-                        </>
-                    }
+												{alignment == CellAlignment.CENTER &&
+													<CenteredDiv>
+														{renderValue()}
+													</CenteredDiv>
+												}
+												{alignment == CellAlignment.RIGHT &&
+													<RightAlignedDiv>
+														{renderValue()}
+													</RightAlignedDiv>
+												}
+												{alignment == CellAlignment.LEFT &&
+													<>
+														{renderValue()}
+													</>
+												}
                 </td>
             }
         </>

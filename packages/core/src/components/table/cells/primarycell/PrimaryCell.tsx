@@ -7,9 +7,10 @@ import {IContextMenuItem} from "../../../contextmenu/contextmenu/ContextMenu";
 
 interface Props {
 	src?: string,
-	text: string,
+	text: any,
+	multipleValues?: boolean,
 	imgHeight?: number,
-	secondaryText?: string,
+	secondaryText?: any,
 	style?: React.CSSProperties,
 	onClick?: (rowId: string) => void,
     dropdownItems?: Array<IContextMenuItem>,
@@ -20,6 +21,7 @@ interface Props {
 export const PrimaryCell: React.FC<Props> = ({
                                                  src,
                                                  text,
+												 multipleValues=false,
                                                  imgHeight=42,
                                                  secondaryText,
                                                  style,
@@ -28,6 +30,19 @@ export const PrimaryCell: React.FC<Props> = ({
                                                  onDropdownSelected,
                                                  rowId="",
                                                  onClick}) => {
+
+	const getDisplayText = (t: any) => {
+		if (multipleValues && Array.isArray(t)) {
+			return t
+				.map((v) => (v === null || v === undefined ? "" : String(v)))
+				.filter((v) => v.length > 0)
+				.join(", ");
+		}
+		if (t === null || t === undefined) {
+			return "";
+		}
+		return String(t);
+	}
 
 
 	var hoverStyle: React.CSSProperties = {
@@ -46,8 +61,8 @@ export const PrimaryCell: React.FC<Props> = ({
                             </div>
                         }
                         <div className='blue-orange-primary-data-text-body'>
-                            <div className='blue-orange-primary-data-primary-text' style={hoverStyle}>{text}</div>
-                            {secondaryText && <div className='blue-orange-primary-data-secondary-text'>{secondaryText}</div>}
+								<div className='blue-orange-primary-data-primary-text' style={hoverStyle}>{getDisplayText(text)}</div>
+								{secondaryText && <div className='blue-orange-primary-data-secondary-text'>{getDisplayText(secondaryText)}</div>}
                         </div>
                     </div>
                 </td>
@@ -62,8 +77,8 @@ export const PrimaryCell: React.FC<Props> = ({
                             </div>
                         }
                         <div className='blue-orange-primary-data-text-body'>
-                            <div className='blue-orange-primary-data-primary-text' style={hoverStyle}>{text}</div>
-                            {secondaryText && <div className='blue-orange-primary-data-secondary-text'>{secondaryText}</div>}
+								<div className='blue-orange-primary-data-primary-text' style={hoverStyle}>{getDisplayText(text)}</div>
+								{secondaryText && <div className='blue-orange-primary-data-secondary-text'>{getDisplayText(secondaryText)}</div>}
                         </div>
                     </div>
                 </td>

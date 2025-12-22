@@ -10,6 +10,7 @@ import {ContextMenu, IContextMenuItem} from "../../../contextmenu/contextmenu/Co
 
 interface Props {
 	obj: any,
+	multipleValues?: boolean,
 	alignment?: CellAlignment,
 	onClick?: () => void,
     dropdownItems?: Array<IContextMenuItem>,
@@ -17,12 +18,32 @@ interface Props {
 	style?: React.CSSProperties
 }
 export const JsonObjDataCell: React.FC<Props> = ({
-										  obj,
-										  alignment=CellAlignment.LEFT,
+								  obj,
+								  multipleValues=false,
+								  alignment=CellAlignment.LEFT,
                                          dropdownItems,
                                          onDropdownSelected,
-										  style= {},
-										  onClick}) => {
+								  style= {},
+								  onClick}) => {
+
+	const getDisplayText = () => {
+		if (multipleValues && Array.isArray(obj)) {
+			return obj
+				.map((o) => {
+					try {
+						if (typeof o === "string") {
+							return o;
+						}
+						return JSON.stringify(o);
+					} catch (e) {
+						return "";
+					}
+				})
+				.filter((t) => t.length > 0)
+				.join(", ");
+		}
+		return null;
+	}
 
 	const getTextAlignment = () => {
 		try{
@@ -59,7 +80,7 @@ export const JsonObjDataCell: React.FC<Props> = ({
                         <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
                             <CenteredDiv>
                                 <TruncatedTextWrapper maxLines={1}>
-                                    <JsonObjectText obj={obj}></JsonObjectText>
+															{getDisplayText() ? getDisplayText() : <JsonObjectText obj={obj}></JsonObjectText>}
                                 </TruncatedTextWrapper>
                             </CenteredDiv>
                         </ContextMenu>
@@ -68,7 +89,7 @@ export const JsonObjDataCell: React.FC<Props> = ({
                         <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
                             <RightAlignedDiv>
                                 <TruncatedTextWrapper maxLines={1}>
-                                    <JsonObjectText obj={obj}></JsonObjectText>
+															{getDisplayText() ? getDisplayText() : <JsonObjectText obj={obj}></JsonObjectText>}
                                 </TruncatedTextWrapper>
                             </RightAlignedDiv>
                         </ContextMenu>
@@ -77,7 +98,7 @@ export const JsonObjDataCell: React.FC<Props> = ({
                         <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
                             <>
                                 <TruncatedTextWrapper maxLines={1}>
-                                    <JsonObjectText obj={obj}></JsonObjectText>
+															{getDisplayText() ? getDisplayText() : <JsonObjectText obj={obj}></JsonObjectText>}
                                 </TruncatedTextWrapper>
                             </>
                         </ContextMenu>
@@ -92,21 +113,21 @@ export const JsonObjDataCell: React.FC<Props> = ({
                     {alignment == CellAlignment.CENTER &&
                         <CenteredDiv>
                             <TruncatedTextWrapper maxLines={1}>
-                                <JsonObjectText obj={obj}></JsonObjectText>
+															{getDisplayText() ? getDisplayText() : <JsonObjectText obj={obj}></JsonObjectText>}
                             </TruncatedTextWrapper>
                         </CenteredDiv>
                     }
                     {alignment == CellAlignment.RIGHT &&
                         <RightAlignedDiv>
                             <TruncatedTextWrapper maxLines={1}>
-                                <JsonObjectText obj={obj}></JsonObjectText>
+															{getDisplayText() ? getDisplayText() : <JsonObjectText obj={obj}></JsonObjectText>}
                             </TruncatedTextWrapper>
                         </RightAlignedDiv>
                     }
                     {alignment == CellAlignment.LEFT &&
                         <>
                             <TruncatedTextWrapper maxLines={1}>
-                                <JsonObjectText obj={obj}></JsonObjectText>
+															{getDisplayText() ? getDisplayText() : <JsonObjectText obj={obj}></JsonObjectText>}
                             </TruncatedTextWrapper>
                         </>
                     }

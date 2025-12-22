@@ -8,7 +8,8 @@ import {TruncatedText} from "../../../text-decorations/truncated-text/TruncatedT
 import {ContextMenu, IContextMenuItem} from "../../../contextmenu/contextmenu/ContextMenu";
 
 interface Props {
-	text: string,
+	text: any,
+	multipleValues?: boolean,
 	alignment?: CellAlignment,
 	onClick?: () => void,
     dropdownItems?: Array<IContextMenuItem>,
@@ -16,13 +17,26 @@ interface Props {
 	style?: React.CSSProperties
 }
 export const TextDataCell: React.FC<Props> = ({
-										  text,
-										  alignment=CellAlignment.LEFT,
+								  text,
+								  multipleValues=false,
+								  alignment=CellAlignment.LEFT,
                                           dropdownItems,
                                           onDropdownSelected,
-										  style= {},
-										  onClick}) => {
+								  style= {},
+								  onClick}) => {
 
+	const getDisplayText = () => {
+		if (multipleValues && Array.isArray(text)) {
+			return text
+				.map((t) => (t === null || t === undefined ? "" : String(t)))
+				.filter((t) => t.length > 0)
+				.join(", ");
+		}
+		if (text === null || text === undefined) {
+			return "";
+		}
+		return String(text);
+	}
 
 	const getTextAlignment = () => {
 		try{
@@ -58,7 +72,7 @@ export const TextDataCell: React.FC<Props> = ({
                     {alignment == CellAlignment.CENTER &&
                         <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
                             <CenteredDiv>
-                                <TruncatedText text={text} maxLines={1}></TruncatedText>
+                                <TruncatedText text={getDisplayText()} maxLines={1}></TruncatedText>
                             </CenteredDiv>
                         </ContextMenu>
 
@@ -66,13 +80,13 @@ export const TextDataCell: React.FC<Props> = ({
                     {alignment == CellAlignment.RIGHT &&
                         <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
                             <RightAlignedDiv>
-                                <TruncatedText text={text} maxLines={1}></TruncatedText>
+                                <TruncatedText text={getDisplayText()} maxLines={1}></TruncatedText>
                             </RightAlignedDiv>
                         </ContextMenu>
                     }
                     {alignment == CellAlignment.LEFT &&
                         <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
-                            <TruncatedText text={text} maxLines={1}></TruncatedText>
+                                <TruncatedText text={getDisplayText()} maxLines={1}></TruncatedText>
                         </ContextMenu>
                     }
                 </td>
@@ -84,17 +98,17 @@ export const TextDataCell: React.FC<Props> = ({
                     style={{...cellAlignment, ...style}}>
                     {alignment == CellAlignment.CENTER &&
                         <CenteredDiv>
-                            <TruncatedText text={text} maxLines={1}></TruncatedText>
+                                <TruncatedText text={getDisplayText()} maxLines={1}></TruncatedText>
                         </CenteredDiv>
                     }
                     {alignment == CellAlignment.RIGHT &&
                         <RightAlignedDiv>
-                            <TruncatedText text={text} maxLines={1}></TruncatedText>
+                                <TruncatedText text={getDisplayText()} maxLines={1}></TruncatedText>
                         </RightAlignedDiv>
                     }
                     {alignment == CellAlignment.LEFT &&
                         <>
-                            <TruncatedText text={text} maxLines={1}></TruncatedText>
+                                <TruncatedText text={getDisplayText()} maxLines={1}></TruncatedText>
                         </>
                     }
                 </td>

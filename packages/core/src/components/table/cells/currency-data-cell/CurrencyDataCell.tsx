@@ -1,4 +1,4 @@
-import React, {ReactNode} from "react";
+import React from "react";
 
 import './CurrencyDataCell.css'
 import {CellAlignment} from "../../../interfaces/AppInterfaces";
@@ -6,10 +6,10 @@ import {CenteredDiv} from "../../../layouts/centered-div/CenteredDiv";
 import {RightAlignedDiv} from "../../../layouts/right-aligned-div/RightAlignedDiv";
 import {Currency} from "../../../text-decorations/currency/Currency";
 import {ContextMenu, IContextMenuItem} from "../../../contextmenu/contextmenu/ContextMenu";
-import {Checkbox} from "../../../inputs/checkbox/Checkbox";
 
 interface Props {
-	amount: number,
+	amount: any,
+	multipleValues?: boolean,
 	currency?: string,
 	alignment?: CellAlignment,
 	onClick?: () => void,
@@ -18,14 +18,62 @@ interface Props {
 	style?: React.CSSProperties
 }
 export const CurrencyDataCell: React.FC<Props> = ({
-										  amount,
-										  currency="AUD",
+								  amount,
+								  multipleValues=false,
+								  currency="AUD",
                                           dropdownItems,
                                           onDropdownSelected,
-										  alignment=CellAlignment.CENTER,
-										  style= {},
-										  onClick}) => {
+								  alignment=CellAlignment.CENTER,
+								  style= {},
+								  onClick}) => {
 
+	const formatCurrency = (value: any) => {
+		if (value === null || value === undefined) {
+			return "";
+		}
+		const asNumber = typeof value === "number" ? value : Number(value);
+		if (Number.isNaN(asNumber)) {
+			return "";
+		}
+		try {
+			return new Intl.NumberFormat(undefined, {style: "currency", currency}).format(asNumber);
+		} catch (e) {
+			return asNumber.toString();
+		}
+	}
+
+	const getDisplayText = () => {
+		if (multipleValues && Array.isArray(amount)) {
+			return amount
+				.map((a) => formatCurrency(a))
+				.filter((t) => t.length > 0)
+				.join(", ");
+		}
+		return null;
+	}
+
+	const getSingleAmount = () => {
+		if (amount === null || amount === undefined) {
+			return null;
+		}
+		const asNumber = typeof amount === "number" ? amount : Number(amount);
+		if (Number.isNaN(asNumber)) {
+			return null;
+		}
+		return asNumber;
+	}
+
+	const renderValue = () => {
+		const multi = getDisplayText();
+		if (multi) {
+			return multi;
+		}
+		const single = getSingleAmount();
+		if (single !== null) {
+			return <Currency amount={single as number} currency={currency}></Currency>;
+		}
+		return "";
+	}
 
 	const getTextAlignment = () => {
 		try{
@@ -61,7 +109,7 @@ export const CurrencyDataCell: React.FC<Props> = ({
                     {alignment == CellAlignment.CENTER &&
                         <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
                             <CenteredDiv>
-                                <Currency amount={amount} currency={currency}></Currency>
+															{renderValue()}
                             </CenteredDiv>
                         </ContextMenu>
 
@@ -69,14 +117,14 @@ export const CurrencyDataCell: React.FC<Props> = ({
                     {alignment == CellAlignment.RIGHT &&
                         <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
                             <RightAlignedDiv>
-                                <Currency amount={amount} currency={currency}></Currency>
+															{renderValue()}
                             </RightAlignedDiv>
                         </ContextMenu>
                     }
                     {alignment == CellAlignment.LEFT &&
                         <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
                             <>
-                                <Currency amount={amount} currency={currency}></Currency>
+															{renderValue()}
                             </>
                         </ContextMenu>
                     }
@@ -87,21 +135,21 @@ export const CurrencyDataCell: React.FC<Props> = ({
                     className='blue-orange-data-table-text-cell'
                     onClick={cellClicked}
                     style={{...cellAlignment, ...style}}>
-                    {alignment == CellAlignment.CENTER &&
-                        <CenteredDiv>
-                            <Currency amount={amount} currency={currency}></Currency>
-                        </CenteredDiv>
-                    }
-                    {alignment == CellAlignment.RIGHT &&
-                        <RightAlignedDiv>
-                            <Currency amount={amount} currency={currency}></Currency>
-                        </RightAlignedDiv>
-                    }
-                    {alignment == CellAlignment.LEFT &&
-                        <>
-                            <Currency amount={amount} currency={currency}></Currency>
-                        </>
-                    }
+												{alignment == CellAlignment.CENTER &&
+													<CenteredDiv>
+														{renderValue()}
+													</CenteredDiv>
+												}
+												{alignment == CellAlignment.RIGHT &&
+													<RightAlignedDiv>
+														{renderValue()}
+													</RightAlignedDiv>
+												}
+												{alignment == CellAlignment.LEFT &&
+													<>
+														{renderValue()}
+													</>
+												}
                 </td>
             }
         </>
