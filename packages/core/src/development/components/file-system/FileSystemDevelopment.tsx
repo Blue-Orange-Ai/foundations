@@ -202,9 +202,18 @@ export const FileSystemDevelopment: React.FC<Props> = ({}) => {
 	return (
 		<PaddedPage>
 			<PageHeading>File System</PageHeading>
-			<FileSystem>
+			<FileSystem
+				onClick={(item, pos) => {
+					console.log('FileSystem onClick', item, pos);
+				}}
+				onRightClick={(items, pos) => {
+					console.log('FileSystem onRightClick', items, pos);
+				}}
+				onDblClick={(item) => {
+					console.log('FileSystem onDblClick', item);
+				}}>
 				{fileSystemItems.map((item, index) => (
-					<FileSystemRow key={index} contextMenuItems={contextMenuItems} item={item} onClick={rowClicked}></FileSystemRow>
+					<FileSystemRow key={index} contextMenuItems={undefined} item={item} onClick={rowClicked}></FileSystemRow>
 				))}
 			</FileSystem>
 		</PaddedPage>

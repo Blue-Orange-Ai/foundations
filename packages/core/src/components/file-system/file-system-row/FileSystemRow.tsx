@@ -1,9 +1,9 @@
-import React from "react";
+import React, {useContext, useEffect, useRef} from "react";
 
 import './FileSystemRow.css'
 import {ButtonIcon} from "../../buttons/button-icon/ButtonIcon";
 import {ContextMenu, IContextMenuItem} from "../../contextmenu/contextmenu/ContextMenu";
-import {IFileSystemItem} from "../file-system/FileSystem";
+import {FileSystemContext, IFileSystemItem} from "../file-system/FileSystem";
 import moment from 'moment';
 import {Input} from "../../inputs/input/Input";
 
@@ -25,7 +25,6 @@ interface Props {
 export const FileSystemRow: React.FC<Props> = ({
 												   item,
 												   indent=0,
-												   indentStep=20,
 												   contextMenuItems=[],
 												   contextMenuItemClicked,
 												   onClick,
@@ -34,6 +33,27 @@ export const FileSystemRow: React.FC<Props> = ({
 												   showFileSize=true,
 												   showFileType=true,
 												   showLastModified=true, style={}}) => {
+
+	const selectionHandledOnMouseDownRef = useRef(false);
+
+	const fileSystemContext = useContext(FileSystemContext);
+
+	useEffect(() => {
+		if (!fileSystemContext) {
+			return;
+		}
+		fileSystemContext.registerItem(item);
+		return () => {
+			fileSystemContext.unregisterItem(item);
+		};
+	}, [fileSystemContext, item]);
+
+	const getPagePosFromRect = (rect: DOMRect) => {
+		return {
+			x: rect.left,
+			y: rect.top,
+		};
+	};
 
 	const dropdownBtnStyle: React.CSSProperties = {
 		height: "15px",
@@ -65,8 +85,13 @@ export const FileSystemRow: React.FC<Props> = ({
 		return `${parseFloat((bytes / Math.pow(k, i)).toFixed(decimals))} ${sizes[i]}`;
 	}
 
-	const rowClicked = (ev: MouseEvent) => {
-		if (onClick) {
+	const rowClicked = (ev: React.MouseEvent<HTMLTableRowElement>) => {
+		const selectionHandled = selectionHandledOnMouseDownRef.current;
+		if (selectionHandled) {
+			selectionHandledOnMouseDownRef.current = false;
+		}
+
+		if (!selectionHandled && onClick) {
 			const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 			const controlOrCommandPressed = isMac ? ev.metaKey : ev.ctrlKey;
 			if (controlOrCommandPressed || ev.shiftKey) {
@@ -74,9 +99,38 @@ export const FileSystemRow: React.FC<Props> = ({
 			}
 			onClick(item, controlOrCommandPressed, ev.shiftKey);
 		}
+
+		if (fileSystemContext?.onClick) {
+			const rect = ev.currentTarget.getBoundingClientRect();
+			fileSystemContext.onClick(item, getPagePosFromRect(rect));
+		}
 	}
 
-	const rowRightClicked = () => {
+	const rowMouseDown = (ev: React.MouseEvent<HTMLTableRowElement>) => {
+		if (!onClick) {
+			return;
+		}
+		const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+		const controlOrCommandPressed = isMac ? ev.metaKey : ev.ctrlKey;
+
+		if (!controlOrCommandPressed && !ev.shiftKey && !item.selected) {
+			onClick(item, false, false);
+			selectionHandledOnMouseDownRef.current = true;
+		}
+	}
+
+	const rowRightClicked = (ev: React.MouseEvent<HTMLTableRowElement>) => {
+		ev.preventDefault();
+		const rect = ev.currentTarget.getBoundingClientRect();
+		const pos = getPagePosFromRect(rect);
+
+		if (fileSystemContext?.onRightClick) {
+			const items = item.selected
+				? (fileSystemContext.getSelectedItems() || [item])
+				: [item];
+			fileSystemContext.onRightClick(items, pos);
+		}
+
 		if (!item.selected && onClick) {
 			onClick(item, false, false);
 		}
@@ -85,6 +139,9 @@ export const FileSystemRow: React.FC<Props> = ({
 	const rowDoubleClicked = () => {
 		if (onDoubleClick) {
 			onDoubleClick(item);
+		}
+		if (fileSystemContext?.onDblClick) {
+			fileSystemContext.onDblClick(item);
 		}
 	}
 
@@ -107,6 +164,7 @@ export const FileSystemRow: React.FC<Props> = ({
 	return (
 		<tr
 			className={item.selected ? "blue-orange-file-system-row-cont blue-orange-file-system-row-selected-style" : "blue-orange-file-system-row-cont"}
+			onMouseDown={rowMouseDown}
 			onClick={rowClicked}
 			onDoubleClick={rowDoubleClicked}
 			onContextMenu={rowRightClicked}

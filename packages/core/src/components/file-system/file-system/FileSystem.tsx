@@ -1,9 +1,7 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import './FileSystem.css'
 import {ButtonIcon} from "../../buttons/button-icon/ButtonIcon";
-import {ContextMenu, IContextMenuItem, IContextMenuType} from "../../contextmenu/contextmenu/ContextMenu";
-import {Badge} from "../../text-decorations/badge/Badge";
 
 export enum IFileSystemOrderBy {
 	UNSELECTED="UNSELECTED",
@@ -57,28 +55,70 @@ interface Props {
 	pasteEvent?: () => void,
 	movingEvent?: (state: boolean) => void,
 	dropEvent?: (files: FileList) => void,
+	onClick?: (item: IFileSystemItem, pos: SelectedElementsPos) => void,
+	onRightClick?: (items: Array<IFileSystemItem>, pos: SelectedElementsPos) => void,
+	onDblClick?: (item: IFileSystemItem) => void,
 }
 
-interface SelectedElementsPos {
+export interface SelectedElementsPos {
 	x: number,
 	y: number
 }
 
+export interface FileSystemContextValue {
+	registerItem: (item: IFileSystemItem) => void,
+	unregisterItem: (item: IFileSystemItem) => void,
+	getSelectedItems: () => Array<IFileSystemItem>,
+	onClick?: (item: IFileSystemItem, pos: SelectedElementsPos) => void,
+	onRightClick?: (items: Array<IFileSystemItem>, pos: SelectedElementsPos) => void,
+	onDblClick?: (item: IFileSystemItem) => void,
+}
+
+export const FileSystemContext = React.createContext<FileSystemContextValue | null>(null);
+
 export const FileSystem: React.FC<Props> = ({
-												children,
-												showHeader=true,
-												showFileSize=true,
-												showFileType=true,
-												showLastModified=true,
-												orderBy=IFileSystemOrderBy.UNSELECTED},
-												copyEvent,
-												cutEvent,
-												pasteEvent,
-												movingEvent,
-												dropEvent,
-											) => {
+										children,
+										showHeader=true,
+										showFileSize=true,
+										showFileType=true,
+										showLastModified=true,
+										orderBy=IFileSystemOrderBy.UNSELECTED,
+										copyEvent,
+										cutEvent,
+										pasteEvent,
+										movingEvent,
+										dropEvent,
+										onClick,
+										onRightClick,
+										onDblClick,
+									}) => {
 
 	const tableRef = useRef<HTMLTableElement>(null);
+
+	const registeredItemsRef = useRef<Set<IFileSystemItem>>(new Set());
+
+	const registerItem = useCallback((item: IFileSystemItem) => {
+		registeredItemsRef.current.add(item);
+	}, []);
+
+	const unregisterItem = useCallback((item: IFileSystemItem) => {
+		registeredItemsRef.current.delete(item);
+	}, []);
+
+	const getSelectedItems = useCallback(() => {
+		return Array.from(registeredItemsRef.current).filter((item) => item.selected);
+	}, []);
+
+	const fileSystemContextValue = useMemo<FileSystemContextValue>(() => {
+		return {
+			registerItem,
+			unregisterItem,
+			getSelectedItems,
+			onClick,
+			onRightClick,
+			onDblClick,
+		};
+	}, [getSelectedItems, onClick, onDblClick, onRightClick, registerItem, unregisterItem]);
 
 	const mouseDownRef = useRef<boolean>(false);
 
@@ -93,15 +133,6 @@ export const FileSystem: React.FC<Props> = ({
 	const [selectedElementsPos, setSelectedElementsPos] = useState<SelectedElementsPos>({x: 0, y: 0});
 
 	const [dragOverState, setDragOverState] = useState<boolean>(false);
-
-	const contextMenuItems: Array<IContextMenuItem> = [
-		{type: IContextMenuType.HEADING, label: "Sort Direction", value:""},
-		{type: IContextMenuType.CONTENT, label: "Sort Asc", icon: "ri-sort-asc", value: "SORT_ASC"},
-		{type: IContextMenuType.CONTENT, label: "Sort Desc", icon: "ri-sort-asc", value: "SORT_DESC"},
-		{type: IContextMenuType.SEPARATOR, label: "Sort Desc", icon: "ri-sort-asc", value: "SORT_DESC"},
-		{type: IContextMenuType.CONTENT, label: "Sort Asc", icon: "ri-sort-asc", value: "SORT_ASC"},
-		{type: IContextMenuType.CONTENT, label: "Sort Desc", icon: "ri-sort-asc", value: "SORT_DESC"},
-	]
 
 	const dropdownBtnStyle: React.CSSProperties = {
 		height: "10px",
@@ -181,11 +212,37 @@ export const FileSystem: React.FC<Props> = ({
 		};
 
 		const handleMousedown = (ev) => {
-			if (tableRef.current) {
+			if (!tableRef.current) {
+				return;
+			}
+
+			const target = ev.target as HTMLElement | null;
+			if (!target) {
+				return;
+			}
+
+			if (!tableRef.current.contains(target)) {
+				return;
+			}
+
+			const row = target.closest("tr");
+			const tbody = tableRef.current.tBodies?.[0];
+			if (!row || !tbody || !tbody.contains(row)) {
+				return;
+			}
+
+			const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+			const controlOrCommandPressed = isMac ? ev.metaKey : ev.ctrlKey;
+			const isRowSelected = row.classList.contains("blue-orange-file-system-row-selected-style");
+
+			if (!controlOrCommandPressed && !ev.shiftKey && !isRowSelected) {
+				setElementsSelected(1);
+			} else {
 				const elementsWithClass = tableRef.current.querySelectorAll(".blue-orange-file-system-row-selected-style");
 				setElementsSelected(elementsWithClass.length);
-				mouseDownRef.current = true;
 			}
+
+			mouseDownRef.current = true;
 		};
 
 		window.addEventListener("keydown", handleKeyDown);
@@ -204,96 +261,94 @@ export const FileSystem: React.FC<Props> = ({
 	}, []);
 
 	return (
-		<div
-			className="blue-orange-file-system-cont"
-			onDragOver={handleDragOver}
-			onDrop={handleDropEvent}
-			onDragLeave={handleDragLeave}>
-			{showSelectedElements &&
-				<div className="blue-orange-file-system-selected-pill" style={{left: selectedElementsPos.x + "px", top: selectedElementsPos.y}}>
-					{elementsSelected} selected
-				</div>
-			}
-			<table
-				ref={tableRef}
-				className="blue-orange-file-system-table">
-				{showHeader &&
-					<thead className="blue-orange-file-system-header-row">
-					<tr>
-						<th style={{width: "100%"}}>
-							<ContextMenu items={contextMenuItems}>
-								<div className="blue-orange-file-system-header-row-item">
-									<span>Name</span>
-									{orderBy != IFileSystemOrderBy.NAME_DESC && orderBy != IFileSystemOrderBy.NAME_ASC &&
-										<div className="blue-orange-file-system-header-row-item-hoverable">
-											<ButtonIcon icon={"ri-arrow-down-s-line"}
-														style={dropdownBtnStyle}></ButtonIcon>
-										</div>
-									}
-
-									{orderBy == IFileSystemOrderBy.NAME_DESC &&
-										<ButtonIcon icon={"ri-arrow-down-s-line"}
-													style={dropdownBtnStyle}></ButtonIcon>}
-									{orderBy == IFileSystemOrderBy.NAME_ASC &&
-										<ButtonIcon icon={"ri-arrow-up-s-line"} style={dropdownBtnStyle}></ButtonIcon>}
-								</div>
-							</ContextMenu>
-						</th>
-						{showLastModified &&
-							<th style={{minWidth: "136px"}}>
-								<ContextMenu items={contextMenuItems}>
-									<div className="blue-orange-file-system-header-row-item">
-										<span>Date Modified</span>
-										{orderBy == IFileSystemOrderBy.LAST_MOD_DESC &&
-											<ButtonIcon icon={"ri-arrow-down-s-line"}
-														style={dropdownBtnStyle}></ButtonIcon>}
-										{orderBy == IFileSystemOrderBy.LAST_MOD_ASC &&
-											<ButtonIcon icon={"ri-arrow-up-s-line"}
-														style={dropdownBtnStyle}></ButtonIcon>}
-									</div>
-								</ContextMenu>
-							</th>
-						}
-						{showFileSize &&
-							<th style={{minWidth: "80px"}}>
-								<div className="blue-orange-file-system-header-row-item">
-									<span>Size</span>
-									{orderBy == IFileSystemOrderBy.FILE_SIZE_DESC &&
-										<ButtonIcon icon={"ri-arrow-down-s-line"}
-													style={dropdownBtnStyle}></ButtonIcon>}
-									{orderBy == IFileSystemOrderBy.FILE_SIZE_ASC &&
-										<ButtonIcon icon={"ri-arrow-up-s-line"} style={dropdownBtnStyle}></ButtonIcon>}
-								</div>
-							</th>
-						}
-						{showFileType &&
-							<th style={{minWidth: "80px"}}>
-								<div className="blue-orange-file-system-header-row-item">
-									<span>Type</span>
-									{orderBy == IFileSystemOrderBy.FILE_TYPE_DESC &&
-										<ButtonIcon icon={"ri-arrow-down-s-line"}
-													style={dropdownBtnStyle}></ButtonIcon>}
-									{orderBy == IFileSystemOrderBy.FILE_TYPE_ASC &&
-										<ButtonIcon icon={"ri-arrow-up-s-line"} style={dropdownBtnStyle}></ButtonIcon>}
-								</div>
-							</th>
-						}
-					</tr>
-					</thead>
-				}
-				<tbody>
-				{children}
-				</tbody>
-			</table>
-			{dragOverState &&
-				<div
-					className="blue-orange-file-system-drag-over-state">
-					<div className="blue-orange-file-system-drop-file-icon-cont">
-						<i className="ri-drop-fill"></i>
+		<FileSystemContext.Provider value={fileSystemContextValue}>
+			<div
+				className="blue-orange-file-system-cont"
+				onDragOver={handleDragOver}
+				onDrop={handleDropEvent}
+				onDragLeave={handleDragLeave}>
+				{showSelectedElements &&
+					<div className="blue-orange-file-system-selected-pill" style={{left: selectedElementsPos.x + "px", top: selectedElementsPos.y}}>
+						{elementsSelected} selected
 					</div>
-					<div className="blue-orange-file-system-drop-file-text">Drop Files</div>
-				</div>
-			}
-		</div>
+				}
+				<table
+					ref={tableRef}
+					className="blue-orange-file-system-table">
+					{showHeader &&
+						<thead className="blue-orange-file-system-header-row">
+						<tr>
+							<th style={{width: "100%"}}>
+                                <div className="blue-orange-file-system-header-row-item">
+                                    <span>Name</span>
+                                    {orderBy != IFileSystemOrderBy.NAME_DESC && orderBy != IFileSystemOrderBy.NAME_ASC &&
+                                        <div className="blue-orange-file-system-header-row-item-hoverable">
+                                            <ButtonIcon icon={"ri-arrow-down-s-line"}
+                                                        style={dropdownBtnStyle}></ButtonIcon>
+                                        </div>
+                                    }
+
+                                    {orderBy == IFileSystemOrderBy.NAME_DESC &&
+                                        <ButtonIcon icon={"ri-arrow-down-s-line"}
+                                                    style={dropdownBtnStyle}></ButtonIcon>}
+                                    {orderBy == IFileSystemOrderBy.NAME_ASC &&
+                                        <ButtonIcon icon={"ri-arrow-up-s-line"} style={dropdownBtnStyle}></ButtonIcon>}
+                                </div>
+							</th>
+							{showLastModified &&
+								<th style={{minWidth: "136px"}}>
+                                    <div className="blue-orange-file-system-header-row-item">
+                                        <span>Date Modified</span>
+                                        {orderBy == IFileSystemOrderBy.LAST_MOD_DESC &&
+                                            <ButtonIcon icon={"ri-arrow-down-s-line"}
+                                                        style={dropdownBtnStyle}></ButtonIcon>}
+                                        {orderBy == IFileSystemOrderBy.LAST_MOD_ASC &&
+                                            <ButtonIcon icon={"ri-arrow-up-s-line"}
+                                                        style={dropdownBtnStyle}></ButtonIcon>}
+                                    </div>
+								</th>
+							}
+							{showFileSize &&
+								<th style={{minWidth: "80px"}}>
+									<div className="blue-orange-file-system-header-row-item">
+										<span>Size</span>
+										{orderBy == IFileSystemOrderBy.FILE_SIZE_DESC &&
+											<ButtonIcon icon={"ri-arrow-down-s-line"}
+														style={dropdownBtnStyle}></ButtonIcon>}
+										{orderBy == IFileSystemOrderBy.FILE_SIZE_ASC &&
+											<ButtonIcon icon={"ri-arrow-up-s-line"} style={dropdownBtnStyle}></ButtonIcon>}
+									</div>
+								</th>
+							}
+							{showFileType &&
+								<th style={{minWidth: "80px"}}>
+									<div className="blue-orange-file-system-header-row-item">
+										<span>Type</span>
+										{orderBy == IFileSystemOrderBy.FILE_TYPE_DESC &&
+											<ButtonIcon icon={"ri-arrow-down-s-line"}
+														style={dropdownBtnStyle}></ButtonIcon>}
+										{orderBy == IFileSystemOrderBy.FILE_TYPE_ASC &&
+											<ButtonIcon icon={"ri-arrow-up-s-line"} style={dropdownBtnStyle}></ButtonIcon>}
+									</div>
+								</th>
+							}
+						</tr>
+						</thead>
+					}
+					<tbody>
+					{children}
+					</tbody>
+				</table>
+				{dragOverState &&
+					<div
+						className="blue-orange-file-system-drag-over-state">
+						<div className="blue-orange-file-system-drop-file-icon-cont">
+							<i className="ri-drop-fill"></i>
+						</div>
+						<div className="blue-orange-file-system-drop-file-text">Drop Files</div>
+					</div>
+				}
+			</div>
+		</FileSystemContext.Provider>
 	)
 }
