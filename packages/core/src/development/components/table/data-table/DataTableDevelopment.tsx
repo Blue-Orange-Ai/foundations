@@ -18,7 +18,9 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 	const [resizableColumns, setResizableColumns] = useState<boolean>(true);
 	const [reorderableColumns, setReorderableColumns] = useState<boolean>(true);
 	const [cellsSelectable, setCellsSelectable] = useState<boolean>(true);
+	const [rowSelectable, setRowSelectable] = useState<boolean>(false);
 	const [lastSelection, setLastSelection] = useState<Array<{rowIndex: number; colIndex: number}>>([]);
+	const [lastRowSelection, setLastRowSelection] = useState<Array<number>>([]);
 
 	const displaySchema: Array<TableField> = [
 		{
@@ -163,8 +165,15 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 				<Checkbox checked={cellsSelectable} onCheckboxChange={setCellsSelectable}></Checkbox>
 				<span style={{marginLeft: 8}}>Cells selectable</span>
 			</div>
+			<div style={{marginBottom: 12}}>
+				<Checkbox checked={rowSelectable} onCheckboxChange={setRowSelectable}></Checkbox>
+				<span style={{marginLeft: 8}}>Row selectable</span>
+			</div>
 			<div style={{marginBottom: 12, fontSize: 12, fontFamily: "monospace"}}>
 				Last selection: {JSON.stringify(lastSelection)}
+			</div>
+			<div style={{marginBottom: 12, fontSize: 12, fontFamily: "monospace"}}>
+				Last row selection: {JSON.stringify(lastRowSelection)}
 			</div>
 			<DataTable
 				schema={displaySchema}
@@ -174,7 +183,9 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 				resizableColumns={resizableColumns}
 				reorderableColumns={reorderableColumns}
 				cellsSelectable={cellsSelectable}
-				onCellSelection={(selection) => setLastSelection(selection)}></DataTable>
+				rowSelectable={rowSelectable}
+				onCellSelection={(selection) => setLastSelection(selection)}
+				onRowSelectable={(selection) => setLastRowSelection(selection)}></DataTable>
 		</PaddedPage>
 	)
 }

@@ -56,6 +56,10 @@
     background-color: #c0e1ff;
 }
 
+.blue-orange-data-table-row-selected {
+    background-color: #c0e1ff;
+}
+
 .blue-orange-data-table-cell-selected-top-border {
     border-top: 2px solid dodgerblue;
 }

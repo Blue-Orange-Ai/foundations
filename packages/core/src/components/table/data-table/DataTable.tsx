@@ -54,10 +54,12 @@ interface Props {
 	resizableColumns?: boolean,
 	reorderableColumns?: boolean,
 	cellsSelectable?: boolean,
+	rowSelectable?: boolean,
 	minColumnWidth?: number,
 	maxColumnWidth?: number,
 	onColumnOrderChange?: (previousIndex: number, newIndex: number, updatedSchema: Array<TableField>) => void,
-	onCellSelection?: (selection: Array<{rowIndex: number; colIndex: number}>) => void
+	onCellSelection?: (selection: Array<{rowIndex: number; colIndex: number}>) => void,
+	onRowSelectable?: (selection: Array<number>) => void
 }
 
 export const DataTable: React.FC<Props> = ({
@@ -68,10 +70,12 @@ export const DataTable: React.FC<Props> = ({
 												resizableColumns=false,
 												reorderableColumns=false,
 												cellsSelectable=false,
+												rowSelectable=false,
 												minColumnWidth=50,
 												maxColumnWidth,
 												onColumnOrderChange,
-												onCellSelection}) => {
+												onCellSelection,
+												onRowSelectable}) => {
 
 	const clampWidth = (width: number): number => {
 		const next = Math.max(minColumnWidth, width);
@@ -121,6 +125,7 @@ export const DataTable: React.FC<Props> = ({
 
 	type CellCoord = {rowIdx: number; colIdx: number};
 	const cellKey = (rowIdx: number, colIdx: number) => `${rowIdx}:${colIdx}`;
+	const effectiveRowSelectable = rowSelectable && !cellsSelectable;
 
 	const selectingCellsRef = useRef<boolean>(false);
 	const lastClickedCellRef = useRef<CellCoord | null>(null);
@@ -128,6 +133,10 @@ export const DataTable: React.FC<Props> = ({
 	const selectionEndRef = useRef<CellCoord | null>(null);
 	const selectedCellsRef = useRef<Set<string>>(new Set());
 	const [selectedCells, setSelectedCells] = useState<Set<string>>(new Set());
+
+	const lastClickedRowRef = useRef<number | null>(null);
+	const selectedRowsRef = useRef<Set<number>>(new Set());
+	const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
 
 	const computeSelectionKeys = (start: CellCoord, end: CellCoord) => {
 		const rowStart = Math.min(start.rowIdx, end.rowIdx);
@@ -171,6 +180,65 @@ export const DataTable: React.FC<Props> = ({
 		onCellSelection?.(selection);
 	}
 
+	const clearRowSelection = () => {
+		selectedRowsRef.current = new Set();
+		setSelectedRows(new Set());
+	}
+
+	const getSelectedRows = (): Array<number> => {
+		return Array.from(selectedRowsRef.current).sort((a, b) => a - b);
+	}
+
+	const computeRowRange = (startRowIdx: number, endRowIdx: number) => {
+		const rowStart = Math.min(startRowIdx, endRowIdx);
+		const rowEnd = Math.max(startRowIdx, endRowIdx);
+		const next = new Set<number>();
+		for (let r = rowStart; r <= rowEnd; r++) {
+			next.add(r);
+		}
+		return next;
+	}
+
+	const beginRowSelection = (rowIdx: number) => (e: React.MouseEvent) => {
+		if (!effectiveRowSelectable) {
+			return;
+		}
+		if (loading) {
+			return;
+		}
+		if (e.button !== 0) {
+			return;
+		}
+		if (resizingRef.current || reorderRef.current?.active || isReordering) {
+			return;
+		}
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (e.metaKey || e.ctrlKey) {
+			const next = new Set(selectedRowsRef.current);
+			if (next.has(rowIdx)) {
+				next.delete(rowIdx);
+			} else {
+				next.add(rowIdx);
+			}
+			selectedRowsRef.current = next;
+			setSelectedRows(next);
+			lastClickedRowRef.current = rowIdx;
+			onRowSelectable?.(getSelectedRows());
+			return;
+		}
+
+		const start = (e.shiftKey && typeof lastClickedRowRef.current === "number")
+			? lastClickedRowRef.current
+			: rowIdx;
+		const next = computeRowRange(start, rowIdx);
+		selectedRowsRef.current = next;
+		setSelectedRows(next);
+		lastClickedRowRef.current = rowIdx;
+		onRowSelectable?.(getSelectedRows());
+	}
+
 	useEffect(() => {
 		if (!cellsSelectable) {
 			return;
@@ -194,6 +262,13 @@ export const DataTable: React.FC<Props> = ({
 			clearCellSelection();
 		}
 	}, [cellsSelectable]);
+
+	useEffect(() => {
+		if (!effectiveRowSelectable) {
+			lastClickedRowRef.current = null;
+			clearRowSelection();
+		}
+	}, [effectiveRowSelectable]);
 
 	const beginCellSelection = (rowIdx: number, colIdx: number) => (e: React.MouseEvent) => {
 		if (!cellsSelectable) {
@@ -635,6 +710,7 @@ export const DataTable: React.FC<Props> = ({
 																	const cellValue = getCellValue(d, item, colIdx);
 																	const cellStyle = getColumnStyle(colIdx);
 																	const isSelected = selectedCells.has(cellKey(rowIdx, colIdx));
+																	const isRowSelected = selectedRows.has(rowIdx);
 
 																	const tdProps = cellsSelectable
 																		? {
@@ -642,7 +718,12 @@ export const DataTable: React.FC<Props> = ({
 																			onMouseEnter: () => extendCellSelectionTo(rowIdx, colIdx),
 																			className: isSelected ? "blue-orange-data-table-cell-selected" : undefined,
 																		}
-																		: undefined;
+																		: (effectiveRowSelectable
+																			? {
+																				onMouseDown: beginRowSelection(rowIdx),
+																				className: isRowSelected ? "blue-orange-data-table-row-selected" : undefined,
+																			}
+																			: undefined);
 
 																	return (
 																		<>
