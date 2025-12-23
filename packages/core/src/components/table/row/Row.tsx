@@ -9,7 +9,8 @@ interface Props {
 	hoverEffect?: boolean,
 	hoverBackgroundColor?: string,
 	onClick?: (id: string) => void,
-	id?: string
+	id?: string,
+	rowRef?: React.Ref<HTMLTableRowElement>
 }
 export const Row: React.FC<Props> = ({
 										 children,
@@ -17,7 +18,8 @@ export const Row: React.FC<Props> = ({
 										 hoverEffect = true,
 										 hoverBackgroundColor = "#e0e1e2",
 										 onClick,
-										 id}) => {
+										 id,
+										 rowRef}) => {
 
 	const [hover, setHover] = useState(false);
 
@@ -37,6 +39,7 @@ export const Row: React.FC<Props> = ({
 	return (
 		<tr
 			style={rowStyle}
+			ref={rowRef}
 			onClick={rowClicked}
 			onMouseEnter={() => setHover(true)}
 			onMouseLeave={() => setHover(false)}>

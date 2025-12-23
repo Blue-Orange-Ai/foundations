@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 
 import {Table, TableTheme} from "../table/Table";
 import {THead} from "../thead/THead";
@@ -57,6 +57,9 @@ interface Props {
     data: Array<any>,
     loading?: boolean,
 	loadingPlaceholderRows?: number,
+	enableInfiniteScroll?: boolean,
+	onEndReached?: () => void,
+	showLoadingRow?: boolean,
 	resizableColumns?: boolean,
 	reorderableColumns?: boolean,
 	cellsSelectable?: boolean,
@@ -75,6 +78,9 @@ export const DataTable: React.FC<Props> = ({
                                                data,
                                                loading=false,
                                                loadingPlaceholderRows=10,
+											   enableInfiniteScroll=false,
+											   onEndReached,
+											   showLoadingRow=false,
 												resizableColumns=false,
 												reorderableColumns=false,
 												cellsSelectable=false,
@@ -147,6 +153,52 @@ export const DataTable: React.FC<Props> = ({
 	const lastClickedRowRef = useRef<number | null>(null);
 	const selectedRowsRef = useRef<Set<number>>(new Set());
 	const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
+
+	const [infiniteScrollObservedRow, setInfiniteScrollObservedRow] = useState<HTMLTableRowElement | null>(null);
+	const lastEndReachedDataLengthRef = useRef<number | null>(null);
+	const infiniteScrollRowRef = useCallback((el: HTMLTableRowElement | null) => {
+		setInfiniteScrollObservedRow(el);
+	}, []);
+
+	useEffect(() => {
+		if (!enableInfiniteScroll) {
+			return;
+		}
+		if (!onEndReached) {
+			return;
+		}
+		if (loading) {
+			return;
+		}
+		if (!infiniteScrollObservedRow) {
+			return;
+		}
+		if (typeof IntersectionObserver === "undefined") {
+			return;
+		}
+
+		const root = tableContainerRef.current ?? null;
+		const observer = new IntersectionObserver(
+			(entries) => {
+				for (const entry of entries) {
+					if (!entry.isIntersecting) {
+						continue;
+					}
+					if (lastEndReachedDataLengthRef.current === data.length) {
+						return;
+					}
+					lastEndReachedDataLengthRef.current = data.length;
+					onEndReached();
+				}
+			},
+			{threshold: 0.1, root}
+		);
+
+		observer.observe(infiniteScrollObservedRow);
+		return () => {
+			observer.disconnect();
+		};
+	}, [enableInfiniteScroll, onEndReached, loading, infiniteScrollObservedRow, data.length]);
 
 	const computeSelectionKeys = (start: CellCoord, end: CellCoord) => {
 		const rowStart = Math.min(start.rowIdx, end.rowIdx);
@@ -761,7 +813,10 @@ export const DataTable: React.FC<Props> = ({
 						{!loading &&
 							<>
 								{data.map((d, rowIdx) => (
-									<Row key={"row-" + rowIdx} hoverEffect={false}>
+									<Row
+										key={"row-" + rowIdx}
+										hoverEffect={false}
+										rowRef={(!showLoadingRow && enableInfiniteScroll && rowIdx === data.length - 1) ? infiniteScrollRowRef : undefined}>
 														{orderedSchema.map((item, colIdx) => (
 															<React.Fragment key={"cell-" + rowIdx + "-" + colIdx}>
 																{(() => {
@@ -830,9 +885,19 @@ export const DataTable: React.FC<Props> = ({
 
                                         </Row>
                                     ))}
-								</>
-							}
-						</TBody>
+								{showLoadingRow &&
+									<Row
+										key={"infinite-loading-row"}
+										hoverEffect={false}
+										rowRef={(enableInfiniteScroll) ? infiniteScrollRowRef : undefined}>
+										{orderedSchema.map((item, colIdx) => (
+											<LoadingCell key={"infinite-loading-cell-" + colIdx} style={getColumnStyle(colIdx)}></LoadingCell>
+										))}
+									</Row>
+								}
+							</>
+						}
+					</TBody>
 				</Table>
 			</div>
 

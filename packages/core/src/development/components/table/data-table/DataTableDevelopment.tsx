@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 
 import './DataTableDevelopment.css'
 import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
@@ -20,6 +20,9 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 	const [reorderableColumns, setReorderableColumns] = useState<boolean>(true);
 	const [cellsSelectable, setCellsSelectable] = useState<boolean>(true);
 	const [rowSelectable, setRowSelectable] = useState<boolean>(false);
+	const [enableInfiniteScroll, setEnableInfiniteScroll] = useState<boolean>(true);
+	const [showLoadingRow, setShowLoadingRow] = useState<boolean>(false);
+	const [endReachedCount, setEndReachedCount] = useState<number>(0);
 	const [lastSelection, setLastSelection] = useState<Array<{rowIndex: number; colIndex: number}>>([]);
 	const [lastRowSelection, setLastRowSelection] = useState<Array<number>>([]);
 	const [lastClickedCell, setLastClickedCell] = useState<{cellIdx: number; rowIdx: number; position: DataTableCellClickPosition} | null>(null);
@@ -114,7 +117,7 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 		}
 	]
 
-	const demoData = [
+	const baseDemoData = [
 		{
 			"Test String": "Alpha",
 			"Test String (Multiple)": ["Alpha", "Beta", "Gamma"],
@@ -153,6 +156,52 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 		}
 	]
 
+	const makeGeneratedRow = (idx: number) => ({
+		"Test String": `Generated ${idx}`,
+		"Test String (Multiple)": [`Generated ${idx}`, `Tag ${idx % 5}`],
+		"Test Number": idx,
+		"Test Number (Multiple)": [idx, idx * 2, idx * 3],
+		"Test Date": new Date(Date.now() - idx * 60_000),
+		"Test Date (Multiple)": [new Date(Date.now() - idx * 60_000), new Date(Date.now() - idx * 120_000)],
+		"Test Currency": (idx * 1.23) % 1000,
+		"Test Currency (Multiple)": [idx * 0.1, idx * 0.2, idx * 0.3],
+		"Test Struct": {id: idx, active: idx % 2 === 0},
+		"Test Struct (Multiple)": [{id: idx, tag: "a"}, {id: idx + 1, tag: "b"}],
+	});
+
+	const [generatedRowsCount, setGeneratedRowsCount] = useState<number>(40);
+	const isLoadingMoreRef = useRef<boolean>(false);
+
+	const data = useMemo(() => {
+		const generated = Array.from({length: generatedRowsCount}).map((_, i) => makeGeneratedRow(i + 1));
+		return [...baseDemoData, ...generated];
+	}, [generatedRowsCount]);
+
+	useEffect(() => {
+		if (!enableInfiniteScroll) {
+			setShowLoadingRow(false);
+			isLoadingMoreRef.current = false;
+		}
+	}, [enableInfiniteScroll]);
+
+	const handleEndReached = () => {
+		setEndReachedCount((c) => c + 1);
+		if (!enableInfiniteScroll) {
+			return;
+		}
+		if (isLoadingMoreRef.current) {
+			return;
+		}
+		isLoadingMoreRef.current = true;
+		setShowLoadingRow(true);
+
+		window.setTimeout(() => {
+			setGeneratedRowsCount((n) => n + 20);
+			setShowLoadingRow(false);
+			isLoadingMoreRef.current = false;
+		}, 900);
+	}
+
 	return (
 		<PaddedPage>
 			<PageHeading>Data Table</PageHeading>
@@ -172,6 +221,16 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 				<Checkbox checked={rowSelectable} onCheckboxChange={setRowSelectable}></Checkbox>
 				<span style={{marginLeft: 8}}>Row selectable</span>
 			</div>
+			<div style={{marginBottom: 12}}>
+				<Checkbox checked={enableInfiniteScroll} onCheckboxChange={setEnableInfiniteScroll}></Checkbox>
+				<span style={{marginLeft: 8}}>Enable infinite scroll</span>
+			</div>
+			<div style={{marginBottom: 12, fontSize: 12, fontFamily: "monospace"}}>
+				End reached count: {endReachedCount}
+			</div>
+			<div style={{marginBottom: 12, fontSize: 12, fontFamily: "monospace"}}>
+				Rows: {data.length} {showLoadingRow ? "(loading...)" : ""}
+			</div>
 			<div style={{marginBottom: 12, fontSize: 12, fontFamily: "monospace"}}>
 				Last selection: {JSON.stringify(lastSelection)}
 			</div>
@@ -186,9 +245,12 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 			</div>
 			<DataTable
 				schema={displaySchema}
-				data={demoData}
+				data={data}
 				loading={false}
 				loadingPlaceholderRows={2}
+				enableInfiniteScroll={enableInfiniteScroll}
+				onEndReached={handleEndReached}
+				showLoadingRow={showLoadingRow}
 				resizableColumns={resizableColumns}
 				reorderableColumns={reorderableColumns}
 				cellsSelectable={cellsSelectable}
