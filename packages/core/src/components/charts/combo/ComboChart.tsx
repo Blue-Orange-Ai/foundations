@@ -42,6 +42,7 @@ interface Props {
     persistentRangeSelect?: boolean;
     onPersistentRangeChange?: (startValue: any, endValue: any) => void;
     initialRange?: { start: any; end: any };
+    persistentRangeValue?: { start: any; end: any } | null;
 
     // Scatter visibility/UX
     scatterPointRadius?: number;       // default 3
@@ -84,6 +85,7 @@ export const ComboChart: React.FC<Props> = ({
                                                 persistentRangeSelect = false,
                                                 onPersistentRangeChange,
                                                 initialRange,
+                                                persistentRangeValue,
 
                                                 scatterPointRadius = 3,
                                                 scatterPointHoverRadius = 5,
@@ -106,7 +108,9 @@ export const ComboChart: React.FC<Props> = ({
     });
 
     // ---- Persistent range selection state ----
-    const persistentRangeRef = useRef<{ start: any; end: any } | null>(initialRange || null);
+    const persistentRangeRef = useRef<{ start: any; end: any } | null>(
+        typeof persistentRangeValue !== "undefined" ? persistentRangeValue : initialRange || null
+    );
     const [persistentRange, setPersistentRange] = useState<{ start: any; end: any } | null>(
         persistentRangeRef.current
     );
@@ -1029,10 +1033,17 @@ export const ComboChart: React.FC<Props> = ({
 
     // Handle initial range and range changes
     useEffect(() => {
+        // Controlled mode: parent drives range. Setting to null clears selection.
+        if (typeof persistentRangeValue !== "undefined") {
+            setPersistentRangeSynced(persistentRangeValue);
+            return;
+        }
+
+        // Uncontrolled mode: only seed from initialRange once.
         if (initialRange && !persistentRangeRef.current) {
             setPersistentRangeSynced(initialRange);
         }
-    }, [initialRange]);
+    }, [initialRange, persistentRangeValue]);
 
     useEffect(() => {
         persistentRangeSelectRef.current = persistentRangeSelect;
