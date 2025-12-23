@@ -51,6 +51,7 @@ import {AvatarDevelopment} from "../components/avatar/AvatarDevelopment";
 import {FileInputDevelopment} from "../components/inputs/file-input/FileInputDevelopment";
 import {HelpTooltipDevelopment} from "../components/inputs/help-tooltip/HelpTooltipDevelopment";
 import {ObjectTableDevelopment} from "../components/table/object-table/ObjectTableDevelopment";
+import {MediaFragment} from "@blue-orange-ai/foundations-clients";
 
 interface Props {
 }
@@ -91,7 +92,22 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 		<SidebarPage>
 			<SideBar state={sidebarState} changeState={changeSidebarState}>
 				<SideBarHeader>
-					<SideBarHeaderItem label="Foundations" state={sidebarState} changeState={changeSidebarState}></SideBarHeaderItem>
+					<SideBarHeaderItem
+                        label="Foundations"
+                        media={{
+                            uuid: "asdasdasads",
+                            location: "",
+                            filename: "foundations-logo",
+                            folder: "",
+                            bucketname: "",
+                            mediaType: "image",
+                            dateCreated: new Date(),
+                            url: "/foundations-logo.png",
+                            mediaPublic: true,
+                            fragments: []
+                        }}
+                        state={sidebarState}
+                        changeState={changeSidebarState}></SideBarHeaderItem>
 				</SideBarHeader>
 				<SideBarBody>
 					<SideBarBodyItem

@@ -6,6 +6,7 @@ import {PageHeading} from "../../../../components/text-decorations/page-heading/
 import {Checkbox} from "../../../../components/inputs/checkbox/Checkbox";
 import {
 	DataTable,
+	DataTableCellClickPosition,
 	TableField,
 	TableFieldSortState,
 	TableFieldType
@@ -21,6 +22,8 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 	const [rowSelectable, setRowSelectable] = useState<boolean>(false);
 	const [lastSelection, setLastSelection] = useState<Array<{rowIndex: number; colIndex: number}>>([]);
 	const [lastRowSelection, setLastRowSelection] = useState<Array<number>>([]);
+	const [lastClickedCell, setLastClickedCell] = useState<{cellIdx: number; rowIdx: number; position: DataTableCellClickPosition} | null>(null);
+	const [lastRightClickedCell, setLastRightClickedCell] = useState<{cellIdx: number; rowIdx: number; position: DataTableCellClickPosition} | null>(null);
 
 	const displaySchema: Array<TableField> = [
 		{
@@ -175,6 +178,12 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 			<div style={{marginBottom: 12, fontSize: 12, fontFamily: "monospace"}}>
 				Last row selection: {JSON.stringify(lastRowSelection)}
 			</div>
+			<div style={{marginBottom: 12, fontSize: 12, fontFamily: "monospace"}}>
+				Last clicked cell: {JSON.stringify(lastClickedCell)}
+			</div>
+			<div style={{marginBottom: 12, fontSize: 12, fontFamily: "monospace"}}>
+				Last right clicked cell: {JSON.stringify(lastRightClickedCell)}
+			</div>
 			<DataTable
 				schema={displaySchema}
 				data={demoData}
@@ -185,7 +194,9 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 				cellsSelectable={cellsSelectable}
 				rowSelectable={rowSelectable}
 				onCellSelection={(selection) => setLastSelection(selection)}
-				onRowSelectable={(selection) => setLastRowSelection(selection)}></DataTable>
+				onRowSelectable={(selection) => setLastRowSelection(selection)}
+				onCellClick={(cellIdx, rowIdx, position) => setLastClickedCell({cellIdx, rowIdx, position})}
+				onCellRightClick={(cellIdx, rowIdx, position) => setLastRightClickedCell({cellIdx, rowIdx, position})}></DataTable>
 		</PaddedPage>
 	)
 }

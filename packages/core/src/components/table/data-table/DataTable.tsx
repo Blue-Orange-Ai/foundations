@@ -46,6 +46,12 @@ export interface TableField {
     dropDownItems?: IContextMenuItem[]
 }
 
+export type DataTableCellClickPosition = {
+	clientX: number;
+	clientY: number;
+	cellRect: DOMRect;
+}
+
 interface Props {
 	schema: Array<TableField>,
     data: Array<any>,
@@ -59,7 +65,9 @@ interface Props {
 	maxColumnWidth?: number,
 	onColumnOrderChange?: (previousIndex: number, newIndex: number, updatedSchema: Array<TableField>) => void,
 	onCellSelection?: (selection: Array<{rowIndex: number; colIndex: number}>) => void,
-	onRowSelectable?: (selection: Array<number>) => void
+	onRowSelectable?: (selection: Array<number>) => void,
+	onCellClick?: (colIdx: number, rowIdx: number, position: DataTableCellClickPosition) => void,
+	onCellRightClick?: (colIdx: number, rowIdx: number, position: DataTableCellClickPosition) => void
 }
 
 export const DataTable: React.FC<Props> = ({
@@ -75,7 +83,9 @@ export const DataTable: React.FC<Props> = ({
 												maxColumnWidth,
 												onColumnOrderChange,
 												onCellSelection,
-												onRowSelectable}) => {
+												onRowSelectable,
+												onCellClick,
+												onCellRightClick}) => {
 
 	const clampWidth = (width: number): number => {
 		const next = Math.max(minColumnWidth, width);
@@ -283,6 +293,14 @@ export const DataTable: React.FC<Props> = ({
 		if (resizingRef.current || reorderRef.current?.active || isReordering) {
 			return;
 		}
+		if (onCellClick) {
+			try {
+				const cellRect = (e.currentTarget as HTMLTableCellElement).getBoundingClientRect();
+				onCellClick(colIdx, rowIdx, {clientX: e.clientX, clientY: e.clientY, cellRect});
+			} catch (err) {
+				// ignore
+			}
+		}
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -317,6 +335,42 @@ export const DataTable: React.FC<Props> = ({
 		setSelectedCells(next);
 
 		lastClickedCellRef.current = current;
+	}
+
+	const canFireCellCallbacks = () => {
+		if (loading) {
+			return false;
+		}
+		if (resizingRef.current || reorderRef.current?.active || isReordering) {
+			return false;
+		}
+		return true;
+	}
+
+	const getEventPosition = (e: React.MouseEvent<HTMLTableCellElement>) => {
+		const cellRect = (e.currentTarget as HTMLTableCellElement).getBoundingClientRect();
+		return {clientX: e.clientX, clientY: e.clientY, cellRect};
+	}
+
+	const handleCellClick = (colIdx: number, rowIdx: number) => (e: React.MouseEvent<HTMLTableCellElement>) => {
+		if (!onCellClick) {
+			return;
+		}
+		if (!canFireCellCallbacks()) {
+			return;
+		}
+		onCellClick(colIdx, rowIdx, getEventPosition(e));
+	}
+
+	const handleCellRightClick = (colIdx: number, rowIdx: number) => (e: React.MouseEvent<HTMLTableCellElement>) => {
+		if (!onCellRightClick) {
+			return;
+		}
+		if (!canFireCellCallbacks()) {
+			return;
+		}
+		e.preventDefault();
+		onCellRightClick(colIdx, rowIdx, getEventPosition(e));
 	}
 
 	const extendCellSelectionTo = (rowIdx: number, colIdx: number) => {
@@ -673,6 +727,10 @@ export const DataTable: React.FC<Props> = ({
 										<HeaderCell
 											dropdownItems={item.dropDownItems}
 											style={getColumnStyle(index)}
+											tdProps={{
+												onClick: handleCellClick(index, -1),
+												onContextMenu: onCellRightClick ? handleCellRightClick(index, -1) : undefined,
+											}}
 											cellRef={setHeaderCellRef(index)}
 											onMouseDown={beginReorder(index)}
 											resizable={resizableColumns && !isReordering}
@@ -680,10 +738,10 @@ export const DataTable: React.FC<Props> = ({
 											onDropdownSelected={(item: IContextMenuItem) => {
 											}}>
 											<div className="blue-orange-data-table-header-cell-group">
-										        <span className="blue-orange-data-table-header-cell-primary-text">{item.label}</span>
-												<span
-													className="blue-orange-data-table-header-cell-column-type">{item.type.toString()}</span>
-											</div>
+									        <span className="blue-orange-data-table-header-cell-primary-text">{item.label}</span>
+											<span
+												className="blue-orange-data-table-header-cell-column-type">{item.type.toString()}</span>
+										</div>
 										</HeaderCell>
 									}
 								</React.Fragment>
@@ -712,27 +770,34 @@ export const DataTable: React.FC<Props> = ({
 																	const isSelected = selectedCells.has(cellKey(rowIdx, colIdx));
 																	const isRowSelected = selectedRows.has(rowIdx);
 
-																	const tdProps = cellsSelectable
-																		? {
-																			onMouseDown: beginCellSelection(rowIdx, colIdx),
-																			onMouseEnter: () => extendCellSelectionTo(rowIdx, colIdx),
-																			className: isSelected ? "blue-orange-data-table-cell-selected" : undefined,
-																		}
-																		: (effectiveRowSelectable
+																		const tdPropsBase = cellsSelectable
 																			? {
-																				onMouseDown: beginRowSelection(rowIdx),
-																				className: isRowSelected ? "blue-orange-data-table-row-selected" : undefined,
+																				onMouseDown: beginCellSelection(rowIdx, colIdx),
+																				onMouseEnter: () => extendCellSelectionTo(rowIdx, colIdx),
+																				className: isSelected ? "blue-orange-data-table-cell-selected" : undefined,
 																			}
-																			: undefined);
+																			: (effectiveRowSelectable
+																				? {
+																					onMouseDown: beginRowSelection(rowIdx),
+																					className: isRowSelected ? "blue-orange-data-table-row-selected" : undefined,
+																				}
+																				: undefined);
 
-																	return (
-																		<>
-																					{item.type == TableFieldType.STRING &&
+																		const shouldAttachClickHandler = !!onCellClick && !cellsSelectable;
+																		const tdProps = {
+																			...(tdPropsBase ?? {}),
+																			...(shouldAttachClickHandler ? {onClick: handleCellClick(colIdx, rowIdx)} : {}),
+																			...(onCellRightClick ? {onContextMenu: handleCellRightClick(colIdx, rowIdx)} : {}),
+																		};
+
+																		return (
+																			<>
+																						{item.type == TableFieldType.STRING &&
 																						<TextDataCell style={{...cellStyle}}
-																							  text={cellValue}
-																							  multipleValues={item.multipleValues}
-																							  tdProps={tdProps}></TextDataCell>
-																						}
+																								  text={cellValue}
+																								  multipleValues={item.multipleValues}
+																								  tdProps={tdProps}></TextDataCell>
+																								}
 																						{item.type == TableFieldType.NUMBER &&
 																						<NumberDataCell style={{...cellStyle}}
 																						  value={cellValue}
@@ -753,14 +818,14 @@ export const DataTable: React.FC<Props> = ({
 																						}
 																						{item.type == TableFieldType.STRUCT &&
 																						<JsonObjDataCell style={{...cellStyle}}
-																							  obj={cellValue}
-																							  multipleValues={item.multipleValues}
-																							  tdProps={tdProps}></JsonObjDataCell>
-																						}
-															</>
-														);
-												})()}
-											</React.Fragment>
+																								  obj={cellValue}
+																								  multipleValues={item.multipleValues}
+																								  tdProps={tdProps}></JsonObjDataCell>
+																								}
+																											</>
+																								);
+																			})()}
+																	</React.Fragment>
                                             ))}
 
                                         </Row>
