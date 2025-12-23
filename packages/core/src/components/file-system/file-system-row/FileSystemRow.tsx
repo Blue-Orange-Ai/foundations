@@ -47,7 +47,7 @@ export const FileSystemRow: React.FC<Props> = ({
 		height: "16px"
 	}
 
-	const paddingLeft = 0 + indent * 20;
+	const paddingLeft = 10 + indent * 20;
 
 	const folderClosedIcon = "ri-arrow-right-s-line";
 

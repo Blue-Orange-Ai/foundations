@@ -40,7 +40,7 @@ export const HeaderCell: React.FC<Props> = ({
 	const tdClassName = ["blue-orange-header-data-table-td", tdClassNameProp].filter(Boolean).join(" ");
 
 	return (
-			<td
+			<th
 				{...restTdProps}
 				className={tdClassName}
 				style={style}
@@ -80,6 +80,6 @@ export const HeaderCell: React.FC<Props> = ({
                         className="blue-orange-header-data-table-cell-resize-handle"
                         onMouseDown={onResizeMouseDown}></div>
                 }
-			</td>
+			</th>
 	)
 }

@@ -14,6 +14,16 @@
     font-weight: 500;
 }
 
+.blue-orange-tables-data-table {
+    height: 100%;
+    position: relative;
+}
+
+thead {
+    position: sticky !important;
+    top: 0;
+    z-index: 2;
+}
 
 .blue-orange-tables-data-table .blue-orange-table-header-cont {
     background-color: #e0e1e2;

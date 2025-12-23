@@ -243,7 +243,7 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 			<div style={{marginBottom: 12, fontSize: 12, fontFamily: "monospace"}}>
 				Last right clicked cell: {JSON.stringify(lastRightClickedCell)}
 			</div>
-			<div style={{height: 420, overflowY: "auto", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 6}}>
+			<div style={{height: 420, overflowY: "auto", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 6, position: "relative"}}>
 				<DataTable
 					schema={displaySchema}
 					data={data}
