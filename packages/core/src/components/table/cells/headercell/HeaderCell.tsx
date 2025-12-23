@@ -8,6 +8,7 @@ interface Props {
 	dropdownItems?: Array<IContextMenuItem>;
 	style?: React.CSSProperties,
 	cellRef?: (el: HTMLTableCellElement | null) => void,
+	onMouseDown?: (e: React.MouseEvent) => void,
 	resizable?: boolean,
 	onResizeMouseDown?: (e: React.MouseEvent) => void,
 	onClick?: (rowId: string) => void,
@@ -22,6 +23,7 @@ export const HeaderCell: React.FC<Props> = ({
 												dropdownItems=[],
 												style,
 												cellRef,
+												onMouseDown,
 												resizable=false,
 												onResizeMouseDown,
 												onClick,
@@ -33,7 +35,7 @@ export const HeaderCell: React.FC<Props> = ({
 
 
 	return (
-			<td className="blue-orange-header-data-table-td" style={style} ref={cellRef}>
+			<td className="blue-orange-header-data-table-td" style={style} ref={cellRef} onMouseDown={onMouseDown}>
                 {dropdownItems.length > 0 &&
                     <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected}>
                         <div className="blue-orange-header-data-table-cell">

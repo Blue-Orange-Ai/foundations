@@ -47,8 +47,10 @@ interface Props {
     loading?: boolean,
 	loadingPlaceholderRows?: number,
 	resizableColumns?: boolean,
+	reorderableColumns?: boolean,
 	minColumnWidth?: number,
-	maxColumnWidth?: number
+	maxColumnWidth?: number,
+	onColumnOrderChange?: (previousIndex: number, newIndex: number, updatedSchema: Array<TableField>) => void
 }
 
 export const DataTable: React.FC<Props> = ({
@@ -57,8 +59,10 @@ export const DataTable: React.FC<Props> = ({
                                                loading=false,
                                                loadingPlaceholderRows=10,
 												resizableColumns=false,
+												reorderableColumns=false,
 												minColumnWidth=50,
-												maxColumnWidth}) => {
+												maxColumnWidth,
+												onColumnOrderChange}) => {
 
 	const clampWidth = (width: number): number => {
 		const next = Math.max(minColumnWidth, width);
@@ -67,6 +71,12 @@ export const DataTable: React.FC<Props> = ({
 		}
 		return next;
 	}
+
+	const [orderedSchema, setOrderedSchema] = useState<Array<TableField>>(schema);
+	useEffect(() => {
+		setOrderedSchema(schema);
+		setColumnWidths({});
+	}, [schema]);
 
 	const getCellValue = (row: any, field: TableField, colIdx: number) => {
 		if (Array.isArray(row)) {
@@ -82,6 +92,8 @@ export const DataTable: React.FC<Props> = ({
 
 	const [columnWidths, setColumnWidths] = useState<Record<number, number>>({});
 	const [resizeGuideLeft, setResizeGuideLeft] = useState<number | null>(null);
+	const [reorderGuideLeft, setReorderGuideLeft] = useState<number | null>(null);
+	const [isReordering, setIsReordering] = useState<boolean>(false);
 	const resizingRef = useRef<{
 		colIdx: number;
 		startX: number;
@@ -91,6 +103,12 @@ export const DataTable: React.FC<Props> = ({
 	} | null>(null);
 	const tableContainerRef = useRef<HTMLDivElement | null>(null);
 	const headerCellRefs = useRef<Record<number, HTMLTableCellElement | null>>({});
+	const reorderRef = useRef<{
+		fromIndex: number;
+		startX: number;
+		active: boolean;
+		insertIndex: number | null;
+	} | null>(null);
 
 	useEffect(() => {
 		const el = tableContainerRef.current;
@@ -140,7 +158,7 @@ export const DataTable: React.FC<Props> = ({
 			setColumnWidths((prev) => {
 				let changed = false;
 				const next: Record<number, number> = {...prev};
-				for (let colIdx = 0; colIdx < schema.length; colIdx++) {
+				for (let colIdx = 0; colIdx < orderedSchema.length; colIdx++) {
 					const existing = next[colIdx];
 					if (typeof existing === "number") {
 						const clamped = clampWidth(existing);
@@ -165,14 +183,171 @@ export const DataTable: React.FC<Props> = ({
 		return () => {
 			window.cancelAnimationFrame(raf);
 		};
-	}, [resizableColumns, schema.length, minColumnWidth, maxColumnWidth]);
+	}, [resizableColumns, orderedSchema.length, minColumnWidth, maxColumnWidth]);
+
+	useEffect(() => {
+		if (!reorderableColumns) {
+			setReorderGuideLeft(null);
+			reorderRef.current = null;
+			setIsReordering(false);
+		}
+	}, [reorderableColumns]);
 
 	const setHeaderCellRef = (colIdx: number) => (el: HTMLTableCellElement | null) => {
 		headerCellRefs.current[colIdx] = el;
 	}
 
+	const moveInArray = <T,>(arr: Array<T>, from: number, to: number): Array<T> => {
+		if (from === to) {
+			return arr;
+		}
+		const next = [...arr];
+		const [item] = next.splice(from, 1);
+		next.splice(to, 0, item);
+		return next;
+	}
+
+	const reorderColumnWidths = (prev: Record<number, number>, from: number, to: number, size: number) => {
+		const widths: Array<number | undefined> = [];
+		for (let i = 0; i < size; i++) {
+			widths.push(prev[i]);
+		}
+		const moved = moveInArray(widths, from, to);
+		const next: Record<number, number> = {};
+		for (let i = 0; i < moved.length; i++) {
+			const w = moved[i];
+			if (typeof w === "number") {
+				next[i] = w;
+			}
+		}
+		return next;
+	}
+
+	const beginReorder = (fromIndex: number) => (e: React.MouseEvent) => {
+		if (!reorderableColumns) {
+			return;
+		}
+		if (e.button !== 0) {
+			return;
+		}
+		if (resizingRef.current) {
+			return;
+		}
+
+		reorderRef.current = {
+			fromIndex,
+			startX: e.clientX,
+			active: false,
+			insertIndex: null,
+		};
+		setIsReordering(false);
+
+		const containerEl = tableContainerRef.current;
+		if (!containerEl) {
+			reorderRef.current = null;
+			return;
+		}
+
+		const updateGuide = (clientX: number) => {
+			const r = reorderRef.current;
+			const c = tableContainerRef.current;
+			if (!r || !c) {
+				return;
+			}
+			const containerRect = c.getBoundingClientRect();
+			const x = clientX - containerRect.left + c.scrollLeft;
+
+			let insertIndex = orderedSchema.length;
+			for (let i = 0; i < orderedSchema.length; i++) {
+				const cellEl = headerCellRefs.current[i];
+				if (!cellEl) {
+					continue;
+				}
+				const rect = cellEl.getBoundingClientRect();
+				const left = rect.left - containerRect.left + c.scrollLeft;
+				const mid = left + rect.width / 2;
+				if (x < mid) {
+					insertIndex = i;
+					break;
+				}
+			}
+
+			r.insertIndex = insertIndex;
+			const guideLeft = (() => {
+				if (insertIndex >= orderedSchema.length) {
+					const lastEl = headerCellRefs.current[orderedSchema.length - 1];
+					if (!lastEl) {
+						return null;
+					}
+					const rect = lastEl.getBoundingClientRect();
+					return rect.right - containerRect.left + c.scrollLeft;
+				}
+				const el = headerCellRefs.current[insertIndex];
+				if (!el) {
+					return null;
+				}
+				const rect = el.getBoundingClientRect();
+				return rect.left - containerRect.left + c.scrollLeft;
+			})();
+			if (guideLeft !== null) {
+				setReorderGuideLeft(guideLeft);
+			}
+		};
+
+		const onMouseMove = (ev: MouseEvent) => {
+			const r = reorderRef.current;
+			if (!r) {
+				return;
+			}
+			const delta = ev.clientX - r.startX;
+			if (!r.active) {
+				if (Math.abs(delta) < 5) {
+					return;
+				}
+				r.active = true;
+				setResizeGuideLeft(null);
+				setIsReordering(true);
+				document.body.style.userSelect = "none";
+			}
+			updateGuide(ev.clientX);
+		};
+
+		const onMouseUp = () => {
+			const r = reorderRef.current;
+			const wasActive = r?.active;
+			const insertIndex = r?.insertIndex;
+			const from = r?.fromIndex;
+			reorderRef.current = null;
+			setReorderGuideLeft(null);
+			setIsReordering(false);
+			document.body.style.userSelect = "";
+			window.removeEventListener("mousemove", onMouseMove);
+			window.removeEventListener("mouseup", onMouseUp);
+
+			if (!wasActive || insertIndex === null || typeof from !== "number") {
+				return;
+			}
+			const to = insertIndex > from ? insertIndex - 1 : insertIndex;
+			if (to === from) {
+				return;
+			}
+			setOrderedSchema((prevSchema) => {
+				setColumnWidths((prev) => reorderColumnWidths(prev, from, to, prevSchema.length));
+				const updated = moveInArray(prevSchema, from, to);
+				onColumnOrderChange?.(from, to, updated);
+				return updated;
+			});
+		};
+
+		window.addEventListener("mousemove", onMouseMove);
+		window.addEventListener("mouseup", onMouseUp);
+	}
+
 	const beginResize = (colIdx: number) => (e: React.MouseEvent) => {
 		if (!resizableColumns) {
+			return;
+		}
+		if (isReordering || reorderRef.current?.active) {
 			return;
 		}
 		e.preventDefault();
@@ -247,10 +422,19 @@ export const DataTable: React.FC<Props> = ({
 					containerRef={tableContainerRef}
 					theme={TableTheme.DATASET}
 					tableStyle={resizableColumns ? ({tableLayout: "fixed"} as React.CSSProperties) : undefined}
-					overlay={resizeGuideLeft !== null ? <div className="blue-orange-data-table-resize-guide" style={{left: resizeGuideLeft}}></div> : null}>
+					overlay={
+					(reorderGuideLeft !== null || resizeGuideLeft !== null)
+						? (
+							<>
+								{resizeGuideLeft !== null && <div className="blue-orange-data-table-resize-guide" style={{left: resizeGuideLeft}}></div>}
+								{reorderGuideLeft !== null && <div className="blue-orange-data-table-resize-guide" style={{left: reorderGuideLeft}}></div>}
+							</>
+						)
+						: null
+					}>
 					<THead>
 						<Row>
-							{schema.map((item, index) => (
+							{orderedSchema.map((item, index) => (
 								<React.Fragment key={item.label + "-" + index}>
 									{loading &&
 										<LoadingCell
@@ -263,7 +447,8 @@ export const DataTable: React.FC<Props> = ({
 											dropdownItems={item.dropDownItems}
 											style={getColumnStyle(index)}
 											cellRef={setHeaderCellRef(index)}
-											resizable={resizableColumns}
+											onMouseDown={beginReorder(index)}
+											resizable={resizableColumns && !isReordering}
 											onResizeMouseDown={beginResize(index)}
 											onDropdownSelected={(item: IContextMenuItem) => {
 											}}>
@@ -282,7 +467,7 @@ export const DataTable: React.FC<Props> = ({
 						{loading &&
 							Array.from({ length: loadingPlaceholderRows }).map((_, index) => (
 								<Row key={"loading-row-" + index} hoverEffect={false}>
-									{schema.map((item, colIdx) => (
+									{orderedSchema.map((item, colIdx) => (
 										<LoadingCell key={"loading-cell-" + index + "-" + colIdx} style={getColumnStyle(colIdx)}></LoadingCell>
 									))}
 								</Row>
@@ -292,11 +477,11 @@ export const DataTable: React.FC<Props> = ({
 							<>
 								{data.map((d, rowIdx) => (
 									<Row key={"row-" + rowIdx} hoverEffect={false}>
-                                            {schema.map((item, colIdx) => (
-										<React.Fragment key={"cell-" + rowIdx + "-" + colIdx}>
-											{(() => {
-												const cellValue = getCellValue(d, item, colIdx);
-												const cellStyle = getColumnStyle(colIdx);
+														{orderedSchema.map((item, colIdx) => (
+															<React.Fragment key={"cell-" + rowIdx + "-" + colIdx}>
+																{(() => {
+																	const cellValue = getCellValue(d, item, colIdx);
+																	const cellStyle = getColumnStyle(colIdx);
 												return (
 													<>
                                                     {item.type == TableFieldType.STRING &&
