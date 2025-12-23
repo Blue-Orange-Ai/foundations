@@ -61,6 +61,30 @@ thead {
     white-space: nowrap;
 }
 
+.blue-orange-data-table th.blue-orange-data-table-row-number-header {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    background-color: inherit;
+    user-select: none;
+    cursor: default;
+}
+
+.blue-orange-data-table td.blue-orange-data-table-row-number-cell {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background-color: #e0e1e2;
+    user-select: none;
+    cursor: default;
+}
+
+.blue-orange-data-table-theme-object-list .blue-orange-data-table-row-number-cell {
+    background-color: #f7f8f9;
+    border: none;
+    border-bottom: 1px solid #e0e1e2;
+}
+
 .blue-orange-data-table-cell-selected {
     outline-offset: -2px;
     background-color: #c0e1ff;

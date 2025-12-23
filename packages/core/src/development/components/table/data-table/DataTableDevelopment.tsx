@@ -20,6 +20,7 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 	const [reorderableColumns, setReorderableColumns] = useState<boolean>(true);
 	const [cellsSelectable, setCellsSelectable] = useState<boolean>(true);
 	const [rowSelectable, setRowSelectable] = useState<boolean>(false);
+	const [showRowNumbers, setShowRowNumbers] = useState<boolean>(true);
 	const [enableInfiniteScroll, setEnableInfiniteScroll] = useState<boolean>(true);
 	const [showLoadingRow, setShowLoadingRow] = useState<boolean>(false);
 	const [endReachedCount, setEndReachedCount] = useState<number>(0);
@@ -225,6 +226,10 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 				<Checkbox checked={enableInfiniteScroll} onCheckboxChange={setEnableInfiniteScroll}></Checkbox>
 				<span style={{marginLeft: 8}}>Enable infinite scroll</span>
 			</div>
+			<div style={{marginBottom: 12}}>
+				<Checkbox checked={showRowNumbers} onCheckboxChange={setShowRowNumbers}></Checkbox>
+				<span style={{marginLeft: 8}}>Show row numbers</span>
+			</div>
 			<div style={{marginBottom: 12, fontSize: 12, fontFamily: "monospace"}}>
 				End reached count: {endReachedCount}
 			</div>
@@ -250,6 +255,7 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 					data={data}
 					loading={false}
 					loadingPlaceholderRows={2}
+					showRowNumbers={showRowNumbers}
 					enableInfiniteScroll={enableInfiniteScroll}
 					onEndReached={handleEndReached}
 					showLoadingRow={showLoadingRow}

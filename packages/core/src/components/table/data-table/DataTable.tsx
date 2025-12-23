@@ -57,6 +57,7 @@ interface Props {
     data: Array<any>,
     loading?: boolean,
 	loadingPlaceholderRows?: number,
+	showRowNumbers?: boolean,
 	persistKey?: string,
 	enableInfiniteScroll?: boolean,
 	onEndReached?: () => void,
@@ -79,6 +80,7 @@ export const DataTable: React.FC<Props> = ({
                                                data,
                                                loading=false,
                                                loadingPlaceholderRows=10,
+											   showRowNumbers=false,
 											   persistKey,
 											   enableInfiniteScroll=false,
 											   onEndReached,
@@ -153,6 +155,7 @@ export const DataTable: React.FC<Props> = ({
 	const [resizeGuideLeft, setResizeGuideLeft] = useState<number | null>(null);
 	const [reorderGuideLeft, setReorderGuideLeft] = useState<number | null>(null);
 	const [isReordering, setIsReordering] = useState<boolean>(false);
+	const rowNumberColumnWidth = 56;
 	const resizingRef = useRef<{
 		colIdx: number;
 		startX: number;
@@ -893,6 +896,20 @@ export const DataTable: React.FC<Props> = ({
 					}>
 					<THead>
 						<Row>
+							{showRowNumbers && (
+								<th
+									className="blue-orange-data-table-row-number-header"
+									style={{
+										width: rowNumberColumnWidth,
+										minWidth: rowNumberColumnWidth,
+										maxWidth: rowNumberColumnWidth,
+									}}
+								>
+									<div className="blue-orange-header-data-table-cell">
+										<span className="blue-orange-data-table-header-cell-primary-text">#</span>
+									</div>
+								</th>
+							)}
 							{orderedSchema.map((item, index) => (
 								<React.Fragment key={item.label + "-" + index}>
 									{loading &&
@@ -930,6 +947,16 @@ export const DataTable: React.FC<Props> = ({
 						{loading &&
 							Array.from({ length: loadingPlaceholderRows }).map((_, index) => (
 								<Row key={"loading-row-" + index} hoverEffect={false}>
+									{showRowNumbers && (
+										<td
+											className="blue-orange-data-table-row-number-cell"
+											style={{
+												width: rowNumberColumnWidth,
+												minWidth: rowNumberColumnWidth,
+												maxWidth: rowNumberColumnWidth,
+											}}
+										></td>
+									)}
 									{orderedSchema.map((item, colIdx) => (
 										<LoadingCell key={"loading-cell-" + index + "-" + colIdx} style={getColumnStyle(colIdx)}></LoadingCell>
 									))}
@@ -943,11 +970,25 @@ export const DataTable: React.FC<Props> = ({
 										key={"row-" + rowIdx}
 										hoverEffect={false}
 										rowRef={(!showLoadingRow && enableInfiniteScroll && rowIdx === data.length - 1) ? infiniteScrollRowRef : undefined}>
+										{showRowNumbers && (
+											<td
+												className="blue-orange-data-table-row-number-cell"
+												style={{
+													width: rowNumberColumnWidth,
+													minWidth: rowNumberColumnWidth,
+													maxWidth: rowNumberColumnWidth,
+												}}
+											>
+												<div className="blue-orange-header-data-table-cell">
+													{rowIdx + 1}
+												</div>
+											</td>
+										)}
 														{orderedSchema.map((item, colIdx) => (
-															<React.Fragment key={"cell-" + rowIdx + "-" + colIdx}>
-																{(() => {
-																	const cellValue = getCellValue(d, item, colIdx);
-																	const cellStyle = getColumnStyle(colIdx);
+														<React.Fragment key={"cell-" + rowIdx + "-" + colIdx}>
+															{(() => {
+																const cellValue = getCellValue(d, item, colIdx);
+																const cellStyle = getColumnStyle(colIdx);
 																	const isSelected = selectedCells.has(cellKey(rowIdx, colIdx));
 																	const isRowSelected = selectedRows.has(rowIdx);
 
@@ -1016,6 +1057,16 @@ export const DataTable: React.FC<Props> = ({
 										key={"infinite-loading-row"}
 										hoverEffect={false}
 										rowRef={(enableInfiniteScroll) ? infiniteScrollRowRef : undefined}>
+										{showRowNumbers && (
+											<td
+												className="blue-orange-data-table-row-number-cell"
+												style={{
+													width: rowNumberColumnWidth,
+													minWidth: rowNumberColumnWidth,
+													maxWidth: rowNumberColumnWidth,
+												}}
+										></td>
+										)}
 										{orderedSchema.map((item, colIdx) => (
 											<LoadingCell key={"infinite-loading-cell-" + colIdx} style={getColumnStyle(colIdx)}></LoadingCell>
 										))}
