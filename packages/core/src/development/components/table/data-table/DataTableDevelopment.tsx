@@ -245,6 +245,7 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 			</div>
 			<div style={{height: 420, overflowY: "auto", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 6, position: "relative"}}>
 				<DataTable
+					persistKey="datatable-development"
 					schema={displaySchema}
 					data={data}
 					loading={false}

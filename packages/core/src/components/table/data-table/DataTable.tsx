@@ -57,6 +57,7 @@ interface Props {
     data: Array<any>,
     loading?: boolean,
 	loadingPlaceholderRows?: number,
+	persistKey?: string,
 	enableInfiniteScroll?: boolean,
 	onEndReached?: () => void,
 	showLoadingRow?: boolean,
@@ -78,6 +79,7 @@ export const DataTable: React.FC<Props> = ({
                                                data,
                                                loading=false,
                                                loadingPlaceholderRows=10,
+											   persistKey,
 											   enableInfiniteScroll=false,
 											   onEndReached,
 											   showLoadingRow=false,
@@ -104,8 +106,36 @@ export const DataTable: React.FC<Props> = ({
 	const [orderedSchema, setOrderedSchema] = useState<Array<TableField>>(schema);
 	useEffect(() => {
 		setOrderedSchema(schema);
-		setColumnWidths({});
-	}, [schema]);
+
+		if (!persistKey) {
+			setColumnWidths({});
+			return;
+		}
+
+		try {
+			if (typeof window === "undefined" || typeof window.localStorage === "undefined") {
+				setColumnWidths({});
+				return;
+			}
+			const stored = window.localStorage.getItem(`blue-orange-datatable:${persistKey}:column-widths-by-label`);
+			if (!stored) {
+				setColumnWidths({});
+				return;
+			}
+			const parsed = JSON.parse(stored) as Record<string, unknown>;
+			const next: Record<number, number> = {};
+			for (let i = 0; i < schema.length; i++) {
+				const label = schema[i]?.label;
+				const w = label ? parsed[label] : undefined;
+				if (typeof w === "number" && Number.isFinite(w)) {
+					next[i] = w;
+				}
+			}
+			setColumnWidths(next);
+		} catch (err) {
+			setColumnWidths({});
+		}
+	}, [schema, persistKey]);
 
 	const getCellValue = (row: any, field: TableField, colIdx: number) => {
 		if (Array.isArray(row)) {
@@ -486,6 +516,98 @@ export const DataTable: React.FC<Props> = ({
 			resizingRef.current = null;
 		}
 	}, [resizableColumns]);
+
+	useEffect(() => {
+		if (!persistKey) {
+			return;
+		}
+		try {
+			if (typeof window === "undefined" || typeof window.localStorage === "undefined") {
+				return;
+			}
+			const widthsByLabel: Record<string, number> = {};
+			for (let i = 0; i < orderedSchema.length; i++) {
+				const label = orderedSchema[i]?.label;
+				const w = columnWidths[i];
+				if (label && typeof w === "number" && Number.isFinite(w)) {
+					widthsByLabel[label] = w;
+				}
+			}
+			window.localStorage.setItem(
+				`blue-orange-datatable:${persistKey}:column-widths-by-label`,
+				JSON.stringify(widthsByLabel)
+			);
+		} catch (err) {
+			// ignore
+		}
+	}, [persistKey, columnWidths, orderedSchema]);
+
+	useEffect(() => {
+		if (!persistKey) {
+			return;
+		}
+		const raf = window.requestAnimationFrame(() => {
+			try {
+				if (typeof window === "undefined" || typeof window.localStorage === "undefined") {
+					return;
+				}
+				const c = tableContainerRef.current;
+				if (!c) {
+					return;
+				}
+				const stored = window.localStorage.getItem(`blue-orange-datatable:${persistKey}:scroll-left`);
+				if (!stored) {
+					return;
+				}
+				const next = Number(stored);
+				if (Number.isFinite(next)) {
+					c.scrollLeft = next;
+				}
+			} catch (err) {
+				// ignore
+			}
+		});
+		return () => {
+			window.cancelAnimationFrame(raf);
+		};
+	}, [persistKey]);
+
+	useEffect(() => {
+		if (!persistKey) {
+			return;
+		}
+		try {
+			if (typeof window === "undefined" || typeof window.localStorage === "undefined") {
+				return;
+			}
+			const c = tableContainerRef.current;
+			if (!c) {
+				return;
+			}
+			let t: number | null = null;
+			const onScroll = () => {
+				if (t !== null) {
+					window.clearTimeout(t);
+				}
+				t = window.setTimeout(() => {
+					try {
+						window.localStorage.setItem(`blue-orange-datatable:${persistKey}:scroll-left`, String(c.scrollLeft));
+					} catch (err) {
+						// ignore
+					}
+				}, 50);
+			};
+			c.addEventListener("scroll", onScroll, {passive: true});
+			return () => {
+				c.removeEventListener("scroll", onScroll as any);
+				if (t !== null) {
+					window.clearTimeout(t);
+				}
+			};
+		} catch (err) {
+			return;
+		}
+	}, [persistKey]);
 
 	useEffect(() => {
 		if (!resizableColumns) {
