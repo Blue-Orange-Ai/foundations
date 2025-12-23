@@ -132,6 +132,41 @@ export const DataTable: React.FC<Props> = ({
 		}
 	}, [resizableColumns]);
 
+	useEffect(() => {
+		if (!resizableColumns) {
+			return;
+		}
+		const raf = window.requestAnimationFrame(() => {
+			setColumnWidths((prev) => {
+				let changed = false;
+				const next: Record<number, number> = {...prev};
+				for (let colIdx = 0; colIdx < schema.length; colIdx++) {
+					const existing = next[colIdx];
+					if (typeof existing === "number") {
+						const clamped = clampWidth(existing);
+						if (clamped !== existing) {
+							next[colIdx] = clamped;
+							changed = true;
+						}
+						continue;
+					}
+
+					const cellEl = headerCellRefs.current[colIdx];
+					if (!cellEl) {
+						continue;
+					}
+					const measured = cellEl.getBoundingClientRect().width;
+					next[colIdx] = clampWidth(measured);
+					changed = true;
+				}
+				return changed ? next : prev;
+			});
+		});
+		return () => {
+			window.cancelAnimationFrame(raf);
+		};
+	}, [resizableColumns, schema.length, minColumnWidth, maxColumnWidth]);
+
 	const setHeaderCellRef = (colIdx: number) => (el: HTMLTableCellElement | null) => {
 		headerCellRefs.current[colIdx] = el;
 	}
