@@ -106,9 +106,12 @@ export const ComboChart: React.FC<Props> = ({
     });
 
     // ---- Persistent range selection state ----
+    const persistentRangeRef = useRef<{ start: any; end: any } | null>(initialRange || null);
     const [persistentRange, setPersistentRange] = useState<{ start: any; end: any } | null>(
-        initialRange || null
+        persistentRangeRef.current
     );
+    const persistentRangeSelectRef = useRef<boolean>(persistentRangeSelect);
+    const onPersistentRangeChangeRef = useRef<Props["onPersistentRangeChange"]>(onPersistentRangeChange);
     const persistentDragRef = useRef<{
         active: boolean;
         dragType: 'start' | 'end' | 'range' | null;
@@ -119,6 +122,18 @@ export const ComboChart: React.FC<Props> = ({
         startOffset: 0,
     });
 
+    const setPersistentRangeSynced = (
+        nextOrUpdater:
+            | { start: any; end: any }
+            | null
+            | ((prev: { start: any; end: any } | null) => { start: any; end: any } | null)
+    ) => {
+        const prev = persistentRangeRef.current;
+        const next = typeof nextOrUpdater === "function" ? nextOrUpdater(prev) : nextOrUpdater;
+        persistentRangeRef.current = next;
+        setPersistentRange(next);
+    };
+
     // ---- Pinned scatter point state ----
     const pinnedRef = useRef<{ datasetIndex: number; index: number } | null>(null);
 
@@ -126,14 +141,31 @@ export const ComboChart: React.FC<Props> = ({
     const valueToPixel = (value: any) => {
         const chart = chartInstanceRef.current as any;
         if (!chart?.scales?.x) return null;
-        return chart.scales.x.getPixelForValue(value);
+        const sc = chart.scales.x as any;
+
+        // Category scale: convert label -> index for stable positioning
+        if (sc?.type === "category" && typeof value === "string" && typeof sc.getLabels === "function") {
+            const labels = sc.getLabels() as any[];
+            const idx = labels.indexOf(value);
+            if (idx >= 0) return sc.getPixelForValue(idx);
+        }
+
+        return sc.getPixelForValue(value);
     };
 
     // Convert pixel position to value
     const pixelToValue = (pixel: number) => {
         const chart = chartInstanceRef.current as any;
         if (!chart?.scales?.x) return null;
-        return chart.scales.x.getValueForPixel(pixel);
+        const sc = chart.scales.x as any;
+        const raw = sc.getValueForPixel(pixel);
+
+        // Category scale: Chart.js returns numeric index, but callers expect the label
+        if (sc?.type === "category" && typeof raw === "number" && typeof sc.getLabelForValue === "function") {
+            return sc.getLabelForValue(raw);
+        }
+
+        return raw;
     };
 
     const clearSelection = () => {
@@ -142,8 +174,8 @@ export const ComboChart: React.FC<Props> = ({
     };
 
     const clearPersistentRange = () => {
-        setPersistentRange(null);
-        onPersistentRangeChange?.(null, null);
+        setPersistentRangeSynced(null);
+        onPersistentRangeChangeRef.current?.(null, null);
         chartInstanceRef.current?.draw();
     };
 
@@ -181,9 +213,10 @@ export const ComboChart: React.FC<Props> = ({
 
     // ---- Persistent range handlers ----
     const getPersistentRangePixels = () => {
-        if (!persistentRange) return null;
-        const startPx = valueToPixel(persistentRange.start);
-        const endPx = valueToPixel(persistentRange.end);
+        const range = persistentRangeRef.current;
+        if (!range) return null;
+        const startPx = valueToPixel(range.start);
+        const endPx = valueToPixel(range.end);
         if (startPx === null || endPx === null) return null;
         return {
             start: Math.min(startPx, endPx),
@@ -192,7 +225,7 @@ export const ComboChart: React.FC<Props> = ({
     };
 
     const getHandleHitTest = (x: number, y: number) => {
-        if (!persistentRangeSelect || !persistentRange) return null;
+        if (!persistentRangeSelectRef.current || !persistentRangeRef.current) return null;
         const chart = chartInstanceRef.current as any;
         const ca = chart?.chartArea;
         if (!ca) return null;
@@ -231,7 +264,7 @@ export const ComboChart: React.FC<Props> = ({
         const { x, y } = coords;
         
         // Handle persistent range selection first
-        if (persistentRangeSelect) {
+        if (persistentRangeSelectRef.current) {
             const handleType = getHandleHitTest(x, y);
             if (handleType) {
                 e.preventDefault();
@@ -240,7 +273,7 @@ export const ComboChart: React.FC<Props> = ({
                 persistentDragRef.current.active = true;
                 persistentDragRef.current.dragType = handleType;
                 
-                if (handleType === 'range' && persistentRange) {
+                if (handleType === 'range' && persistentRangeRef.current) {
                     const pixels = getPersistentRangePixels();
                     if (pixels) {
                         persistentDragRef.current.startOffset = x - pixels.start;
@@ -256,7 +289,7 @@ export const ComboChart: React.FC<Props> = ({
                 const clampedX = clampToChartAreaX(x);
                 const value = pixelToValue(clampedX);
                 if (value !== null) {
-                    setPersistentRange({ start: value, end: value });
+                    setPersistentRangeSynced({ start: value, end: value });
                     persistentDragRef.current.active = true;
                     persistentDragRef.current.dragType = 'end';
                     (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
@@ -280,7 +313,7 @@ export const ComboChart: React.FC<Props> = ({
         if (!coords) return;
         
         // Handle persistent range dragging
-        if (persistentRangeSelect && persistentDragRef.current.active && persistentRange) {
+        if (persistentRangeSelectRef.current && persistentDragRef.current.active && persistentRangeRef.current) {
             e.preventDefault();
             const clampedX = clampToChartAreaX(coords.x);
             const dragType = persistentDragRef.current.dragType;
@@ -288,12 +321,12 @@ export const ComboChart: React.FC<Props> = ({
             if (dragType === 'start') {
                 const newStart = pixelToValue(clampedX);
                 if (newStart !== null) {
-                    setPersistentRange(prev => prev ? { ...prev, start: newStart } : null);
+                    setPersistentRangeSynced(prev => (prev ? { ...prev, start: newStart } : null));
                 }
             } else if (dragType === 'end') {
                 const newEnd = pixelToValue(clampedX);
                 if (newEnd !== null) {
-                    setPersistentRange(prev => prev ? { ...prev, end: newEnd } : null);
+                    setPersistentRangeSynced(prev => (prev ? { ...prev, end: newEnd } : null));
                 }
             } else if (dragType === 'range') {
                 const pixels = getPersistentRangePixels();
@@ -313,7 +346,7 @@ export const ComboChart: React.FC<Props> = ({
                         const newEnd = pixelToValue(clampedEndPx);
                         
                         if (newStart !== null && newEnd !== null) {
-                            setPersistentRange({ start: newStart, end: newEnd });
+                            setPersistentRangeSynced({ start: newStart, end: newEnd });
                         }
                     }
                 }
@@ -331,7 +364,7 @@ export const ComboChart: React.FC<Props> = ({
         }
         
         // Update cursor for persistent range handles (only when not dragging)
-        if (persistentRangeSelect && !persistentDragRef.current.active && !dragRef.current.active) {
+        if (persistentRangeSelectRef.current && !persistentDragRef.current.active && !dragRef.current.active) {
             const canvas = chartInstanceRef.current?.canvas;
             if (canvas) {
                 const handleType = getHandleHitTest(coords.x, coords.y);
@@ -362,13 +395,13 @@ export const ComboChart: React.FC<Props> = ({
 
     const onPointerUp = () => {
         // Handle persistent range selection
-        if (persistentRangeSelect && persistentDragRef.current.active) {
+        if (persistentRangeSelectRef.current && persistentDragRef.current.active) {
             persistentDragRef.current.active = false;
             persistentDragRef.current.dragType = null;
             persistentDragRef.current.startOffset = 0;
             
-            if (persistentRange) {
-                onPersistentRangeChange?.(persistentRange.start, persistentRange.end);
+            if (persistentRangeRef.current) {
+                onPersistentRangeChangeRef.current?.(persistentRangeRef.current.start, persistentRangeRef.current.end);
             }
             return;
         }
@@ -380,7 +413,7 @@ export const ComboChart: React.FC<Props> = ({
     };
 
     const onPointerCancel = () => {
-        if (persistentRangeSelect && persistentDragRef.current.active) {
+        if (persistentRangeSelectRef.current && persistentDragRef.current.active) {
             persistentDragRef.current.active = false;
             persistentDragRef.current.dragType = null;
             persistentDragRef.current.startOffset = 0;
@@ -402,7 +435,7 @@ export const ComboChart: React.FC<Props> = ({
         if (e.key === "Escape") {
             clearSelection();
             clearPinned();
-            if (persistentRangeSelect) {
+            if (persistentRangeSelectRef.current) {
                 clearPersistentRange();
             }
         }
@@ -573,7 +606,7 @@ export const ComboChart: React.FC<Props> = ({
             }
             
             // Draw persistent range selection
-            if (persistentRangeSelect && persistentRange) {
+            if (persistentRangeSelectRef.current && persistentRangeRef.current) {
                 const pixels = getPersistentRangePixels();
                 if (pixels && pixels.end > pixels.start) {
                     const x1 = Math.max(pixels.start, chartArea.left);
@@ -996,10 +1029,15 @@ export const ComboChart: React.FC<Props> = ({
 
     // Handle initial range and range changes
     useEffect(() => {
-        if (initialRange && !persistentRange) {
-            setPersistentRange(initialRange);
+        if (initialRange && !persistentRangeRef.current) {
+            setPersistentRangeSynced(initialRange);
         }
     }, [initialRange]);
+
+    useEffect(() => {
+        persistentRangeSelectRef.current = persistentRangeSelect;
+        onPersistentRangeChangeRef.current = onPersistentRangeChange;
+    }, [persistentRangeSelect, onPersistentRangeChange]);
 
     useEffect(() => {
         if (persistentRange) {
