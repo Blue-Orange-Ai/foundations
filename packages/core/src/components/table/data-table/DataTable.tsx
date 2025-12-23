@@ -211,6 +211,22 @@ export const DataTable: React.FC<Props> = ({
 		e.preventDefault();
 		e.stopPropagation();
 
+		if (e.metaKey || e.ctrlKey) {
+			const current = {rowIdx, colIdx};
+			const key = cellKey(rowIdx, colIdx);
+			const next = new Set(selectedCellsRef.current);
+			if (next.has(key)) {
+				next.delete(key);
+			} else {
+				next.add(key);
+			}
+			selectedCellsRef.current = next;
+			setSelectedCells(next);
+			lastClickedCellRef.current = current;
+			onCellSelection?.(getSelectedCells());
+			return;
+		}
+
 		clearCellSelection();
 		document.body.style.userSelect = "none";
 
