@@ -15,6 +15,11 @@ import {CurrencyDataCell} from "../cells/currency-data-cell/CurrencyDataCell";
 import {NumberDataCell} from "../cells/number-data-cell/NumberDataCell";
 import {JsonObjDataCell} from "../cells/json-obj-data-cell/JsonObjDataCell";
 
+interface SimpleCellRef {
+    rowIndex: number,
+    colIndex: number
+}
+
 export enum TableFieldType {
 	STRING="STRING",
 	NUMBER="NUMBER",
@@ -48,9 +53,11 @@ interface Props {
 	loadingPlaceholderRows?: number,
 	resizableColumns?: boolean,
 	reorderableColumns?: boolean,
+	cellsSelectable?: boolean,
 	minColumnWidth?: number,
 	maxColumnWidth?: number,
-	onColumnOrderChange?: (previousIndex: number, newIndex: number, updatedSchema: Array<TableField>) => void
+	onColumnOrderChange?: (previousIndex: number, newIndex: number, updatedSchema: Array<TableField>) => void,
+	onCellSelection?: (selection: Array<{rowIndex: number; colIndex: number}>) => void
 }
 
 export const DataTable: React.FC<Props> = ({
@@ -60,9 +67,11 @@ export const DataTable: React.FC<Props> = ({
                                                loadingPlaceholderRows=10,
 												resizableColumns=false,
 												reorderableColumns=false,
+												cellsSelectable=false,
 												minColumnWidth=50,
 												maxColumnWidth,
-												onColumnOrderChange}) => {
+												onColumnOrderChange,
+												onCellSelection}) => {
 
 	const clampWidth = (width: number): number => {
 		const next = Math.max(minColumnWidth, width);
@@ -109,6 +118,133 @@ export const DataTable: React.FC<Props> = ({
 		active: boolean;
 		insertIndex: number | null;
 	} | null>(null);
+
+	type CellCoord = {rowIdx: number; colIdx: number};
+	const cellKey = (rowIdx: number, colIdx: number) => `${rowIdx}:${colIdx}`;
+
+	const selectingCellsRef = useRef<boolean>(false);
+	const lastClickedCellRef = useRef<CellCoord | null>(null);
+	const selectionStartRef = useRef<CellCoord | null>(null);
+	const selectionEndRef = useRef<CellCoord | null>(null);
+	const selectedCellsRef = useRef<Set<string>>(new Set());
+	const [selectedCells, setSelectedCells] = useState<Set<string>>(new Set());
+
+	const computeSelectionKeys = (start: CellCoord, end: CellCoord) => {
+		const rowStart = Math.min(start.rowIdx, end.rowIdx);
+		const rowEnd = Math.max(start.rowIdx, end.rowIdx);
+		const colStart = Math.min(start.colIdx, end.colIdx);
+		const colEnd = Math.max(start.colIdx, end.colIdx);
+		const next = new Set<string>();
+		for (let r = rowStart; r <= rowEnd; r++) {
+			for (let c = colStart; c <= colEnd; c++) {
+				next.add(cellKey(r, c));
+			}
+		}
+		return next;
+	}
+
+	const clearCellSelection = () => {
+		selectedCellsRef.current = new Set();
+		setSelectedCells(new Set());
+	}
+
+	const getSelectedCells = (): SimpleCellRef[] => {
+        return Array.from(selectedCellsRef.current)
+            .map((key) => {
+                const [rowIndex, colIndex] = key.split(":");
+                return {rowIndex: Number(rowIndex), colIndex: Number(colIndex)};
+            })
+            .sort((a, b) => (a.rowIndex - b.rowIndex) || (a.colIndex - b.colIndex));
+    }
+
+    const finalizeCellSelection = () => {
+		if (!selectingCellsRef.current) {
+			return;
+		}
+		selectingCellsRef.current = false;
+		selectionStartRef.current = null;
+		selectionEndRef.current = null;
+		document.body.style.userSelect = "";
+
+		const selection = getSelectedCells();
+
+		onCellSelection?.(selection);
+	}
+
+	useEffect(() => {
+		if (!cellsSelectable) {
+			return;
+		}
+		const onMouseUp = () => {
+			finalizeCellSelection();
+		};
+		window.addEventListener("mouseup", onMouseUp);
+		return () => {
+			window.removeEventListener("mouseup", onMouseUp);
+		};
+	}, [cellsSelectable, onCellSelection]);
+
+	useEffect(() => {
+		if (!cellsSelectable) {
+			selectingCellsRef.current = false;
+			lastClickedCellRef.current = null;
+			selectionStartRef.current = null;
+			selectionEndRef.current = null;
+			document.body.style.userSelect = "";
+			clearCellSelection();
+		}
+	}, [cellsSelectable]);
+
+	const beginCellSelection = (rowIdx: number, colIdx: number) => (e: React.MouseEvent) => {
+		if (!cellsSelectable) {
+			return;
+		}
+		if (loading) {
+			return;
+		}
+		if (e.button !== 0) {
+			return;
+		}
+		if (resizingRef.current || reorderRef.current?.active || isReordering) {
+			return;
+		}
+		e.preventDefault();
+		e.stopPropagation();
+
+		clearCellSelection();
+		document.body.style.userSelect = "none";
+
+		selectingCellsRef.current = true;
+		const current = {rowIdx, colIdx};
+		const start = (e.shiftKey && lastClickedCellRef.current)
+			? lastClickedCellRef.current
+			: current;
+		selectionStartRef.current = start;
+		selectionEndRef.current = current;
+		const next = computeSelectionKeys(start, current);
+		selectedCellsRef.current = next;
+		setSelectedCells(next);
+
+		lastClickedCellRef.current = current;
+	}
+
+	const extendCellSelectionTo = (rowIdx: number, colIdx: number) => {
+		if (!cellsSelectable) {
+			return;
+		}
+		if (!selectingCellsRef.current) {
+			return;
+		}
+		const start = selectionStartRef.current;
+		if (!start) {
+			return;
+		}
+		const end = {rowIdx, colIdx};
+		selectionEndRef.current = end;
+		const next = computeSelectionKeys(start, end);
+		selectedCellsRef.current = next;
+		setSelectedCells(next);
+	}
 
 	useEffect(() => {
 		const el = tableContainerRef.current;
@@ -482,37 +618,52 @@ export const DataTable: React.FC<Props> = ({
 																{(() => {
 																	const cellValue = getCellValue(d, item, colIdx);
 																	const cellStyle = getColumnStyle(colIdx);
-												return (
-													<>
-                                                    {item.type == TableFieldType.STRING &&
-															<TextDataCell style={{...cellStyle}}
-															  text={cellValue}
-															  multipleValues={item.multipleValues}></TextDataCell>
-                                                    }
-                                                    {item.type == TableFieldType.NUMBER &&
-															<NumberDataCell style={{...cellStyle}}
-															  value={cellValue}
-															  multipleValues={item.multipleValues}></NumberDataCell>
-                                                    }
-                                                    {item.type == TableFieldType.DATE &&
-															<DateDataCell style={{...cellStyle}}
-																date={cellValue}
-																multipleValues={item.multipleValues}></DateDataCell>
-                                                    }
-                                                    {item.type == TableFieldType.CURRENCY &&
-															<CurrencyDataCell style={{...cellStyle}}
-															  amount={cellValue} currency={"AUD"}
-															  multipleValues={item.multipleValues}></CurrencyDataCell>
-                                                    }
-                                                    {item.type == TableFieldType.STRUCT &&
-															<JsonObjDataCell style={{...cellStyle}}
-																  obj={cellValue}
-																  multipleValues={item.multipleValues}></JsonObjDataCell>
-                                                    }
-													</>
-												);
-											})()}
-										</React.Fragment>
+																	const isSelected = selectedCells.has(cellKey(rowIdx, colIdx));
+
+																	const tdProps = cellsSelectable
+																		? {
+																			onMouseDown: beginCellSelection(rowIdx, colIdx),
+																			onMouseEnter: () => extendCellSelectionTo(rowIdx, colIdx),
+																			className: isSelected ? "blue-orange-data-table-cell-selected" : undefined,
+																		}
+																		: undefined;
+
+																	return (
+																		<>
+																					{item.type == TableFieldType.STRING &&
+																						<TextDataCell style={{...cellStyle}}
+																							  text={cellValue}
+																							  multipleValues={item.multipleValues}
+																							  tdProps={tdProps}></TextDataCell>
+																						}
+																						{item.type == TableFieldType.NUMBER &&
+																						<NumberDataCell style={{...cellStyle}}
+																						  value={cellValue}
+																						  multipleValues={item.multipleValues}
+																						  tdProps={tdProps}></NumberDataCell>
+																						}
+																						{item.type == TableFieldType.DATE &&
+																						<DateDataCell style={{...cellStyle}}
+																							date={cellValue}
+																							multipleValues={item.multipleValues}
+																							tdProps={tdProps}></DateDataCell>
+																						}
+																						{item.type == TableFieldType.CURRENCY &&
+																						<CurrencyDataCell style={{...cellStyle}}
+																						  amount={cellValue} currency={"AUD"}
+																						  multipleValues={item.multipleValues}
+																						  tdProps={tdProps}></CurrencyDataCell>
+																						}
+																						{item.type == TableFieldType.STRUCT &&
+																						<JsonObjDataCell style={{...cellStyle}}
+																							  obj={cellValue}
+																							  multipleValues={item.multipleValues}
+																							  tdProps={tdProps}></JsonObjDataCell>
+																						}
+															</>
+														);
+												})()}
+											</React.Fragment>
                                             ))}
 
                                         </Row>

@@ -17,6 +17,8 @@ interface Props {
 export const DataTableDevelopment: React.FC<Props> = ({}) => {
 	const [resizableColumns, setResizableColumns] = useState<boolean>(true);
 	const [reorderableColumns, setReorderableColumns] = useState<boolean>(true);
+	const [cellsSelectable, setCellsSelectable] = useState<boolean>(true);
+	const [lastSelection, setLastSelection] = useState<Array<{rowIndex: number; colIndex: number}>>([]);
 
 	const displaySchema: Array<TableField> = [
 		{
@@ -157,7 +159,22 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 				<Checkbox checked={reorderableColumns} onCheckboxChange={setReorderableColumns}></Checkbox>
 				<span style={{marginLeft: 8}}>Reorderable columns</span>
 			</div>
-			<DataTable schema={displaySchema} data={demoData} loading={false} loadingPlaceholderRows={2} resizableColumns={resizableColumns} reorderableColumns={reorderableColumns}></DataTable>
+			<div style={{marginBottom: 12}}>
+				<Checkbox checked={cellsSelectable} onCheckboxChange={setCellsSelectable}></Checkbox>
+				<span style={{marginLeft: 8}}>Cells selectable</span>
+			</div>
+			<div style={{marginBottom: 12, fontSize: 12, fontFamily: "monospace"}}>
+				Last selection: {JSON.stringify(lastSelection)}
+			</div>
+			<DataTable
+				schema={displaySchema}
+				data={demoData}
+				loading={false}
+				loadingPlaceholderRows={2}
+				resizableColumns={resizableColumns}
+				reorderableColumns={reorderableColumns}
+				cellsSelectable={cellsSelectable}
+				onCellSelection={(selection) => setLastSelection(selection)}></DataTable>
 		</PaddedPage>
 	)
 }

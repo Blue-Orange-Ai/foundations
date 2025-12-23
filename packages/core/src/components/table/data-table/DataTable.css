@@ -50,3 +50,24 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.blue-orange-data-table-cell-selected {
+    outline-offset: -2px;
+    background-color: #c0e1ff;
+}
+
+.blue-orange-data-table-cell-selected-top-border {
+    border-top: 2px solid dodgerblue;
+}
+
+.blue-orange-data-table-cell-selected-left-border {
+    border-left: 2px solid dodgerblue;
+}
+
+.blue-orange-data-table-cell-selected-right-border {
+    border-right: 2px solid dodgerblue;
+}
+
+.blue-orange-data-table-cell-selected-bottom-border {
+    border-bottom: 2px solid dodgerblue;
+}

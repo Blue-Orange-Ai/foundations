@@ -15,7 +15,8 @@ interface Props {
 	onClick?: () => void,
     dropdownItems?: Array<IContextMenuItem>,
     onDropdownSelected?: (arg0: IContextMenuItem) => void,
-	style?: React.CSSProperties
+	style?: React.CSSProperties,
+	tdProps?: React.TdHTMLAttributes<HTMLTableCellElement>
 }
 export const NumberDataCell: React.FC<Props> = ({
 								  value,
@@ -25,6 +26,7 @@ export const NumberDataCell: React.FC<Props> = ({
                                           dropdownItems,
                                           onDropdownSelected,
 								  style= {},
+								  tdProps,
 								  onClick}) => {
 
 	const getDisplayValue = () => {
@@ -77,11 +79,15 @@ export const NumberDataCell: React.FC<Props> = ({
 		}
 	}
 
+	const {className: tdClassNameProp, onClick: _tdOnClickIgnored, style: _tdStyleIgnored, ...restTdProps} = tdProps ?? {};
+	const tdClassName = ["blue-orange-data-table-text-cell", tdClassNameProp].filter(Boolean).join(" ");
+
 	return (
         <>
             {dropdownItems && dropdownItems.length > 0 &&
                 <td
-                    className='blue-orange-data-table-text-cell'
+                    {...restTdProps}
+                    className={tdClassName}
                     onClick={cellClicked}
                     style={{...cellAlignment, ...style}}>
                     {alignment == CellAlignment.CENTER &&
@@ -109,7 +115,8 @@ export const NumberDataCell: React.FC<Props> = ({
             }
             {(!dropdownItems || dropdownItems.length <= 0) &&
                 <td
-                    className='blue-orange-data-table-text-cell'
+                    {...restTdProps}
+                    className={tdClassName}
                     onClick={cellClicked}
                     style={{...cellAlignment, ...style}}>
                     {alignment == CellAlignment.CENTER &&
