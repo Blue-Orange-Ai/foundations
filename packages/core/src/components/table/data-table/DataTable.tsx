@@ -170,6 +170,9 @@ export const DataTable: React.FC<Props> = ({
 		if (loading) {
 			return;
 		}
+		if (showLoadingRow) {
+			return;
+		}
 		if (!infiniteScrollObservedRow) {
 			return;
 		}
@@ -177,7 +180,8 @@ export const DataTable: React.FC<Props> = ({
 			return;
 		}
 
-		const root = tableContainerRef.current ?? null;
+		const containerEl = tableContainerRef.current;
+		const root = (containerEl && containerEl.scrollHeight > containerEl.clientHeight + 1) ? containerEl : null;
 		const observer = new IntersectionObserver(
 			(entries) => {
 				for (const entry of entries) {
@@ -198,7 +202,7 @@ export const DataTable: React.FC<Props> = ({
 		return () => {
 			observer.disconnect();
 		};
-	}, [enableInfiniteScroll, onEndReached, loading, infiniteScrollObservedRow, data.length]);
+	}, [enableInfiniteScroll, onEndReached, loading, showLoadingRow, infiniteScrollObservedRow, data.length]);
 
 	const computeSelectionKeys = (start: CellCoord, end: CellCoord) => {
 		const rowStart = Math.min(start.rowIdx, end.rowIdx);

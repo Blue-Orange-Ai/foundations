@@ -243,22 +243,24 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 			<div style={{marginBottom: 12, fontSize: 12, fontFamily: "monospace"}}>
 				Last right clicked cell: {JSON.stringify(lastRightClickedCell)}
 			</div>
-			<DataTable
-				schema={displaySchema}
-				data={data}
-				loading={false}
-				loadingPlaceholderRows={2}
-				enableInfiniteScroll={enableInfiniteScroll}
-				onEndReached={handleEndReached}
-				showLoadingRow={showLoadingRow}
-				resizableColumns={resizableColumns}
-				reorderableColumns={reorderableColumns}
-				cellsSelectable={cellsSelectable}
-				rowSelectable={rowSelectable}
-				onCellSelection={(selection) => setLastSelection(selection)}
-				onRowSelectable={(selection) => setLastRowSelection(selection)}
-				onCellClick={(cellIdx, rowIdx, position) => setLastClickedCell({cellIdx, rowIdx, position})}
-				onCellRightClick={(cellIdx, rowIdx, position) => setLastRightClickedCell({cellIdx, rowIdx, position})}></DataTable>
+			<div style={{height: 420, overflowY: "auto", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 6}}>
+				<DataTable
+					schema={displaySchema}
+					data={data}
+					loading={false}
+					loadingPlaceholderRows={2}
+					enableInfiniteScroll={enableInfiniteScroll}
+					onEndReached={handleEndReached}
+					showLoadingRow={showLoadingRow}
+					resizableColumns={resizableColumns}
+					reorderableColumns={reorderableColumns}
+					cellsSelectable={cellsSelectable}
+					rowSelectable={rowSelectable}
+					onCellSelection={(selection) => setLastSelection(selection)}
+					onRowSelectable={(selection) => setLastRowSelection(selection)}
+					onCellClick={(cellIdx, rowIdx, position) => setLastClickedCell({cellIdx, rowIdx, position})}
+					onCellRightClick={(cellIdx, rowIdx, position) => setLastRightClickedCell({cellIdx, rowIdx, position})}></DataTable>
+			</div>
 		</PaddedPage>
 	)
 }
