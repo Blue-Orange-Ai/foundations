@@ -2,6 +2,7 @@
 .blue-orange-data-table-cont {
     width: 100%;
     overflow-x: auto;
+    position: relative;
 }
 
 .blue-orange-data-table {

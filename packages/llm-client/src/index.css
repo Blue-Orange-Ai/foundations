@@ -276,7 +276,9 @@
   --blue-orange-light-default-tag-color: white;
   --blue-orange-dark-default-tag-color: white;
 
-  --blue-orange-graph-edge-selection-color: #28B463
+  --blue-orange-graph-edge-selection-color: #28B463;
+
+  --blue-orange-data-table-resize-guide-color: dodgerblue;
 }
 
 body {

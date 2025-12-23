@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useState} from "react";
 
 import './DataTableDevelopment.css'
 import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
 import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
+import {Checkbox} from "../../../../components/inputs/checkbox/Checkbox";
 import {
 	DataTable,
 	TableField,
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export const DataTableDevelopment: React.FC<Props> = ({}) => {
+	const [resizableColumns, setResizableColumns] = useState<boolean>(true);
 
 	const displaySchema: Array<TableField> = [
 		{
@@ -146,7 +148,11 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 	return (
 		<PaddedPage>
 			<PageHeading>Data Table</PageHeading>
-			<DataTable schema={displaySchema} data={demoData} loading={false} loadingPlaceholderRows={2}></DataTable>
+			<div style={{marginBottom: 12}}>
+				<Checkbox checked={resizableColumns} onCheckboxChange={setResizableColumns}></Checkbox>
+				<span style={{marginLeft: 8}}>Resizable columns</span>
+			</div>
+			<DataTable schema={displaySchema} data={demoData} loading={false} loadingPlaceholderRows={2} resizableColumns={resizableColumns}></DataTable>
 		</PaddedPage>
 	)
 }

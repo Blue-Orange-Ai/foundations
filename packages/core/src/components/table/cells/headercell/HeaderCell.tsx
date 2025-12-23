@@ -6,6 +6,10 @@ import {ContextMenu, IContextMenuItem} from "../../../contextmenu/contextmenu/Co
 interface Props {
 	children: ReactNode;
 	dropdownItems?: Array<IContextMenuItem>;
+	style?: React.CSSProperties,
+	cellRef?: (el: HTMLTableCellElement | null) => void,
+	resizable?: boolean,
+	onResizeMouseDown?: (e: React.MouseEvent) => void,
 	onClick?: (rowId: string) => void,
 	onDropdownSelected?: (arg0: IContextMenuItem) => void;
 	hover?: boolean,
@@ -16,6 +20,10 @@ interface Props {
 export const HeaderCell: React.FC<Props> = ({
 												children,
 												dropdownItems=[],
+												style,
+												cellRef,
+												resizable=false,
+												onResizeMouseDown,
 												onClick,
 												onDropdownSelected,
 												hover=false,
@@ -25,7 +33,7 @@ export const HeaderCell: React.FC<Props> = ({
 
 
 	return (
-			<td>
+			<td className="blue-orange-header-data-table-td" style={style} ref={cellRef}>
                 {dropdownItems.length > 0 &&
                     <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected}>
                         <div className="blue-orange-header-data-table-cell">
@@ -36,12 +44,6 @@ export const HeaderCell: React.FC<Props> = ({
                                 }
                                 {sorted && sortAsc &&
                                     <i className="ri-arrow-up-s-line"></i>
-                                }
-                                {!sorted &&
-                                    <div className="blue-orange-header-data-table-cell-control-hidden">
-                                        <i className="ri-arrow-down-s-line"></i>
-                                    </div>
-
                                 }
                             </div>
                         </div>
@@ -57,14 +59,13 @@ export const HeaderCell: React.FC<Props> = ({
                             {sorted && sortAsc &&
                                 <i className="ri-arrow-up-s-line"></i>
                             }
-                            {!sorted &&
-                                <div className="blue-orange-header-data-table-cell-control-hidden">
-                                    <i className="ri-arrow-down-s-line"></i>
-                                </div>
-
-                            }
                         </div>
                     </div>
+                }
+                {resizable &&
+                    <div
+                        className="blue-orange-header-data-table-cell-resize-handle"
+                        onMouseDown={onResizeMouseDown}></div>
                 }
 			</td>
 	)

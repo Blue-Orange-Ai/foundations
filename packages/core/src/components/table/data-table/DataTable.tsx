@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 import {Table, TableTheme} from "../table/Table";
 import {THead} from "../thead/THead";
@@ -45,14 +45,28 @@ interface Props {
 	schema: Array<TableField>,
     data: Array<any>,
     loading?: boolean,
-	loadingPlaceholderRows?: number
+	loadingPlaceholderRows?: number,
+	resizableColumns?: boolean,
+	minColumnWidth?: number,
+	maxColumnWidth?: number
 }
 
 export const DataTable: React.FC<Props> = ({
                                                schema,
                                                data,
                                                loading=false,
-                                               loadingPlaceholderRows=10}) => {
+                                               loadingPlaceholderRows=10,
+												resizableColumns=false,
+												minColumnWidth=50,
+												maxColumnWidth}) => {
+
+	const clampWidth = (width: number): number => {
+		const next = Math.max(minColumnWidth, width);
+		if (typeof maxColumnWidth === "number") {
+			return Math.min(maxColumnWidth, next);
+		}
+		return next;
+	}
 
 	const getCellValue = (row: any, field: TableField, colIdx: number) => {
 		if (Array.isArray(row)) {
@@ -66,10 +80,139 @@ export const DataTable: React.FC<Props> = ({
 		return row;
 	}
 
+	const [columnWidths, setColumnWidths] = useState<Record<number, number>>({});
+	const [resizeGuideLeft, setResizeGuideLeft] = useState<number | null>(null);
+	const resizingRef = useRef<{
+		colIdx: number;
+		startX: number;
+		startWidth: number;
+		currentWidth: number;
+		startLeft: number;
+	} | null>(null);
+	const tableContainerRef = useRef<HTMLDivElement | null>(null);
+	const headerCellRefs = useRef<Record<number, HTMLTableCellElement | null>>({});
+
+	useEffect(() => {
+		const el = tableContainerRef.current;
+		if (!el) {
+			return;
+		}
+		const onScroll = () => {
+			const r = resizingRef.current;
+			if (!r) {
+				return;
+			}
+			const cellEl = headerCellRefs.current[r.colIdx];
+			const containerEl = tableContainerRef.current;
+			if (!cellEl || !containerEl) {
+				return;
+			}
+			const rect = cellEl.getBoundingClientRect();
+			const containerRect = containerEl.getBoundingClientRect();
+			const left = rect.left - containerRect.left + containerEl.scrollLeft;
+			resizingRef.current = {...r, startLeft: left};
+			setResizeGuideLeft(left + r.currentWidth);
+		};
+		el.addEventListener("scroll", onScroll, {passive: true});
+		return () => {
+			el.removeEventListener("scroll", onScroll as any);
+		};
+	}, [resizableColumns]);
+
+	useEffect(() => {
+		return () => {
+			document.body.style.userSelect = "";
+		};
+	}, []);
+
+	useEffect(() => {
+		if (!resizableColumns) {
+			setResizeGuideLeft(null);
+			resizingRef.current = null;
+		}
+	}, [resizableColumns]);
+
+	const setHeaderCellRef = (colIdx: number) => (el: HTMLTableCellElement | null) => {
+		headerCellRefs.current[colIdx] = el;
+	}
+
+	const beginResize = (colIdx: number) => (e: React.MouseEvent) => {
+		if (!resizableColumns) {
+			return;
+		}
+		e.preventDefault();
+		e.stopPropagation();
+
+		const cellEl = headerCellRefs.current[colIdx];
+		const containerEl = tableContainerRef.current;
+		if (!cellEl || !containerEl) {
+			return;
+		}
+
+		const rect = cellEl.getBoundingClientRect();
+		const containerRect = containerEl.getBoundingClientRect();
+		const currentWidth = clampWidth(columnWidths[colIdx] ?? rect.width);
+
+		const startLeft = rect.left - containerRect.left + containerEl.scrollLeft;
+		resizingRef.current = {
+			colIdx,
+			startX: e.clientX,
+			startWidth: currentWidth,
+			currentWidth,
+			startLeft,
+		};
+		setResizeGuideLeft(startLeft + currentWidth);
+		document.body.style.userSelect = "none";
+
+		const onMouseMove = (ev: MouseEvent) => {
+			const r = resizingRef.current;
+			if (!r) {
+				return;
+			}
+			const delta = ev.clientX - r.startX;
+			const nextWidth = clampWidth(r.startWidth + delta);
+			resizingRef.current = {...r, currentWidth: nextWidth};
+			setResizeGuideLeft(r.startLeft + nextWidth);
+		};
+
+		const onMouseUp = (ev: MouseEvent) => {
+			const r = resizingRef.current;
+			if (r) {
+				setColumnWidths((prev) => ({...prev, [r.colIdx]: r.currentWidth}));
+			}
+			setResizeGuideLeft(null);
+			resizingRef.current = null;
+			document.body.style.userSelect = "";
+			window.removeEventListener("mousemove", onMouseMove);
+			window.removeEventListener("mouseup", onMouseUp);
+		};
+
+		window.addEventListener("mousemove", onMouseMove);
+		window.addEventListener("mouseup", onMouseUp);
+	}
+
+	const getColumnStyle = (colIdx: number): React.CSSProperties => {
+		const w = columnWidths[colIdx];
+		const style: React.CSSProperties = {
+			minWidth: minColumnWidth,
+		};
+		if (typeof maxColumnWidth === "number") {
+			style.maxWidth = maxColumnWidth;
+		}
+		if (typeof w === "number") {
+			style.width = clampWidth(w);
+		}
+		return style;
+	}
+
 	return (
 		<>
 			<div className="blue-orange-tables-data-table">
-				<Table theme={TableTheme.DATASET}>
+				<Table
+					containerRef={tableContainerRef}
+					theme={TableTheme.DATASET}
+					tableStyle={resizableColumns ? ({tableLayout: "fixed"} as React.CSSProperties) : undefined}
+					overlay={resizeGuideLeft !== null ? <div className="blue-orange-data-table-resize-guide" style={{left: resizeGuideLeft}}></div> : null}>
 					<THead>
 						<Row>
 							{schema.map((item, index) => (
@@ -77,16 +220,20 @@ export const DataTable: React.FC<Props> = ({
 									{loading &&
 										<LoadingCell
 											key={item.label + "-" + index}
+											style={getColumnStyle(index)}
 											headerCell={true}></LoadingCell>
 									}
 									{!loading &&
 										<HeaderCell
 											dropdownItems={item.dropDownItems}
+											style={getColumnStyle(index)}
+											cellRef={setHeaderCellRef(index)}
+											resizable={resizableColumns}
+											onResizeMouseDown={beginResize(index)}
 											onDropdownSelected={(item: IContextMenuItem) => {
 											}}>
-											<div className="blue-orange-data-table-header-cell-group" style={{width: "50px"}}>
-										<span
-											className="blue-orange-data-table-header-cell-primary-text">{item.label}</span>
+											<div className="blue-orange-data-table-header-cell-group">
+										        <span className="blue-orange-data-table-header-cell-primary-text">{item.label}</span>
 												<span
 													className="blue-orange-data-table-header-cell-column-type">{item.type.toString()}</span>
 											</div>
@@ -101,7 +248,7 @@ export const DataTable: React.FC<Props> = ({
 							Array.from({ length: loadingPlaceholderRows }).map((_, index) => (
 								<Row key={"loading-row-" + index} hoverEffect={false}>
 									{schema.map((item, colIdx) => (
-										<LoadingCell key={"loading-cell-" + index + "-" + colIdx}></LoadingCell>
+										<LoadingCell key={"loading-cell-" + index + "-" + colIdx} style={getColumnStyle(colIdx)}></LoadingCell>
 									))}
 								</Row>
 							))
@@ -114,30 +261,31 @@ export const DataTable: React.FC<Props> = ({
 										<React.Fragment key={"cell-" + rowIdx + "-" + colIdx}>
 											{(() => {
 												const cellValue = getCellValue(d, item, colIdx);
+												const cellStyle = getColumnStyle(colIdx);
 												return (
 													<>
                                                     {item.type == TableFieldType.STRING &&
-                                                        <TextDataCell style={{width: "50px"}}
+															<TextDataCell style={{...cellStyle}}
 															  text={cellValue}
 															  multipleValues={item.multipleValues}></TextDataCell>
                                                     }
                                                     {item.type == TableFieldType.NUMBER &&
-                                                        <NumberDataCell style={{width: "50px"}}
+															<NumberDataCell style={{...cellStyle}}
 															  value={cellValue}
 															  multipleValues={item.multipleValues}></NumberDataCell>
                                                     }
                                                     {item.type == TableFieldType.DATE &&
-                                                        <DateDataCell style={{width: "50px"}}
+															<DateDataCell style={{...cellStyle}}
 																date={cellValue}
 																multipleValues={item.multipleValues}></DateDataCell>
                                                     }
                                                     {item.type == TableFieldType.CURRENCY &&
-                                                        <CurrencyDataCell style={{width: "50px"}}
+															<CurrencyDataCell style={{...cellStyle}}
 															  amount={cellValue} currency={"AUD"}
 															  multipleValues={item.multipleValues}></CurrencyDataCell>
                                                     }
                                                     {item.type == TableFieldType.STRUCT &&
-                                                        <JsonObjDataCell style={{width: "50px"}}
+															<JsonObjDataCell style={{...cellStyle}}
 																  obj={cellValue}
 																  multipleValues={item.multipleValues}></JsonObjDataCell>
                                                     }
@@ -147,13 +295,6 @@ export const DataTable: React.FC<Props> = ({
 										</React.Fragment>
                                             ))}
 
-                                            {/*<TextDataCell style={{width: "50px"}}*/}
-                                            {/*              dropdownItems={contextMenuItems}*/}
-                                            {/*              text={"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."}></TextDataCell>*/}
-                                            {/*<NumberDataCell style={{width: "50px"}} value={15000.3338907}></NumberDataCell>*/}
-                                            {/*<DateDataCell date={new Date()} style={{width: "50px"}} dateformat={"YYYY-MM-DD"}></DateDataCell>*/}
-                                            {/*<CurrencyDataCell amount={10000} currency={"AUD"} style={{width: "50px"}}></CurrencyDataCell>*/}
-                                            {/*<JsonObjDataCell style={{maxWidth: "200px", overflow: "hidden"}} obj={displaySchema}></JsonObjDataCell>*/}
                                         </Row>
                                     ))}
 								</>
