@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import './SearchQueryCondition.css'
 import {Dropdown} from "../../inputs/dropdown/basic/Dropdown";
@@ -25,6 +25,10 @@ interface Props {
 export const SearchQueryCondition: React.FC<Props> = ({condition, schema, onChange, onDelete}) => {
 
 	const [internalCondition, setInternalCondition] = useState(condition);
+
+	useEffect(() => {
+		setInternalCondition(condition);
+	}, [condition]);
 
 	const variableSelectionStyle: React.CSSProperties = {
 		backgroundColor: "#e0e1e2",
@@ -93,43 +97,37 @@ export const SearchQueryCondition: React.FC<Props> = ({condition, schema, onChan
 
 	const updateVariable = (variable: string) => {
 		if (variable != "-1") {
-			var modCondition = internalCondition;
-			modCondition.variable = variable;
+			const modCondition: ISearchQueryEditorCondition = {...internalCondition, variable: variable};
 			setInternalCondition(modCondition);
 			updateCondition(modCondition);
 		} else if (schema.length > 0) {
-			var modCondition = internalCondition;
-			modCondition.variable = schema[0].apiName;
+			const modCondition: ISearchQueryEditorCondition = {...internalCondition, variable: schema[0].apiName};
 			setInternalCondition(modCondition);
 			updateCondition(modCondition);
 		}
 	}
 
 	const updateComparison = (comparison: string) => {
-		var modCondition = internalCondition;
-		modCondition.comparison = comparison;
+		const modCondition: ISearchQueryEditorCondition = {...internalCondition, comparison: comparison};
 		setInternalCondition(modCondition);
 		updateCondition(modCondition);
 	}
 
 	const updateDateComparison = (comparison: Date) => {
-		var modCondition = internalCondition;
-		modCondition.comparison = comparison.toISOString();
+		const modCondition: ISearchQueryEditorCondition = {...internalCondition, comparison: comparison.toISOString()};
 		setInternalCondition(modCondition);
 		updateCondition(modCondition);
 	}
 
 	const updateMatchCase = (state: boolean) => {
-		var modCondition = internalCondition;
-		modCondition.ignoreCase = !state;
+		const modCondition: ISearchQueryEditorCondition = {...internalCondition, ignoreCase: !state};
 		setInternalCondition(modCondition);
 		updateCondition(modCondition);
 	}
 
 	const updateOperand = (operand: string) => {
 		if (operand in SearchQueryLeafOperand) {
-			var modCondition = internalCondition;
-			modCondition.operand = operand as SearchQueryLeafOperand;
+			const modCondition: ISearchQueryEditorCondition = {...internalCondition, operand: operand as SearchQueryLeafOperand};
 			setInternalCondition(modCondition);
 			updateCondition(modCondition);
 		}

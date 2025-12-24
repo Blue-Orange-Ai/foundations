@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import './SearchQueryGroup.css'
 import {Dropdown} from "../../inputs/dropdown/basic/Dropdown";
@@ -35,15 +35,19 @@ export const SearchQueryGroup: React.FC<Props> = ({condition, deletable=true, co
 		return {
 			comparison: "",
 			conditionType: SearchQueryConditionType.GROUP,
-			groupConditions: conditions as ISearchQueryEditorCondition[],
+			groupConditions: conditions ?? [],
 			ignoreCase: false,
-			logic: logic as SearchQueryLogicalOperand,
+			logic: logic ?? SearchQueryLogicalOperand.AND,
 			operand: SearchQueryLeafOperand.PHRASE,
 			variable: firstField
 		}
 	}
 
 	const [internalCondition, setInternalCondition] = useState(initParentGroup());
+
+	useEffect(() => {
+		setInternalCondition(initParentGroup());
+	}, [condition, conditions, logic, schema]);
 
 	const newCondition: ISearchQueryEditorCondition = {
 		comparison: "",
@@ -72,34 +76,38 @@ export const SearchQueryGroup: React.FC<Props> = ({condition, deletable=true, co
 	}
 
 	const addCondition = () => {
-		var modCondition = internalCondition;
-		modCondition.groupConditions.push(newCondition);
+		const modCondition: ISearchQueryEditorCondition = {
+			...internalCondition,
+			groupConditions: [...internalCondition.groupConditions, newCondition]
+		};
 		setInternalCondition(modCondition);
 		dispatchChange(modCondition);
 	}
 
 	const addGroup = () => {
-		var modCondition = internalCondition;
-		modCondition.groupConditions.push(newGroup);
+		const modCondition: ISearchQueryEditorCondition = {
+			...internalCondition,
+			groupConditions: [...internalCondition.groupConditions, newGroup]
+		};
 		setInternalCondition(modCondition);
 		dispatchChange(modCondition);
 	}
 
 	const logicalChange = (value: string) => {
 		if (internalCondition.logic == SearchQueryLogicalOperand.AND && value == "OR") {
-			internalCondition.logic = SearchQueryLogicalOperand.OR;
-			dispatchChange(internalCondition);
-			setInternalCondition(internalCondition);
+			const updated: ISearchQueryEditorCondition = {...internalCondition, logic: SearchQueryLogicalOperand.OR};
+			dispatchChange(updated);
+			setInternalCondition(updated);
 		} else if (internalCondition.logic == SearchQueryLogicalOperand.OR && value == "AND") {
-			internalCondition.logic = SearchQueryLogicalOperand.AND;
-			dispatchChange(internalCondition);
-			setInternalCondition(internalCondition);
+			const updated: ISearchQueryEditorCondition = {...internalCondition, logic: SearchQueryLogicalOperand.AND};
+			dispatchChange(updated);
+			setInternalCondition(updated);
 		}
 	}
 
 	const updateChildCondition = (index: number, c: ISearchQueryEditorCondition) => {
-		var modCondition = internalCondition;
-		modCondition.groupConditions[index] = c
+		const groupConditions = internalCondition.groupConditions.map((item, i) => i === index ? c : item);
+		const modCondition: ISearchQueryEditorCondition = {...internalCondition, groupConditions: groupConditions};
 		updateCondition(modCondition);
 	}
 
@@ -109,8 +117,8 @@ export const SearchQueryGroup: React.FC<Props> = ({condition, deletable=true, co
 	}
 
 	const handleDelete = (index: number) => {
-		var modCondition = internalCondition;
-		modCondition.groupConditions.splice(index, 1);
+		const groupConditions = internalCondition.groupConditions.filter((_, i) => i !== index);
+		const modCondition: ISearchQueryEditorCondition = {...internalCondition, groupConditions: groupConditions};
 		updateCondition(modCondition);
 	}
 
