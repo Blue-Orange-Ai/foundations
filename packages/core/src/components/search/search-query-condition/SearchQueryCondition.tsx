@@ -7,6 +7,7 @@ import {DropdownItemText} from "../../inputs/dropdown/items/DropdownItemText/Dro
 import {Input} from "../../inputs/input/Input";
 import {Checkbox} from "../../inputs/checkbox/Checkbox";
 import {ButtonIcon} from "../../buttons/button-icon/ButtonIcon";
+import {Button, ButtonType} from "../../buttons/button/Button";
 import {DateInput} from "../../inputs/date/datepicker/inputs/dateinput/DateInput";
 import {TimePrecision} from "../../inputs/date/datepicker/items/datecontextwindowsingle/DateContextWindowSingle";
 import {
@@ -43,6 +44,18 @@ export const SearchQueryCondition: React.FC<Props> = ({condition, schema, onChan
 		fontSize: "0.8rem"
 	}
 
+	const inputRowStyle: React.CSSProperties = {
+		display: "flex",
+		gap: "8px",
+		flexWrap: "wrap",
+		alignItems: "flex-end"
+	}
+
+	const parseNumberOrDefault = (value: string, defaultValue: number) => {
+		const n = parseFloat(value);
+		return isNaN(n) ? defaultValue : n;
+	}
+
 	const normalizeSchemaType = (schemaType: string): string => {
 		const normalized = schemaType.toUpperCase();
 		if (normalized == "INTEGER" || normalized == "LONG" || normalized == "FLOAT" || normalized == "DOUBLE") {
@@ -53,6 +66,12 @@ export const SearchQueryCondition: React.FC<Props> = ({condition, schema, onChan
 		}
 		if (normalized == "BOOLEAN") {
 			return "BOOLEAN";
+		}
+		if (normalized == "GEO_POINT") {
+			return "GEO";
+		}
+		if (normalized == "VECTOR") {
+			return "VECTOR";
 		}
 		return "STRING";
 	}
@@ -96,18 +115,34 @@ export const SearchQueryCondition: React.FC<Props> = ({condition, schema, onChan
 	}
 
 	const updateVariable = (variable: string) => {
-		if (variable != "-1") {
-			const modCondition: ISearchQueryEditorCondition = {...internalCondition, variable: variable};
-			setInternalCondition(modCondition);
-			updateCondition(modCondition);
-		} else if (schema.length > 0) {
-			const modCondition: ISearchQueryEditorCondition = {...internalCondition, variable: schema[0].apiName};
-			setInternalCondition(modCondition);
-			updateCondition(modCondition);
+		const nextVariable = variable != "-1" ? variable : (schema.length > 0 ? schema[0].apiName : "");
+		const schemaProperty = getSchemaPropertyFromVariableName(nextVariable);
+		const nextType = normalizeSchemaType(schemaProperty?.type ?? "");
+
+		let nextOperand = internalCondition.operand;
+		if (nextType == "GEO") {
+			nextOperand = SearchQueryLeafOperand.GEO_DISTANCE;
+		} else if (nextType == "VECTOR") {
+			nextOperand = SearchQueryLeafOperand.KNN;
+		} else if (nextType == "NUMBER" || nextType == "DATE") {
+			nextOperand = SearchQueryLeafOperand.EQUALS;
+		} else if (nextType == "BOOLEAN") {
+			nextOperand = SearchQueryLeafOperand.TRUE;
+		} else {
+			nextOperand = SearchQueryLeafOperand.PHRASE;
 		}
+
+		const modCondition: ISearchQueryEditorCondition = {
+			...internalCondition,
+			variable: nextVariable,
+			operand: nextOperand,
+			comparison: defaultComparisonForOperand(nextOperand)
+		};
+		setInternalCondition(modCondition);
+		updateCondition(modCondition);
 	}
 
-	const updateComparison = (comparison: string) => {
+	const updateComparison = (comparison: any) => {
 		const modCondition: ISearchQueryEditorCondition = {...internalCondition, comparison: comparison};
 		setInternalCondition(modCondition);
 		updateCondition(modCondition);
@@ -125,9 +160,30 @@ export const SearchQueryCondition: React.FC<Props> = ({condition, schema, onChan
 		updateCondition(modCondition);
 	}
 
+	const defaultComparisonForOperand = (operand: SearchQueryLeafOperand) => {
+		if (operand == SearchQueryLeafOperand.GEO_DISTANCE) {
+			return {distance: "", location: {lat: 0, lng: 0}};
+		}
+		if (operand == SearchQueryLeafOperand.GEO_BOUNDING_BOX) {
+			return {topLeft: {lat: 0, lng: 0}, bottomRight: {lat: 0, lng: 0}};
+		}
+		if (operand == SearchQueryLeafOperand.GEO_POLYGON) {
+			return {locations: []};
+		}
+		if (operand == SearchQueryLeafOperand.KNN) {
+			return {vector: [], k: 5, numCandidates: 100};
+		}
+		return "";
+	}
+
 	const updateOperand = (operand: string) => {
 		if (operand in SearchQueryLeafOperand) {
-			const modCondition: ISearchQueryEditorCondition = {...internalCondition, operand: operand as SearchQueryLeafOperand};
+			const nextOperand = operand as SearchQueryLeafOperand;
+			const modCondition: ISearchQueryEditorCondition = {
+				...internalCondition,
+				operand: nextOperand,
+				comparison: defaultComparisonForOperand(nextOperand)
+			};
 			setInternalCondition(modCondition);
 			updateCondition(modCondition);
 		}
@@ -165,10 +221,112 @@ export const SearchQueryCondition: React.FC<Props> = ({condition, schema, onChan
 		if (normalizedType == "BOOLEAN") {
 			return "Boolean";
 		}
+		if (normalizedType == "GEO") {
+			return "Geo";
+		}
+		if (normalizedType == "VECTOR") {
+			return "Vector";
+		}
 		return "String";
 	}
 
 	const normalizedType = normalizeSchemaType(getSchemaPropertyFromVariableName(internalCondition.variable)?.type ?? "");
+
+	useEffect(() => {
+		const operand = internalCondition.operand;
+		const shouldCorrectString = normalizedType == "STRING" && !(
+			operand == SearchQueryLeafOperand.PHRASE ||
+			operand == SearchQueryLeafOperand.PHRASE_PREFIX ||
+			operand == SearchQueryLeafOperand.FUZZY ||
+			operand == SearchQueryLeafOperand.REGEX ||
+			operand == SearchQueryLeafOperand.WILDCARD ||
+			operand == SearchQueryLeafOperand.FULL_TEXT
+		);
+		const shouldCorrectGeo = normalizedType == "GEO" && !(
+			operand == SearchQueryLeafOperand.GEO_DISTANCE ||
+			operand == SearchQueryLeafOperand.GEO_BOUNDING_BOX ||
+			operand == SearchQueryLeafOperand.GEO_POLYGON
+		);
+		const shouldCorrectVector = normalizedType == "VECTOR" && operand != SearchQueryLeafOperand.KNN;
+		const shouldCorrectNumberOrDate = (normalizedType == "NUMBER" || normalizedType == "DATE") && !(
+			operand == SearchQueryLeafOperand.EQUALS ||
+			operand == SearchQueryLeafOperand.GREATER_THAN ||
+			operand == SearchQueryLeafOperand.GREATER_THAN_OR_EQUAL_TO ||
+			operand == SearchQueryLeafOperand.LESS_THAN ||
+			operand == SearchQueryLeafOperand.LESS_THAN_OR_EQUAL_TO
+		);
+		const shouldCorrectBoolean = normalizedType == "BOOLEAN" && !(operand == SearchQueryLeafOperand.TRUE || operand == SearchQueryLeafOperand.FALSE);
+
+		if (shouldCorrectString || shouldCorrectGeo || shouldCorrectVector || shouldCorrectNumberOrDate || shouldCorrectBoolean) {
+			const nextOperand =
+				normalizedType == "GEO" ? SearchQueryLeafOperand.GEO_DISTANCE :
+				normalizedType == "VECTOR" ? SearchQueryLeafOperand.KNN :
+				normalizedType == "NUMBER" || normalizedType == "DATE" ? SearchQueryLeafOperand.EQUALS :
+				normalizedType == "BOOLEAN" ? SearchQueryLeafOperand.TRUE :
+				SearchQueryLeafOperand.PHRASE;
+
+			const updated: ISearchQueryEditorCondition = {
+				...internalCondition,
+				operand: nextOperand,
+				comparison: defaultComparisonForOperand(nextOperand)
+			};
+			setInternalCondition(updated);
+			updateCondition(updated);
+		}
+	}, [normalizedType]);
+
+	const geoDistanceComparison = (typeof internalCondition.comparison === "object" && internalCondition.comparison) ? internalCondition.comparison : {distance: "", location: {lat: 0, lng: 0}};
+	const geoBoundingBoxComparison = (typeof internalCondition.comparison === "object" && internalCondition.comparison) ? internalCondition.comparison : {topLeft: {lat: 0, lng: 0}, bottomRight: {lat: 0, lng: 0}};
+	const geoPolygonComparison = (typeof internalCondition.comparison === "object" && internalCondition.comparison) ? internalCondition.comparison : {locations: []};
+	const knnComparison = (typeof internalCondition.comparison === "object" && internalCondition.comparison) ? internalCondition.comparison : {vector: [], k: 5, numCandidates: 100};
+
+	const updateGeoDistance = (patch: any) => {
+		const next = {
+			...geoDistanceComparison,
+			...patch,
+			location: {
+				...(geoDistanceComparison.location ?? {lat: 0, lng: 0}),
+				...(patch.location ?? {})
+			}
+		};
+		updateComparison(next);
+	}
+
+	const updateGeoBoundingBox = (patch: any) => {
+		const next = {
+			...geoBoundingBoxComparison,
+			...patch,
+			topLeft: {
+				...(geoBoundingBoxComparison.topLeft ?? {lat: 0, lng: 0}),
+				...(patch.topLeft ?? {})
+			},
+			bottomRight: {
+				...(geoBoundingBoxComparison.bottomRight ?? {lat: 0, lng: 0}),
+				...(patch.bottomRight ?? {})
+			}
+		};
+		updateComparison(next);
+	}
+
+	const addGeoPolygonPoint = () => {
+		const locations = Array.isArray(geoPolygonComparison.locations) ? geoPolygonComparison.locations : [];
+		updateComparison({...geoPolygonComparison, locations: [...locations, {lat: 0, lng: 0}]});
+	}
+
+	const updateGeoPolygonPoint = (index: number, patch: any) => {
+		const locations = Array.isArray(geoPolygonComparison.locations) ? geoPolygonComparison.locations : [];
+		const nextLocations = locations.map((p: any, i: number) => i === index ? {...p, ...patch} : p);
+		updateComparison({...geoPolygonComparison, locations: nextLocations});
+	}
+
+	const removeGeoPolygonPoint = (index: number) => {
+		const locations = Array.isArray(geoPolygonComparison.locations) ? geoPolygonComparison.locations : [];
+		updateComparison({...geoPolygonComparison, locations: locations.filter((_: any, i: number) => i !== index)});
+	}
+
+	const updateKnn = (patch: any) => {
+		updateComparison({...knnComparison, ...patch});
+	}
 
 	return (
 		<div className={"blue-orange-search-query-condition-cont"}>
@@ -189,48 +347,103 @@ export const SearchQueryCondition: React.FC<Props> = ({condition, schema, onChan
 			<div className={"blue-orange-search-query-condition-match-selection"}>
 				{normalizedType == "STRING" &&
 					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
-						<DropdownItemText label={"Equals"} value={"PHRASE"} selected={"PHRASE" == condition.operand}></DropdownItemText>
-						<DropdownItemText label={"Starts With"} value={"PHRASE_PREFIX"} selected={"PHRASE_PREFIX" == condition.operand}></DropdownItemText>
-						<DropdownItemText label={"Fuzzy"} value={"FUZZY"} selected={"FUZZY" == condition.operand}></DropdownItemText>
-						<DropdownItemText label={"Regex"} value={"REGEX"} selected={"REGEX" == condition.operand}></DropdownItemText>
-						<DropdownItemText label={"Wildcard"} value={"WILDCARD"} selected={"WILDCARD" == condition.operand}></DropdownItemText>
-						<DropdownItemText label={"Full Text"} value={"FULL_TEXT"} selected={"FULL_TEXT" == condition.operand}></DropdownItemText>
-						<DropdownItemText label={"Geo Distance (JSON)"} value={"GEO_DISTANCE"} selected={"GEO_DISTANCE" == condition.operand}></DropdownItemText>
-						<DropdownItemText label={"Geo Bounding Box (JSON)"} value={"GEO_BOUNDING_BOX"} selected={"GEO_BOUNDING_BOX" == condition.operand}></DropdownItemText>
-						<DropdownItemText label={"Geo Polygon (JSON)"} value={"GEO_POLYGON"} selected={"GEO_POLYGON" == condition.operand}></DropdownItemText>
-						<DropdownItemText label={"KNN (JSON)"} value={"KNN"} selected={"KNN" == condition.operand}></DropdownItemText>
+						<DropdownItemText label={"Equals"} value={"PHRASE"} selected={"PHRASE" == internalCondition.operand}></DropdownItemText>
+						<DropdownItemText label={"Starts With"} value={"PHRASE_PREFIX"} selected={"PHRASE_PREFIX" == internalCondition.operand}></DropdownItemText>
+						<DropdownItemText label={"Fuzzy"} value={"FUZZY"} selected={"FUZZY" == internalCondition.operand}></DropdownItemText>
+						<DropdownItemText label={"Regex"} value={"REGEX"} selected={"REGEX" == internalCondition.operand}></DropdownItemText>
+						<DropdownItemText label={"Wildcard"} value={"WILDCARD"} selected={"WILDCARD" == internalCondition.operand}></DropdownItemText>
+						<DropdownItemText label={"Full Text"} value={"FULL_TEXT"} selected={"FULL_TEXT" == internalCondition.operand}></DropdownItemText>
+					</Dropdown>
+				}
+				{normalizedType == "GEO" &&
+					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
+						<DropdownItemText label={"Geo Distance"} value={"GEO_DISTANCE"} selected={"GEO_DISTANCE" == internalCondition.operand}></DropdownItemText>
+						<DropdownItemText label={"Geo Bounding Box"} value={"GEO_BOUNDING_BOX"} selected={"GEO_BOUNDING_BOX" == internalCondition.operand}></DropdownItemText>
+						<DropdownItemText label={"Geo Polygon"} value={"GEO_POLYGON"} selected={"GEO_POLYGON" == internalCondition.operand}></DropdownItemText>
+					</Dropdown>
+				}
+				{normalizedType == "VECTOR" &&
+					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
+						<DropdownItemText label={"KNN"} value={"KNN"} selected={"KNN" == internalCondition.operand}></DropdownItemText>
 					</Dropdown>
 				}
 				{(normalizedType == "NUMBER" || normalizedType == "DATE") &&
 					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
-						<DropdownItemText label={"equals"} value={"EQUALS"} selected={"EQUALS" == condition.operand}></DropdownItemText>
-						<DropdownItemText label={"is greater than"} value={"GREATER_THAN"} selected={"GREATER_THAN" == condition.operand}></DropdownItemText>
-						<DropdownItemText label={"is greater than or equal to"} value={"GREATER_THAN_OR_EQUAL_TO"} selected={"GREATER_THAN_OR_EQUAL_TO" == condition.operand}></DropdownItemText>
-						<DropdownItemText label={"is less than"} value={"LESS_THAN"} selected={"LESS_THAN" == condition.operand}></DropdownItemText>
-						<DropdownItemText label={"is less than or equal to"} value={"LESS_THAN_OR_EQUAL_TO"} selected={"LESS_THAN_OR_EQUAL_TO" == condition.operand}></DropdownItemText>
+						<DropdownItemText label={"equals"} value={"EQUALS"} selected={"EQUALS" == internalCondition.operand}></DropdownItemText>
+						<DropdownItemText label={"is greater than"} value={"GREATER_THAN"} selected={"GREATER_THAN" == internalCondition.operand}></DropdownItemText>
+						<DropdownItemText label={"is greater than or equal to"} value={"GREATER_THAN_OR_EQUAL_TO"} selected={"GREATER_THAN_OR_EQUAL_TO" == internalCondition.operand}></DropdownItemText>
+						<DropdownItemText label={"is less than"} value={"LESS_THAN"} selected={"LESS_THAN" == internalCondition.operand}></DropdownItemText>
+						<DropdownItemText label={"is less than or equal to"} value={"LESS_THAN_OR_EQUAL_TO"} selected={"LESS_THAN_OR_EQUAL_TO" == internalCondition.operand}></DropdownItemText>
 					</Dropdown>
 				}
 				{normalizedType == "BOOLEAN" &&
 					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
-						<DropdownItemText label={"is true"} value={"TRUE"} selected={"TRUE" == condition.operand}></DropdownItemText>
-						<DropdownItemText label={"is false"} value={"FALSE"} selected={"FALSE" == condition.operand}></DropdownItemText>
+						<DropdownItemText label={"is true"} value={"TRUE"} selected={"TRUE" == internalCondition.operand}></DropdownItemText>
+						<DropdownItemText label={"is false"} value={"FALSE"} selected={"FALSE" == internalCondition.operand}></DropdownItemText>
 					</Dropdown>
 				}
 			</div>
 			<div className={"blue-orange-search-query-condition-user-input"}>
-				{determineComparisonInputType() != "Date" && determineComparisonInputType() != "Boolean" &&
+				{determineComparisonInputType() != "Date" && determineComparisonInputType() != "Boolean" && determineComparisonInputType() != "Geo" && determineComparisonInputType() != "Vector" &&
 					<Input
 						value={String(internalCondition.comparison ?? "")}
 						isNumber={determineComparisonInputType() == "Number"}
-						placeholder={
-							internalCondition.operand == SearchQueryLeafOperand.GEO_DISTANCE ? '{"distance":"10km","location":{"lat":-33.86,"lng":151.21}}' :
-							internalCondition.operand == SearchQueryLeafOperand.GEO_BOUNDING_BOX ? '{"topLeft":{"lat":-33.0,"lng":151.0},"bottomRight":{"lat":-34.0,"lng":152.0}}' :
-							internalCondition.operand == SearchQueryLeafOperand.GEO_POLYGON ? '{"locations":[{"lat":-33.0,"lng":151.0},{"lat":-34.0,"lng":152.0},{"lat":-35.0,"lng":151.5}]}' :
-							internalCondition.operand == SearchQueryLeafOperand.KNN ? '{"vector":[0.1,0.2],"k":5,"numCandidates":100}' :
-							""
-						}
+						placeholder={""}
 						onChange={updateComparison}
 					></Input>
+				}
+				{determineComparisonInputType() == "Geo" && internalCondition.operand == SearchQueryLeafOperand.GEO_DISTANCE &&
+					<div style={inputRowStyle}>
+						<Input label={"Distance"} value={String(geoDistanceComparison.distance ?? "")} placeholder={"10km"} onChange={(v) => updateGeoDistance({distance: v})}></Input>
+						<Input label={"Lat"} value={String(geoDistanceComparison.location?.lat ?? "")} isNumber={true} onChange={(v) => updateGeoDistance({location: {lat: parseNumberOrDefault(v, 0)}})}></Input>
+						<Input label={"Lng"} value={String(geoDistanceComparison.location?.lng ?? "")} isNumber={true} onChange={(v) => updateGeoDistance({location: {lng: parseNumberOrDefault(v, 0)}})}></Input>
+					</div>
+				}
+				{determineComparisonInputType() == "Geo" && internalCondition.operand == SearchQueryLeafOperand.GEO_BOUNDING_BOX &&
+					<div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
+						<div style={inputRowStyle}>
+							<Input label={"Top Left Lat"} value={String(geoBoundingBoxComparison.topLeft?.lat ?? "")} isNumber={true} onChange={(v) => updateGeoBoundingBox({topLeft: {lat: parseNumberOrDefault(v, 0)}})}></Input>
+							<Input label={"Top Left Lng"} value={String(geoBoundingBoxComparison.topLeft?.lng ?? "")} isNumber={true} onChange={(v) => updateGeoBoundingBox({topLeft: {lng: parseNumberOrDefault(v, 0)}})}></Input>
+						</div>
+						<div style={inputRowStyle}>
+							<Input label={"Bottom Right Lat"} value={String(geoBoundingBoxComparison.bottomRight?.lat ?? "")} isNumber={true} onChange={(v) => updateGeoBoundingBox({bottomRight: {lat: parseNumberOrDefault(v, 0)}})}></Input>
+							<Input label={"Bottom Right Lng"} value={String(geoBoundingBoxComparison.bottomRight?.lng ?? "")} isNumber={true} onChange={(v) => updateGeoBoundingBox({bottomRight: {lng: parseNumberOrDefault(v, 0)}})}></Input>
+						</div>
+					</div>
+				}
+				{determineComparisonInputType() == "Geo" && internalCondition.operand == SearchQueryLeafOperand.GEO_POLYGON &&
+					<div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
+						{(Array.isArray(geoPolygonComparison.locations) ? geoPolygonComparison.locations : []).map((p: any, index: number) => (
+							<div key={index} style={inputRowStyle}>
+								<Input label={`Lat ${index + 1}`} value={String(p?.lat ?? "")} isNumber={true} onChange={(v) => updateGeoPolygonPoint(index, {lat: parseNumberOrDefault(v, 0)})}></Input>
+								<Input label={`Lng ${index + 1}`} value={String(p?.lng ?? "")} isNumber={true} onChange={(v) => updateGeoPolygonPoint(index, {lng: parseNumberOrDefault(v, 0)})}></Input>
+								<ButtonIcon icon={"ri-close-line"} label={"Remove"} onClick={() => removeGeoPolygonPoint(index)}></ButtonIcon>
+							</div>
+						))}
+						<div style={inputRowStyle}>
+							<Button text={"Add Point"} buttonType={ButtonType.PRIMARY} onClick={() => addGeoPolygonPoint()}></Button>
+						</div>
+					</div>
+				}
+				{determineComparisonInputType() == "Vector" && internalCondition.operand == SearchQueryLeafOperand.KNN &&
+					<div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
+						<div style={inputRowStyle}>
+							<Input
+								label={"Vector"}
+								value={Array.isArray(knnComparison.vector) ? knnComparison.vector.join(",") : ""}
+								placeholder={"0.1,0.2,0.3"}
+								onChange={(v) => {
+									const vec = v.split(",").map((s) => s.trim()).filter(Boolean).map((s) => parseFloat(s)).filter((n) => !isNaN(n));
+									updateKnn({vector: vec});
+								}}
+							></Input>
+						</div>
+						<div style={inputRowStyle}>
+							<Input label={"k"} value={String(knnComparison.k ?? "")} isNumber={true} onChange={(v) => updateKnn({k: parseNumberOrDefault(v, 5)})}></Input>
+							<Input label={"numCandidates"} value={String(knnComparison.numCandidates ?? "")} isNumber={true} onChange={(v) => updateKnn({numCandidates: parseNumberOrDefault(v, 100)})}></Input>
+							<Input label={"similarity"} value={knnComparison.similarity === undefined || knnComparison.similarity === null ? "" : String(knnComparison.similarity)} isNumber={true} onChange={(v) => updateKnn({similarity: v === "" ? undefined : parseNumberOrDefault(v, 0)})}></Input>
+						</div>
+					</div>
 				}
 				{determineComparisonInputType() == "Date" &&
 					<DateInput
