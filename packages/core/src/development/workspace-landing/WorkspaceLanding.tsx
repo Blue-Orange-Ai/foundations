@@ -52,6 +52,7 @@ import {FileInputDevelopment} from "../components/inputs/file-input/FileInputDev
 import {HelpTooltipDevelopment} from "../components/inputs/help-tooltip/HelpTooltipDevelopment";
 import {ObjectTableDevelopment} from "../components/table/object-table/ObjectTableDevelopment";
 import {MediaFragment} from "@blue-orange-ai/foundations-clients";
+import {SearchQueryEditorDevelopment} from "../components/search/search-query-editor/SearchQueryEditorDevelopment";
 
 interface Props {
 }
@@ -421,6 +422,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						icon={<i className="ri-ruler-fill"></i>}
 						onClick={() => navigate("/rules")}
 					></SideBarBodyItem>
+					<SideBarBodyItem
+						label={"Search Query Editor"}
+						active={component == "search-query"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-search-line"></i>}
+						onClick={() => navigate("/search-query")}
+					></SideBarBodyItem>
 					<SideBarBodyGroup opened={sidebarTooltipState} openOnActiveChild={true} onOpenedChange={setSidebarTooltipState}>
 						<SideBarBodyLabel
 							icon={sidebarTooltipState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
@@ -505,6 +515,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "charts-combo" && <ComboChartDevelopment></ComboChartDevelopment>}
 			{component == "charts-scatter" && <ScatterChartDevelopment></ScatterChartDevelopment>}
 			{component == "rules" && <RuleEditorDevelopment></RuleEditorDevelopment>}
+			{component == "search-query" && <SearchQueryEditorDevelopment></SearchQueryEditorDevelopment>}
 			{component == "file-system" && <FileSystemDevelopment></FileSystemDevelopment>}
 			{component == "inputs-color" && <ColorPickerDevelopment></ColorPickerDevelopment>}
 			{component == "inputs-icon" && <IconSelectorDevelopment></IconSelectorDevelopment>}

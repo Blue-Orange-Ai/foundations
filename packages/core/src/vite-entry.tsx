@@ -179,5 +179,8 @@ export * from './components/text-decorations/code-block/CodeBlock';
 // Rules
 export * from './components/rules/rule-editor/RuleEditor';
 
+// Search
+export * from './components/search/search-query-editor/SearchQueryEditor';
+
 // Tooltips
 export * from './components/tooltips/simple-tooltip/SimpleTooltip';
