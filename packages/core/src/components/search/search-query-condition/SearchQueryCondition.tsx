@@ -487,6 +487,15 @@ export const SearchQueryCondition: React.FC<Props> = ({condition, schema, onChan
                         </Dropdown>
                     }
                 </div>
+                {normalizedType == "STRING" &&
+                    !(internalCondition.operand == SearchQueryLeafOperand.REGEX || internalCondition.operand == SearchQueryLeafOperand.WILDCARD) &&
+                    <div className={"blue-orange-search-query-condition-checkbox"}>
+                        <Checkbox checked={!internalCondition.ignoreCase} onCheckboxChange={updateMatchCase}></Checkbox>
+                        <div className={"blue-orange-search-query-condition-checkbox-label"}>
+                            Match Case
+                        </div>
+                    </div>
+                }
                 <div className={"blue-orange-search-query-condition-checkbox"}>
                     <ButtonIcon icon="ri-close-line" label={"Delete"} onClick={() => removeCondition()}></ButtonIcon>
                 </div>
@@ -584,15 +593,6 @@ export const SearchQueryCondition: React.FC<Props> = ({condition, schema, onChan
                             onChange={(value) => updateDateComparison(value)}></DateInput>
                     }
                 </div>
-                {normalizedType == "STRING" &&
-                    (internalCondition.operand == SearchQueryLeafOperand.REGEX || internalCondition.operand == SearchQueryLeafOperand.WILDCARD) &&
-                    <div className={"blue-orange-search-query-condition-checkbox"}>
-                        <Checkbox checked={!internalCondition.ignoreCase} onCheckboxChange={updateMatchCase}></Checkbox>
-                        <div className={"blue-orange-search-query-condition-checkbox-label"}>
-                            Match Case
-                        </div>
-                    </div>
-                }
             </div>
 			{geoJsonImportModalOpen &&
 				<Modal width={800} minWidth={800} minHeight={520} onClose={() => setGeoJsonImportModalOpen(false)}>
