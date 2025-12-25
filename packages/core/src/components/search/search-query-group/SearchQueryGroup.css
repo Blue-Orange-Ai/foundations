@@ -2,8 +2,11 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    width: 100%;
+    width: calc(100% - 20px);
     position: relative;
+    padding: 10px;
+    background-color: #f7f7f9;
+    border-radius: 4px;
 }
 
 .blue-orange-search-query-group-header {
@@ -14,11 +17,18 @@
     justify-content: space-between;
     width: 100%;
 }
+.blue-orange-search-query-group-header-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px
+}
 
 .blue-orange-search-query-group-operand-selection {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
 }
 
 .blue-orange-search-query-group-operand-selection {

@@ -8,10 +8,15 @@ export default defineConfig ({
             entry: resolve(__dirname, "src/vite-entry.tsx"),
             name: "core",
             formats: ["es", "umd"],
-            fileName: (format) => `index.${format}.js`,
+            fileName: (format) => format === "es" ? "index.mjs" : "index.umd.js",
         },
         rollupOptions: {
-            external: ["react", "@blue-orange-ai/foundations-clients"],
+            external: [
+                "react",
+                "@blue-orange-ai/foundations-clients",
+                "moment",
+                "chartjs-adapter-moment"
+            ],
         },
     },
     plugins: [

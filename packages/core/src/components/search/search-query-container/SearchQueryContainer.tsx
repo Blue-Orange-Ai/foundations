@@ -35,17 +35,6 @@ export const SearchQueryContainer: React.FC<Props> = ({condition, schema, logica
 
 	return (
 		<div className="blue-orange-search-query-container-cont">
-			<div className="blue-orange-search-query-container-operand">
-				<Badge style={{paddingTop: "6px", paddingBottom: "6px"}}>
-					<div className="blue-orange-search-query-container-operand-cont">
-						<i className="ri-circle-fill"></i>
-						{ logicalOperand == SearchQueryLogicalOperand.AND &&
-							<div className="blue-orange-search-query-container-operand-text">AND</div>}
-						{ logicalOperand == SearchQueryLogicalOperand.OR &&
-							<div className="blue-orange-search-query-container-operand-text">OR</div>}
-					</div>
-				</Badge>
-			</div>
 			<div className="blue-orange-search-query-container-block">
 				{ condition.conditionType == SearchQueryConditionType.LEAF && <SearchQueryCondition condition={condition} schema={schema} onChange={updateCondition} onDelete={handleDelete}></SearchQueryCondition>}
 				{ condition.conditionType == SearchQueryConditionType.GROUP && <SearchQueryGroup condition={condition} schema={schema} onChange={updateCondition} onDelete={handleDelete}></SearchQueryGroup>}

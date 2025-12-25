@@ -26,5 +26,5 @@
 .blue-orange-search-query-container-block {
     flex-grow: 1;
     border: 1px solid var(--blue-orange-light-default-border-color);
-    padding: 20px;
+    padding: 10px;
 }

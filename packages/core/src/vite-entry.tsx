@@ -181,6 +181,7 @@ export * from './components/rules/rule-editor/RuleEditor';
 
 // Search
 export * from './components/search/search-query-editor/SearchQueryEditor';
+export * from './components/search/schema-editor/SchemaEditor';
 
 // Tooltips
 export * from './components/tooltips/simple-tooltip/SimpleTooltip';

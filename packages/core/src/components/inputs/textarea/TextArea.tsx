@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 import './TextArea.css';
 import {HelpIcon} from "../help/HelpIcon";
@@ -29,6 +29,10 @@ export const TextArea: React.FC<Props> = ({
 
 
 	const [text, setText] = useState(value);
+
+	useEffect(() => {
+		setText(value);
+	}, [value]);
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
 		const newValue = event.target.value;

@@ -2,9 +2,26 @@
     width: 100%;
     border-radius: 4px;
     display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.blue-orange-search-query-condition-cont-header {
+    width: 100%;
+    border-radius: 4px;
+    display: flex;
     flex-direction: row;
     align-items: center;
     height: 48px;
+    justify-content: space-between;
+}
+
+.blue-orange-search-query-condition-cont-body {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 10px;
 }
 
 .blue-orange-search-query-condition-start-text {
@@ -17,7 +34,11 @@
 }
 
 .blue-orange-search-query-condition-variable-selection {
-    width: 250px;
+    flex-grow: 1;
+}
+
+.blue-orange-search-query-condition-match-selection {
+    margin-left: 10px;
 }
 
 .blue-orange-search-query-condition-match-selection .blue-orange-dropdown-icon {
@@ -33,6 +54,13 @@
 .blue-orange-search-query-condition-user-input {
     margin-left: 4px;
     flex-grow: 1;
+}
+
+.blue-orange-search-query-condition-geo-point-header {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .blue-orange-search-query-condition-checkbox {

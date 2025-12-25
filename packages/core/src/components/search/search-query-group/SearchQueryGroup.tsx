@@ -14,6 +14,7 @@ import {
 	SearchQueryLogicalOperand
 } from "../search-query-editor/SearchQueryEditor";
 import {SearchQueryContainer} from "../search-query-container/SearchQueryContainer";
+import {Badge} from "../../text-decorations/badge/Badge";
 
 interface Props {
 	condition?: ISearchQueryEditorCondition,
@@ -129,18 +130,36 @@ export const SearchQueryGroup: React.FC<Props> = ({condition, deletable=true, co
 	}
 
 	return (
-		<div className={"blue-orange-search-query-group-cont"}>
-			<div className="blue-orange-search-query-group-cont-vertical-line"></div>
+		<div className="blue-orange-search-query-group-cont">
 			<div className="blue-orange-search-query-group-header">
 				<div className="blue-orange-search-query-group-operand-selection">
-					<Dropdown style={{backgroundColor: "#283747", paddingLeft: "10px"}} onSelection={(item: DropdownItemObj) => logicalChange(item.reference)}>
+					<Dropdown style={{
+                        backgroundColor: "transparent",
+                        fontSize: "14px",
+                        border: "none",
+                        color: "#000000",
+                        paddingLeft: "10px"}} onSelection={(item: DropdownItemObj) => logicalChange(item.reference)}>
 						<DropdownItemText label={"All of the following are true"} value={"AND"}
 									  selected={internalCondition.logic == SearchQueryLogicalOperand.AND}></DropdownItemText>
 						<DropdownItemText label={"Any of the following are true"} value={"OR"}
 									  selected={internalCondition.logic == SearchQueryLogicalOperand.OR}></DropdownItemText>
 					</Dropdown>
 				</div>
-				{deletable && <ButtonIcon icon="ri-close-line" label={"Delete"} onClick={() => removeCondition()}></ButtonIcon>}
+                <div className="blue-orange-search-query-group-header-controls">
+                    <Badge style={{paddingTop: "6px", paddingBottom: "6px"}}>
+                        <div className="blue-orange-search-query-container-operand-cont">
+                            <i className="ri-circle-fill"></i>
+                            { internalCondition.logic == SearchQueryLogicalOperand.AND &&
+                                <div className="blue-orange-search-query-container-operand-text">AND</div>}
+                            { internalCondition.logic == SearchQueryLogicalOperand.OR &&
+                                <div className="blue-orange-search-query-container-operand-text">OR</div>}
+                        </div>
+                    </Badge>
+                    <div className="blue-orange-search-query-group-header-controls-delete">
+                        {deletable && <ButtonIcon icon="ri-close-line" label={"Delete"} onClick={() => removeCondition()}></ButtonIcon>}
+                    </div>
+                </div>
+
 			</div>
 			{internalCondition.groupConditions.map((item, index) => (
 				<SearchQueryContainer

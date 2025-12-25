@@ -53,6 +53,7 @@ import {HelpTooltipDevelopment} from "../components/inputs/help-tooltip/HelpTool
 import {ObjectTableDevelopment} from "../components/table/object-table/ObjectTableDevelopment";
 import {MediaFragment} from "@blue-orange-ai/foundations-clients";
 import {SearchQueryEditorDevelopment} from "../components/search/search-query-editor/SearchQueryEditorDevelopment";
+import {SchemaEditorDevelopment} from "../components/search/schema-editor/SchemaEditorDevelopment";
 
 interface Props {
 }
@@ -431,6 +432,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						icon={<i className="ri-search-line"></i>}
 						onClick={() => navigate("/search-query")}
 					></SideBarBodyItem>
+					<SideBarBodyItem
+						label={"Schema Editor"}
+						active={component == "schema-editor"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-braces-fill"></i>}
+						onClick={() => navigate("/schema-editor")}
+					></SideBarBodyItem>
 					<SideBarBodyGroup opened={sidebarTooltipState} openOnActiveChild={true} onOpenedChange={setSidebarTooltipState}>
 						<SideBarBodyLabel
 							icon={sidebarTooltipState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
@@ -516,6 +526,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "charts-scatter" && <ScatterChartDevelopment></ScatterChartDevelopment>}
 			{component == "rules" && <RuleEditorDevelopment></RuleEditorDevelopment>}
 			{component == "search-query" && <SearchQueryEditorDevelopment></SearchQueryEditorDevelopment>}
+			{component == "schema-editor" && <SchemaEditorDevelopment></SchemaEditorDevelopment>}
 			{component == "file-system" && <FileSystemDevelopment></FileSystemDevelopment>}
 			{component == "inputs-color" && <ColorPickerDevelopment></ColorPickerDevelopment>}
 			{component == "inputs-icon" && <IconSelectorDevelopment></IconSelectorDevelopment>}
