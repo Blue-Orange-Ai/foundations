@@ -27,9 +27,10 @@ interface Props {
 	showSave?: boolean,
 	isDirty?: boolean,
 	onSave?: () => void,
+	onCancel?: () => void,
 }
 
-export const SearchQueryGroup: React.FC<Props> = ({condition, deletable=true, conditions, schema, logic, onChange, onDelete, showSave=false, isDirty=false, onSave}) => {
+export const SearchQueryGroup: React.FC<Props> = ({condition, deletable=true, conditions, schema, logic, onChange, onDelete, showSave=false, isDirty=false, onSave, onCancel}) => {
 
 	const initParentGroup = () : ISearchQueryEditorCondition => {
 		if (condition) {
@@ -180,7 +181,12 @@ export const SearchQueryGroup: React.FC<Props> = ({condition, deletable=true, co
 					<Button text={"Add Group"} buttonType={ButtonType.PRIMARY} onClick={() => addGroup()}></Button>
 				</div>
 				<div className="blue-orange-search-query-group-save-btn-cont">
-					{showSave && isDirty && <Button text={"Save"} buttonType={ButtonType.PRIMARY} onClick={() => onSave && onSave()}></Button>}
+					{showSave && isDirty &&
+						<div style={{display: "flex", gap: "8px"}}>
+							<Button text={"Cancel"} buttonType={ButtonType.SECONDARY} onClick={() => onCancel && onCancel()}></Button>
+							<Button text={"Save"} buttonType={ButtonType.PRIMARY} onClick={() => onSave && onSave()}></Button>
+						</div>
+					}
 				</div>
 			</div>
 		</div>

@@ -275,6 +275,13 @@ export const SearchQueryEditor: React.FC<Props> = ({index, page=1, size=25, filt
 		setInitialRootSnapshot(internalRoot);
 	}
 
+	const handleCancel = () => {
+		setInternalRoot(initialRootSnapshot);
+		if (changeReportingMode === "ON_CHANGE" && onChange) {
+			dispatchChange(initialRootSnapshot);
+		}
+	}
+
 	const convertGroup = (condition: ISearchQueryEditorCondition): BlueOrangeSearchQueryCompositeCondition => {
 		const operand = condition.logic == SearchQueryLogicalOperand.OR ? BlueOrangeSearchQueryOperand.OR : BlueOrangeSearchQueryOperand.AND;
 		return {
@@ -469,6 +476,7 @@ export const SearchQueryEditor: React.FC<Props> = ({index, page=1, size=25, filt
 				showSave={true}
 				isDirty={isDirty}
 				onSave={handleSave}
+				onCancel={handleCancel}
 			></SearchQueryGroup>
 		</div>
 	)
