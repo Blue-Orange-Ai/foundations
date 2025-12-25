@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 
 import './SearchQueryEditor.css'
 import {ButtonIcon} from "../../buttons/button-icon/ButtonIcon";
@@ -183,10 +183,12 @@ interface Props {
 	minimumShouldMatch?: number,
 	analyzer?: string,
 	showHeader?: boolean,
-	onChange?: (query: BlueOrangeSearchQuery) => void
+	onChange?: (query: BlueOrangeSearchQuery) => void,
+	reportChangesOnSaveOnly?: boolean,
+	onSave?: (query: BlueOrangeSearchQuery) => void,
 }
 
-export const SearchQueryEditor: React.FC<Props> = ({index, page=1, size=25, filter=false, minimumShouldMatch=1, analyzer, showHeader=true, onChange}) => {
+export const SearchQueryEditor: React.FC<Props> = ({index, page=1, size=25, filter=false, minimumShouldMatch=1, analyzer, showHeader=true, onChange, reportChangesOnSaveOnly=false, onSave}) => {
 
 	const initRootGroup = (): ISearchQueryEditorCondition => {
 		const firstField = index.schema.properties.length > 0 ? index.schema.properties[0].apiName : "";
@@ -202,6 +204,19 @@ export const SearchQueryEditor: React.FC<Props> = ({index, page=1, size=25, filt
 	}
 
 	const [internalRoot, setInternalRoot] = useState(initRootGroup());
+	const [initialRootSnapshot, setInitialRootSnapshot] = useState<ISearchQueryEditorCondition>(initRootGroup());
+
+	const schemaSignature = useMemo(() => {
+		return (index.schema?.properties ?? [])
+			.map((p) => `${p.apiName}:${p.type}`)
+			.join("|");
+	}, [index.name, index.schema?.properties]);
+
+	useEffect(() => {
+		const next = initRootGroup();
+		setInternalRoot(next);
+		setInitialRootSnapshot(next);
+	}, [index.name, schemaSignature]);
 
 	const dispatchChange = (condition: ISearchQueryEditorCondition) => {
 		const rootCondition = convertGroup(condition);
@@ -219,9 +234,45 @@ export const SearchQueryEditor: React.FC<Props> = ({index, page=1, size=25, filt
 		}
 	}
 
+	const buildQuery = (condition: ISearchQueryEditorCondition): BlueOrangeSearchQuery => {
+		const rootCondition = convertGroup(condition);
+		return {
+			index: index.name,
+			filter: filter,
+			page: page,
+			size: size,
+			minimumShouldMatch: minimumShouldMatch,
+			analyzer: analyzer,
+			rootCondition: rootCondition
+		}
+	}
+
+	const isDirty = useMemo(() => {
+		try {
+			return JSON.stringify(internalRoot) !== JSON.stringify(initialRootSnapshot);
+		} catch (e) {
+			return true;
+		}
+	}, [internalRoot, initialRootSnapshot]);
+
+	const changeReportingMode = reportChangesOnSaveOnly ? "ON_SAVE" : "ON_CHANGE";
+
 	const updateRoot = (condition: ISearchQueryEditorCondition) => {
 		setInternalRoot(condition);
-		dispatchChange(condition);
+		if (changeReportingMode === "ON_CHANGE") {
+			dispatchChange(condition);
+		}
+	}
+
+	const handleSave = () => {
+		const query = buildQuery(internalRoot);
+		if (onSave) {
+			onSave(query);
+		}
+		if (changeReportingMode === "ON_SAVE" && onChange) {
+			onChange(query);
+		}
+		setInitialRootSnapshot(internalRoot);
 	}
 
 	const convertGroup = (condition: ISearchQueryEditorCondition): BlueOrangeSearchQueryCompositeCondition => {
@@ -415,6 +466,9 @@ export const SearchQueryEditor: React.FC<Props> = ({index, page=1, size=25, filt
 				logic={internalRoot.logic}
 				schema={index.schema.properties}
 				onChange={updateRoot}
+				showSave={true}
+				isDirty={isDirty}
+				onSave={handleSave}
 			></SearchQueryGroup>
 		</div>
 	)

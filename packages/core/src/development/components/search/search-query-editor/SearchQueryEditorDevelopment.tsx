@@ -56,12 +56,17 @@ export const SearchQueryEditorDevelopment: React.FC<Props> = ({}) => {
 		setQueryStr(generateQueryStr(q));
 	}
 
+	const querySave = (q: BlueOrangeSearchQuery) => {
+		setQuery(q);
+		setQueryStr(generateQueryStr(q));
+	}
+
 	return (
 		<HorizontalSplitPage>
 			<SplitPageMajor>
 				<PaddedPage>
 					<PageHeading>Search Query Editor</PageHeading>
-					<SearchQueryEditor index={index} onChange={queryChange}></SearchQueryEditor>
+					<SearchQueryEditor index={index} onChange={queryChange} reportChangesOnSaveOnly={false} onSave={querySave}></SearchQueryEditor>
 				</PaddedPage>
 			</SplitPageMajor>
 			<SplitPageMinor>

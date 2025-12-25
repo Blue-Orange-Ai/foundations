@@ -44,9 +44,23 @@
     left: 15px;
 }
 
+.blue-orange-search-query-group-add-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
 .blue-orange-search-query-group-add-btns-cont {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 20px;
+}
+
+.blue-orange-search-query-group-save-btn-cont {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }

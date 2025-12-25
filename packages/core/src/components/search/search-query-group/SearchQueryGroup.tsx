@@ -24,9 +24,12 @@ interface Props {
 	logic?: SearchQueryLogicalOperand,
 	onChange: (condition: ISearchQueryEditorCondition) => void,
 	onDelete?: () => void,
+	showSave?: boolean,
+	isDirty?: boolean,
+	onSave?: () => void,
 }
 
-export const SearchQueryGroup: React.FC<Props> = ({condition, deletable=true, conditions, schema, logic, onChange, onDelete}) => {
+export const SearchQueryGroup: React.FC<Props> = ({condition, deletable=true, conditions, schema, logic, onChange, onDelete, showSave=false, isDirty=false, onSave}) => {
 
 	const initParentGroup = () : ISearchQueryEditorCondition => {
 		if (condition) {
@@ -171,9 +174,14 @@ export const SearchQueryGroup: React.FC<Props> = ({condition, deletable=true, co
 					onDelete={() => handleDelete(index)}
 				></SearchQueryContainer>
 			))}
-			<div className="blue-orange-search-query-group-add-btns-cont">
-				<Button text={"Add Condition"} buttonType={ButtonType.PRIMARY} onClick={() => addCondition()}></Button>
-				<Button text={"Add Group"} buttonType={ButtonType.PRIMARY} onClick={() => addGroup()}></Button>
+			<div className="blue-orange-search-query-group-add-controls">
+				<div className="blue-orange-search-query-group-add-btns-cont">
+					<Button text={"Add Condition"} buttonType={ButtonType.PRIMARY} onClick={() => addCondition()}></Button>
+					<Button text={"Add Group"} buttonType={ButtonType.PRIMARY} onClick={() => addGroup()}></Button>
+				</div>
+				<div className="blue-orange-search-query-group-save-btn-cont">
+					{showSave && isDirty && <Button text={"Save"} buttonType={ButtonType.PRIMARY} onClick={() => onSave && onSave()}></Button>}
+				</div>
 			</div>
 		</div>
 	)
