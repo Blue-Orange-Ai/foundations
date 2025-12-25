@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 
 import './SchemaEditor.css'
 import {Button, ButtonType} from "../../buttons/button/Button";
@@ -57,6 +57,21 @@ const DEFAULT_TYPES = [
 	"STRING"
 ];
 
+const schemaSignature = (s?: IBlueOrangeSearchSchema): string => {
+	const normalized = (s?.properties ?? [])
+		.map((p) => ({
+			apiName: String(p.apiName ?? ""),
+			displayName: p.displayName ?? "",
+			type: String(p.type ?? ""),
+			analyzer: p.analyzer ?? "",
+			dims: p.dims ?? "",
+			similarity: p.similarity ?? ""
+		}))
+		.sort((a, b) => a.apiName.localeCompare(b.apiName));
+
+	return JSON.stringify(normalized);
+}
+
 export const SchemaEditor: React.FC<Props> = ({
 	schema,
 	showHeader=true,
@@ -71,6 +86,7 @@ export const SchemaEditor: React.FC<Props> = ({
 
 	const [internalSchema, setInternalSchema] = useState<IBlueOrangeSearchSchema>(initSchema());
 	const [nodes, setNodes] = useState<SchemaNode[]>([]);
+	const lastEmittedSchemaSignatureRef = useRef<string | null>(null);
 
 	const [importModalOpen, setImportModalOpen] = useState(false);
 	const [importJsonText, setImportJsonText] = useState<string>("");
@@ -78,11 +94,16 @@ export const SchemaEditor: React.FC<Props> = ({
 
 	useEffect(() => {
 		const nextSchema = initSchema();
+		const nextSignature = schemaSignature(nextSchema);
+		if (lastEmittedSchemaSignatureRef.current && nextSignature === lastEmittedSchemaSignatureRef.current) {
+			return;
+		}
 		setInternalSchema(nextSchema);
 		setNodes(schemaToNodes(nextSchema));
 	}, [schema]);
 
 	const dispatchChange = (updated: IBlueOrangeSearchSchema) => {
+		lastEmittedSchemaSignatureRef.current = schemaSignature(updated);
 		if (onChange) {
 			onChange(updated);
 		}
@@ -474,15 +495,6 @@ export const SchemaEditor: React.FC<Props> = ({
 						<ButtonIcon icon={"ri-close-line"} label={"Delete"} onClick={() => deleteNode(node.id)}></ButtonIcon>
 					</div>
 				</div>
-				{t === "OBJECT" &&
-					<div className="blue-orange-schema-editor-object-children">
-						{(node.children ?? []).map((c) => renderNode(c, depth + 1, fullPath))}
-						<div className="blue-orange-schema-editor-nested-add" style={{marginLeft: `${(depth + 1) * 22}px`}}>
-							<Button text={"Add Field"} buttonType={ButtonType.PRIMARY} onClick={() => addChildTo(node.id, false)}></Button>
-							<Button text={"Add Object"} buttonType={ButtonType.PRIMARY} onClick={() => addChildTo(node.id, true)}></Button>
-						</div>
-					</div>
-				}
 			</div>
 		);
 	}
