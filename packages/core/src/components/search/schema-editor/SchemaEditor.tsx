@@ -23,7 +23,9 @@ interface Props {
 	showHeader?: boolean,
 	headerTitle?: string,
 	headerDescription?: string,
-	onChange?: (schema: IBlueOrangeSearchSchema) => void
+	onChange?: (schema: IBlueOrangeSearchSchema) => void,
+	reportChangesOnSaveOnly?: boolean,
+	onSave?: (schema: IBlueOrangeSearchSchema) => void,
 }
 
 type SchemaNode = {
@@ -77,7 +79,9 @@ export const SchemaEditor: React.FC<Props> = ({
 	showHeader=true,
 	headerTitle="Schema",
 	headerDescription="Build a schema by adding fields",
-	onChange
+	onChange,
+	reportChangesOnSaveOnly=false,
+	onSave
 }) => {
 
 	const initSchema = (): IBlueOrangeSearchSchema => {
@@ -85,6 +89,7 @@ export const SchemaEditor: React.FC<Props> = ({
 	}
 
 	const [internalSchema, setInternalSchema] = useState<IBlueOrangeSearchSchema>(initSchema());
+	const [initialSchemaSnapshot, setInitialSchemaSnapshot] = useState<IBlueOrangeSearchSchema>(initSchema());
 	const [nodes, setNodes] = useState<SchemaNode[]>([]);
 	const lastEmittedSchemaSignatureRef = useRef<string | null>(null);
 	const [schemaCopySuccess, setSchemaCopySuccess] = useState(false);
@@ -101,6 +106,7 @@ export const SchemaEditor: React.FC<Props> = ({
 			return;
 		}
 		setInternalSchema(nextSchema);
+		setInitialSchemaSnapshot(nextSchema);
 		setNodes(schemaToNodes(nextSchema));
 	}, [schema]);
 
@@ -118,6 +124,16 @@ export const SchemaEditor: React.FC<Props> = ({
 			onChange(updated);
 		}
 	}
+
+	const isDirty = useMemo(() => {
+		try {
+			return schemaSignature(internalSchema) !== schemaSignature(initialSchemaSnapshot);
+		} catch (e) {
+			return true;
+		}
+	}, [internalSchema, initialSchemaSnapshot]);
+
+	const changeReportingMode = reportChangesOnSaveOnly ? "ON_SAVE" : "ON_CHANGE";
 
 	const schemaType = (type: string): string => {
 		return String(type ?? "").toUpperCase();
@@ -141,7 +157,7 @@ export const SchemaEditor: React.FC<Props> = ({
 
 	const shouldShowAnalyzer = (type: string) => {
 		const t = schemaType(type);
-		return t === "TEXT" || t === "KEYWORDS" || t === "SEARCH_AS_YOU_TYPE";
+		return t === "TEXT" || t === "KEYWORDS" || t === "SEARCH_AS_YOU_TYPE" || t === "STRING";
 	}
 
 	const shouldShowVectorOptions = (type: string) => {
@@ -215,7 +231,17 @@ export const SchemaEditor: React.FC<Props> = ({
 		setNodes(nextNodes);
 		const updatedSchema = nodesToSchema(nextNodes);
 		setInternalSchema(updatedSchema);
-		dispatchChange(updatedSchema);
+		if (changeReportingMode === "ON_CHANGE") {
+			dispatchChange(updatedSchema);
+		}
+	}
+
+	const applySchema = (nextSchema: IBlueOrangeSearchSchema) => {
+		setInternalSchema(nextSchema);
+		setNodes(schemaToNodes(nextSchema));
+		if (changeReportingMode === "ON_CHANGE") {
+			dispatchChange(nextSchema);
+		}
 	}
 
 	const uniqueChildName = (siblings: SchemaNode[], base: string) => {
@@ -324,9 +350,7 @@ export const SchemaEditor: React.FC<Props> = ({
 		try {
 			const parsed = JSON.parse(importJsonText);
 			const nextSchema = isSchemaJson(parsed) ? parsed : buildSchemaFromJson(parsed);
-			setInternalSchema(nextSchema);
-			setNodes(schemaToNodes(nextSchema));
-			dispatchChange(nextSchema);
+			applySchema(nextSchema);
 			setImportModalOpen(false);
 		} catch (e: any) {
 			setImportError("Invalid JSON");
@@ -443,7 +467,7 @@ export const SchemaEditor: React.FC<Props> = ({
 				if (n.id === nodeId) {
 					const next: SchemaNode = {...n, ...patch};
 					const t = schemaType(next.type);
-					if (!shouldShowAnalyzer(t)) {
+					if (!shouldShowAnalyzer(next.type)) {
 						next.analyzer = undefined;
 					}
 					if (!shouldShowVectorOptions(t)) {
@@ -477,9 +501,25 @@ export const SchemaEditor: React.FC<Props> = ({
 
 	const resetSchema = () => {
 		const updated: IBlueOrangeSearchSchema = {properties: []};
-		setInternalSchema(updated);
-		setNodes([]);
-		dispatchChange(updated);
+		applySchema(updated);
+	}
+
+	const handleSave = () => {
+		if (onSave) {
+			onSave(internalSchema);
+		}
+		if (changeReportingMode === "ON_SAVE" && onChange) {
+			dispatchChange(internalSchema);
+		}
+		setInitialSchemaSnapshot(internalSchema);
+	}
+
+	const handleCancel = () => {
+		setInternalSchema(initialSchemaSnapshot);
+		setNodes(schemaToNodes(initialSchemaSnapshot));
+		if (changeReportingMode === "ON_CHANGE" && onChange) {
+			dispatchChange(initialSchemaSnapshot);
+		}
 	}
 
 	const typeOptions = useMemo(() => {
@@ -588,6 +628,12 @@ export const SchemaEditor: React.FC<Props> = ({
 					</div>
 				}
 			</div>
+			{isDirty &&
+				<div style={{width: "100%", display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "12px"}}>
+					<Button text={"Cancel"} buttonType={ButtonType.SECONDARY} onClick={() => handleCancel()}></Button>
+					<Button text={"Save"} buttonType={ButtonType.PRIMARY} onClick={() => handleSave()}></Button>
+				</div>
+			}
 			{importModalOpen &&
 				<Modal width={800} minWidth={800} minHeight={520} onClose={() => setImportModalOpen(false)}>
 					<ModalHeader label={"Import JSON"} onClose={() => setImportModalOpen(false)}></ModalHeader>
