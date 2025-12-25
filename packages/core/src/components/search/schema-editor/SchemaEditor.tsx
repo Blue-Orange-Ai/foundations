@@ -87,6 +87,8 @@ export const SchemaEditor: React.FC<Props> = ({
 	const [internalSchema, setInternalSchema] = useState<IBlueOrangeSearchSchema>(initSchema());
 	const [nodes, setNodes] = useState<SchemaNode[]>([]);
 	const lastEmittedSchemaSignatureRef = useRef<string | null>(null);
+	const [schemaCopySuccess, setSchemaCopySuccess] = useState(false);
+	const schemaCopySuccessTimeoutRef = useRef<number | undefined>(undefined);
 
 	const [importModalOpen, setImportModalOpen] = useState(false);
 	const [importJsonText, setImportJsonText] = useState<string>("");
@@ -101,6 +103,14 @@ export const SchemaEditor: React.FC<Props> = ({
 		setInternalSchema(nextSchema);
 		setNodes(schemaToNodes(nextSchema));
 	}, [schema]);
+
+	useEffect(() => {
+		return () => {
+			if (schemaCopySuccessTimeoutRef.current) {
+				window.clearTimeout(schemaCopySuccessTimeoutRef.current);
+			}
+		};
+	}, []);
 
 	const dispatchChange = (updated: IBlueOrangeSearchSchema) => {
 		lastEmittedSchemaSignatureRef.current = schemaSignature(updated);
@@ -297,11 +307,23 @@ export const SchemaEditor: React.FC<Props> = ({
 		return {properties};
 	}
 
+	const isSchemaJson = (value: any): value is IBlueOrangeSearchSchema => {
+		if (!value || typeof value !== "object") {
+			return false;
+		}
+		if (!Array.isArray(value.properties)) {
+			return false;
+		}
+		return value.properties.every((p: any) => {
+			return p && typeof p === "object" && typeof p.apiName === "string" && typeof p.type === "string";
+		});
+	}
+
 	const importFromJson = () => {
 		setImportError(undefined);
 		try {
 			const parsed = JSON.parse(importJsonText);
-			const nextSchema = buildSchemaFromJson(parsed);
+			const nextSchema = isSchemaJson(parsed) ? parsed : buildSchemaFromJson(parsed);
 			setInternalSchema(nextSchema);
 			setNodes(schemaToNodes(nextSchema));
 			dispatchChange(nextSchema);
@@ -309,6 +331,49 @@ export const SchemaEditor: React.FC<Props> = ({
 		} catch (e: any) {
 			setImportError("Invalid JSON");
 		}
+	}
+
+	const openImportModal = () => {
+		setImportError(undefined);
+		setImportJsonText("");
+		setImportModalOpen(true);
+	}
+
+	const copySchemaToClipboard = async (): Promise<boolean> => {
+		const text = JSON.stringify(internalSchema ?? {properties: []}, null, 2);
+		try {
+			if (navigator?.clipboard?.writeText) {
+				await navigator.clipboard.writeText(text);
+			} else {
+				const el = document.createElement("textarea");
+				el.value = text;
+				el.style.position = "fixed";
+				el.style.opacity = "0";
+				document.body.appendChild(el);
+				el.focus();
+				el.select();
+				document.execCommand("copy");
+				document.body.removeChild(el);
+			}
+			return true;
+		} catch (e) {
+			setImportError("Failed to copy");
+			return false;
+		}
+	}
+
+	const copySchemaFromHeader = async () => {
+		const ok = await copySchemaToClipboard();
+		if (!ok) {
+			return;
+		}
+		setSchemaCopySuccess(true);
+		if (schemaCopySuccessTimeoutRef.current) {
+			window.clearTimeout(schemaCopySuccessTimeoutRef.current);
+		}
+		schemaCopySuccessTimeoutRef.current = window.setTimeout(() => {
+			setSchemaCopySuccess(false);
+		}, 2000);
 	}
 
 	const handleImportFile = (file: File) => {
@@ -508,7 +573,8 @@ export const SchemaEditor: React.FC<Props> = ({
 						{headerDescription && <Description>{headerDescription}</Description>}
 					</div>
 					<div className="blue-orange-schema-editor-header-controls">
-						<ButtonIcon icon={"ri-upload-2-line"} label={"Import JSON"} onClick={() => {setImportModalOpen(true); setImportError(undefined);}}></ButtonIcon>
+						<ButtonIcon icon={"ri-upload-2-line"} label={"Import JSON"} onClick={() => openImportModal()}></ButtonIcon>
+						<ButtonIcon icon={schemaCopySuccess ? "ri-check-line" : "ri-file-copy-2-line"} label={schemaCopySuccess ? "Copied" : "Copy Schema"} onClick={() => copySchemaFromHeader()}></ButtonIcon>
 						<ButtonIcon icon={"ri-refresh-fill"} label={"Reset"} onClick={() => resetSchema()}></ButtonIcon>
 						<Button text={"Add Field"} buttonType={ButtonType.PRIMARY} onClick={() => addProperty()}></Button>
 					</div>
@@ -529,6 +595,7 @@ export const SchemaEditor: React.FC<Props> = ({
 					<ModalBody>
 						<div className={"blue-orange-schema-editor-import-actions"}>
 							<FileUploadBtn accept={"*/*"} label={"Upload JSON"} icon={true} onFileSelect={handleImportFile}></FileUploadBtn>
+							<ButtonIcon icon={"ri-file-copy-2-line"} label={"Copy Current Schema"} onClick={() => copySchemaToClipboard()}></ButtonIcon>
 						</div>
 						<div className={"blue-orange-schema-editor-import-text"}>
 							<TextArea label={"JSON"} value={importJsonText} onChange={setImportJsonText}></TextArea>
