@@ -96,3 +96,30 @@
     color: #b00020;
     font-weight: 600;
 }
+
+.blue-orange-schema-editor-row-header {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 20px;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.blue-orange-shcema-editor-row-header-main {
+    flex-grow: 1;
+}
+
+.blue-orange-schema-editor-footer {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 50px;
+}
+
+.blue-orange-schema-editor-type {
+    width: 100%;
+    width: 100%;
+}

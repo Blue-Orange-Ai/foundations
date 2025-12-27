@@ -17,12 +17,14 @@ import {ModalFooter} from "../../layouts/modal/modal-footer/ModalFooter";
 import {ModalFooterRight} from "../../layouts/modal/modal-footer-right/ModalFooterRight";
 import {FileUploadBtn} from "../../buttons/file-upload-btn/FileUploadBtn";
 import {TextArea} from "../../inputs/textarea/TextArea";
+import {TagInput} from "../../inputs/tags/simple/TagInput";
 
 interface Props {
 	schema?: IBlueOrangeSearchSchema,
 	showHeader?: boolean,
 	headerTitle?: string,
 	headerDescription?: string,
+    analyzers?: string[],
 	onChange?: (schema: IBlueOrangeSearchSchema) => void,
 	reportChangesOnSaveOnly?: boolean,
 	onSave?: (schema: IBlueOrangeSearchSchema) => void,
@@ -80,6 +82,7 @@ export const SchemaEditor: React.FC<Props> = ({
 	headerTitle="Schema",
 	headerDescription="Build a schema by adding fields",
 	onChange,
+    analyzers=["standard"],
 	reportChangesOnSaveOnly=false,
 	onSave
 }) => {
@@ -554,29 +557,44 @@ export const SchemaEditor: React.FC<Props> = ({
 		return (
 			<div key={node.id}>
 				<div className="blue-orange-schema-editor-row" style={{...rowStyle, ...indentStyle}}>
-					<Input
+                    <div className="blue-orange-schema-editor-row-header">
+                        <div className="blue-orange-shcema-editor-row-header-main">
+                            <Input
+                                label={"Display Name"}
+                                value={node.displayName === undefined || node.displayName === null ? "" : String(node.displayName)}
+                                onChange={(v) => updateNode(node.id, {displayName: v})}
+                            ></Input>
+                        </div>
+                        <div className="blue-orange-schema-editor-row-actions">
+                            <ButtonIcon icon={"ri-close-line"} label={"Delete"} onClick={() => deleteNode(node.id)}></ButtonIcon>
+                        </div>
+                    </div>
+
+                    <Input
 						label={"API Name"}
 						value={String(node.apiName ?? "")}
 						onChange={(v) => updateNode(node.id, {apiName: v})}
 					></Input>
-					<Input
-						label={"Display Name"}
-						value={node.displayName === undefined || node.displayName === null ? "" : String(node.displayName)}
-						onChange={(v) => updateNode(node.id, {displayName: v})}
-					></Input>
 					<div className="blue-orange-schema-editor-type">
-						<Dropdown label={"Type"} style={dropdownStyle} onSelection={(item) => updateNode(node.id, {type: item.reference})}>
+						<Dropdown
+                            label={"Type"}
+                            style={dropdownStyle}
+                            filter={true}
+                            onSelection={(item) => updateNode(node.id, {type: item.reference})}>
 							{typeOptions.map((opt) => (
 								<DropdownItemText key={opt} label={opt} value={opt} selected={schemaType(node.type) === opt}></DropdownItemText>
 							))}
 						</Dropdown>
 					</div>
 					{shouldShowAnalyzer(node.type) &&
-						<Input
-							label={"Analyzer"}
-							value={node.analyzer === undefined || node.analyzer === null ? "" : String(node.analyzer)}
-							onChange={(v) => updateNode(node.id, {analyzer: v})}
-						></Input>
+						<TagInput
+                            label={"Analyzer"}
+                            maxTags={1}
+                            enforceWhitelist={true}
+                            whitelist={analyzers}
+                            initialTags={node.analyzer === undefined || node.analyzer === null ? [] : Array.of(String(node.analyzer))}
+                            onChange={(v) => updateNode(node.id, {analyzer: v[0] ?? ""})}
+                        ></TagInput>
 					}
 					{shouldShowVectorOptions(node.type) &&
 						<>
@@ -596,9 +614,6 @@ export const SchemaEditor: React.FC<Props> = ({
 							></Input>
 						</>
 					}
-					<div className="blue-orange-schema-editor-row-actions">
-						<ButtonIcon icon={"ri-close-line"} label={"Delete"} onClick={() => deleteNode(node.id)}></ButtonIcon>
-					</div>
 				</div>
 			</div>
 		);
@@ -615,8 +630,6 @@ export const SchemaEditor: React.FC<Props> = ({
 					<div className="blue-orange-schema-editor-header-controls">
 						<ButtonIcon icon={"ri-upload-2-line"} label={"Import JSON"} onClick={() => openImportModal()}></ButtonIcon>
 						<ButtonIcon icon={schemaCopySuccess ? "ri-check-line" : "ri-file-copy-2-line"} label={schemaCopySuccess ? "Copied" : "Copy Schema"} onClick={() => copySchemaFromHeader()}></ButtonIcon>
-						<ButtonIcon icon={"ri-refresh-fill"} label={"Reset"} onClick={() => resetSchema()}></ButtonIcon>
-						<Button text={"Add Field"} buttonType={ButtonType.PRIMARY} onClick={() => addProperty()}></Button>
 					</div>
 				</div>
 			}
@@ -628,12 +641,16 @@ export const SchemaEditor: React.FC<Props> = ({
 					</div>
 				}
 			</div>
-			{isDirty &&
-				<div style={{width: "100%", display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "12px"}}>
-					<Button text={"Cancel"} buttonType={ButtonType.SECONDARY} onClick={() => handleCancel()}></Button>
-					<Button text={"Save"} buttonType={ButtonType.PRIMARY} onClick={() => handleSave()}></Button>
-				</div>
-			}
+			<div className={"blue-orange-schema-editor-footer"}>
+                <Button text={"Add Field"} buttonType={ButtonType.PRIMARY} onClick={() => addProperty()}></Button>
+                {isDirty &&
+                    <div style={{width: "100%", display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "12px"}}>
+                        <Button text={"Cancel"} buttonType={ButtonType.SECONDARY} onClick={() => handleCancel()}></Button>
+                        <Button text={"Save"} buttonType={ButtonType.PRIMARY} onClick={() => handleSave()}></Button>
+                    </div>
+                }
+            </div>
+
 			{importModalOpen &&
 				<Modal width={800} minWidth={800} minHeight={520} onClose={() => setImportModalOpen(false)}>
 					<ModalHeader label={"Import JSON"} onClose={() => setImportModalOpen(false)}></ModalHeader>
