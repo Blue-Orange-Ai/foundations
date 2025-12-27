@@ -38,7 +38,12 @@ export const TagInput: React.FC<Props> = ({
 										   }) => {
 
 	const tagifyRef = useRef<HTMLInputElement>(null);
-	const [tags, setTags] = useState(initialTags);
+	const onChangeRef = useRef(onChange);
+	const [, setTags] = useState(initialTags);
+
+	useEffect(() => {
+		onChangeRef.current = onChange;
+	}, [onChange]);
 
 	useEffect(() => {
 		if (!tagifyRef.current) return;
@@ -55,16 +60,16 @@ export const TagInput: React.FC<Props> = ({
 		};
 
 		const tagify = new Tagify(tagifyRef.current, settings);
+		if (initialTags.length > 0) {
+			tagify.addTags(initialTags);
+		}
 		// @ts-ignore
 		tagify.on("add remove", (e) => {
-			setTimeout(() => {
-				// @ts-ignore
-				const updatedTags = tagify.getTagElms().map(tagEl => tagEl["__tagifyTagData"]["value"] || '');
-				setTags(updatedTags);
-				if (onChange) {
-					onChange(updatedTags);
-				}
-			}, 10);
+			const updatedTags = (tagify.value || []).map((t: any) => t?.value || '');
+			setTags(updatedTags);
+			if (onChangeRef.current) {
+				onChangeRef.current(updatedTags);
+			}
 		});
 
 		return () => {
@@ -81,8 +86,7 @@ export const TagInput: React.FC<Props> = ({
 					{required && <RequiredIcon></RequiredIcon>}
 				</div>
 			}
-			<input ref={tagifyRef} className={"blue-orange-tags"} value={tags.join(',')} onChange={() => {
-			}}/>
+			<input ref={tagifyRef} className={"blue-orange-tags"}/>
 		</div>
 
 	);

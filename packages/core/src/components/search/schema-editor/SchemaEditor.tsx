@@ -94,7 +94,9 @@ export const SchemaEditor: React.FC<Props> = ({
 	const [internalSchema, setInternalSchema] = useState<IBlueOrangeSearchSchema>(initSchema());
 	const [initialSchemaSnapshot, setInitialSchemaSnapshot] = useState<IBlueOrangeSearchSchema>(initSchema());
 	const [nodes, setNodes] = useState<SchemaNode[]>([]);
+    const nodeRef = useRef<SchemaNode[]>([]);
 	const lastEmittedSchemaSignatureRef = useRef<string | null>(null);
+	const lastAppliedPropSchemaSignatureRef = useRef<string | null>(null);
 	const [schemaCopySuccess, setSchemaCopySuccess] = useState(false);
 	const schemaCopySuccessTimeoutRef = useRef<number | undefined>(undefined);
 
@@ -105,9 +107,22 @@ export const SchemaEditor: React.FC<Props> = ({
 	useEffect(() => {
 		const nextSchema = initSchema();
 		const nextSignature = schemaSignature(nextSchema);
+		const currentSignature = schemaSignature(internalSchema);
+		const snapshotSignature = schemaSignature(initialSchemaSnapshot);
+		const dirtyNow = currentSignature !== snapshotSignature;
+		if (dirtyNow) {
+			const lastEmitted = lastEmittedSchemaSignatureRef.current;
+			if (!lastEmitted || nextSignature !== lastEmitted) {
+				return;
+			}
+		}
 		if (lastEmittedSchemaSignatureRef.current && nextSignature === lastEmittedSchemaSignatureRef.current) {
 			return;
 		}
+		if (lastAppliedPropSchemaSignatureRef.current && nextSignature === lastAppliedPropSchemaSignatureRef.current) {
+			return;
+		}
+		lastAppliedPropSchemaSignatureRef.current = nextSignature;
 		setInternalSchema(nextSchema);
 		setInitialSchemaSnapshot(nextSchema);
 		setNodes(schemaToNodes(nextSchema));
@@ -120,6 +135,10 @@ export const SchemaEditor: React.FC<Props> = ({
 			}
 		};
 	}, []);
+
+    useEffect(() => {
+        nodeRef.current = nodes;
+    }, [nodes]);
 
 	const dispatchChange = (updated: IBlueOrangeSearchSchema) => {
 		lastEmittedSchemaSignatureRef.current = schemaSignature(updated);
@@ -490,7 +509,7 @@ export const SchemaEditor: React.FC<Props> = ({
 				return n;
 			});
 		}
-		applyNodes(updateRec(nodes ?? []));
+		applyNodes(updateRec(nodeRef.current ?? []));
 	}
 
 	const deleteNode = (nodeId: string) => {
