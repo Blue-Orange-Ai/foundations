@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 
 import './Metric.css'
-import {ButtonIcon} from "../../buttons/button-icon/ButtonIcon";
 
 interface Props {
 	text: string;

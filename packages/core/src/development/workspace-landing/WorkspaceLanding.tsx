@@ -54,6 +54,7 @@ import {ObjectTableDevelopment} from "../components/table/object-table/ObjectTab
 import {MediaFragment} from "@blue-orange-ai/foundations-clients";
 import {SearchQueryEditorDevelopment} from "../components/search/search-query-editor/SearchQueryEditorDevelopment";
 import {SchemaEditorDevelopment} from "../components/search/schema-editor/SchemaEditorDevelopment";
+import {SearchIndexEditorDevelopment} from "../components/search/search-index-editor/SearchIndexEditorDevelopment";
 
 interface Props {
 }
@@ -75,6 +76,8 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 	const [sidebarChartState, setSidebarChartState] = useState(false);
 
 	const [sidebarInputState, setSidebarInputState] = useState(false);
+
+    const [sidebarSearchState, setSidebarSearchState] = useState(false);
 
 	const [sidebarTextDecorationState, setSidebarTextDecorationState] = useState(false);
 
@@ -423,24 +426,40 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						icon={<i className="ri-ruler-fill"></i>}
 						onClick={() => navigate("/rules")}
 					></SideBarBodyItem>
-					<SideBarBodyItem
-						label={"Search Query Editor"}
-						active={component == "search-query"}
-						focused={false}
-						defaultStyle={inactiveStyle}
-						activeStyle={activeStyle}
-						icon={<i className="ri-search-line"></i>}
-						onClick={() => navigate("/search-query")}
-					></SideBarBodyItem>
-					<SideBarBodyItem
-						label={"Schema Editor"}
-						active={component == "schema-editor"}
-						focused={false}
-						defaultStyle={inactiveStyle}
-						activeStyle={activeStyle}
-						icon={<i className="ri-braces-fill"></i>}
-						onClick={() => navigate("/schema-editor")}
-					></SideBarBodyItem>
+                    <SideBarBodyGroup opened={sidebarSearchState} openOnActiveChild={true} onOpenedChange={setSidebarSearchState}>
+                        <SideBarBodyLabel
+                            icon={sidebarSearchState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
+                            label={"Search"}
+                            onClick={() => setSidebarSearchState(!sidebarSearchState)}
+                        ></SideBarBodyLabel>
+                        <SideBarBodyItem
+                            label={"Search Query Editor"}
+                            active={component == "search-query"}
+                            focused={false}
+                            defaultStyle={inactiveStyle}
+                            activeStyle={activeStyle}
+                            icon={<i className="ri-search-line"></i>}
+                            onClick={() => navigate("/search-query")}
+                        ></SideBarBodyItem>
+                        <SideBarBodyItem
+                            label={"Schema Editor"}
+                            active={component == "schema-editor"}
+                            focused={false}
+                            defaultStyle={inactiveStyle}
+                            activeStyle={activeStyle}
+                            icon={<i className="ri-braces-fill"></i>}
+                            onClick={() => navigate("/schema-editor")}
+                        ></SideBarBodyItem>
+                        <SideBarBodyItem
+                            label={"Index Editor"}
+                            active={component == "search-index"}
+                            focused={false}
+                            defaultStyle={inactiveStyle}
+                            activeStyle={activeStyle}
+                            icon={<i className="ri-braces-fill"></i>}
+                            onClick={() => navigate("/search-index")}
+                        ></SideBarBodyItem>
+                    </SideBarBodyGroup>
 					<SideBarBodyGroup opened={sidebarTooltipState} openOnActiveChild={true} onOpenedChange={setSidebarTooltipState}>
 						<SideBarBodyLabel
 							icon={sidebarTooltipState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
@@ -527,6 +546,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "rules" && <RuleEditorDevelopment></RuleEditorDevelopment>}
 			{component == "search-query" && <SearchQueryEditorDevelopment></SearchQueryEditorDevelopment>}
 			{component == "schema-editor" && <SchemaEditorDevelopment></SchemaEditorDevelopment>}
+            {component == "search-index" && <SearchIndexEditorDevelopment></SearchIndexEditorDevelopment>}
 			{component == "file-system" && <FileSystemDevelopment></FileSystemDevelopment>}
 			{component == "inputs-color" && <ColorPickerDevelopment></ColorPickerDevelopment>}
 			{component == "inputs-icon" && <IconSelectorDevelopment></IconSelectorDevelopment>}

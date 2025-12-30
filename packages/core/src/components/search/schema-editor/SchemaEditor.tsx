@@ -25,6 +25,7 @@ interface Props {
 	headerTitle?: string,
 	headerDescription?: string,
     analyzers?: string[],
+	readOnly?: boolean,
 	onChange?: (schema: IBlueOrangeSearchSchema) => void,
 	reportChangesOnSaveOnly?: boolean,
 	onSave?: (schema: IBlueOrangeSearchSchema) => void,
@@ -83,6 +84,7 @@ export const SchemaEditor: React.FC<Props> = ({
 	headerDescription="Build a schema by adding fields",
 	onChange,
     analyzers=["standard"],
+	readOnly=false,
 	reportChangesOnSaveOnly=false,
 	onSave
 }) => {
@@ -141,6 +143,9 @@ export const SchemaEditor: React.FC<Props> = ({
     }, [nodes]);
 
 	const dispatchChange = (updated: IBlueOrangeSearchSchema) => {
+		if (readOnly) {
+			return;
+		}
 		lastEmittedSchemaSignatureRef.current = schemaSignature(updated);
 		if (onChange) {
 			onChange(updated);
@@ -250,6 +255,9 @@ export const SchemaEditor: React.FC<Props> = ({
 	}
 
 	const applyNodes = (nextNodes: SchemaNode[]) => {
+		if (readOnly) {
+			return;
+		}
 		setNodes(nextNodes);
 		const updatedSchema = nodesToSchema(nextNodes);
 		setInternalSchema(updatedSchema);
@@ -259,6 +267,9 @@ export const SchemaEditor: React.FC<Props> = ({
 	}
 
 	const applySchema = (nextSchema: IBlueOrangeSearchSchema) => {
+		if (readOnly) {
+			return;
+		}
 		setInternalSchema(nextSchema);
 		setNodes(schemaToNodes(nextSchema));
 		if (changeReportingMode === "ON_CHANGE") {
@@ -435,6 +446,9 @@ export const SchemaEditor: React.FC<Props> = ({
 	}
 
 	const addProperty = () => {
+		if (readOnly) {
+			return;
+		}
 		const apiName = uniqueChildName(nodes, `field_${(nodes?.length ?? 0) + 1}`);
 		const next: SchemaNode = {
 			id: newNodeId(),
@@ -450,6 +464,9 @@ export const SchemaEditor: React.FC<Props> = ({
 	}
 
 	const addChildTo = (parentId: string, asObject: boolean) => {
+		if (readOnly) {
+			return;
+		}
 		const addRec = (list: SchemaNode[]): SchemaNode[] => {
 			return list.map((n) => {
 				if (n.id === parentId) {
@@ -484,6 +501,9 @@ export const SchemaEditor: React.FC<Props> = ({
 	}
 
 	const updateNode = (nodeId: string, patch: Partial<SchemaNode>) => {
+		if (readOnly) {
+			return;
+		}
 		const updateRec = (list: SchemaNode[]): SchemaNode[] => {
 			return list.map((n) => {
 				if (n.id === nodeId) {
@@ -513,6 +533,9 @@ export const SchemaEditor: React.FC<Props> = ({
 	}
 
 	const deleteNode = (nodeId: string) => {
+		if (readOnly) {
+			return;
+		}
 		const deleteRec = (list: SchemaNode[]): SchemaNode[] => {
 			return list
 				.filter((n) => n.id !== nodeId)
@@ -522,11 +545,17 @@ export const SchemaEditor: React.FC<Props> = ({
 	}
 
 	const resetSchema = () => {
+		if (readOnly) {
+			return;
+		}
 		const updated: IBlueOrangeSearchSchema = {properties: []};
 		applySchema(updated);
 	}
 
 	const handleSave = () => {
+		if (readOnly) {
+			return;
+		}
 		if (onSave) {
 			onSave(internalSchema);
 		}
@@ -537,6 +566,9 @@ export const SchemaEditor: React.FC<Props> = ({
 	}
 
 	const handleCancel = () => {
+		if (readOnly) {
+			return;
+		}
 		setInternalSchema(initialSchemaSnapshot);
 		setNodes(schemaToNodes(initialSchemaSnapshot));
 		if (changeReportingMode === "ON_CHANGE" && onChange) {
@@ -582,10 +614,13 @@ export const SchemaEditor: React.FC<Props> = ({
                                 label={"Display Name"}
                                 value={node.displayName === undefined || node.displayName === null ? "" : String(node.displayName)}
                                 onChange={(v) => updateNode(node.id, {displayName: v})}
+                                disabled={readOnly}
                             ></Input>
                         </div>
                         <div className="blue-orange-schema-editor-row-actions">
-                            <ButtonIcon icon={"ri-close-line"} label={"Delete"} onClick={() => deleteNode(node.id)}></ButtonIcon>
+                            {!readOnly &&
+								<ButtonIcon icon={"ri-close-line"} label={"Delete"} onClick={() => deleteNode(node.id)}></ButtonIcon>
+							}
                         </div>
                     </div>
 
@@ -593,12 +628,14 @@ export const SchemaEditor: React.FC<Props> = ({
 						label={"API Name"}
 						value={String(node.apiName ?? "")}
 						onChange={(v) => updateNode(node.id, {apiName: v})}
+						disabled={readOnly}
 					></Input>
 					<div className="blue-orange-schema-editor-type">
 						<Dropdown
                             label={"Type"}
                             style={dropdownStyle}
                             filter={true}
+							disabled={readOnly}
                             onSelection={(item) => updateNode(node.id, {type: item.reference})}>
 							{typeOptions.map((opt) => (
 								<DropdownItemText key={opt} label={opt} value={opt} selected={schemaType(node.type) === opt}></DropdownItemText>
@@ -606,14 +643,24 @@ export const SchemaEditor: React.FC<Props> = ({
 						</Dropdown>
 					</div>
 					{shouldShowAnalyzer(node.type) &&
-						<TagInput
-                            label={"Analyzer"}
-                            maxTags={1}
-                            enforceWhitelist={true}
-                            whitelist={analyzers}
-                            initialTags={node.analyzer === undefined || node.analyzer === null ? [] : Array.of(String(node.analyzer))}
-                            onChange={(v) => updateNode(node.id, {analyzer: v[0] ?? ""})}
-                        ></TagInput>
+						<>
+							{readOnly ?
+								<Input
+									label={"Analyzer"}
+									value={node.analyzer === undefined || node.analyzer === null ? "" : String(node.analyzer)}
+									disabled={true}
+								></Input>
+								:
+								<TagInput
+									label={"Analyzer"}
+									maxTags={1}
+									enforceWhitelist={true}
+									whitelist={analyzers}
+									initialTags={node.analyzer === undefined || node.analyzer === null ? [] : Array.of(String(node.analyzer))}
+									onChange={(v) => updateNode(node.id, {analyzer: v[0] ?? ""})}
+								></TagInput>
+							}
+						</>
 					}
 					{shouldShowVectorOptions(node.type) &&
 						<>
@@ -625,11 +672,13 @@ export const SchemaEditor: React.FC<Props> = ({
 									const n = parseInt(v, 10);
 									updateNode(node.id, {dims: isNaN(n) ? undefined : n});
 								}}
+								disabled={readOnly}
 							></Input>
 							<Input
 								label={"Similarity"}
 								value={node.similarity === undefined || node.similarity === null ? "" : String(node.similarity)}
 								onChange={(v) => updateNode(node.id, {similarity: v})}
+								disabled={readOnly}
 							></Input>
 						</>
 					}
@@ -647,7 +696,9 @@ export const SchemaEditor: React.FC<Props> = ({
 						{headerDescription && <Description>{headerDescription}</Description>}
 					</div>
 					<div className="blue-orange-schema-editor-header-controls">
-						<ButtonIcon icon={"ri-upload-2-line"} label={"Import JSON"} onClick={() => openImportModal()}></ButtonIcon>
+						{!readOnly &&
+							<ButtonIcon icon={"ri-upload-2-line"} label={"Import JSON"} onClick={() => openImportModal()}></ButtonIcon>
+						}
 						<ButtonIcon icon={schemaCopySuccess ? "ri-check-line" : "ri-file-copy-2-line"} label={schemaCopySuccess ? "Copied" : "Copy Schema"} onClick={() => copySchemaFromHeader()}></ButtonIcon>
 					</div>
 				</div>
@@ -656,13 +707,17 @@ export const SchemaEditor: React.FC<Props> = ({
 				{(nodes ?? []).map((n) => renderNode(n, 0, ""))}
 				{(nodes ?? []).length === 0 &&
 					<div className="blue-orange-schema-editor-empty">
-						<Button text={"Add your first field"} buttonType={ButtonType.PRIMARY} onClick={() => addProperty()}></Button>
+						{!readOnly &&
+							<Button text={"Add your first field"} buttonType={ButtonType.PRIMARY} onClick={() => addProperty()}></Button>
+						}
 					</div>
 				}
 			</div>
 			<div className={"blue-orange-schema-editor-footer"}>
-                <Button text={"Add Field"} buttonType={ButtonType.PRIMARY} onClick={() => addProperty()}></Button>
-                {isDirty &&
+				{!readOnly && (nodes ?? []).length > 0 &&
+                    <Button text={"Add Field"} buttonType={ButtonType.PRIMARY} onClick={() => addProperty()}></Button>
+                }
+				{!readOnly && isDirty &&
                     <div style={{width: "100%", display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "12px"}}>
                         <Button text={"Cancel"} buttonType={ButtonType.SECONDARY} onClick={() => handleCancel()}></Button>
                         <Button text={"Save"} buttonType={ButtonType.PRIMARY} onClick={() => handleSave()}></Button>
@@ -670,7 +725,7 @@ export const SchemaEditor: React.FC<Props> = ({
                 }
             </div>
 
-			{importModalOpen &&
+			{!readOnly && importModalOpen &&
 				<Modal width={800} minWidth={800} minHeight={520} onClose={() => setImportModalOpen(false)}>
 					<ModalHeader label={"Import JSON"} onClose={() => setImportModalOpen(false)}></ModalHeader>
 					<ModalDescription description={"Upload or paste a JSON object to generate a schema"}></ModalDescription>

@@ -27,4 +27,5 @@
     flex-grow: 1;
     border: 1px solid var(--blue-orange-light-default-border-color);
     padding: 10px;
+    width: calc(100% - 20px);
 }

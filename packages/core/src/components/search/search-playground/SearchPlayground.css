@@ -1,0 +1,27 @@
+
+.blue-orange-search-playground {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    max-height: 100%;
+    min-height: 100%;
+}
+
+.blue-orange-search-playground-query-cont {
+    max-height: 100%;
+    overflow-y: auto;
+    width: 450px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--blue-orange-light-default-border-color);
+    flex-shrink: 0;
+}
+
+.blue-orange-search-playground-body-cont {
+    flex-grow: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto;
+}

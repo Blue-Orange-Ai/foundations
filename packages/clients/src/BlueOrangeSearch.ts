@@ -231,6 +231,31 @@ export type Analyzer = {
     filter?: string[];
 }
 
+export type SearchDocument = Record<string, unknown>;
+
+export type SearchStats = Record<string, unknown>;
+
+export type HttpStatus =
+    | "ACCEPTED"
+    | "OK"
+    | "CREATED"
+    | "NO_CONTENT"
+    | "BAD_REQUEST"
+    | "UNAUTHORIZED"
+    | "FORBIDDEN"
+    | "NOT_FOUND"
+    | "CONFLICT"
+    | "INTERNAL_SERVER_ERROR"
+    | string;
+
+export type QueryResponse<TDocument = SearchDocument> = {
+    result?: TDocument[];
+    count?: number;
+    query?: Query;
+    aggregations?: Record<string, unknown>;
+    [key: string]: unknown;
+}
+
 export class BlueOrangeSearch {
 
     protected baseUrl: string;
@@ -241,58 +266,119 @@ export class BlueOrangeSearch {
         this.authCookie = authCookie;
     }
 
-    search<T = any>(query: Query): Promise<T> {
+    protected request<T>(
+        method: "GET" | "POST" | "DELETE",
+        path: string,
+        body?: unknown
+    ): Promise<T> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
-            var authToken = Cookies.get(this.authCookie)
-            xhr.open('POST', this.baseUrl + "/api/v1/search");
+            const authToken = Cookies.get(this.authCookie);
+
+            xhr.open(method, this.baseUrl + path);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
+
             xhr.onload = function() {
-                if (xhr.status === 200) {
-                    const response: T = JSON.parse(xhr.responseText);
-                    resolve(response);
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    if (!xhr.responseText) {
+                        resolve(undefined as T);
+                        return;
+                    }
+                    try {
+                        const response: T = JSON.parse(xhr.responseText);
+                        resolve(response);
+                    } catch (e) {
+                        resolve(xhr.responseText as unknown as T);
+                    }
                 } else {
                     try {
-                        var response = JSON.parse(xhr.response);
+                        const response = JSON.parse(xhr.response);
                         reject(response.details ?? response.message ?? response);
                     } catch (e) {
                         reject(xhr.responseText);
                     }
                 }
             };
+
             xhr.onerror = function() {
-                reject('Network error while attempting to perform search');
+                reject(`Network error while attempting to call ${method} ${path}`);
             };
-            xhr.send(JSON.stringify({ Query: query }));
+
+            if (body === undefined) {
+                xhr.send();
+            } else {
+                xhr.send(JSON.stringify(body));
+            }
         });
     }
 
-    createIndex<T = any>(index: Index): Promise<T> {
-        return new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            var authToken = Cookies.get(this.authCookie)
-            xhr.open('POST', this.baseUrl + "/api/v1/create/index");
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    const response: T = JSON.parse(xhr.responseText);
-                    resolve(response);
-                } else {
-                    try {
-                        var response = JSON.parse(xhr.response);
-                        reject(response.details ?? response.message ?? response);
-                    } catch (e) {
-                        reject(xhr.responseText);
-                    }
-                }
-            };
-            xhr.onerror = function() {
-                reject('Network error while attempting to create index');
-            };
-            xhr.send(JSON.stringify({ Index: index }));
-        });
+    search<TDocument = SearchDocument>(query: Query): Promise<QueryResponse<TDocument>> {
+        return this.request<QueryResponse<TDocument>>("POST", "/api/v1/search", query);
+    }
+
+    createIndex(index: Index): Promise<Index> {
+        return this.request<Index>("POST", "/api/v1/create/index", index);
+    }
+
+    createIndexSilent(index: Index): Promise<HttpStatus> {
+        return this.request<HttpStatus>("POST", "/api/v1/create/index/silent", index);
+    }
+
+    createMigrateIndex(index: Index): Promise<Index> {
+        return this.request<Index>("POST", "/api/v1/create/migrate/index", index);
+    }
+
+    createMigrateIndexSilent(index: Index): Promise<HttpStatus> {
+        return this.request<HttpStatus>("POST", "/api/v1/create/migrate/index/silent", index);
+    }
+
+    deleteIndex(name: string): Promise<HttpStatus> {
+        return this.request<HttpStatus>(
+            "DELETE",
+            `/api/v1/delete/index/${encodeURIComponent(name)}`
+        );
+    }
+
+    getIndex(name: string): Promise<Index> {
+        return this.request<Index>(
+            "GET",
+            `/api/v1/index/get/${encodeURIComponent(name)}`
+        );
+    }
+
+    indexDocument(name: string, document: SearchDocument): Promise<HttpStatus> {
+        return this.request<HttpStatus>(
+            "POST",
+            `/api/v1/index/${encodeURIComponent(name)}/document`,
+            document
+        );
+    }
+
+    indexDocumentsBulk(name: string, documents: SearchDocument[]): Promise<HttpStatus> {
+        return this.request<HttpStatus>(
+            "POST",
+            `/api/v1/index/${encodeURIComponent(name)}/document/bulk`,
+            documents
+        );
+    }
+
+    deleteDocument(name: string, objId: string): Promise<HttpStatus> {
+        return this.request<HttpStatus>(
+            "POST",
+            `/api/v1/index/delete/${encodeURIComponent(name)}/${encodeURIComponent(objId)}`
+        );
+    }
+
+    getIndexSearchStats(name: string): Promise<SearchStats> {
+        return this.request<SearchStats>(
+            "GET",
+            `/api/v1/index/${encodeURIComponent(name)}/stats/search`
+        );
+    }
+
+    getAllIndexSearchStats(): Promise<SearchStats> {
+        return this.request<SearchStats>("GET", `/api/v1/index/stats/search`);
     }
 }
 
@@ -300,7 +386,7 @@ export class BlueOrangeSearchQuery extends BlueOrangeSearch {
 }
 
 export class BlueOrangeIndexSchema extends BlueOrangeSearch {
-    create<T = any>(index: Index): Promise<T> {
+    create(index: Index): Promise<Index> {
         return this.createIndex(index);
     }
 }
