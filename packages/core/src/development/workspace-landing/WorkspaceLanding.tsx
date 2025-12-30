@@ -55,6 +55,7 @@ import {MediaFragment} from "@blue-orange-ai/foundations-clients";
 import {SearchQueryEditorDevelopment} from "../components/search/search-query-editor/SearchQueryEditorDevelopment";
 import {SchemaEditorDevelopment} from "../components/search/schema-editor/SchemaEditorDevelopment";
 import {SearchIndexEditorDevelopment} from "../components/search/search-index-editor/SearchIndexEditorDevelopment";
+import {ArrayInputDevelopment} from "../components/inputs/array-input/ArrayInputDevelopment";
 
 interface Props {
 }
@@ -273,6 +274,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/inputs-address")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
+							label={"Array Input"}
+							active={component == "inputs-array"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-list-ordered-2"></i>}
+							onClick={() => navigate("/inputs-array")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
 							label={"Checkbox Input"}
 							active={component == "inputs-checkbox"}
 							focused={false}
@@ -456,7 +466,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
                             focused={false}
                             defaultStyle={inactiveStyle}
                             activeStyle={activeStyle}
-                            icon={<i className="ri-braces-fill"></i>}
+                            icon={<i className="ri-git-repository-fill"></i>}
                             onClick={() => navigate("/search-index")}
                         ></SideBarBodyItem>
                     </SideBarBodyGroup>
@@ -560,6 +570,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "context-menu" && <ContextMenuDevelopment></ContextMenuDevelopment>}
 			{component == "sockets" && <SocketWorkspace></SocketWorkspace>}
 			{component == "inputs-address" && <AddressInputDevelopment></AddressInputDevelopment>}
+			{component == "inputs-array" && <ArrayInputDevelopment></ArrayInputDevelopment>}
 			{component == "inputs-checkbox" && <CheckboxInputDevelopment></CheckboxInputDevelopment>}
 			{component == "inputs-date" && <DateInputDevelopment></DateInputDevelopment>}
 			{component == "inputs-dropdown" && <DropdownInputDevelopment></DropdownInputDevelopment>}

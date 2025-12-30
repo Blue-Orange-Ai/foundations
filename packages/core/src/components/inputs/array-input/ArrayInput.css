@@ -1,0 +1,40 @@
+.blue-orange-array-input-items-cont {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+}
+
+.blue-orange-array-input-bar {
+	width: 3px;
+	background-color: var(--blue-orange-light-input-border-color);
+	border-radius: 2px;
+	margin-right: 10px;
+	flex-shrink: 0;
+}
+
+.dark .blue-orange-array-input-bar {
+	background-color: var(--blue-orange-dark-input-border-color);
+}
+
+.blue-orange-array-input-items {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	flex-grow: 1;
+}
+
+.blue-orange-array-input-item {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+}
+
+.blue-orange-array-input-item .blue-orange-default-input-cont {
+	flex-grow: 1;
+}
+
+.blue-orange-array-input-add {
+	display: flex;
+	justify-content: flex-start;
+}

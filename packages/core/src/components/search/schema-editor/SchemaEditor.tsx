@@ -43,7 +43,8 @@ type SchemaNode = {
 	primaryKey?: boolean,
 	title?: boolean,
 	allowMultiple?: boolean,
-	children?: SchemaNode[]
+	children?: SchemaNode[],
+	isNew?: boolean
 }
 
 const newNodeId = () => {
@@ -472,7 +473,8 @@ export const SchemaEditor: React.FC<Props> = ({
 			analyzer: "",
 			dims: undefined,
 			similarity: "",
-			children: undefined
+			children: undefined,
+			isNew: true
 		};
 		applyNodes([...(nodes ?? []), next]);
 	}
@@ -762,6 +764,15 @@ export const SchemaEditor: React.FC<Props> = ({
 						(n.type ?? "").toLowerCase().includes(search)
 					);
 				}).sort((a, b) => {
+					const hasFilter = filterText.trim().length > 0;
+					// When no filter, keep new items at the bottom
+					if (!hasFilter) {
+						if (a.isNew && !b.isNew) return 1;
+						if (!a.isNew && b.isNew) return -1;
+						// If both are new, preserve their order (no sorting)
+						if (a.isNew && b.isNew) return 0;
+					}
+					// Sort original items: primary key first, title second, then alphabetical
 					if (a.primaryKey && !b.primaryKey) return -1;
 					if (!a.primaryKey && b.primaryKey) return 1;
 					if (a.title && !b.title) return -1;
