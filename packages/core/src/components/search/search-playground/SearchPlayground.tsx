@@ -1,15 +1,18 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 
 import './SearchPlayground.css';
-import {IBlueOrangeSearchIndex, SearchQueryEditor} from "../search-query-editor/SearchQueryEditor";
+import {BlueOrangeSearchQuery, BlueOrangeSearchQueryOperand, IBlueOrangeSearchIndex, IBlueOrangeSearchSchemaProperty, SearchQueryEditor} from "../search-query-editor/SearchQueryEditor";
 import {DataTable, TableField, TableFieldSortState, TableFieldType} from "../../table/data-table/DataTable";
+import {BlueOrangeSearch, SearchDocument} from "@blue-orange-ai/foundations-clients";
 
 interface Props {
+    searchClient?: BlueOrangeSearch;
+    index?: IBlueOrangeSearchIndex;
 }
 
-export const SearchPlayground: React.FC<Props> = ({}) => {
+export const SearchPlayground: React.FC<Props> = ({ searchClient, index: externalIndex }) => {
 
-    const index: IBlueOrangeSearchIndex = {
+    const defaultIndex: IBlueOrangeSearchIndex = {
         name: "demo-index",
         displayName: "Demo Search Query",
         description: "Build a BlueOrange search Query using a schema",
@@ -27,133 +30,106 @@ export const SearchPlayground: React.FC<Props> = ({}) => {
         }
     }
 
-    const displaySchema: Array<TableField> = [
-        {
-            label: "Test String",
-            type: TableFieldType.STRING,
-            sortable: true,
-            filterable: false,
-            statistics: false,
-            sortState: TableFieldSortState.UNSORTED
-        },
-        {
-            label: "Test String (Multiple)",
-            type: TableFieldType.STRING,
-            multipleValues: true,
-            sortable: true,
-            filterable: false,
-            statistics: false,
-            sortState: TableFieldSortState.UNSORTED
-        },
-        {
-            label: "Test Number",
-            type: TableFieldType.NUMBER,
-            sortable: true,
-            filterable: false,
-            statistics: false,
-            sortState: TableFieldSortState.UNSORTED
-        },
-        {
-            label: "Test Number (Multiple)",
-            type: TableFieldType.NUMBER,
-            multipleValues: true,
-            sortable: true,
-            filterable: false,
-            statistics: false,
-            sortState: TableFieldSortState.UNSORTED
-        },
-        {
-            label: "Test Date",
-            type: TableFieldType.DATE,
-            sortable: true,
-            filterable: false,
-            statistics: false,
-            sortState: TableFieldSortState.UNSORTED
-        },
-        {
-            label: "Test Date (Multiple)",
-            type: TableFieldType.DATE,
-            multipleValues: true,
-            sortable: true,
-            filterable: false,
-            statistics: false,
-            sortState: TableFieldSortState.UNSORTED
-        },
-        {
-            label: "Test Currency",
-            type: TableFieldType.CURRENCY,
-            sortable: true,
-            filterable: false,
-            statistics: false,
-            sortState: TableFieldSortState.UNSORTED
-        },
-        {
-            label: "Test Currency (Multiple)",
-            type: TableFieldType.CURRENCY,
-            multipleValues: true,
-            sortable: true,
-            filterable: false,
-            statistics: false,
-            sortState: TableFieldSortState.UNSORTED
-        },
-        {
-            label: "Test Struct",
-            type: TableFieldType.STRUCT,
-            sortable: true,
-            filterable: false,
-            statistics: false,
-            sortState: TableFieldSortState.UNSORTED
-        }
-        ,
-        {
-            label: "Test Struct (Multiple)",
-            type: TableFieldType.STRUCT,
-            multipleValues: true,
-            sortable: true,
-            filterable: false,
-            statistics: false,
-            sortState: TableFieldSortState.UNSORTED
-        }
-    ]
+    const index = externalIndex ?? defaultIndex;
+    const pageSize = 25;
 
-    const baseDemoData = [
-        {
-            "Test String": "Alpha",
-            "Test String (Multiple)": ["Alpha", "Beta", "Gamma"],
-            "Test Number": 1234.56,
-            "Test Number (Multiple)": [1, 2.5, 3.14159],
-            "Test Date": new Date("2025-01-15T10:00:00Z"),
-            "Test Date (Multiple)": [new Date("2025-01-01T00:00:00Z"), new Date("2025-02-01T00:00:00Z")],
-            "Test Currency": 99.95,
-            "Test Currency (Multiple)": [10, 20.55, 3000],
-            "Test Struct": {id: 1, name: "Alice", active: true},
-            "Test Struct (Multiple)": [{id: 1, tag: "a"}, {id: 2, tag: "b"}]
-        },
-        {
-            "Test String": "Lorem ipsum",
-            "Test String (Multiple)": ["One", "Two"],
-            "Test Number": -42,
-            "Test Number (Multiple)": [10, -20, 30],
-            "Test Date": new Date(),
-            "Test Date (Multiple)": [new Date("2024-12-31T00:00:00Z"), new Date()],
-            "Test Currency": 15000.333,
-            "Test Currency (Multiple)": [0, 0.01, 999999.99],
-            "Test Struct": {nested: {a: 1, b: ["x", "y"]}},
-            "Test Struct (Multiple)": [{k: "v"}, {arr: [1, 2, 3]}]
-        },
-        {
-            "Test String": "",
-            "Test String (Multiple)": [],
-            "Test Number": 0,
-            "Test Number (Multiple)": [],
-            "Test Date": "invalid",
-            "Test Date (Multiple)": ["invalid", "2025-03-01"],
-            "Test Currency": "invalid",
-            "Test Currency (Multiple)": ["invalid", 12.34],
-            "Test Struct": null,
-            "Test Struct (Multiple)": [null, {ok: true}]
+    const [query, setQuery] = useState<BlueOrangeSearchQuery>({
+        index: index.name,
+        filter: false,
+        page: 1,
+        size: pageSize,
+        minimumShouldMatch: 1,
+        rootCondition: {
+            operand: BlueOrangeSearchQueryOperand.AND,
+            components: []
         }
-    ]
+    });
+
+    const [searchResults, setSearchResults] = useState<SearchDocument[]>([]);
+    const [totalCount, setTotalCount] = useState<number>(0);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [hasSearched, setHasSearched] = useState<boolean>(false);
+
+    const handleQueryChange = (updatedQuery: BlueOrangeSearchQuery) => {
+        setQuery(updatedQuery);
+    };
+
+    const executeSearch = useCallback(async (searchQuery: BlueOrangeSearchQuery, page: number, append: boolean = false) => {
+        if (!searchClient) return;
+
+        setLoading(true);
+        try {
+            const queryWithPage = { ...searchQuery, page };
+            const response = await searchClient.search(queryWithPage);
+            
+            if (append) {
+                setSearchResults(prev => [...prev, ...(response.result ?? [])]);
+            } else {
+                setSearchResults(response.result ?? []);
+            }
+            setTotalCount(response.count ?? 0);
+            setCurrentPage(page);
+            setHasSearched(true);
+        } catch (error) {
+            console.error('Search error:', error);
+        } finally {
+            setLoading(false);
+        }
+    }, [searchClient]);
+
+    const handleSearch = useCallback(() => {
+        setSearchResults([]);
+        setCurrentPage(1);
+        executeSearch(query, 1, false);
+    }, [query, executeSearch]);
+
+    const handleLoadMore = useCallback(() => {
+        if (loading) return;
+        const nextPage = currentPage + 1;
+        executeSearch(query, nextPage, true);
+    }, [query, currentPage, loading, executeSearch]);
+
+    const hasMoreResults = totalCount > searchResults.length;
+
+    const mapSchemaTypeToTableFieldType = (schemaType: string): TableFieldType => {
+        const normalized = schemaType.toUpperCase();
+        switch (normalized) {
+            case 'INTEGER':
+            case 'LONG':
+            case 'FLOAT':
+            case 'DOUBLE':
+                return TableFieldType.NUMBER;
+            case 'DATE':
+                return TableFieldType.DATE;
+            case 'BOOLEAN':
+                return TableFieldType.STRING;
+            case 'GEO_POINT':
+            case 'OBJECT':
+            case 'VECTOR':
+                return TableFieldType.STRUCT;
+            case 'TEXT':
+            case 'KEYWORDS':
+            case 'SEARCH_AS_YOU_TYPE':
+            default:
+                return TableFieldType.STRING;
+        }
+    };
+
+    const convertPropertyToTableField = (property: IBlueOrangeSearchSchemaProperty): TableField => {
+        return {
+            label: property.displayName ?? property.apiName,
+            type: mapSchemaTypeToTableFieldType(property.type),
+            sortable: true,
+            filterable: false,
+            statistics: false,
+            sortState: TableFieldSortState.UNSORTED
+        };
+    };
+
+    const displaySchema: Array<TableField> = useMemo(() => {
+        return index.schema.properties.map(convertPropertyToTableField);
+    }, [index.schema.properties]);
 
     return (
         <div className="blue-orange-search-playground">
@@ -161,17 +137,21 @@ export const SearchPlayground: React.FC<Props> = ({}) => {
                 <SearchQueryEditor
                     showHeader={false}
                     index={index}
+                    query={query}
+                    onChange={handleQueryChange}
                     reportChangesOnSaveOnly={false}></SearchQueryEditor>
             </div>
             <div className="blue-orange-search-playground-body-cont">
                 <DataTable
                     persistKey="datatable-development"
                     schema={displaySchema}
-                    data={baseDemoData}
-                    loading={false}
+                    data={searchResults}
+                    loading={loading}
                     loadingPlaceholderRows={2}
                     showRowNumbers={false}
-                    enableInfiniteScroll={true}
+                    enableInfiniteScroll={hasSearched && hasMoreResults}
+                    onEndReached={handleLoadMore}
+                    showLoadingRow={loading && currentPage > 1}
                     resizableColumns={true}
                     reorderableColumns={true}
                     cellsSelectable={false}

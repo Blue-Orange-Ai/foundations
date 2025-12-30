@@ -18,6 +18,7 @@ import {ModalFooterRight} from "../../layouts/modal/modal-footer-right/ModalFoot
 import {FileUploadBtn} from "../../buttons/file-upload-btn/FileUploadBtn";
 import {TextArea} from "../../inputs/textarea/TextArea";
 import {TagInput} from "../../inputs/tags/simple/TagInput";
+import {Checkbox} from "../../inputs/checkbox/Checkbox";
 
 interface Props {
 	schema?: IBlueOrangeSearchSchema,
@@ -39,6 +40,9 @@ type SchemaNode = {
 	analyzer?: string,
 	dims?: number,
 	similarity?: string,
+	primaryKey?: boolean,
+	title?: boolean,
+	allowMultiple?: boolean,
 	children?: SchemaNode[]
 }
 
@@ -70,7 +74,10 @@ const schemaSignature = (s?: IBlueOrangeSearchSchema): string => {
 			type: String(p.type ?? ""),
 			analyzer: p.analyzer ?? "",
 			dims: p.dims ?? "",
-			similarity: p.similarity ?? ""
+			similarity: p.similarity ?? "",
+			primaryKey: p.primaryKey ?? false,
+			title: p.title ?? false,
+			allowMultiple: p.allowMultiple ?? false
 		}))
 		.sort((a, b) => a.apiName.localeCompare(b.apiName));
 
@@ -105,6 +112,7 @@ export const SchemaEditor: React.FC<Props> = ({
 	const [importModalOpen, setImportModalOpen] = useState(false);
 	const [importJsonText, setImportJsonText] = useState<string>("");
 	const [importError, setImportError] = useState<string | undefined>(undefined);
+	const [filterText, setFilterText] = useState<string>("");
 
 	useEffect(() => {
 		const nextSchema = initSchema();
@@ -112,7 +120,7 @@ export const SchemaEditor: React.FC<Props> = ({
 		const currentSignature = schemaSignature(internalSchema);
 		const snapshotSignature = schemaSignature(initialSchemaSnapshot);
 		const dirtyNow = currentSignature !== snapshotSignature;
-		if (dirtyNow) {
+		if (dirtyNow && reportChangesOnSaveOnly) {
 			const lastEmitted = lastEmittedSchemaSignatureRef.current;
 			if (!lastEmitted || nextSignature !== lastEmitted) {
 				return;
@@ -225,6 +233,9 @@ export const SchemaEditor: React.FC<Props> = ({
 				currentNode.analyzer = p.analyzer;
 				currentNode.dims = p.dims;
 				currentNode.similarity = p.similarity;
+				currentNode.primaryKey = p.primaryKey;
+				currentNode.title = p.title;
+				currentNode.allowMultiple = p.allowMultiple;
 				if (schemaType(currentNode.type) === "OBJECT") {
 					currentNode.children = currentNode.children ?? [];
 				}
@@ -238,13 +249,16 @@ export const SchemaEditor: React.FC<Props> = ({
 		const visit = (node: SchemaNode, prefix: string) => {
 			const fullName = prefix ? `${prefix}.${node.apiName}` : node.apiName;
 			const t = schemaType(node.type);
-			props.push({
+				props.push({
 				apiName: fullName,
 				displayName: node.displayName,
 				type: node.type,
 				analyzer: node.analyzer,
 				dims: node.dims,
-				similarity: node.similarity
+				similarity: node.similarity,
+				primaryKey: node.primaryKey,
+				title: node.title,
+				allowMultiple: node.allowMultiple
 			});
 			if (t === "OBJECT" && node.children) {
 				node.children.forEach((c) => visit(c, fullName));
@@ -682,6 +696,32 @@ export const SchemaEditor: React.FC<Props> = ({
 							></Input>
 						</>
 					}
+					<div className="blue-orange-schema-editor-checkbox-group">
+						<div className="blue-orange-schema-editor-checkbox-item">
+							<Checkbox
+								checked={node.primaryKey ?? false}
+								onCheckboxChange={(v) => updateNode(node.id, {primaryKey: v})}
+								readonly={readOnly}
+							></Checkbox>
+							<span>Primary Key</span>
+						</div>
+						<div className="blue-orange-schema-editor-checkbox-item">
+							<Checkbox
+								checked={node.title ?? false}
+								onCheckboxChange={(v) => updateNode(node.id, {title: v})}
+								readonly={readOnly}
+							></Checkbox>
+							<span>Title</span>
+						</div>
+						<div className="blue-orange-schema-editor-checkbox-item">
+							<Checkbox
+								checked={node.allowMultiple ?? false}
+								onCheckboxChange={(v) => updateNode(node.id, {allowMultiple: v})}
+								readonly={readOnly}
+							></Checkbox>
+							<span>Allow Multiple</span>
+						</div>
+					</div>
 				</div>
 			</div>
 		);
@@ -703,8 +743,31 @@ export const SchemaEditor: React.FC<Props> = ({
 					</div>
 				</div>
 			}
+			{(nodes ?? []).length > 0 &&
+				<div className="blue-orange-schema-editor-filter">
+					<Input
+						placeholder="Search by name, display name, or type..."
+						value={filterText}
+						onChange={setFilterText}
+					></Input>
+				</div>
+			}
 			<div className="blue-orange-schema-editor-body">
-				{(nodes ?? []).map((n) => renderNode(n, 0, ""))}
+				{[...(nodes ?? [])].filter((n) => {
+					if (!filterText.trim()) return true;
+					const search = filterText.toLowerCase();
+					return (
+						(n.apiName ?? "").toLowerCase().includes(search) ||
+						(n.displayName ?? "").toLowerCase().includes(search) ||
+						(n.type ?? "").toLowerCase().includes(search)
+					);
+				}).sort((a, b) => {
+					if (a.primaryKey && !b.primaryKey) return -1;
+					if (!a.primaryKey && b.primaryKey) return 1;
+					if (a.title && !b.title) return -1;
+					if (!a.title && b.title) return 1;
+					return (a.apiName ?? "").localeCompare(b.apiName ?? "");
+				}).map((n) => renderNode(n, 0, ""))}
 				{(nodes ?? []).length === 0 &&
 					<div className="blue-orange-schema-editor-empty">
 						{!readOnly &&
@@ -717,7 +780,7 @@ export const SchemaEditor: React.FC<Props> = ({
 				{!readOnly && (nodes ?? []).length > 0 &&
                     <Button text={"Add Field"} buttonType={ButtonType.PRIMARY} onClick={() => addProperty()}></Button>
                 }
-				{!readOnly && isDirty &&
+				{!readOnly && isDirty && reportChangesOnSaveOnly &&
                     <div style={{width: "100%", display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "12px"}}>
                         <Button text={"Cancel"} buttonType={ButtonType.SECONDARY} onClick={() => handleCancel()}></Button>
                         <Button text={"Save"} buttonType={ButtonType.PRIMARY} onClick={() => handleSave()}></Button>

@@ -79,7 +79,7 @@ export type QueryDateCondition = {
 
 export type GeoPoint = {
     lat: number;
-    lng: number;
+    lon: number;
 }
 
 export type QueryGeoBoundingBoxCondition = {
@@ -233,7 +233,69 @@ export type Analyzer = {
 
 export type SearchDocument = Record<string, unknown>;
 
-export type SearchStats = Record<string, unknown>;
+export type SearchStats = {
+    uuid?: string;
+    health?: string;
+    status?: string;
+    primaries?: {
+        docs?: {
+            count?: number;
+            deleted?: number;
+        };
+        store?: {
+            size_in_bytes?: number;
+            total_data_set_size_in_bytes?: number;
+            reserved_in_bytes?: number;
+        };
+        indexing?: {
+            index_total?: number;
+            index_time_in_millis?: number;
+            index_current?: number;
+            index_failed?: number;
+            delete_total?: number;
+            delete_time_in_millis?: number;
+            delete_current?: number;
+        };
+        search?: {
+            open_contexts?: number;
+            query_total?: number;
+            query_time_in_millis?: number;
+            query_current?: number;
+            fetch_total?: number;
+            fetch_time_in_millis?: number;
+            fetch_current?: number;
+        };
+    };
+    total?: {
+        docs?: {
+            count?: number;
+            deleted?: number;
+        };
+        store?: {
+            size_in_bytes?: number;
+            total_data_set_size_in_bytes?: number;
+            reserved_in_bytes?: number;
+        };
+        indexing?: {
+            index_total?: number;
+            index_time_in_millis?: number;
+            index_current?: number;
+            index_failed?: number;
+            delete_total?: number;
+            delete_time_in_millis?: number;
+            delete_current?: number;
+        };
+        search?: {
+            open_contexts?: number;
+            query_total?: number;
+            query_time_in_millis?: number;
+            query_current?: number;
+            fetch_total?: number;
+            fetch_time_in_millis?: number;
+            fetch_current?: number;
+        };
+    };
+};
 
 export type HttpStatus =
     | "ACCEPTED"

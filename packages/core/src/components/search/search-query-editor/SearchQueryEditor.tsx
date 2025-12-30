@@ -43,7 +43,10 @@ export interface IBlueOrangeSearchSchemaProperty {
 	type: string,
 	analyzer?: string,
 	dims?: number,
-	similarity?: string
+	similarity?: string,
+	primaryKey?: boolean,
+	title?: boolean,
+	allowMultiple?: boolean
 }
 
 export interface IBlueOrangeSearchSchema {
@@ -177,6 +180,7 @@ export interface ISearchQueryEditorCondition {
 
 interface Props {
 	index: IBlueOrangeSearchIndex,
+	query?: BlueOrangeSearchQuery,
 	page?: number,
 	size?: number,
 	filter?: boolean,
@@ -188,7 +192,7 @@ interface Props {
 	onSave?: (query: BlueOrangeSearchQuery) => void,
 }
 
-export const SearchQueryEditor: React.FC<Props> = ({index, page=1, size=25, filter=false, minimumShouldMatch=1, analyzer, showHeader=true, onChange, reportChangesOnSaveOnly=false, onSave}) => {
+export const SearchQueryEditor: React.FC<Props> = ({index, query, page=1, size=25, filter=false, minimumShouldMatch=1, analyzer, showHeader=true, onChange, reportChangesOnSaveOnly=false, onSave}) => {
 
 	const initRootGroup = (): ISearchQueryEditorCondition => {
 		const firstField = index.schema.properties.length > 0 ? index.schema.properties[0].apiName : "";
@@ -203,8 +207,211 @@ export const SearchQueryEditor: React.FC<Props> = ({index, page=1, size=25, filt
 		}
 	}
 
-	const [internalRoot, setInternalRoot] = useState(initRootGroup());
-	const [initialRootSnapshot, setInitialRootSnapshot] = useState<ISearchQueryEditorCondition>(initRootGroup());
+	const convertQueryToEditorCondition = (queryToConvert: BlueOrangeSearchQuery): ISearchQueryEditorCondition => {
+		return convertCompositeToEditorCondition(queryToConvert.rootCondition);
+	}
+
+	const convertCompositeToEditorCondition = (composite: BlueOrangeSearchQueryCompositeCondition): ISearchQueryEditorCondition => {
+		const firstField = index.schema.properties.length > 0 ? index.schema.properties[0].apiName : "";
+		const logic = composite.operand === BlueOrangeSearchQueryOperand.OR ? SearchQueryLogicalOperand.OR : SearchQueryLogicalOperand.AND;
+		
+		return {
+			conditionType: SearchQueryConditionType.GROUP,
+			logic: logic,
+			operand: SearchQueryLeafOperand.PHRASE,
+			ignoreCase: false,
+			variable: firstField,
+			comparison: "",
+			groupConditions: composite.components.map(convertComponentToEditorCondition)
+		};
+	}
+
+	const convertComponentToEditorCondition = (component: BlueOrangeSearchQueryComponent): ISearchQueryEditorCondition => {
+		const firstField = index.schema.properties.length > 0 ? index.schema.properties[0].apiName : "";
+		
+		if ('operand' in component && 'components' in component) {
+			return convertCompositeToEditorCondition(component as BlueOrangeSearchQueryCompositeCondition);
+		}
+
+		const condition = component as BlueOrangeSearchQueryCondition;
+
+		if ('fullTextCondition' in condition) {
+			const ftc = condition.fullTextCondition;
+			return {
+				conditionType: SearchQueryConditionType.LEAF,
+				logic: SearchQueryLogicalOperand.EMPTY,
+				operand: SearchQueryLeafOperand.FULL_TEXT,
+				ignoreCase: false,
+				variable: ftc.fields[0] ?? firstField,
+				comparison: ftc.query,
+				groupConditions: []
+			};
+		}
+
+		if ('termCondition' in condition) {
+			const tc = condition.termCondition;
+			let operand: SearchQueryLeafOperand;
+			switch (tc.type) {
+				case BlueOrangeSearchQueryTermType.PHRASE_PREFIX:
+					operand = SearchQueryLeafOperand.PHRASE_PREFIX;
+					break;
+				case BlueOrangeSearchQueryTermType.FUZZY:
+					operand = SearchQueryLeafOperand.FUZZY;
+					break;
+				case BlueOrangeSearchQueryTermType.REGEX:
+					operand = SearchQueryLeafOperand.REGEX;
+					break;
+				case BlueOrangeSearchQueryTermType.WILDCARD:
+					operand = SearchQueryLeafOperand.WILDCARD;
+					break;
+				default:
+					operand = SearchQueryLeafOperand.PHRASE;
+			}
+			return {
+				conditionType: SearchQueryConditionType.LEAF,
+				logic: SearchQueryLogicalOperand.EMPTY,
+				operand: operand,
+				ignoreCase: tc.caseInsensitive ?? false,
+				variable: tc.field,
+				comparison: tc.query,
+				groupConditions: []
+			};
+		}
+
+		if ('numericCondition' in condition) {
+			const nc = condition.numericCondition;
+			let operand = SearchQueryLeafOperand.EQUALS;
+			let value = "";
+			if (nc.gt !== undefined) {
+				operand = SearchQueryLeafOperand.GREATER_THAN;
+				value = nc.gt;
+			} else if (nc.gte !== undefined && nc.lte !== undefined && nc.gte === nc.lte) {
+				operand = SearchQueryLeafOperand.EQUALS;
+				value = nc.gte;
+			} else if (nc.gte !== undefined) {
+				operand = SearchQueryLeafOperand.GREATER_THAN_OR_EQUAL_TO;
+				value = nc.gte;
+			} else if (nc.lt !== undefined) {
+				operand = SearchQueryLeafOperand.LESS_THAN;
+				value = nc.lt;
+			} else if (nc.lte !== undefined) {
+				operand = SearchQueryLeafOperand.LESS_THAN_OR_EQUAL_TO;
+				value = nc.lte;
+			}
+			return {
+				conditionType: SearchQueryConditionType.LEAF,
+				logic: SearchQueryLogicalOperand.EMPTY,
+				operand: operand,
+				ignoreCase: false,
+				variable: nc.field,
+				comparison: value,
+				groupConditions: []
+			};
+		}
+
+		if ('dateCondition' in condition) {
+			const dc = condition.dateCondition;
+			let operand = SearchQueryLeafOperand.EQUALS;
+			let value = "";
+			if (dc.gt !== undefined) {
+				operand = SearchQueryLeafOperand.GREATER_THAN;
+				value = dc.gt;
+			} else if (dc.gte !== undefined && dc.lte !== undefined && dc.gte === dc.lte) {
+				operand = SearchQueryLeafOperand.EQUALS;
+				value = dc.gte;
+			} else if (dc.gte !== undefined) {
+				operand = SearchQueryLeafOperand.GREATER_THAN_OR_EQUAL_TO;
+				value = dc.gte;
+			} else if (dc.lt !== undefined) {
+				operand = SearchQueryLeafOperand.LESS_THAN;
+				value = dc.lt;
+			} else if (dc.lte !== undefined) {
+				operand = SearchQueryLeafOperand.LESS_THAN_OR_EQUAL_TO;
+				value = dc.lte;
+			}
+			return {
+				conditionType: SearchQueryConditionType.LEAF,
+				logic: SearchQueryLogicalOperand.EMPTY,
+				operand: operand,
+				ignoreCase: false,
+				variable: dc.field,
+				comparison: value,
+				groupConditions: []
+			};
+		}
+
+		if ('geoDistanceCondition' in condition) {
+			const gdc = condition.geoDistanceCondition;
+			return {
+				conditionType: SearchQueryConditionType.LEAF,
+				logic: SearchQueryLogicalOperand.EMPTY,
+				operand: SearchQueryLeafOperand.GEO_DISTANCE,
+				ignoreCase: false,
+				variable: gdc.field,
+				comparison: JSON.stringify({ distance: gdc.distance, location: gdc.location }),
+				groupConditions: []
+			};
+		}
+
+		if ('geoBoundingBoxCondition' in condition) {
+			const gbbc = condition.geoBoundingBoxCondition;
+			return {
+				conditionType: SearchQueryConditionType.LEAF,
+				logic: SearchQueryLogicalOperand.EMPTY,
+				operand: SearchQueryLeafOperand.GEO_BOUNDING_BOX,
+				ignoreCase: false,
+				variable: gbbc.field,
+				comparison: JSON.stringify({ topLeft: gbbc.topLeft, bottomRight: gbbc.bottomRight }),
+				groupConditions: []
+			};
+		}
+
+		if ('geoPolygonCondition' in condition) {
+			const gpc = condition.geoPolygonCondition;
+			return {
+				conditionType: SearchQueryConditionType.LEAF,
+				logic: SearchQueryLogicalOperand.EMPTY,
+				operand: SearchQueryLeafOperand.GEO_POLYGON,
+				ignoreCase: false,
+				variable: gpc.field,
+				comparison: JSON.stringify({ locations: gpc.locations }),
+				groupConditions: []
+			};
+		}
+
+		if ('knnCondition' in condition) {
+			const kc = condition.knnCondition;
+			return {
+				conditionType: SearchQueryConditionType.LEAF,
+				logic: SearchQueryLogicalOperand.EMPTY,
+				operand: SearchQueryLeafOperand.KNN,
+				ignoreCase: false,
+				variable: kc.field,
+				comparison: JSON.stringify({ vector: kc.vector, k: kc.k, similarity: kc.similarity, numCandidates: kc.numCandidates }),
+				groupConditions: []
+			};
+		}
+
+		return {
+			conditionType: SearchQueryConditionType.LEAF,
+			logic: SearchQueryLogicalOperand.EMPTY,
+			operand: SearchQueryLeafOperand.PHRASE,
+			ignoreCase: false,
+			variable: firstField,
+			comparison: "",
+			groupConditions: []
+		};
+	}
+
+	const getInitialRoot = (): ISearchQueryEditorCondition => {
+		if (query) {
+			return convertQueryToEditorCondition(query);
+		}
+		return initRootGroup();
+	}
+
+	const [internalRoot, setInternalRoot] = useState(getInitialRoot());
+	const [initialRootSnapshot, setInitialRootSnapshot] = useState<ISearchQueryEditorCondition>(getInitialRoot());
 
 	const schemaSignature = useMemo(() => {
 		return (index.schema?.properties ?? [])
@@ -212,11 +419,28 @@ export const SearchQueryEditor: React.FC<Props> = ({index, page=1, size=25, filt
 			.join("|");
 	}, [index.name, index.schema?.properties]);
 
+	const querySignature = useMemo(() => {
+		if (!query) return "";
+		try {
+			return JSON.stringify(query.rootCondition);
+		} catch {
+			return "";
+		}
+	}, [query]);
+
 	useEffect(() => {
 		const next = initRootGroup();
 		setInternalRoot(next);
 		setInitialRootSnapshot(next);
 	}, [index.name, schemaSignature]);
+
+	useEffect(() => {
+		if (query) {
+			const converted = convertQueryToEditorCondition(query);
+			setInternalRoot(converted);
+			setInitialRootSnapshot(converted);
+		}
+	}, [querySignature]);
 
 	const dispatchChange = (condition: ISearchQueryEditorCondition) => {
 		const rootCondition = convertGroup(condition);

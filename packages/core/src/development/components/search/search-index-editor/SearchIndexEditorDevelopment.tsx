@@ -10,26 +10,16 @@ import {
 import {SplitPageMajor} from "../../../../components/layouts/pages/split-pages/split-page-major/SplitPageMajor";
 import {SplitPageMinor} from "../../../../components/layouts/pages/split-pages/split-page-minor/SplitPageMinor";
 import {SearchIndexEditor} from "../../../../components/search/search-index-editor/SearchIndexEditor";
+import {BlueOrangeSearch} from "@blue-orange-ai/foundations-clients";
 
 interface Props {
 }
 
 export const SearchIndexEditorDevelopment: React.FC<Props> = ({}) => {
 
+    const demoSearchClient = new BlueOrangeSearch("http://localhost:8091");
 
 	return (
-		<HorizontalSplitPage>
-			<SplitPageMajor>
-				<SearchIndexEditor></SearchIndexEditor>
-			</SplitPageMajor>
-			<SplitPageMinor>
-				<div className="workspace-output-window">
-					<div style={{marginBottom: "20px"}}>Output:</div>
-					<div style={{whiteSpace: "pre-wrap", fontFamily: "monospace"}}>
-						{"Hello world"}
-					</div>
-				</div>
-			</SplitPageMinor>
-		</HorizontalSplitPage>
+        <SearchIndexEditor searchClient={demoSearchClient}></SearchIndexEditor>
 	)
 }

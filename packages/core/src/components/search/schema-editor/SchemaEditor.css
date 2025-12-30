@@ -123,3 +123,26 @@
     width: 100%;
     width: 100%;
 }
+
+.blue-orange-schema-editor-checkbox-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.blue-orange-schema-editor-checkbox-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--blue-orange-light-default-font-color);
+}
+
+.blue-orange-schema-editor-filter {
+    width: 100%;
+    margin-bottom: 16px;
+}

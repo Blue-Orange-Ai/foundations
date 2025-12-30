@@ -38,3 +38,27 @@
     flex-direction: row;
     align-items: center;
 }
+
+.blue-orange-index-editor-header-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-index-editor-validation-errors {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+    padding: 12px;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+}
+
+.search-index-editor-validation-error {
+    color: #dc2626;
+    font-size: 13px;
+    line-height: 1.4;
+}

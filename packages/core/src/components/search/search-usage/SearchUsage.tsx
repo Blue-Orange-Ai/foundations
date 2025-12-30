@@ -1,4 +1,7 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useContext, useEffect, useRef, useState} from "react";
+import {Index, BlueOrangeSearch, SearchStats} from "@blue-orange-ai/foundations-clients";
+import {ToastContext, ToastLocation} from "../../alerts/toast/toastcontext/ToastContext";
+import {ToasterType} from "../../alerts/toast/toaster/Toaster";
 
 import './SearchUsage.css';
 import {MetricCard} from "../../metrics/metric-card/MetricCard";
@@ -7,9 +10,57 @@ import {InputForm} from "../../inputs/form/InputForm";
 import {CopyInput} from "../../inputs/copy-input/CopyInput";
 
 interface Props {
+    index?: Index;
+    client?: BlueOrangeSearch;
 }
 
-export const SearchUsage: React.FC<Props> = ({}) => {
+export const SearchUsage: React.FC<Props> = ({index, client}) => {
+
+    const { addToast } = useContext(ToastContext);
+
+    const [stats, setStats] = useState<SearchStats | null>(null);
+    const [statsLoading, setStatsLoading] = useState<boolean>(false);
+
+    const fetchIndexStats = useCallback(async (indexName: string): Promise<SearchStats | null> => {
+        if (!client) {
+            addToast({
+                id: `stats-error-${Date.now()}`,
+                location: ToastLocation.BOTTOM_RIGHT,
+                toastType: ToasterType.ERROR,
+                heading: "Error",
+                description: "Client is required to fetch stats",
+                showCloseButton: true
+            });
+            return null;
+        }
+
+        setStatsLoading(true);
+
+        try {
+            const fetchedStats = await client.getIndexSearchStats(indexName);
+            setStats(fetchedStats);
+            return fetchedStats;
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            addToast({
+                id: `stats-error-${Date.now()}`,
+                location: ToastLocation.BOTTOM_RIGHT,
+                toastType: ToasterType.ERROR,
+                heading: "Failed to fetch stats",
+                description: errorMessage,
+                showCloseButton: true
+            });
+            return null;
+        } finally {
+            setStatsLoading(false);
+        }
+    }, [client, addToast]);
+
+    useEffect(() => {
+        if (index?.name) {
+            fetchIndexStats(index.name);
+        }
+    }, [index?.name, fetchIndexStats]);
 
     const firstMetricStyle: React.CSSProperties = {
         borderBottomRightRadius: "0px",
@@ -36,43 +87,30 @@ export const SearchUsage: React.FC<Props> = ({}) => {
             <div className="blue-orange-search-usage-metric-group">
                 <MetricCard
                     label="Name"
-                    text={"Hello world"}
+                    text={index?.name ?? "-"}
                     style={firstMetricStyle}>
                 </MetricCard>
                 <MetricCard
-                    label="Total Searches"
-                    text={"10000000"}
+                    label="Total Documents"
+                    text={statsLoading ? "Loading..." : (stats?.total?.docs?.count?.toLocaleString() ?? "-")}
                     style={middleMetricStyle}>
 
                 </MetricCard>
                 <MetricCard
-                    label="Searches Last 5 Minutes"
-                    text={"10"}
+                    label="Total Searches"
+                    text={statsLoading ? "Loading..." : (stats?.total?.search?.query_total?.toLocaleString() ?? "-")}
                     style={lastMetricStyle}>
                 </MetricCard>
             </div>
-            <ComboChart
-                height={"50vh"}
-                width={"100%"}
-                dataset={[
-                    { type: 'line', label: 'CPU %', parsing: false, data: [
-                            {x: 1719705600000, y: 12}, {x: 1719709200000, y: 18}
-                        ], borderColor: '#2d88ff' },
-                    { type: 'scatter', label: 'Events', parsing: false, data: [
-                            {x: 1719707000000, y: 20}, {x: 1719708200000, y: 35}
-                        ], borderColor: '#ff7a00', backgroundColor: '#ff7a00' },
-                ]}
-                xScale="time"
-                xScaleTimeUnit="minute"
-                yScale="linear"
-                showXValueInTooltip={true}
-                legend
-                rangeSelect
-            />
-            <InputForm paddingTop={40}>
-                <CopyInput label="Id"></CopyInput>
-                <CopyInput label="Version"></CopyInput>
-            </InputForm>
+            {index &&
+                <>
+                    <InputForm paddingTop={40}>
+                        <CopyInput label="Id" value={index.id ?? ""}></CopyInput>
+                        <CopyInput label="Version" value={index.version ?? ""}></CopyInput>
+                    </InputForm>
+                </>
+            }
+
         </div>
     )
 
