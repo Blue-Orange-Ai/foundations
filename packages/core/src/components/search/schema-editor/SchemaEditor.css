@@ -35,7 +35,7 @@
 }
 
 .blue-orange-schema-editor-row {
-    width: 100%;
+    max-width: calc(100% - 24px) !important;
     padding: 12px;
     border: 1px solid var(--blue-orange-light-default-border-color);
     border-radius: 8px;
