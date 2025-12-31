@@ -144,7 +144,6 @@ export const SearchInput: React.FC<Props> = ({
 	const inputStyle: React.CSSProperties = {
 		paddingLeft: icon === undefined ? "5px" : "42px",
 		paddingRight: !deletable ? "5px" : "42px",
-		width: icon === undefined ? "calc(100% - 10px)" : "calc(100% - 47px)",
 	}
 
 	return (

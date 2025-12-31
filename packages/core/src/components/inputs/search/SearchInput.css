@@ -21,13 +21,14 @@
 }
 
 .blue-orange-search-group-input {
-    width: calc(100% - 47px);
+    width: 100%;
+    box-sizing: border-box;
     border: 1px solid var(--blue-orange-light-input-border-color);
     height: 34px;
     background-color: var(--blue-orange-light-input-search-background);
     color: var(--blue-orange-light-input-color);
     border-radius: 4px;
-    padding-left: 42px;
+    padding-left: 5px;
     padding-right: 5px;
     font-size: 0.8rem;
 }
@@ -65,7 +66,7 @@
     cursor: pointer;
     left: unset;
     width: 38px;
-    right: -38px;
+    right: 1px;
     height: calc(100% - 2px);
     top: 1px;
 }
