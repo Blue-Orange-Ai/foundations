@@ -56,7 +56,7 @@ export const FileUploadBtn: React.FC<Props> = ({
 	}
 
 	return (
-		<div>
+		<div style={{ width: '100%', height: '100%' }}>
 			<input
 				type="file"
 				ref={fileUploadElem}
