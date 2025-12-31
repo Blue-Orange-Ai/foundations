@@ -95,6 +95,8 @@ export * from './components/interfaces/AppInterfaces';
 export * from './components/inputs/color-picker/ColorPicker';
 export * from './components/inputs/icon-selector/IconSelector';
 export * from './components/inputs/copy-input/CopyInput';
+export * from './components/inputs/array-input/ArrayInput';
+export * from './components/inputs/object-array-input/ObjectArrayInput';
 
 // Layouts
 export * from './components/layouts/drawer/drawer/Drawer';

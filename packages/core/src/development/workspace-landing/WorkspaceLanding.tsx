@@ -56,6 +56,7 @@ import {SearchQueryEditorDevelopment} from "../components/search/search-query-ed
 import {SchemaEditorDevelopment} from "../components/search/schema-editor/SchemaEditorDevelopment";
 import {SearchIndexEditorDevelopment} from "../components/search/search-index-editor/SearchIndexEditorDevelopment";
 import {ArrayInputDevelopment} from "../components/inputs/array-input/ArrayInputDevelopment";
+import {ObjectArrayInputDevelopment} from "../components/inputs/object-array-input/ObjectArrayInputDevelopment";
 
 interface Props {
 }
@@ -281,6 +282,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							activeStyle={activeStyle}
 							icon={<i className="ri-list-ordered-2"></i>}
 							onClick={() => navigate("/inputs-array")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Object Array Input"}
+							active={component == "inputs-object-array"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-list-unordered"></i>}
+							onClick={() => navigate("/inputs-object-array")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
 							label={"Checkbox Input"}
@@ -571,6 +581,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "sockets" && <SocketWorkspace></SocketWorkspace>}
 			{component == "inputs-address" && <AddressInputDevelopment></AddressInputDevelopment>}
 			{component == "inputs-array" && <ArrayInputDevelopment></ArrayInputDevelopment>}
+			{component == "inputs-object-array" && <ObjectArrayInputDevelopment></ObjectArrayInputDevelopment>}
 			{component == "inputs-checkbox" && <CheckboxInputDevelopment></CheckboxInputDevelopment>}
 			{component == "inputs-date" && <DateInputDevelopment></DateInputDevelopment>}
 			{component == "inputs-dropdown" && <DropdownInputDevelopment></DropdownInputDevelopment>}
