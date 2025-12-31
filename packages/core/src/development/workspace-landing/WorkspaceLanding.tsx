@@ -59,6 +59,7 @@ import {RenderHtmlDevelopment} from "../components/text-decorations/render-html/
 import {TagDevelopment} from "../components/text-decorations/tag/TagDevelopment";
 import {TelephoneTextDevelopment} from "../components/text-decorations/telephone-text/TelephoneTextDevelopment";
 import {TruncatedTextDevelopment} from "../components/text-decorations/truncated-text/TruncatedTextDevelopment";
+import {MarkdownTextDevelopment} from "../components/text-decorations/markdown-text/MarkdownTextDevelopment";
 import {CopyInputDevelopment} from "../components/inputs/copy-input/CopyInputDevelopment";
 import {ComboChartDevelopment} from "../components/charts/combo/ComboChartDevelopment";
 import {SearchInput} from "../../components/inputs/search/SearchInput";
@@ -748,6 +749,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							icon={<i className="ri-text-wrap"></i>}
 							onClick={() => navigate("/text-decoration-truncated-text")}
 						></SideBarBodyItem>
+							<SideBarBodyItem
+							label={"Markdown Text"}
+							active={component == "text-decoration-markdown"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-markdown-line"></i>}
+							onClick={() => navigate("/text-decoration-markdown")}
+						></SideBarBodyItem>
 					</SideBarBodyGroup>
 				</SideBarBody>
 			</SideBar>
@@ -805,6 +815,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "text-decoration-tag" && <TagDevelopment></TagDevelopment>}
 			{component == "text-decoration-telephone" && <TelephoneTextDevelopment></TelephoneTextDevelopment>}
 			{component == "text-decoration-truncated-text" && <TruncatedTextDevelopment></TruncatedTextDevelopment>}
+			{component == "text-decoration-markdown" && <MarkdownTextDevelopment></MarkdownTextDevelopment>}
 			{component == "inputs-copy" && <CopyInputDevelopment></CopyInputDevelopment>}
             {component == "inputs-search" && <SearchInputDevelopment></SearchInputDevelopment>}
 			{component == "alerts-toaster" && <ToasterDevelopment></ToasterDevelopment>}

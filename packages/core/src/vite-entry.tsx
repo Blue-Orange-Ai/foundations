@@ -177,6 +177,7 @@ export * from './components/text-decorations/dates/relative-time/RelativeTime';
 export * from './components/text-decorations/dotified-text/DotifiedText';
 export * from './components/text-decorations/truncated-text/TruncatedText';
 export * from './components/text-decorations/code-block/CodeBlock';
+export * from './components/text-decorations/markdown-text/MarkdownText';
 
 // Rules
 export * from './components/rules/rule-editor/RuleEditor';
