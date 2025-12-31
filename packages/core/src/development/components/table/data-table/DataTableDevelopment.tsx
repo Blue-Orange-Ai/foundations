@@ -115,6 +115,23 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 			filterable: false,
 			statistics: false,
 			sortState: TableFieldSortState.UNSORTED
+		},
+		{
+			label: "Test Markdown",
+			type: TableFieldType.MARKDOWN,
+			sortable: false,
+			filterable: false,
+			statistics: false,
+			sortState: TableFieldSortState.UNSORTED
+		},
+		{
+			label: "Test Markdown (Multiple)",
+			type: TableFieldType.MARKDOWN,
+			multipleValues: true,
+			sortable: false,
+			filterable: false,
+			statistics: false,
+			sortState: TableFieldSortState.UNSORTED
 		}
 	]
 
@@ -129,7 +146,9 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 			"Test Currency": 99.95,
 			"Test Currency (Multiple)": [10, 20.55, 3000],
 			"Test Struct": {id: 1, name: "Alice", active: true},
-			"Test Struct (Multiple)": [{id: 1, tag: "a"}, {id: 2, tag: "b"}]
+			"Test Struct (Multiple)": [{id: 1, tag: "a"}, {id: 2, tag: "b"}],
+			"Test Markdown": "**Bold text** and *italic* with `code`",
+			"Test Markdown (Multiple)": ["# Heading", "- List item 1\n- List item 2"]
 		},
 		{
 			"Test String": "Lorem ipsum",
@@ -141,7 +160,9 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 			"Test Currency": 15000.333,
 			"Test Currency (Multiple)": [0, 0.01, 999999.99],
 			"Test Struct": {nested: {a: 1, b: ["x", "y"]}},
-			"Test Struct (Multiple)": [{k: "v"}, {arr: [1, 2, 3]}]
+			"Test Struct (Multiple)": [{k: "v"}, {arr: [1, 2, 3]}],
+			"Test Markdown": "[Link](https://example.com) and ~~strikethrough~~",
+			"Test Markdown (Multiple)": ["**First**", "*Second*", "`Third`"]
 		},
 		{
 			"Test String": "",
@@ -153,7 +174,9 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 			"Test Currency": "invalid",
 			"Test Currency (Multiple)": ["invalid", 12.34],
 			"Test Struct": null,
-			"Test Struct (Multiple)": [null, {ok: true}]
+			"Test Struct (Multiple)": [null, {ok: true}],
+			"Test Markdown": "Simple text with no formatting",
+			"Test Markdown (Multiple)": []
 		}
 	]
 
@@ -168,6 +191,8 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 		"Test Currency (Multiple)": [idx * 0.1, idx * 0.2, idx * 0.3],
 		"Test Struct": {id: idx, active: idx % 2 === 0},
 		"Test Struct (Multiple)": [{id: idx, tag: "a"}, {id: idx + 1, tag: "b"}],
+		"Test Markdown": `**Row ${idx}** with _emphasis_ and \`code\``,
+		"Test Markdown (Multiple)": [`Item **${idx}**`, `Sub-item *${idx % 5}*`],
 	});
 
 	const [generatedRowsCount, setGeneratedRowsCount] = useState<number>(40);

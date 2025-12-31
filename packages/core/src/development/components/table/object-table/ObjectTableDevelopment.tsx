@@ -11,6 +11,7 @@ import {HeaderCell} from "../../../../components/table/cells/headercell/HeaderCe
 import {TextDataCell} from "../../../../components/table/cells/text-data-cell/TextDataCell";
 import {CheckboxCell} from "../../../../components/table/cells/checkboxcell/CheckboxCell";
 import {PrimaryCell} from "../../../../components/table/cells/primarycell/PrimaryCell";
+import {MarkdownDataCell} from "../../../../components/table/cells/markdown-data-cell/MarkdownDataCell";
 
 interface Props {
 }
@@ -35,6 +36,9 @@ export const ObjectTableDevelopment: React.FC<Props> = ({}) => {
 							<HeaderCell>
 								<div className="blue-orange-object-table-development-header">Flag</div>
 							</HeaderCell>
+							<HeaderCell>
+								<div className="blue-orange-object-table-development-header">Description</div>
+							</HeaderCell>
 						</tr>
 					</THead>
 					<TBody>
@@ -46,6 +50,27 @@ export const ObjectTableDevelopment: React.FC<Props> = ({}) => {
 							></PrimaryCell>
 							<TextDataCell text={"Active"}></TextDataCell>
 							<CheckboxCell state={checked} onClick={setChecked}></CheckboxCell>
+							<MarkdownDataCell text={"**Bold text** and *italic* with `inline code`"}></MarkdownDataCell>
+						</Row>
+						<Row>
+							<PrimaryCell
+								text={"Another Object"}
+								secondaryText={"With markdown description"}
+								src={"https://placehold.co/84x84"}
+							></PrimaryCell>
+							<TextDataCell text={"Pending"}></TextDataCell>
+							<CheckboxCell state={!checked} onClick={() => setChecked(!checked)}></CheckboxCell>
+							<MarkdownDataCell text={"[Link example](https://example.com) and ~~strikethrough~~"}></MarkdownDataCell>
+						</Row>
+						<Row>
+							<PrimaryCell
+								text={"Third Object"}
+								secondaryText={"List example"}
+								src={"https://placehold.co/84x84"}
+							></PrimaryCell>
+							<TextDataCell text={"Complete"}></TextDataCell>
+							<CheckboxCell state={true} onClick={() => {}}></CheckboxCell>
+							<MarkdownDataCell text={"- Item one\n- Item two\n- Item three"}></MarkdownDataCell>
 						</Row>
 					</TBody>
 				</Table>

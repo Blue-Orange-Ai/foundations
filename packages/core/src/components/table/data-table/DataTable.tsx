@@ -14,6 +14,7 @@ import {DateDataCell} from "../cells/date-data-cell/DateDataCell";
 import {CurrencyDataCell} from "../cells/currency-data-cell/CurrencyDataCell";
 import {NumberDataCell} from "../cells/number-data-cell/NumberDataCell";
 import {JsonObjDataCell} from "../cells/json-obj-data-cell/JsonObjDataCell";
+import {MarkdownDataCell} from "../cells/markdown-data-cell/MarkdownDataCell";
 
 interface SimpleCellRef {
     rowIndex: number,
@@ -27,6 +28,7 @@ export enum TableFieldType {
 	CURRENCY="CURRENCY",
 	STRUCT="STRUCT",
 	GEO_POINT="GEO POINT",
+	MARKDOWN="MARKDOWN",
 }
 
 export enum TableFieldSortState {
@@ -1043,6 +1045,12 @@ export const DataTable: React.FC<Props> = ({
 																								  obj={cellValue}
 																								  multipleValues={item.multipleValues}
 																								  tdProps={tdProps}></JsonObjDataCell>
+																								}
+																						{item.type == TableFieldType.MARKDOWN &&
+																						<MarkdownDataCell style={{...cellStyle}}
+																								  text={cellValue}
+																								  multipleValues={item.multipleValues}
+																								  tdProps={tdProps}></MarkdownDataCell>
 																								}
 																											</>
 																								);
