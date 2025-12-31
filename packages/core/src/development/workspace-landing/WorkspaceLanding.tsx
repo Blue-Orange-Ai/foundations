@@ -41,6 +41,24 @@ import {TextAreaDevelopment} from "../components/inputs/textarea/TextAreaDevelop
 import {ToggleInputDevelopment} from "../components/inputs/toggle-input/ToggleInputDevelopment";
 import {AccordionDevelopment} from "../components/accordion/AccordionDevelopment";
 import {CodeBlockDevelopment} from "../components/text-decorations/code-block/CodeBlockDevelopment";
+import {BadgeDevelopment} from "../components/text-decorations/badge/BadgeDevelopment";
+import {CurrencyDevelopment} from "../components/text-decorations/currency/CurrencyDevelopment";
+import {DatesDevelopment} from "../components/text-decorations/dates/DatesDevelopment";
+import {DescriptionDevelopment} from "../components/text-decorations/description/DescriptionDevelopment";
+import {DotifiedTextDevelopment} from "../components/text-decorations/dotified-text/DotifiedTextDevelopment";
+import {EmailLinkDevelopment} from "../components/text-decorations/email-link/EmailLinkDevelopment";
+import {FormHeadingDevelopment} from "../components/text-decorations/form-heading/FormHeadingDevelopment";
+import {GeneralHeadingDevelopment} from "../components/text-decorations/general-heading/GeneralHeadingDevelopment";
+import {JsonObjectTextDevelopment} from "../components/text-decorations/json-object-text/JsonObjectTextDevelopment";
+import {NumberTextDevelopment} from "../components/text-decorations/number-text/NumberTextDevelopment";
+import {NumberUnitsDevelopment} from "../components/text-decorations/number-units/NumberUnitsDevelopment";
+import {PageHeadingDevelopment} from "../components/text-decorations/page-heading/PageHeadingDevelopment";
+import {ParagraphDevelopment} from "../components/text-decorations/paragraph/ParagraphDevelopment";
+import {PercentageDevelopment} from "../components/text-decorations/percentage/PercentageDevelopment";
+import {RenderHtmlDevelopment} from "../components/text-decorations/render-html/RenderHtmlDevelopment";
+import {TagDevelopment} from "../components/text-decorations/tag/TagDevelopment";
+import {TelephoneTextDevelopment} from "../components/text-decorations/telephone-text/TelephoneTextDevelopment";
+import {TruncatedTextDevelopment} from "../components/text-decorations/truncated-text/TruncatedTextDevelopment";
 import {CopyInputDevelopment} from "../components/inputs/copy-input/CopyInputDevelopment";
 import {ComboChartDevelopment} from "../components/charts/combo/ComboChartDevelopment";
 import {SearchInput} from "../../components/inputs/search/SearchInput";
@@ -560,6 +578,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => setSidebarTextDecorationState(!sidebarTextDecorationState)}
 						></SideBarBodyLabel>
 						<SideBarBodyItem
+							label={"Badge"}
+							active={component == "text-decoration-badge"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-price-tag-2-line"></i>}
+							onClick={() => navigate("/text-decoration-badge")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
 							label={"Code Block"}
 							active={component == "text-decoration-code-block"}
 							focused={false}
@@ -568,7 +595,159 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							icon={<i className="ri-code-box-line"></i>}
 							onClick={() => navigate("/text-decoration-code-block")}
 						></SideBarBodyItem>
-
+						<SideBarBodyItem
+							label={"Currency"}
+							active={component == "text-decoration-currency"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-money-dollar-circle-line"></i>}
+							onClick={() => navigate("/text-decoration-currency")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Dates"}
+							active={component == "text-decoration-dates"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-calendar-line"></i>}
+							onClick={() => navigate("/text-decoration-dates")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Description"}
+							active={component == "text-decoration-description"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-file-text-line"></i>}
+							onClick={() => navigate("/text-decoration-description")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Dotified Text"}
+							active={component == "text-decoration-dotified-text"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-more-line"></i>}
+							onClick={() => navigate("/text-decoration-dotified-text")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Email Link"}
+							active={component == "text-decoration-email-link"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-mail-line"></i>}
+							onClick={() => navigate("/text-decoration-email-link")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Form Heading"}
+							active={component == "text-decoration-form-heading"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-input-field"></i>}
+							onClick={() => navigate("/text-decoration-form-heading")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"General Heading"}
+							active={component == "text-decoration-general-heading"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-heading"></i>}
+							onClick={() => navigate("/text-decoration-general-heading")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"JSON Object"}
+							active={component == "text-decoration-json-object"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-braces-line"></i>}
+							onClick={() => navigate("/text-decoration-json-object")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Number Text"}
+							active={component == "text-decoration-number-text"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-hashtag"></i>}
+							onClick={() => navigate("/text-decoration-number-text")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Number Units"}
+							active={component == "text-decoration-number-units"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-ruler-2-line"></i>}
+							onClick={() => navigate("/text-decoration-number-units")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Page Heading"}
+							active={component == "text-decoration-page-heading"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-h-1"></i>}
+							onClick={() => navigate("/text-decoration-page-heading")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Paragraph"}
+							active={component == "text-decoration-paragraph"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-paragraph"></i>}
+							onClick={() => navigate("/text-decoration-paragraph")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Percentage"}
+							active={component == "text-decoration-percentage"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-percent-line"></i>}
+							onClick={() => navigate("/text-decoration-percentage")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Render HTML"}
+							active={component == "text-decoration-render-html"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-html5-line"></i>}
+							onClick={() => navigate("/text-decoration-render-html")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Tag"}
+							active={component == "text-decoration-tag"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-price-tag-3-line"></i>}
+							onClick={() => navigate("/text-decoration-tag")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Telephone Text"}
+							active={component == "text-decoration-telephone"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-phone-line"></i>}
+							onClick={() => navigate("/text-decoration-telephone")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Truncated Text"}
+							active={component == "text-decoration-truncated-text"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-text-wrap"></i>}
+							onClick={() => navigate("/text-decoration-truncated-text")}
+						></SideBarBodyItem>
 					</SideBarBodyGroup>
 				</SideBarBody>
 			</SideBar>
@@ -607,7 +786,25 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "inputs-text-area" && <TextAreaDevelopment></TextAreaDevelopment>}
 			{component == "inputs-toggle" && <ToggleInputDevelopment></ToggleInputDevelopment>}
 			{component == "accordion" && <AccordionDevelopment></AccordionDevelopment>}
+			{component == "text-decoration-badge" && <BadgeDevelopment></BadgeDevelopment>}
 			{component == "text-decoration-code-block" && <CodeBlockDevelopment></CodeBlockDevelopment>}
+			{component == "text-decoration-currency" && <CurrencyDevelopment></CurrencyDevelopment>}
+			{component == "text-decoration-dates" && <DatesDevelopment></DatesDevelopment>}
+			{component == "text-decoration-description" && <DescriptionDevelopment></DescriptionDevelopment>}
+			{component == "text-decoration-dotified-text" && <DotifiedTextDevelopment></DotifiedTextDevelopment>}
+			{component == "text-decoration-email-link" && <EmailLinkDevelopment></EmailLinkDevelopment>}
+			{component == "text-decoration-form-heading" && <FormHeadingDevelopment></FormHeadingDevelopment>}
+			{component == "text-decoration-general-heading" && <GeneralHeadingDevelopment></GeneralHeadingDevelopment>}
+			{component == "text-decoration-json-object" && <JsonObjectTextDevelopment></JsonObjectTextDevelopment>}
+			{component == "text-decoration-number-text" && <NumberTextDevelopment></NumberTextDevelopment>}
+			{component == "text-decoration-number-units" && <NumberUnitsDevelopment></NumberUnitsDevelopment>}
+			{component == "text-decoration-page-heading" && <PageHeadingDevelopment></PageHeadingDevelopment>}
+			{component == "text-decoration-paragraph" && <ParagraphDevelopment></ParagraphDevelopment>}
+			{component == "text-decoration-percentage" && <PercentageDevelopment></PercentageDevelopment>}
+			{component == "text-decoration-render-html" && <RenderHtmlDevelopment></RenderHtmlDevelopment>}
+			{component == "text-decoration-tag" && <TagDevelopment></TagDevelopment>}
+			{component == "text-decoration-telephone" && <TelephoneTextDevelopment></TelephoneTextDevelopment>}
+			{component == "text-decoration-truncated-text" && <TruncatedTextDevelopment></TruncatedTextDevelopment>}
 			{component == "inputs-copy" && <CopyInputDevelopment></CopyInputDevelopment>}
             {component == "inputs-search" && <SearchInputDevelopment></SearchInputDevelopment>}
 			{component == "alerts-toaster" && <ToasterDevelopment></ToasterDevelopment>}
