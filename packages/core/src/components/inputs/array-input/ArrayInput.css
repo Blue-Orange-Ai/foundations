@@ -38,3 +38,11 @@
 	display: flex;
 	justify-content: flex-start;
 }
+
+.blue-orange-array-input-item-textarea {
+	align-items: flex-start;
+}
+
+.blue-orange-array-input-item-textarea .blue-orange-text-area-input-cont {
+	flex-grow: 1;
+}

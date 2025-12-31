@@ -4,6 +4,7 @@
     width: 100%;
     display: flex;
     flex-direction: column;
+    font-size: 0.8rem;
 }
 
 .blue-orange-default-text-area{
