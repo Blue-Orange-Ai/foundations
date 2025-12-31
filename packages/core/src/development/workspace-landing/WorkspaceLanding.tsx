@@ -57,6 +57,9 @@ import {SchemaEditorDevelopment} from "../components/search/schema-editor/Schema
 import {SearchIndexEditorDevelopment} from "../components/search/search-index-editor/SearchIndexEditorDevelopment";
 import {ArrayInputDevelopment} from "../components/inputs/array-input/ArrayInputDevelopment";
 import {ObjectArrayInputDevelopment} from "../components/inputs/object-array-input/ObjectArrayInputDevelopment";
+import {
+    SearchQueryEditorSmallDevelopment
+} from "../components/search/search-query-editor-small/SearchQueryEditorSmallDevelopment";
 
 interface Props {
 }
@@ -460,6 +463,17 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
                             activeStyle={activeStyle}
                             icon={<i className="ri-search-line"></i>}
                             onClick={() => navigate("/search-query")}
+
+                        ></SideBarBodyItem>
+                        <SideBarBodyItem
+                            label={"Search Query Editor Small"}
+                            active={component == "search-query-small"}
+                            focused={false}
+                            defaultStyle={inactiveStyle}
+                            activeStyle={activeStyle}
+                            icon={<i className="ri-search-line"></i>}
+                            onClick={() => navigate("/search-query-small")}
+
                         ></SideBarBodyItem>
                         <SideBarBodyItem
                             label={"Schema Editor"}
@@ -565,6 +579,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "charts-scatter" && <ScatterChartDevelopment></ScatterChartDevelopment>}
 			{component == "rules" && <RuleEditorDevelopment></RuleEditorDevelopment>}
 			{component == "search-query" && <SearchQueryEditorDevelopment></SearchQueryEditorDevelopment>}
+			{component == "search-query-small" && <SearchQueryEditorSmallDevelopment></SearchQueryEditorSmallDevelopment>}
 			{component == "schema-editor" && <SchemaEditorDevelopment></SchemaEditorDevelopment>}
             {component == "search-index" && <SearchIndexEditorDevelopment></SearchIndexEditorDevelopment>}
 			{component == "file-system" && <FileSystemDevelopment></FileSystemDevelopment>}
