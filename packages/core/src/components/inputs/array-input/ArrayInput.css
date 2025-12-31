@@ -46,3 +46,19 @@
 .blue-orange-array-input-item-textarea .blue-orange-text-area-input-cont {
 	flex-grow: 1;
 }
+
+.blue-orange-array-input-item-address {
+	align-items: flex-start;
+}
+
+.blue-orange-array-input-item-address .address-input-group {
+	flex-grow: 1;
+}
+
+.blue-orange-array-input-item-phone {
+	align-items: center;
+}
+
+.blue-orange-array-input-item-phone .phone-input-group {
+	flex-grow: 1;
+}

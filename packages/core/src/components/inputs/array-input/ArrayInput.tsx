@@ -7,19 +7,22 @@ import {Input} from "../input/Input";
 import {ButtonIcon} from "../../buttons/button-icon/ButtonIcon";
 import {TagInput} from "../tags/simple/TagInput";
 import {TextArea} from "../textarea/TextArea";
+import {AddressInput} from "../address/AddressInput";
+import {PhoneInput} from "../phone/PhoneInput";
+import {Address, Telephone} from "@blue-orange-ai/foundations-clients";
 
 interface Props {
-	value?: (string | number)[] | string[][];
+	value?: (string | number)[] | string[][] | Address[] | Telephone[];
 	label?: string;
 	placeholder?: string;
 	isNumber?: boolean;
 	style?: React.CSSProperties;
 	labelStyle?: React.CSSProperties;
-	onChange?: (value: (string | number)[] | string[][]) => void;
+	onChange?: (value: (string | number)[] | string[][] | Address[] | Telephone[]) => void;
 	disabled?: boolean;
 	required?: boolean;
 	help?: string;
-	variant?: 'list' | 'tag-list' | 'textarea-list';
+	variant?: 'list' | 'tag-list' | 'textarea-list' | 'address-list' | 'phone-list';
 	whitelist?: string[];
 	enforceWhitelist?: boolean;
 }
@@ -42,6 +45,8 @@ export const ArrayInput: React.FC<Props> = ({
 
 	const [items, setItems] = useState<(string | number)[]>(value as (string | number)[]);
 	const [tagListItems, setTagListItems] = useState<string[][]>(value as string[][] || []);
+	const [addressItems, setAddressItems] = useState<Address[]>(value as Address[] || []);
+	const [phoneItems, setPhoneItems] = useState<Telephone[]>(value as Telephone[] || []);
 
 	const handleItemChange = (index: number, newValue: string) => {
 		const updatedItems = [...items];
@@ -94,9 +99,77 @@ export const ArrayInput: React.FC<Props> = ({
 		}
 	};
 
+	const handleAddressItemChange = (index: number, address: Address) => {
+		const updatedItems = [...addressItems];
+		updatedItems[index] = address;
+		setAddressItems(updatedItems);
+		if (onChange) {
+			onChange(updatedItems);
+		}
+	};
+
+	const handleRemoveAddressItem = (index: number) => {
+		const updatedItems = addressItems.filter((_, i) => i !== index);
+		setAddressItems(updatedItems);
+		if (onChange) {
+			onChange(updatedItems);
+		}
+	};
+
+	const handleAddAddressItem = () => {
+		const newAddress: Address = {
+			address: '',
+			city: '',
+			state: '',
+			postcode: '',
+			country: 'Australia'
+		};
+		const updatedItems = [...addressItems, newAddress];
+		setAddressItems(updatedItems);
+		if (onChange) {
+			onChange(updatedItems);
+		}
+	};
+
+	const handlePhoneItemChange = (index: number, phone: Telephone) => {
+		const updatedItems = [...phoneItems];
+		updatedItems[index] = phone;
+		setPhoneItems(updatedItems);
+		if (onChange) {
+			onChange(updatedItems);
+		}
+	};
+
+	const handleRemovePhoneItem = (index: number) => {
+		const updatedItems = phoneItems.filter((_, i) => i !== index);
+		setPhoneItems(updatedItems);
+		if (onChange) {
+			onChange(updatedItems);
+		}
+	};
+
+	const handleAddPhoneItem = () => {
+		const newPhone: Telephone = {
+			code: 'AU',
+			country: 'Australia',
+			extension: '+61',
+			format: '',
+			number: ''
+		};
+		const updatedItems = [...phoneItems, newPhone];
+		setPhoneItems(updatedItems);
+		if (onChange) {
+			onChange(updatedItems);
+		}
+	};
+
 	useEffect(() => {
 		if (variant === 'tag-list') {
 			setTagListItems(value as string[][] || []);
+		} else if (variant === 'address-list') {
+			setAddressItems(value as Address[] || []);
+		} else if (variant === 'phone-list') {
+			setPhoneItems(value as Telephone[] || []);
 		} else {
 			setItems(value as (string | number)[]);
 		}
@@ -105,6 +178,94 @@ export const ArrayInput: React.FC<Props> = ({
 	const buttonStyle: React.CSSProperties = {
 		flexShrink: 0
 	};
+
+	if (variant === 'address-list') {
+		return (
+			<div className="blue-orange-default-input-cont" style={style}>
+				{label && (
+					<div className="blue-orange-default-input-label-cont" style={labelStyle}>
+						{label}
+						{help && <HelpIcon label={help}></HelpIcon>}
+						{required && <RequiredIcon></RequiredIcon>}
+					</div>
+				)}
+				<div className="blue-orange-array-input-items-cont">
+					<div className="blue-orange-array-input-bar"></div>
+					<div className="blue-orange-array-input-items">
+						{addressItems.map((address, index) => (
+							<div key={index} className="blue-orange-array-input-item blue-orange-array-input-item-address">
+								<AddressInput
+									address={address}
+									onChange={(addr) => handleAddressItemChange(index, addr)}
+									disabled={disabled}
+								/>
+								<ButtonIcon
+									icon="ri-close-line"
+									style={buttonStyle}
+									onClick={() => handleRemoveAddressItem(index)}
+									isDisabled={disabled}
+									label="Remove address"
+								/>
+							</div>
+						))}
+						<div className="blue-orange-array-input-add">
+							<ButtonIcon
+								icon="ri-add-line"
+								style={buttonStyle}
+								onClick={handleAddAddressItem}
+								isDisabled={disabled}
+								label="Add address"
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
+	if (variant === 'phone-list') {
+		return (
+			<div className="blue-orange-default-input-cont" style={style}>
+				{label && (
+					<div className="blue-orange-default-input-label-cont" style={labelStyle}>
+						{label}
+						{help && <HelpIcon label={help}></HelpIcon>}
+						{required && <RequiredIcon></RequiredIcon>}
+					</div>
+				)}
+				<div className="blue-orange-array-input-items-cont">
+					<div className="blue-orange-array-input-bar"></div>
+					<div className="blue-orange-array-input-items">
+						{phoneItems.map((phone, index) => (
+							<div key={index} className="blue-orange-array-input-item blue-orange-array-input-item-phone">
+								<PhoneInput
+									telephone={phone}
+									onChange={(tel) => handlePhoneItemChange(index, tel)}
+									disabled={disabled}
+								/>
+								<ButtonIcon
+									icon="ri-close-line"
+									style={buttonStyle}
+									onClick={() => handleRemovePhoneItem(index)}
+									isDisabled={disabled}
+									label="Remove phone"
+								/>
+							</div>
+						))}
+						<div className="blue-orange-array-input-add">
+							<ButtonIcon
+								icon="ri-add-line"
+								style={buttonStyle}
+								onClick={handleAddPhoneItem}
+								isDisabled={disabled}
+								label="Add phone"
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	}
 
 	if (variant === 'tag-list') {
 		return (
