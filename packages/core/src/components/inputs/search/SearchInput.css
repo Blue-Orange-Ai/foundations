@@ -75,3 +75,84 @@
     transition: 0.2s;
 }
 
+.blue-orange-search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: var(--blue-orange-light-input-search-background);
+    border: 1px solid var(--blue-orange-light-input-border-color);
+    border-radius: 4px;
+    margin-top: 4px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.dark .blue-orange-search-suggestions {
+    background-color: var(--blue-orange-dark-input-search-background);
+    border: 1px solid var(--blue-orange-dark-input-border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.blue-orange-search-suggestions-above {
+    top: auto;
+    bottom: 100%;
+    margin-top: 0;
+    margin-bottom: 4px;
+}
+
+.blue-orange-search-suggestion-group {
+    padding: 4px 0;
+}
+
+.blue-orange-search-suggestion-group:not(:last-child) {
+    border-bottom: 1px solid var(--blue-orange-light-input-border-color);
+}
+
+.dark .blue-orange-search-suggestion-group:not(:last-child) {
+    border-bottom: 1px solid var(--blue-orange-dark-input-border-color);
+}
+
+.blue-orange-search-suggestion-group-label {
+    padding: 8px 12px 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--blue-orange-light-default-text-color);
+}
+
+.dark .blue-orange-search-suggestion-group-label {
+    color: var(--blue-orange-dark-default-text-color);
+}
+
+.blue-orange-search-suggestion-item {
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--blue-orange-light-default-text-color);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.dark .blue-orange-search-suggestion-item {
+    color: var(--blue-orange-dark-default-text-color);
+}
+
+.blue-orange-search-suggestion-icon {
+    margin-right: 10px;
+    width: 16px;
+    text-align: center;
+    opacity: 0.8;
+}
+
+.blue-orange-search-suggestion-item:hover {
+    background-color: var(--blue-orange-light-input-dropdown-item-hover-color);
+}
+
+.dark .blue-orange-search-suggestion-item:hover {
+    background-color: var(--blue-orange-dark-input-dropdown-item-hover-color);
+}
+
