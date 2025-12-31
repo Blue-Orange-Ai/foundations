@@ -1,5 +1,6 @@
 
 .blue-orange-checkbox-data-table-cell {
+    padding: 5px 5px;
 }
 
 .blue-orange-checkbox-data-table-cell-inner-cont {
@@ -11,7 +12,11 @@
     min-width: 28px;
 }
 
-.blue-orange-data-table-theme-object-list .blue-orange-checkbox-data-table-cell-inner-cont{
+.blue-orange-data-table-theme-object-list .blue-orange-checkbox-data-table-cell {
     border: none;
     border-bottom: 1px solid #e0e1e2;
+}
+
+.blue-orange-data-table-theme-object-list .blue-orange-checkbox-data-table-cell-inner-cont{
+    border: none;
 }
