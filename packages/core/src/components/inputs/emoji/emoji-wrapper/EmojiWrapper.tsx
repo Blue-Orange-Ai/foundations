@@ -66,22 +66,22 @@ export const EmojiWrapper: React.FC<Props> = ({children, onSelection}) => {
 	const calculateContextWindowPos = () : React.CSSProperties => {
 		if (isPosAbove() && (getClientBottom() + getClientHeight() + 10) < window.innerHeight) {
 			return {
-				left: calculateLeftPosition(),
+				left: calculateLeftPosition() + "px",
 				bottom: getClientBottom() + getClientHeight() + 10 + "px"
 			}
 		} else if (isPosAbove()) {
 			return {
-				left: calculateLeftPosition(),
+				left: calculateLeftPosition() + "px",
 				top: "20px"
 			}
 		} else if (!isPosAbove() && (getClientTop() - getClientHeight() + 20) > 0) {
 			return {
-				left: calculateLeftPosition(),
+				left: calculateLeftPosition() + "px",
 				top: getClientTop() + getClientHeight() + 20 + "px"
 			}
 		} else {
 			return {
-				left: calculateLeftPosition(),
+				left: calculateLeftPosition() + "px",
 				bottom: "20px"
 			}
 		}

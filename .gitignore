@@ -5,3 +5,16 @@ node_modules/
 /packages/map/dist/
 /packages/graph/dist/
 /packages/code-editors/dist/
+
+# OS files
+.DS_Store
+
+# Generated TypeScript declaration files in source directories (exclude react-app-env.d.ts)
+packages/*/src/**/[A-Z]*.d.ts
+
+# Nx cache
+.nx/
+
+# Debug logs
+lerna-debug.log
+npm-debug.log*

@@ -79,6 +79,7 @@ import {ObjectArrayInputDevelopment} from "../components/inputs/object-array-inp
 import {
     SearchQueryEditorSmallDevelopment
 } from "../components/search/search-query-editor-small/SearchQueryEditorSmallDevelopment";
+import {FileUploadTableDevelopment} from "../components/inputs/file-upload-table/FileUploadTableDevelopment";
 
 interface Props {
 }
@@ -376,6 +377,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							activeStyle={activeStyle}
 							icon={<i className="ri-file-upload-line"></i>}
 							onClick={() => navigate("/inputs-file")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"File Upload Table"}
+							active={component == "inputs-file-upload-table"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-upload-cloud-2-line"></i>}
+							onClick={() => navigate("/inputs-file-upload-table")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
 							label={"Help Tooltip"}
@@ -822,6 +832,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "alerts-in-line" && <InLineAlertsDevelopment></InLineAlertsDevelopment>}
 			{component == "avatar" && <AvatarDevelopment></AvatarDevelopment>}
 			{component == "inputs-file" && <FileInputDevelopment></FileInputDevelopment>}
+			{component == "inputs-file-upload-table" && <FileUploadTableDevelopment></FileUploadTableDevelopment>}
 			{component == "inputs-help" && <HelpTooltipDevelopment></HelpTooltipDevelopment>}
 			{component == "table-objects" && <ObjectTableDevelopment></ObjectTableDevelopment>}
 		</SidebarPage>

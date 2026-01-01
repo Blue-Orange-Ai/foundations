@@ -1,0 +1,66 @@
+.blue-orange-object-array-input-items-cont {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+}
+
+.blue-orange-object-array-input-bar {
+	width: 3px;
+	background-color: var(--blue-orange-light-input-border-color);
+	border-radius: 2px;
+	margin-right: 10px;
+	flex-shrink: 0;
+}
+
+.dark .blue-orange-object-array-input-bar {
+	background-color: var(--blue-orange-dark-input-border-color);
+}
+
+.blue-orange-object-array-input-items {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	flex-grow: 1;
+}
+
+.blue-orange-object-array-input-item {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 8px;
+	padding-bottom: 16px;
+	border-bottom: 1px solid var(--blue-orange-light-input-border-color);
+}
+
+.dark .blue-orange-object-array-input-item {
+	border-bottom-color: var(--blue-orange-dark-input-border-color);
+}
+
+.blue-orange-object-array-input-item:last-of-type {
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+.blue-orange-object-array-input-fields {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	flex-grow: 1;
+}
+
+.blue-orange-object-array-input-field {
+	width: 100%;
+}
+
+.blue-orange-object-array-input-field .blue-orange-default-input-cont {
+	width: 100%;
+}
+
+.blue-orange-object-array-input-field .blue-orange-text-area-input-cont {
+	width: 100%;
+}
+
+.blue-orange-object-array-input-add {
+	display: flex;
+	justify-content: flex-start;
+}

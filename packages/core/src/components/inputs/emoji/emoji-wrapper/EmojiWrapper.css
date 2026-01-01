@@ -1,5 +1,6 @@
 
 .blue-orange-emoji-wrapper {
     position: fixed;
+    z-index: 9999;
 }
 
