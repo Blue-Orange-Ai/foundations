@@ -22,6 +22,7 @@ export * from './components/avatar/avatarlist/AvatarList';
 export * from './components/buttons/file-upload-btn/FileUploadBtn';
 export * from './components/buttons/button/Button';
 export * from './components/buttons/button-icon/ButtonIcon';
+export * from './components/buttons/button-dropdown/ButtonDropdown';
 export * from './components/buttons/utils/erroranimation/ErrorAnimation'
 export * from './components/buttons/utils/successanimation/SuccessAnimation'
 
@@ -29,6 +30,7 @@ export * from './components/buttons/utils/successanimation/SuccessAnimation'
 export * from './components/charts/bar/BarChart';
 export * from './components/charts/line/LineChart';
 export * from './components/charts/scatter/ScatterChart';
+export * from './components/charts/combo/ComboChart';
 export * from './components/charts/types/ChartTypes';
 
 // Config
@@ -38,10 +40,15 @@ export * from './components/config/BlueOrangePassportConfig';
 
 // Context Menu
 export * from './components/contextmenu/contextmenu/ContextMenu';
+export * from './components/contextmenu/context-menu-heading/ContextMenuHeading';
+export * from './components/contextmenu/context-menu-item/ContextMenuItem';
+export * from './components/contextmenu/context-menu-separator/ContextMenuSeparator';
 
 // Comments
 export * from './components/comments/floating-comments/FloatingComments';
 export * from './components/comments/full-page-comments/FullPageComments';
+export * from './components/comments/add-comment/AddComment';
+export * from './components/comments/render-comment/RenderComment';
 
 // Misc
 export * from './components/loading/loading/Loading';
@@ -97,6 +104,7 @@ export * from './components/inputs/icon-selector/IconSelector';
 export * from './components/inputs/copy-input/CopyInput';
 export * from './components/inputs/array-input/ArrayInput';
 export * from './components/inputs/object-array-input/ObjectArrayInput';
+export * from './components/inputs/file-upload-table/FileUploadTable';
 
 // Layouts
 export * from './components/layouts/drawer/drawer/Drawer';
@@ -154,11 +162,19 @@ export * from './components/table/cells/cell/Cell';
 export * from './components/table/cells/checkboxcell/CheckboxCell';
 export * from './components/table/cells/headercell/HeaderCell';
 export * from './components/table/cells/primarycell/PrimaryCell';
+export * from './components/table/cells/text-data-cell/TextDataCell';
+export * from './components/table/cells/markdown-data-cell/MarkdownDataCell';
+export * from './components/table/cells/currency-data-cell/CurrencyDataCell';
+export * from './components/table/cells/date-data-cell/DateDataCell';
+export * from './components/table/cells/json-obj-data-cell/JsonObjDataCell';
+export * from './components/table/cells/number-data-cell/NumberDataCell';
+export * from './components/table/cells/loading-cell/LoadingCell';
 export * from './components/table/row/Row';
 export * from './components/table/table/Table';
 export * from './components/table/tbody/TBody';
 export * from './components/table/tfooter/TFooter';
 export * from './components/table/thead/THead';
+export * from './components/table/data-table/DataTable';
 
 // Text Decorations
 export * from './components/text-decorations/badge/Badge';
@@ -188,3 +204,7 @@ export * from './components/search/schema-editor/SchemaEditor';
 
 // Tooltips
 export * from './components/tooltips/simple-tooltip/SimpleTooltip';
+
+// File System
+export * from './components/file-system/file-system/FileSystem';
+export * from './components/file-system/file-system-row/FileSystemRow';

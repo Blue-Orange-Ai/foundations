@@ -1,12 +1,12 @@
 import {
-	AddressInput,
-	AvatarEmpty, Button, ButtonType,
-	Checkbox,
-	Input,
-	InputForm,
-	PaddedPage,
-	PageHeading,
-	PhoneInput
+    AddressInput,
+    AvatarEmpty, Button, ButtonType,
+    Checkbox, ErrorBlockAlert,
+    Input,
+    InputForm,
+    PaddedPage,
+    PageHeading,
+    PhoneInput
 } from "@blue-orange-ai/foundations-core";
 import React, {useEffect, useState} from "react";
 
@@ -15,7 +15,6 @@ import {Address, Telephone} from "@blue-orange-ai/foundations-clients";
 import passport from "@blue-orange-ai/foundations-core/src/components/config/BlueOrangePassportConfig";
 import Cookies from "js-cookie";
 import {useLocation, useNavigate} from "react-router-dom";
-import {ErrorAlert} from "../../../utils/alerts/login/erroralert/ErrorAlert";
 
 import './RegistrationPage.css'
 
@@ -251,7 +250,7 @@ export const RegistrationPage: React.FC<Props> = ({
 			></Button>
 			{ error &&
 				<div className="passport-registration-page-plain-error-message">
-					<ErrorAlert title={"An error occurred"} description={errorDescription}></ErrorAlert>
+					<ErrorBlockAlert title={"An error occurred"} description={errorDescription}></ErrorBlockAlert>
 				</div>
 			}
 		</PaddedPage>

@@ -27,6 +27,7 @@ import {
 	TBody,
 	THead,
 	ToastContext,
+	ToastContextType,
 	ToasterType,
 	ToastLocation
 } from "@blue-orange-ai/foundations-core";
@@ -45,7 +46,7 @@ interface Props {
 
 export const UserSearch: React.FC<Props> = ({userRedirectUri="/users/"}) => {
 
-	const { addToast } = useContext(ToastContext);
+	const { addToast } = useContext<ToastContextType>(ToastContext);
 
 	const navigate = useNavigate();
 
@@ -334,7 +335,7 @@ export const UserSearch: React.FC<Props> = ({userRedirectUri="/users/"}) => {
 								   placeholder={"Re Enter Password"} onChange={setPassword2}></Input>
 							<div className="passport-registration-page-checkbox-group">
 								<Checkbox checked={forcePasswordReset}
-										  onCheckboxChange={(s) => setForcePasswordReset(s)}></Checkbox>
+										  onCheckboxChange={(s:boolean) => setForcePasswordReset(s)}></Checkbox>
 								<p className="passport-registration-terms-of-service-text">Force Password Reset</p>
 							</div>
 						</InputForm>

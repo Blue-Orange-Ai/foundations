@@ -1,18 +1,17 @@
 import React, {useEffect, useState} from "react";
 import {
-	AvatarEmpty,
-	Button,
-	ButtonType,
-	Dropdown,
-	DropdownItemObj, DropdownItemText,
-	DropdownItemType,
-	Input,
-	InputForm
+    AvatarEmpty,
+    Button,
+    ButtonType,
+    Dropdown,
+    DropdownItemObj, DropdownItemText,
+    DropdownItemType, ErrorBlockAlert,
+    Input,
+    InputForm
 } from "@blue-orange-ai/foundations-core";
 
 
 import passport from "@blue-orange-ai/foundations-core/src/components/config/BlueOrangePassportConfig";
-import {ErrorAlert} from "../../../utils/alerts/login/erroralert/ErrorAlert";
 
 import './LoginPagePlain.css'
 import Cookies from "js-cookie";
@@ -151,7 +150,7 @@ export const LoginPagePlain: React.FC<Props> = ({
 				</div>
 				{ error &&
 					<div className="passport-login-page-plain-error-message">
-						<ErrorAlert title={"An error occurred"} description={errorDescription}></ErrorAlert>
+						<ErrorBlockAlert title={"An error occurred"} description={errorDescription}></ErrorBlockAlert>
 					</div>
 				}
 				<InputForm verticalMargin={15}>
