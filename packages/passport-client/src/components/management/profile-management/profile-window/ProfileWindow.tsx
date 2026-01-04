@@ -3,7 +3,8 @@ import React, {useEffect, useRef, useState} from "react";
 import "./ProfileWindow.css"
 
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {Passport, User} from "@blue-orange-ai/foundations-clients";
+import {User} from "@blue-orange-ai/foundations-clients";
+import {usePassport} from "../../../providers/PassportProvider";
 import {Avatar, Loading} from "@blue-orange-ai/foundations-core";
 import {BasicInformation} from "../basic-information/BasicInformation";
 import {ResetPassword} from "../reset-password/ResetPassword";
@@ -15,6 +16,8 @@ interface Props {
 }
 
 export const ProfileWindow: React.FC<Props> = ({}) => {
+
+	const passport = usePassport();
 
 	const isInitialMount = useRef(true);
 
@@ -72,7 +75,6 @@ export const ProfileWindow: React.FC<Props> = ({}) => {
 	}
 
 	const getUser = (userId: string) => {
-		var passport = new Passport("http://localhost:8080");
 		passport.get(userId)
 			.then(user => {
 				setUser(user);

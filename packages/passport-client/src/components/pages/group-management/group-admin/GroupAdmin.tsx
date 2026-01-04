@@ -1,29 +1,29 @@
 import React, {useContext, useEffect, useState} from "react";
 import {
-	Badge,
-	Button,
-	ButtonIcon,
-	ButtonType,
-	Cell,
-	CellAlignment, CheckboxCell, Dropdown, DropdownItemIcon,
-	InputForm,
-	Metric,
-	Modal,
-	ModalBody,
-	ModalFooter,
-	ModalFooterLeft,
-	ModalFooterRight,
-	ModalHeader,
-	PaddedPage,
-	PageHeading,
-	Row,
-	SearchInput,
-	Table,
-	TBody,
-	THead,
-	ToastContext,
-	ToasterType,
-	ToastLocation
+    Badge,
+    Button,
+    ButtonIcon, ButtonIconPos,
+    ButtonType,
+    Cell,
+    CellAlignment, CheckboxCell, Dropdown, DropdownItemIcon,
+    InputForm,
+    Metric,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    ModalFooterLeft,
+    ModalFooterRight,
+    ModalHeader,
+    PaddedPage,
+    PageHeading,
+    Row,
+    SearchInput,
+    Table,
+    TBody,
+    THead,
+    ToastContext,
+    ToasterType,
+    ToastLocation
 } from "@blue-orange-ai/foundations-core";
 
 
@@ -359,6 +359,10 @@ export const GroupAdmin: React.FC<Props> = ({groupId, group, userRedirectUri = "
 		}
 	}
 
+    const returnHomeClicked = () => {
+        navigate("/passport/management")
+    }
+
 	useEffect(() => {
 		getMembers({
 			page: 0,
@@ -369,7 +373,10 @@ export const GroupAdmin: React.FC<Props> = ({groupId, group, userRedirectUri = "
 
 	return (
 		<>
-			<PaddedPage>
+            <div className="passport-management-header-management-home">
+                <Button iconPos={ButtonIconPos.LEFT} icon="ri-arrow-left-line" text={"Back to Management"} buttonType={ButtonType.CLEAR} onClick={returnHomeClicked}></Button>
+            </div>
+            <PaddedPage>
 				{group &&
 					<>
 						<div className="passport-group-main-heading">

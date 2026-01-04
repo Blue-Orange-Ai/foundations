@@ -1,7 +1,8 @@
 import React, {ChangeEvent, MouseEventHandler, useEffect, useImperativeHandle, useRef, useState} from "react";
 
 import "./UserGroupTable.css"
-import {Group, GroupPermission, Passport, User, UserGroup} from "@blue-orange-ai/foundations-clients";
+import {Group, GroupPermission, User, UserGroup} from "@blue-orange-ai/foundations-clients";
+import {usePassport} from "../../../providers/PassportProvider";
 import {ButtonIcon, Checkbox, ContextMenu, IContextMenuItem, IContextMenuType} from "@blue-orange-ai/foundations-core";
 import {UserGroupTableCheckBox} from "../user-group-table-checkbox/UserGroupTableCheckBox";
 
@@ -27,6 +28,8 @@ export const UserGroupTable: React.FC<Props> = ({
 													query,
 													page=0,
 													size=20}) => {
+
+	const passport = usePassport();
 
 	const isInitialMount = useRef(true);
 
@@ -180,7 +183,6 @@ export const UserGroupTable: React.FC<Props> = ({
 	}
 
 	const getUserGroups = (query: string, page: number, size: number) => {
-		var passport = new Passport("http://localhost:8080");
 		if (user != null && user.id != null) {
 			passport.adminGetUserGroups(user.id, {
 				query: query,

@@ -2,7 +2,8 @@ import React, {useState} from "react";
 
 import "./ProfileAdmin.css"
 import "react-toggle/style.css"
-import {Passport, User, UserState} from "@blue-orange-ai/foundations-clients";
+import {User, UserState} from "@blue-orange-ai/foundations-clients";
+import {usePassport} from "../../../providers/PassportProvider";
 import {Button, ButtonType, Dropdown, DropdownItemIcon, TextArea} from "@blue-orange-ai/foundations-core";
 
 interface Props {
@@ -10,6 +11,8 @@ interface Props {
 }
 
 export const ProfileAdmin: React.FC<Props> = ({user}) => {
+
+	const passport = usePassport();
 
     const defaultUser: User = {
         addressVerified: false,
@@ -65,7 +68,6 @@ export const ProfileAdmin: React.FC<Props> = ({user}) => {
 
 	const saveUser = () => {
 		setLoading(true)
-		var passport = new Passport("http://localhost:8080");
 		passport.save(workingUser)
 			.then(user => {
 				setWorkingUser(user);

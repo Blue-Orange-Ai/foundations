@@ -3,7 +3,8 @@ import React, {useRef, useState} from "react";
 import "./UserGroups.css"
 
 import {SearchInput2} from "../../../utils/searchinput2/SearchInput2";
-import {Passport, User} from "@blue-orange-ai/foundations-clients";
+import {User} from "@blue-orange-ai/foundations-clients";
+import {usePassport} from "../../../providers/PassportProvider";
 import {ButtonIcon} from "@blue-orange-ai/foundations-core";
 import {GroupSelectionState, UserGroupTable} from "../user-group-table/UserGroupTable";
 import {AddUserToGroupModal} from "../add-user-to-group-modal/AddUserToGroupModal";
@@ -14,6 +15,7 @@ interface Props {
 
 export const UserGroups: React.FC<Props> = ({user}) => {
 
+	const passport = usePassport();
 
 	const [addUserModal, setAddUserModal] = useState(false);
 
@@ -44,7 +46,6 @@ export const UserGroups: React.FC<Props> = ({user}) => {
 
 	const deleteSelectedGroups = () => {
 		if (selectedGroups.length > 0) {
-			var passport = new Passport("http://localhost:8080");
 			if (user != null && user.id != null) {
 				setLoading(true);
 				passport.adminRemoveGroupsFromUser({

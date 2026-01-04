@@ -3,9 +3,9 @@ import {MentionList} from "../mentionlist/MentionList";
 import tippy from 'tippy.js'
 import {MentionItem} from "../default/RichText";
 import passport from "../../../config/BlueOrangePassportConfig";
-import {User, UserSearchResult} from "@blue-orange-ai/foundations-clients";
+import {PublicUser, User, UserSearchPublicResult, UserSearchResult} from "@blue-orange-ai/foundations-clients";
 
-const getDisplayName = (user: User) => {
+const getDisplayName = (user: User | PublicUser) => {
     if (user.name == undefined || user.name == "") {
         return user.username;
     } else {
@@ -15,7 +15,7 @@ const getDisplayName = (user: User) => {
 
 export const fetchMentionItems = async (query: string): Promise<MentionItem[]> => {
     try {
-        var searchResult: UserSearchResult = await passport.searchUsers(
+        var searchResult: UserSearchPublicResult = await passport.searchPublicUsers(
             {
                 query: query,
                 page: 0,

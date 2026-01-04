@@ -1,5 +1,12 @@
 import React, {useContext, useEffect, useState} from "react";
-import {ToastContext, ToasterType, ToastLocation} from "@blue-orange-ai/foundations-core";
+import {
+    Button,
+    ButtonIconPos,
+    ButtonType,
+    ToastContext,
+    ToasterType,
+    ToastLocation
+} from "@blue-orange-ai/foundations-core";
 
 
 import passport from "@blue-orange-ai/foundations-core/src/components/config/BlueOrangePassportConfig";
@@ -8,14 +15,16 @@ import './UserProfileAdmin.css'
 import {UserProfile} from "../user-profile/UserProfile";
 import {User} from "@blue-orange-ai/foundations-clients";
 import {v4 as uuidv4} from "uuid";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 interface Props {
 }
 
 export const UserProfileAdmin: React.FC<Props> = ({}) => {
 
-	const { addToast } = useContext(ToastContext);
+    const navigate = useNavigate();
+
+    const { addToast } = useContext(ToastContext);
 
 	const { userId } = useParams();
 
@@ -36,6 +45,10 @@ export const UserProfileAdmin: React.FC<Props> = ({}) => {
 			})
 	}
 
+    const returnHomeClicked = () => {
+        navigate("/passport/management")
+    }
+
 	useEffect(() => {
 		if (userId) {
 			getReferencedUser(userId)
@@ -44,7 +57,10 @@ export const UserProfileAdmin: React.FC<Props> = ({}) => {
 
 	return (
 		<>
-			{user && <UserProfile profileUser={user} admin={true}></UserProfile>}
+			<div className="passport-management-header-management-home">
+                <Button iconPos={ButtonIconPos.LEFT} icon="ri-arrow-left-line" text={"Back to Management"} buttonType={ButtonType.CLEAR} onClick={returnHomeClicked}></Button>
+            </div>
+            {user && <UserProfile profileUser={user} admin={true}></UserProfile>}
 		</>
 	)
 }

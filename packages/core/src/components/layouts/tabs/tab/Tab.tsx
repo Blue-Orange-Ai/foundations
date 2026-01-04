@@ -5,7 +5,8 @@ import './Tab.css'
 interface Props {
 	uuid: string,
 	name: string,
-	icon?: string
+	icon?: string,
+	children?: React.ReactNode
 }
 
 export const Tab: React.FC<Props> = ({}) => {

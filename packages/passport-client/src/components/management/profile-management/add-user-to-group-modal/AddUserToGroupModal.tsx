@@ -5,7 +5,7 @@ import "./AddUserToGroupModal.css"
 import {SearchInput2} from "../../../utils/searchinput2/SearchInput2";
 // import {IContextMenuItem} from "../../../../interfaces/AppInterfaces";
 import {AddUserGroupCheckbox} from "../add-user-group-checkbox/AddUserGroupCheckbox";
-import {AddGroup, Group, GroupPermission, Passport, User} from "@blue-orange-ai/foundations-clients";
+import {AddGroup, Group, GroupPermission, User} from "@blue-orange-ai/foundations-clients";
 import {
     Button,
     ButtonIcon,
@@ -17,6 +17,7 @@ import {
     IContextMenuType,
     SearchInput
 } from "@blue-orange-ai/foundations-core";
+import {usePassport} from "../../../providers/PassportProvider";
 
 interface Props {
 	user?: User,
@@ -24,6 +25,8 @@ interface Props {
 }
 
 export const AddUserToGroupModal: React.FC<Props> = ({user, onClose}) => {
+
+	const passport = usePassport();
 
 	const [loading, setLoading] = useState(false);
 
@@ -187,7 +190,6 @@ export const AddUserToGroupModal: React.FC<Props> = ({user, onClose}) => {
 	}
 
 	const saveGroups = () => {
-		var passport = new Passport("http://localhost:8080");
 		if (user != null && user.id != null) {
 			var addGroups: Array<AddGroup> = selectedGroups.map(groupId => ({
 				id: groupId.toString(),
@@ -212,7 +214,6 @@ export const AddUserToGroupModal: React.FC<Props> = ({user, onClose}) => {
 	}
 
 	const getGroups = (q:string, p:number, s:number) => {
-		var passport = new Passport("http://localhost:8080");
 		if (user != null && user.id != null) {
 			setLoading(true);
 			passport.searchGroups({

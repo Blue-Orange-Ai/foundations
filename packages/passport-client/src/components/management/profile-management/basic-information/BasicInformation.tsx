@@ -1,7 +1,8 @@
 import React, {useCallback, useState} from "react";
 
 import "./BasicInformation.css"
-import {Address, Passport, Telephone, User, UserState} from "@blue-orange-ai/foundations-clients";
+import {Address, Telephone, User, UserState} from "@blue-orange-ai/foundations-clients";
+import {usePassport} from "../../../providers/PassportProvider";
 import {AddressInput, Button, ButtonType, Input, PhoneInput} from "@blue-orange-ai/foundations-core";
 
 interface Props {
@@ -11,6 +12,7 @@ interface Props {
 
 export const BasicInformation: React.FC<Props> = ({user, reloadUser}) => {
 
+	const passport = usePassport();
 
     const defaultUser: User = {
         addressVerified: false,
@@ -65,7 +67,6 @@ export const BasicInformation: React.FC<Props> = ({user, reloadUser}) => {
 	}
 
 	const getUser = useCallback(async () => {
-		var passport = new Passport("http://localhost:8080");
 		if (workingUser.id != null) {
 			const user = await passport.get(workingUser.id);
             setWorkingUser(user);
@@ -79,7 +80,6 @@ export const BasicInformation: React.FC<Props> = ({user, reloadUser}) => {
 
 	const saveUser = () => {
 		setLoading(true)
-		var passport = new Passport("http://localhost:8080");
 		passport.save(workingUser)
 			.then(user => {
 				setWorkingUser(user);

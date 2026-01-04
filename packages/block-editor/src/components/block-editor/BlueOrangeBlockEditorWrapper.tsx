@@ -19,7 +19,7 @@ import {
 	Tabs
 } from "@blue-orange-ai/foundations-core";
 import UnicodeEmoji from "./data/UnicodeEmoji";
-import {User, UserSearchResult} from "@blue-orange-ai/foundations-clients";
+import {PublicUser, User, UserSearchPublicResult, UserSearchResult} from "@blue-orange-ai/foundations-clients";
 import passport from "./config/BlueOrangePassportConfig";
 import {v4 as uuidv4} from "uuid";
 
@@ -81,7 +81,7 @@ export const BlueOrangeBlockEditorWrapper: React.FC<Props> = ({documentId, handl
 		})
 	}
 
-	const getDisplayName = (user: User) => {
+	const getDisplayName = (user: User | PublicUser) => {
 		if (user.name == undefined || user.name == "") {
 			return user.username;
 		} else {
@@ -91,13 +91,13 @@ export const BlueOrangeBlockEditorWrapper: React.FC<Props> = ({documentId, handl
 
 	const fetchUsers = async (query: string): Promise<EditorMention[]> => {
 		try {
-			var searchResult: UserSearchResult = await passport.searchUsers(
+			var searchResult: UserSearchPublicResult = await passport.searchPublicUsers(
 				{
 					query: query,
 					page: 0,
 					size: 10
 				});
-			var users = searchResult.result;
+			var users: Array<PublicUser> = searchResult.result;
 
 			return users.map(user => {
 				const uuid = uuidv4();

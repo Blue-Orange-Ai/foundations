@@ -1,7 +1,8 @@
 import React, {useState} from "react";
 
 import "./ResetPassword.css"
-import {Passport, User, UserState} from "@blue-orange-ai/foundations-clients";
+import {User, UserState} from "@blue-orange-ai/foundations-clients";
+import {usePassport} from "../../../providers/PassportProvider";
 import {Button, ButtonType, Input} from "@blue-orange-ai/foundations-core";
 
 interface Props {
@@ -9,6 +10,8 @@ interface Props {
 }
 
 export const ResetPassword: React.FC<Props> = ({user}) => {
+
+	const passport = usePassport();
 
 	const defaultUser: User = {
         addressVerified: false,
@@ -41,7 +44,6 @@ export const ResetPassword: React.FC<Props> = ({user}) => {
 
 	const updatePassword = () => {
 		if (password != "") {
-			var passport = new Passport("http://localhost:8080");
 			if (user != null && user.id != null) {
 				passport.adminUpdatePassword(user.id, {password: password})
 					.then(user => {

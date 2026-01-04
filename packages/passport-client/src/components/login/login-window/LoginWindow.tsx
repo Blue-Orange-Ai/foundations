@@ -5,7 +5,8 @@ import Cookies from "js-cookie"
 import './LoginWindow.css';
 
 import {useNavigate} from "react-router-dom";
-import {Passport, UserLoginRequest} from "@blue-orange-ai/foundations-clients";
+import {UserLoginRequest} from "@blue-orange-ai/foundations-clients";
+import {usePassport} from "../../providers/PassportProvider";
 import {
     Button,
     ButtonType,
@@ -19,6 +20,8 @@ interface Props {
 }
 
 export const LoginWindow: React.FC<Props> = ({}) => {
+
+	const passport = usePassport();
 
 	var uri = undefined;
 
@@ -73,7 +76,6 @@ export const LoginWindow: React.FC<Props> = ({}) => {
 	const submitRequest = () => {
 		if (validInput) {
 			setLoading(true);
-			var passport = new Passport("http://localhost:8080");
 			var loginRequest: UserLoginRequest = {
 				username: username,
 				password: password,

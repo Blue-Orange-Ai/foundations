@@ -1,7 +1,8 @@
 import React, {useRef, useState} from "react";
 
 import "./DeleteAccount.css"
-import {Passport, User} from "@blue-orange-ai/foundations-clients";
+import {User} from "@blue-orange-ai/foundations-clients";
+import {usePassport} from "../../../providers/PassportProvider";
 import {Button, ButtonType} from "@blue-orange-ai/foundations-core";
 
 
@@ -11,6 +12,8 @@ interface Props {
 
 export const DeleteAccount: React.FC<Props> = ({user}) => {
 
+	const passport = usePassport();
+
 	const [loading, setLoading] = useState(false);
 
 	const [deleteModalState, setDeleteModalState] = useState(false);
@@ -18,7 +21,6 @@ export const DeleteAccount: React.FC<Props> = ({user}) => {
 	const deleteModalElem = useRef<HTMLDivElement>(null);
 
 	const deleteAccount = () => {
-		var passport = new Passport("http://localhost:8080");
 		if (user != null && user.id != null) {
 			passport.adminDeleteUser(user.id)
 				.then(user => {

@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from "react";
 
 import './UserTable.css'
-import {Passport, SearchDirection, User, UserSearchField, UserSearchResult} from "@blue-orange-ai/foundations-clients";
+import {SearchDirection, User, UserSearchField, UserSearchResult} from "@blue-orange-ai/foundations-clients";
+import {usePassport} from "../../../providers/PassportProvider";
 import {UserRow} from "../user-row/UserRow";
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
 
 export const UserTable: React.FC<Props> = ({query, page, size, forceSearch, setLoading, updateUserSearchResult}) => {
 
+	const passport = usePassport();
 
 	const [searchField, setSearchField] = useState<UserSearchField>(UserSearchField.NAME)
 
@@ -24,7 +26,6 @@ export const UserTable: React.FC<Props> = ({query, page, size, forceSearch, setL
 
 
 	const search = () => {
-		var passport = new Passport("http://localhost:8080");
 		if (setLoading) {
 			setLoading(true);
 		}
