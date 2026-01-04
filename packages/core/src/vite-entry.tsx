@@ -96,6 +96,8 @@ export * from './components/inputs/richtext/suggestion/Suggestion';
 export * from './components/inputs/richtext/uploaded-file/UploadedFile'
 export * from './components/inputs/search/SearchInput';
 export * from './components/inputs/tags/simple/TagInput';
+export * from './components/inputs/tags/fetch/TagInputCallback';
+export * from './components/inputs/tags/users/TagInputUsers';
 export * from './components/inputs/textarea/TextArea';
 export * from './components/inputs/toggle/Toggle';
 export * from './components/interfaces/AppInterfaces';
@@ -178,7 +180,9 @@ export * from './components/table/data-table/DataTable';
 
 // Text Decorations
 export * from './components/text-decorations/badge/Badge';
+export * from './components/text-decorations/code-block/CodeBlock';
 export * from './components/text-decorations/currency/Currency';
+export * from './components/text-decorations/dates/date-display/DateDisplay';
 export * from './components/text-decorations/email/EmailLink';
 export * from './components/text-decorations/form-heading/FormHeading';
 export * from './components/text-decorations/page-heading/PageHeading';
@@ -192,8 +196,12 @@ export * from './components/text-decorations/dates/time/TimeDisplay';
 export * from './components/text-decorations/dates/relative-time/RelativeTime';
 export * from './components/text-decorations/dotified-text/DotifiedText';
 export * from './components/text-decorations/truncated-text/TruncatedText';
-export * from './components/text-decorations/code-block/CodeBlock';
+export * from './components/text-decorations/truncated-text-wrapper/TruncatedTextWrapper';
 export * from './components/text-decorations/markdown-text/MarkdownText';
+export * from './components/text-decorations/general-heading/GeneralHeading';
+export * from './components/text-decorations/json-object-text/JsonObjectText';
+export * from './components/text-decorations/number-text/NumberText';
+export * from './components/text-decorations/number-units/NumberUnits';
 
 // Rules
 export * from './components/rules/rule-editor/RuleEditor';

@@ -788,7 +788,7 @@ export const DataTable: React.FC<Props> = ({
 			window.removeEventListener("mousemove", onMouseMove);
 			window.removeEventListener("mouseup", onMouseUp);
 
-			if (!wasActive || insertIndex === null || typeof from !== "number") {
+			if (!wasActive || insertIndex === null || !insertIndex || typeof from !== "number") {
 				return;
 			}
 			const to = insertIndex > from ? insertIndex - 1 : insertIndex;
@@ -796,7 +796,10 @@ export const DataTable: React.FC<Props> = ({
 				return;
 			}
 			setOrderedSchema((prevSchema) => {
-				setColumnWidths((prev) => reorderColumnWidths(prev, from, to, prevSchema.length));
+				if (!to) {
+                    return prevSchema;
+                }
+                setColumnWidths((prev) => reorderColumnWidths(prev, from, to, prevSchema.length));
 				const updated = moveInArray(prevSchema, from, to);
 				onColumnOrderChange?.(from, to, updated);
 				return updated;

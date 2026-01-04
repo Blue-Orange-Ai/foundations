@@ -36,6 +36,7 @@ import {DropdownInputDevelopment} from "../components/inputs/dropdown-input/Drop
 import {EmojiInputDevelopment} from "../components/inputs/emoji-input/EmojiInputDevelopment";
 import {PhoneInputDevelopment} from "../components/inputs/phone-input/PhoneInputDevelopment";
 import {TagInputDevelopment} from "../components/inputs/tag-input/TagInputDevelopment";
+import {PassportTagInputDevelopment} from "../components/inputs/passport-tag-input/PassportTagInputDevelopment";
 import {GeneralInputDevelopment} from "../components/inputs/general-input/GeneralInputDevelopment";
 import {TextAreaDevelopment} from "../components/inputs/textarea/TextAreaDevelopment";
 import {ToggleInputDevelopment} from "../components/inputs/toggle-input/ToggleInputDevelopment";
@@ -84,7 +85,7 @@ import {FileUploadTableDevelopment} from "../components/inputs/file-upload-table
 interface Props {
 }
 
-Cookies.set("authorization","eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NzU0ZDQ1Mi1lOGYwLTQ5ZDUtYjkzZC02NTEyMDdmZjczMDciLCJleHAiOjE3Mzc4NDg1NjN9.dcqG2rCMAvOFV6mUWGJNtXA-yhRvTX35309uzafP7tVwEQohVtqKuascj9CwTpUrgCiRSagULgoOGWIJRSrC3w")
+Cookies.set("authorization","eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmN2Y1ODdiNy00YTY3LTQzN2YtOGMyNS1hY2NiOGRlNWUyN2MiLCJleHAiOjE3NzAxMTY4ODh9.5-9nogPXF6rtUbRxfsloavMkgHxf8SWWe-qL1h4s4BK5gyfI5RV_pXLVPs2vcpls7j2G2IO791qM-sLox8-KeQ")
 
 export const WorkspaceLanding: React.FC<Props> = ({}) => {
 
@@ -451,6 +452,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/inputs-tags")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
+							label={"Passport Tag Input"}
+							active={component == "inputs-passport-tags"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-user-search-line"></i>}
+							onClick={() => navigate("/inputs-passport-tags")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
 							label={"Text Area Input"}
 							active={component == "inputs-text-area"}
 							focused={false}
@@ -802,6 +812,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "inputs-emoji" && <EmojiInputDevelopment></EmojiInputDevelopment>}
 			{component == "inputs-phone" && <PhoneInputDevelopment></PhoneInputDevelopment>}
 			{component == "inputs-tags" && <TagInputDevelopment></TagInputDevelopment>}
+			{component == "inputs-passport-tags" && <PassportTagInputDevelopment></PassportTagInputDevelopment>}
 			{component == "inputs-general" && <GeneralInputDevelopment></GeneralInputDevelopment>}
 			{component == "inputs-text-area" && <TextAreaDevelopment></TextAreaDevelopment>}
 			{component == "inputs-toggle" && <ToggleInputDevelopment></ToggleInputDevelopment>}

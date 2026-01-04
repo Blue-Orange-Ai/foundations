@@ -161,10 +161,10 @@ export const FileSystem: React.FC<Props> = ({
 	}
 
 	useEffect(() => {
-		const handleKeyDown = (ev) => {
-			const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+		const handleKeyDown = (ev: any) => {
+			const isMac = /Mac|iPhone|iPod|iPad/.test(navigator.userAgent);
 			const controlOrCommandPressed = isMac ? ev.metaKey : ev.ctrlKey;
-			if (ev.key === "Shift") {
+			if (ev.key === "Shift" && tableRef.current) {
 				setIsShiftKeyPressed(true);
 				tableRef.current.classList.add("disable-text-selection");
 				ev.preventDefault();
@@ -177,15 +177,15 @@ export const FileSystem: React.FC<Props> = ({
 			}
 		};
 
-		const handleKeyUp = (ev) => {
-			if (ev.key === "Shift") {
+		const handleKeyUp = (ev: any) => {
+			if (ev.key === "Shift" && tableRef.current) {
 				setIsShiftKeyPressed(false);
 				tableRef.current.classList.remove("disable-text-selection");
 			}
 		};
 
-		const handleMousemove = (ev) => {
-			if (mouseDownRef.current) {
+		const handleMousemove = (ev: any) => {
+			if (mouseDownRef.current && tableRef.current) {
 				tableRef.current.classList.add("disable-text-selection");
 				setSelectedElementsPos({
 					x: ev.clientX,
@@ -199,8 +199,8 @@ export const FileSystem: React.FC<Props> = ({
 			}
 		};
 
-		const handleMouseup = (ev) => {
-			if (showSelectedElementsRef.current) {
+		const handleMouseup = (ev: any) => {
+			if (showSelectedElementsRef.current && tableRef.current) {
 				tableRef.current.classList.remove("disable-text-selection");
 				setShowSelectedElements(false);
 				if (movingEvent) {
@@ -211,7 +211,7 @@ export const FileSystem: React.FC<Props> = ({
 			mouseDownRef.current = false;
 		};
 
-		const handleMousedown = (ev) => {
+		const handleMousedown = (ev: any) => {
 			if (!tableRef.current) {
 				return;
 			}
@@ -231,7 +231,7 @@ export const FileSystem: React.FC<Props> = ({
 				return;
 			}
 
-			const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+			const isMac = /Mac|iPhone|iPod|iPad/.test(navigator.userAgent);
 			const controlOrCommandPressed = isMac ? ev.metaKey : ev.ctrlKey;
 			const isRowSelected = row.classList.contains("blue-orange-file-system-row-selected-style");
 

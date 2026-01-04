@@ -1,0 +1,89 @@
+:root {
+    --tagify-dd-color-primary: var(--blue-orange-input-tag-primary-background-color);
+}
+
+.blue-orange-input-tags-cont {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.blue-orange-tags {
+    --tag-bg: var(--blue-orange-light-input-tag-background-color);
+    --tag-text-color: var(--blue-orange-light-input-tag-text-color);
+    --tag-hover: var(--blue-orange-light-input-tag-hover-color);
+    --tag-remove-btn-color: var(--blue-orange-light-input-tag-remove-color);
+    --placeholder-color: #757575;
+    border: 1px solid var(--blue-orange-light-input-border-color);
+    width: calc(100% + 2px);
+    height: 38px;
+    background-color: var(--blue-orange-light-input-background-color);
+    border-radius: 4px;
+    padding: 4px 5px;
+    font-size: 0.8rem;
+}
+
+.dark .blue-orange-tags {
+    --tag-bg: var(--blue-orange-dark-input-tag-background-color);
+    --tag-text-color: var(--blue-orange-dark-input-tag-text-color);
+    --tag-hover: var(--blue-orange-dark-input-tag-hover-color);
+    --tag-remove-btn-color: var(--blue-orange-dark-input-tag-remove-color);
+    --placeholder-color: #757575;
+    border: 1px solid var(--blue-orange-dark-input-border-color);
+    width: calc(100% + 2px);
+    height: 42px;
+    background-color: var(--blue-orange-dark-input-background-color);
+    border-radius: 4px;
+    padding: 4px 5px;
+    font-size: 0.8rem;
+}
+
+.tagify--focus {
+    border: 1.5px solid var(--blue-orange-light-input-focus-border-color);
+}
+
+.dark .tagify--focus {
+    border: 1.5px solid var(--blue-orange-dark-input-focus-border-color);
+}
+
+.tagify__dropdown {
+    margin-top: 10px;
+    background-color: var(--blue-orange-light-input-tag-dropdown-background-color);
+    border: none;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    outline: none;
+    border-radius: 8px;
+}
+
+.dark .tagify__dropdown {
+    background-color: var(--blue-orange-dark-input-tag-dropdown-background-color);
+}
+
+.tagify__dropdown:focus {
+    outline: none;
+    border: none;
+}
+
+.tagify__dropdown__wrapper {
+    border: 1px solid transparent;
+}
+
+.tagify__tag {
+    background-color: var(--blue-orange-light-input-tag-background-color);
+    color: var(--blue-orange-light-input-tag-text-color);
+    font-size: 0.8rem;
+    border-radius: 4px;
+    margin-block: 2px;
+}
+
+.tagify__input {
+    margin: 0;
+    margin-top: 2px;
+}
+
+.dark .tagify__tag {
+    background-color: var(--blue-orange-dark-input-tag-background-color);
+    color: var(--blue-orange-dark-input-tag-text-color);
+    font-size: 0.8rem;
+    border-radius: 4px;
+}
