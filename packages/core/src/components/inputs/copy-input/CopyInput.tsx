@@ -42,7 +42,7 @@ export const CopyInput: React.FC<Props> = ({value, label, style, labelStyle, dis
 				</div>
 			}
 			<div className="blue-orange-copy-input-cont">
-				<span>{value}</span>
+				<span className="blue-orange-copy-input-text">{value}</span>
 				<div className="blue-orange-copy-input-copy-btn">
 					{copied &&
 						<ButtonIcon icon={"ri-check-line"} style={buttonStyle}></ButtonIcon>

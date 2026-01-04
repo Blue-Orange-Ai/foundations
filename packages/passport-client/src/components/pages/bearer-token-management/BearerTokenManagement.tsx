@@ -6,7 +6,7 @@ import {
     ButtonType,
     Cell,
     CellAlignment,
-    CheckboxCell, DateInput, ErrorBlockAlert,
+    CheckboxCell, CopyInput, DateDisplay, DateInput, Description, ErrorBlockAlert,
     Input,
     InputForm,
     Modal,
@@ -44,6 +44,10 @@ export const BearerTokenManagement: React.FC<Props> = ({groupRedirectUri="/group
 
     const [createTokenModal, setCreateTokenModal] = useState(false);
 
+    const [tempTokenStore, setTempTokenStore] = useState<string>("")
+
+    const [tokenCreatedModal, setTokenCreatedModal] = useState(false);
+
     const [createTokenLoading, setCreateTokenLoading] = useState(false);
 
     const initialisedRef = useRef(false);
@@ -55,41 +59,20 @@ export const BearerTokenManagement: React.FC<Props> = ({groupRedirectUri="/group
 
     const getEmptyTokenRequest = (): BearerTokenCreationRequest => {
         return {
-            description: "",
-            expiry: new Date()
+            name: "",
+            expiration: new Date()
         }
     }
 
     const [createTokenRequest, setCreateTokenRequest] = useState<BearerTokenCreationRequest>(getEmptyTokenRequest())
 
-    const updateDescription = (description: string) => {
-        setCreateTokenRequest({...createTokenRequest, description: description})
+    const updateTitle = (title: string) => {
+        setCreateTokenRequest({...createTokenRequest, name: title})
     }
 
     const updateExpiry = (expiry: Date) => {
-        setCreateTokenRequest({...createTokenRequest, expiry: expiry})
+        setCreateTokenRequest({...createTokenRequest, expiration: expiry})
     }
-
-    const copyTokenToClipboard = async (token: string) => {
-        try {
-            await navigator.clipboard.writeText(token);
-            addToast({
-                id: uuidv4(),
-                heading: "Token copied to clipboard",
-                location: ToastLocation.BOTTOM_RIGHT,
-                toastType: ToasterType.SUCCESS,
-                ttl: 5000
-            });
-        } catch (err) {
-            addToast({
-                id: uuidv4(),
-                heading: "Failed to copy token",
-                location: ToastLocation.BOTTOM_RIGHT,
-                toastType: ToasterType.ERROR,
-                ttl: 5000
-            });
-        }
-    };
 
     const deleteToken = useCallback(async (tokenId: string | undefined) => {
         if (tokenId) {
@@ -101,9 +84,11 @@ export const BearerTokenManagement: React.FC<Props> = ({groupRedirectUri="/group
     const saveBearerTokenRequest = useCallback(async (createRequest: BearerTokenCreationRequest) => {
         setCreateTokenLoading(true);
         const token = await passport.createBearerToken(createRequest);
+        setTempTokenStore(token);
         await getTokens();
         setCreateTokenLoading(false);
-        setCreateTokenModal(false)
+        setCreateTokenModal(false);
+        setTokenCreatedModal(true);
     }, [])
 
     useEffect(() => {
@@ -140,7 +125,7 @@ export const BearerTokenManagement: React.FC<Props> = ({groupRedirectUri="/group
 										borderBottom: "1px solid #e0e1e2",
 										borderLeft: "none",
 										borderTop: "none"
-									}}>Description</Cell>
+									}}>Name</Cell>
 									<Cell
 										alignment={CellAlignment.CENTER}
 										style={{
@@ -150,27 +135,7 @@ export const BearerTokenManagement: React.FC<Props> = ({groupRedirectUri="/group
 										borderBottom: "1px solid #e0e1e2",
 										borderLeft: "none",
 										borderTop: "none"
-									}}>Date Created</Cell>
-                                    <Cell
-                                        alignment={CellAlignment.CENTER}
-                                        style={{
-                                            backgroundColor: "#f7f8f9",
-                                            fontWeight: "600",
-                                            border: "none",
-                                            borderBottom: "1px solid #e0e1e2",
-                                            borderLeft: "none",
-                                            borderTop: "none"
-                                        }}>Expiry Date</Cell>
-                                    <Cell
-                                        alignment={CellAlignment.CENTER}
-                                        style={{
-                                            backgroundColor: "#f7f8f9",
-                                            fontWeight: "600",
-                                            border: "none",
-                                            borderBottom: "1px solid #e0e1e2",
-                                            borderLeft: "none",
-                                            borderTop: "none"
-                                        }}>Token</Cell>
+									}}>Expiry</Cell>
                                     <Cell
                                         alignment={CellAlignment.CENTER}
                                         style={{
@@ -186,8 +151,7 @@ export const BearerTokenManagement: React.FC<Props> = ({groupRedirectUri="/group
 							<TBody>
 								{tokens.map((item, index) => (
 									<Row key={item.id + "-" + index}>
-										<Cell 
-											onClick={() => copyTokenToClipboard(item.token)}
+										<Cell
 											style={{
 											border: "none",
 											borderLeft: "none",
@@ -198,32 +162,15 @@ export const BearerTokenManagement: React.FC<Props> = ({groupRedirectUri="/group
 											<div className="passport-user-groups-primary-cell">
 												<div
 													className="passport-user-groups-primary-cell-main">
-													{item.description}
+													{item.title}
 												</div>
 											</div>
 										</Cell>
-										<Cell
-											onClick={() => copyTokenToClipboard(item.token)}
-											alignment={CellAlignment.CENTER}
-											style={{border: "none", borderBottom: index == (tokens.length -1) ? "none" : "1px solid #e0e1e2", borderTop: "1px solid #e0e1e2", cursor: "pointer"}}>
-											<div style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
-												{/*<DateDisplay targetDate={item.created}></DateDisplay>*/}
-											</div>
-										</Cell>
                                         <Cell
-                                            onClick={() => copyTokenToClipboard(item.token)}
                                             alignment={CellAlignment.CENTER}
                                             style={{border: "none", borderBottom: index == (tokens.length -1) ? "none" : "1px solid #e0e1e2", borderTop: "1px solid #e0e1e2", cursor: "pointer"}}>
                                             <div style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
-                                                {/*<DateDisplay targetDate={item.expiry}></DateDisplay>*/}
-                                            </div>
-                                        </Cell>
-                                        <Cell
-                                            alignment={CellAlignment.CENTER}
-                                            style={{border: "none", borderBottom: index == (tokens.length -1) ? "none" : "1px solid #e0e1e2", borderTop: "1px solid #e0e1e2", cursor: "pointer"}}
-                                            onClick={() => copyTokenToClipboard(item.token)}>
-                                            <div style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
-                                                {item.token}
+                                                <DateDisplay targetDate={item.expiry}></DateDisplay>
                                             </div>
                                         </Cell>
                                         <Cell
@@ -240,13 +187,13 @@ export const BearerTokenManagement: React.FC<Props> = ({groupRedirectUri="/group
 					</div>
 				</div>
 			</PaddedPage>
-			{createTokenModal &&
+            {createTokenModal &&
 				<Modal onClose={() => setCreateTokenModal(false)}>
 					<ModalHeader label={"Create Token"} onClose={() => setCreateTokenModal(false)}></ModalHeader>
 					<ModalBody>
 						<InputForm paddingBottom={50}>
-							<Input label={"Description"} value={createTokenRequest.description} onChange={updateDescription}></Input>
-							<DateInput label={"Expiry Date"} value={createTokenRequest.expiry} onChange={updateExpiry}></DateInput>
+							<Input label={"Name"} value={createTokenRequest.name} onChange={updateTitle}></Input>
+							<DateInput label={"Expiry Date"} value={createTokenRequest.expiration} onChange={updateExpiry}></DateInput>
 						</InputForm>
 					</ModalBody>
 					<ModalFooter>
@@ -261,6 +208,23 @@ export const BearerTokenManagement: React.FC<Props> = ({groupRedirectUri="/group
 					</ModalFooter>
 				</Modal>
 			}
+            {tokenCreatedModal &&
+                <Modal onClose={() => setTokenCreatedModal(false)}>
+                    <ModalHeader label={"Token Created"} onClose={() => setTokenCreatedModal(false)}></ModalHeader>
+                    <ModalBody>
+                        <InputForm paddingBottom={50}>
+                            <Description>Please copy you token once this modal closes you will not be able to get the token again.</Description>
+                            <CopyInput label={"Name"} value={tempTokenStore}></CopyInput>
+                        </InputForm>
+                    </ModalBody>
+                    <ModalFooter>
+                        <ModalFooterRight>
+                            <Button text={"Close"} buttonType={ButtonType.SECONDARY}
+                                    onClick={() => setTokenCreatedModal(false)}></Button>
+                        </ModalFooterRight>
+                    </ModalFooter>
+                </Modal>
+            }
 		</>
 	)
 }

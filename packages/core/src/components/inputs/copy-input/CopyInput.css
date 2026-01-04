@@ -18,6 +18,11 @@
     justify-content: space-between;
 }
 
+.blue-orange-copy-input-text {
+    width: calc(100% - 40px);
+    overflow-x: auto;
+}
+
 .dark .blue-orange-copy-input-cont {
     border: 1px solid var(--blue-orange-dark-input-border-color);
     background-color: var(--blue-orange-dark-input-background-color);

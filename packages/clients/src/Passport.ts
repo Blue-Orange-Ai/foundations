@@ -311,18 +311,15 @@ export type GetGroupRequest = {
 }
 
 export type BearerToken = {
-    id?: string;
-    token: string;
-    userId: string;
-    description: string;
-    created: Date;
-    expiry: Date;
-    revoked: boolean;
+    id: string,
+    title: string,
+    expiry: Date,
+    revoked: boolean
 }
 
 export type BearerTokenCreationRequest = {
-    description?: string;
-    expiry?: Date;
+    name: string,
+    expiration: Date;
 }
 
 export type VerifyAccessRequest = {
@@ -997,7 +994,7 @@ export class Passport {
         });
     }
 
-    createBearerToken(createToken: BearerTokenCreationRequest): Promise<BearerToken> {
+    createBearerToken(createToken: BearerTokenCreationRequest): Promise<string> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
@@ -1006,7 +1003,7 @@ export class Passport {
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
                 if (xhr.status === 200) {
-                    const bearerToken: BearerToken = JSON.parse(xhr.responseText);
+                    const bearerToken: string = xhr.responseText;
                     resolve(bearerToken);
                 } else {
                     var response =JSON.parse(xhr.response);
