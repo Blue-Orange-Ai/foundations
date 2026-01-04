@@ -26,7 +26,10 @@ export const PassportManagement: React.FC<Props> = ({
                     </div>
 
                 </div>
-                <Tabs headerStyle={{paddingLeft: "60px", paddingRight: "60px", width: "calc(100% - 120px"}}>
+                <Tabs
+                    persistInUrl={true}
+                    urlParamName="passport-management"
+                    headerStyle={{paddingLeft: "60px", paddingRight: "60px", width: "calc(100% - 120px"}}>
                     <Tab uuid={"passport-management-user-search"} name={"Users"}>
                         <UserSearch></UserSearch>
                     </Tab>

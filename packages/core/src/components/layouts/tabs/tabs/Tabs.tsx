@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import './Tabs.css'
 import {Tab} from "../tab/Tab";
@@ -22,9 +22,35 @@ interface Props {
 	headerActiveStyle?: React.CSSProperties,
 	headerInActiveStyle?: React.CSSProperties,
 	onClick?: (uuid: string) => void,
+	persistInUrl?: boolean,
+	urlParamName?: string,
 }
 
-export const Tabs: React.FC<Props> = ({children, activeTab, headerStyle = {}, headerActiveStyle, headerInActiveStyle, onClick}) => {
+const getTabFromUrl = (paramName: string, validUuids: string[]): string | null => {
+	const urlParams = new URLSearchParams(window.location.search);
+	const tabParam = urlParams.get(paramName);
+	if (tabParam && validUuids.includes(tabParam)) {
+		return tabParam;
+	}
+	return null;
+};
+
+const setTabInUrl = (paramName: string, uuid: string) => {
+	const url = new URL(window.location.href);
+	url.searchParams.set(paramName, uuid);
+	window.history.replaceState({}, '', url.toString());
+};
+
+export const Tabs: React.FC<Props> = ({
+	children,
+	activeTab,
+	headerStyle = {},
+	headerActiveStyle,
+	headerInActiveStyle,
+	onClick,
+	persistInUrl = false,
+	urlParamName = 'tab'
+}) => {
 
 	const tabs: TabData[] = [];
 
@@ -46,7 +72,23 @@ export const Tabs: React.FC<Props> = ({children, activeTab, headerStyle = {}, he
 		}
 	});
 
-	const [active, setActive] = useState(activeTab ?? tabMetaData[0].uuid);
+	const validUuids = tabMetaData.map(t => t.uuid);
+
+	const getInitialTab = (): string => {
+		if (persistInUrl) {
+			const urlTab = getTabFromUrl(urlParamName, validUuids);
+			if (urlTab) return urlTab;
+		}
+		return activeTab ?? tabMetaData[0]?.uuid ?? '';
+	};
+
+	const [active, setActive] = useState(getInitialTab);
+
+	useEffect(() => {
+		if (persistInUrl && active) {
+			setTabInUrl(urlParamName, active);
+		}
+	}, [active, persistInUrl, urlParamName]);
 
 	const tabHeaderInActiveStyle: React.CSSProperties = headerInActiveStyle ? headerInActiveStyle : {
 		color: "#393939",
