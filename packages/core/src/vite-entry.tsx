@@ -98,6 +98,7 @@ export * from './components/inputs/search/SearchInput';
 export * from './components/inputs/tags/simple/TagInput';
 export * from './components/inputs/tags/fetch/TagInputCallback';
 export * from './components/inputs/tags/users/TagInputUsers';
+export * from './components/inputs/tags/groups/TagInputGroups';
 export * from './components/inputs/textarea/TextArea';
 export * from './components/inputs/toggle/Toggle';
 export * from './components/interfaces/AppInterfaces';
