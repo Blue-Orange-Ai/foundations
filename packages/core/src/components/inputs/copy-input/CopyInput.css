@@ -21,6 +21,7 @@
 .blue-orange-copy-input-text {
     width: calc(100% - 40px);
     overflow-x: auto;
+    white-space: nowrap;
 }
 
 .dark .blue-orange-copy-input-cont {

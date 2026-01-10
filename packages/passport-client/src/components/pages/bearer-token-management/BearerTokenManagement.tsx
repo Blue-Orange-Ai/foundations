@@ -170,7 +170,7 @@ export const BearerTokenManagement: React.FC<Props> = ({groupRedirectUri="/group
                                             alignment={CellAlignment.CENTER}
                                             style={{border: "none", borderBottom: index == (tokens.length -1) ? "none" : "1px solid #e0e1e2", borderTop: "1px solid #e0e1e2", cursor: "pointer"}}>
                                             <div style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
-                                                <DateDisplay targetDate={item.expiry}></DateDisplay>
+                                                <DateDisplay targetDate={item.expiry} dateFormat={"DD-MM-yyyy"}></DateDisplay>
                                             </div>
                                         </Cell>
                                         <Cell
