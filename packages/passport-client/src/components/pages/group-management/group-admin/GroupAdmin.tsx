@@ -526,7 +526,7 @@ export const GroupAdmin: React.FC<Props> = ({
 															backgroundColor: "#626567"
 														}}>{convertPermissionToText(item.permission)}</Badge>}
 													</Cell>
-                                                    {(currentUserPermission?.ownerAccess || (currentUserPermission?.editorAccess && item.permission != GroupPermission.OWNER)) &&
+                                                    {(currentUserPermission?.ownerAccess || (currentUserPermission?.editAccess && item.permission != GroupPermission.OWNER)) &&
                                                         <Cell alignment={CellAlignment.CENTER} style={{
                                                             border: "none",
                                                             borderBottom: index == (groupMembers.length - 1) ? "none" : "1px solid #e0e1e2",
