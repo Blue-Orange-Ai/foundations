@@ -38,19 +38,35 @@ import {
 	GroupMemberSearchQuery,
 	GroupMemberType,
 	GroupPermission, SimpleGroupMember,
-	User
+	User,
+	VerifyAccessDto
 } from "@blue-orange-ai/foundations-clients";
 import {UserIdToName} from "../../../text-decorations/user-id-to-name/UserIdToName";
 
 interface Props {
 	groupId: string,
+    showHeader?: boolean,
+    shawManagementRedirect?: boolean,
+    allowDelete?: boolean,
+    allowRedirect?: boolean,
 	group: Group,
+    checkUserPermission?: boolean,
 	userRedirectUri?: string,
 	groupRedirectUri?: string,
 	deleteRedirectUri?: string,
 }
 
-export const GroupAdmin: React.FC<Props> = ({groupId, group, userRedirectUri = "/users/", groupRedirectUri="/groups/", deleteRedirectUri="/groups"}) => {
+export const GroupAdmin: React.FC<Props> = ({
+    groupId,
+    group,
+    showHeader=true,
+    shawManagementRedirect=true,
+    allowDelete=true,
+    allowRedirect=true,
+    checkUserPermission=true,
+    userRedirectUri = "/users/",
+    groupRedirectUri="/groups/",
+    deleteRedirectUri="/groups"}) => {
 
 	const { addToast } = useContext(ToastContext);
 
@@ -105,6 +121,8 @@ export const GroupAdmin: React.FC<Props> = ({groupId, group, userRedirectUri = "
 	const [selectedMembers, setSelectedMembers] = useState<Array<string>>([]);
 
 	const [addGroupLoading, setAddGroupLoading] = useState<boolean>(false);
+
+	const [currentUserPermission, setCurrentUserPermission] = useState<VerifyAccessDto | undefined>(undefined);
 
 	const getUsers = (query: string) => {
 		if (groupId) {
@@ -369,25 +387,61 @@ export const GroupAdmin: React.FC<Props> = ({groupId, group, userRedirectUri = "
 			query: "",
 			size: 20
 		})
-	}, []);
+		passport.currentUser().then(user => {
+			if (user.id && groupId) {
+				passport.verifyUserAccess({
+					userId: user.id,
+					groupId: groupId
+				}).then(result => {
+					setCurrentUserPermission(result);
+				}).catch(error => {
+					addToast({
+						id: uuidv4(),
+						heading: "An error occurred whilst verifying user access",
+						description: error.message,
+						location: ToastLocation.TOP_RIGHT,
+						toastType: ToasterType.ERROR,
+						ttl: 5000
+					});
+				});
+			}
+		}).catch(error => {
+			addToast({
+				id: uuidv4(),
+				heading: "An error occurred whilst retrieving current user",
+				description: error.message,
+				location: ToastLocation.TOP_RIGHT,
+				toastType: ToasterType.ERROR,
+				ttl: 5000
+			});
+		});
+	}, [groupId]);
 
 	return (
 		<>
-            <div className="passport-management-header-management-home">
-                <Button iconPos={ButtonIconPos.LEFT} icon="ri-arrow-left-line" text={"Back to Management"} buttonType={ButtonType.CLEAR} onClick={returnHomeClicked}></Button>
-            </div>
+            {shawManagementRedirect &&
+                <div className="passport-management-header-management-home">
+                    <Button iconPos={ButtonIconPos.LEFT} icon="ri-arrow-left-line" text={"Back to Management"} buttonType={ButtonType.CLEAR} onClick={returnHomeClicked}></Button>
+                </div>
+            }
             <PaddedPage>
 				{group &&
 					<>
-						<div className="passport-group-main-heading">
-							<div className="passport-group-main-heading-txt">
-								<PageHeading>{group.name}</PageHeading>
-							</div>
-							<div className="passport-group-main-heading-btns">
-								<ButtonIcon icon={"ri-delete-bin-7-fill"}
-											onClick={() => setDeleteGroupModal(true)}></ButtonIcon>
-							</div>
-						</div>
+                        {showHeader &&
+                            <div className="passport-group-main-heading">
+                                <div className="passport-group-main-heading-txt">
+                                    <PageHeading>{group.name}</PageHeading>
+                                </div>
+                                {allowDelete && (checkUserPermission && currentUserPermission?.ownerAccess) || !checkUserPermission &&
+                                    <div className="passport-group-main-heading-btns">
+                                        <ButtonIcon icon={"ri-delete-bin-7-fill"}
+                                                    onClick={() => setDeleteGroupModal(true)}></ButtonIcon>
+                                    </div>
+                                }
+
+                            </div>
+                        }
+
 						<InputForm>
 							<Metric text={group.id as string} label={"Group Id"}></Metric>
 							<div>
@@ -423,15 +477,17 @@ export const GroupAdmin: React.FC<Props> = ({groupId, group, userRedirectUri = "
 													borderBottom: "1px solid #e0e1e2",
 													borderTop: "none"
 												}}>Permission</Cell>
-												<Cell
-													alignment={CellAlignment.CENTER}
-													style={{
-													backgroundColor: "#f7f8f9",
-													fontWeight: "600",
-													border: "none",
-													borderBottom: "1px solid #e0e1e2",
-													borderTop: "none"
-												}}>Edit</Cell>
+                                                {currentUserPermission?.ownerAccess || currentUserPermission?.editAccess &&
+                                                    <Cell
+                                                        alignment={CellAlignment.CENTER}
+                                                        style={{
+                                                            backgroundColor: "#f7f8f9",
+                                                            fontWeight: "600",
+                                                            border: "none",
+                                                            borderBottom: "1px solid #e0e1e2",
+                                                            borderTop: "none"
+                                                        }}>Edit</Cell>
+                                                }
 											</Row>
 										</THead>
 										<TBody>
@@ -470,19 +526,22 @@ export const GroupAdmin: React.FC<Props> = ({groupId, group, userRedirectUri = "
 															backgroundColor: "#626567"
 														}}>{convertPermissionToText(item.permission)}</Badge>}
 													</Cell>
-													<Cell alignment={CellAlignment.CENTER} style={{
-														border: "none",
-														borderBottom: index == (groupMembers.length - 1) ? "none" : "1px solid #e0e1e2",
-														borderTop: "1px solid #e0e1e2"
-													}}>
-														<div className="passport-user-profile-group-edit-btn">
-															<ButtonIcon icon={"ri-pencil-line"} onClick={() => {
-																setFocusMember(item);
-																setEditGroupPermission(convertPermissionToSelection(item.permission));
-																setEditGroupModal(true);
-															}}></ButtonIcon>
-														</div>
-													</Cell>
+                                                    {(currentUserPermission?.ownerAccess || (currentUserPermission?.editorAccess && item.permission != GroupPermission.OWNER)) &&
+                                                        <Cell alignment={CellAlignment.CENTER} style={{
+                                                            border: "none",
+                                                            borderBottom: index == (groupMembers.length - 1) ? "none" : "1px solid #e0e1e2",
+                                                            borderTop: "1px solid #e0e1e2"
+                                                        }}>
+                                                            <div className="passport-user-profile-group-edit-btn">
+                                                                <ButtonIcon icon={"ri-pencil-line"} onClick={() => {
+                                                                    setFocusMember(item);
+                                                                    setEditGroupPermission(convertPermissionToSelection(item.permission));
+                                                                    setEditGroupModal(true);
+                                                                }}></ButtonIcon>
+                                                            </div>
+                                                        </Cell>
+                                                    }
+
 												</Row>
 											))}
 										</TBody>
@@ -521,7 +580,7 @@ export const GroupAdmin: React.FC<Props> = ({groupId, group, userRedirectUri = "
 						<ModalBody>
 							<InputForm paddingBottom={40}>
 								<Dropdown label={"Permission"} onSelection={(item) => setEditGroupPermission(item.reference)}>
-									<DropdownItemIcon src={"ri-shield-star-fill"} label={"Owner"} value={"OWNER"} selected={editGroupPermission == "OWNER"}></DropdownItemIcon>
+									{currentUserPermission?.ownerAccess && <DropdownItemIcon src={"ri-shield-star-fill"} label={"Owner"} value={"OWNER"} selected={editGroupPermission == "OWNER"}></DropdownItemIcon>}
 									<DropdownItemIcon src={"ri-pencil-fill"} label={"Edit"} value={"EDIT"} selected={editGroupPermission == "EDIT"}></DropdownItemIcon>
 									<DropdownItemIcon src={"ri-eye-fill"} label={"Read"} value={"READ"} selected={editGroupPermission == "READ"}></DropdownItemIcon>
 								</Dropdown>
@@ -548,7 +607,7 @@ export const GroupAdmin: React.FC<Props> = ({groupId, group, userRedirectUri = "
 									<DropdownItemIcon src={"ri-pencil-fill"} label={"User"} value={"USER"} selected={addMemberType == "USER"}></DropdownItemIcon>
 								</Dropdown>
 								<Dropdown label={"Permission"} onSelection={(item) => setAddMemberPermission(item.reference)}>
-									<DropdownItemIcon src={"ri-shield-star-fill"} label={"Owner"} value={"OWNER"} selected={addMemberPermission == "OWNER"}></DropdownItemIcon>
+									{currentUserPermission?.ownerAccess && <DropdownItemIcon src={"ri-shield-star-fill"} label={"Owner"} value={"OWNER"} selected={addMemberPermission == "OWNER"}></DropdownItemIcon>}
 									<DropdownItemIcon src={"ri-pencil-fill"} label={"Edit"} value={"EDIT"} selected={addMemberPermission == "EDIT"}></DropdownItemIcon>
 									<DropdownItemIcon src={"ri-eye-fill"} label={"Read"} value={"READ"} selected={addMemberPermission == "READ"}></DropdownItemIcon>
 								</Dropdown>
