@@ -81,6 +81,7 @@ import {
     SearchQueryEditorSmallDevelopment
 } from "../components/search/search-query-editor-small/SearchQueryEditorSmallDevelopment";
 import {FileUploadTableDevelopment} from "../components/inputs/file-upload-table/FileUploadTableDevelopment";
+import {BreadcrumbsDevelopment} from "../components/breadcrumbs/BreadcrumbsDevelopment";
 
 interface Props {
 }
@@ -185,6 +186,16 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						hoverEffects={true}
 						onClick={() => navigate("/avatar")}
 						icon={<i className="ri-user-4-line"></i>}
+					></SideBarBodyItem>
+					<SideBarBodyItem
+						label={"Breadcrumbs"}
+						active={component == "breadcrumbs"}
+						focused={true}
+						defaultStyle={inactiveStyle}
+						focusedStyle={activeStyle}
+						hoverEffects={true}
+						onClick={() => navigate("/breadcrumbs")}
+						icon={<i className="ri-arrow-right-double-fill"></i>}
 					></SideBarBodyItem>
 					<SideBarBodyItem
 						label={"Buttons"}
@@ -781,6 +792,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 					</SideBarBodyGroup>
 				</SideBarBody>
 			</SideBar>
+			{component == "breadcrumbs" && <BreadcrumbsDevelopment></BreadcrumbsDevelopment>}
 			{component == "buttons" && <ButtonDevelopment></ButtonDevelopment>}
 			{component == "charts-line" && <LineChartDevelopment></LineChartDevelopment>}
 			{component == "charts-bar" && <BarChartDevelopment></BarChartDevelopment>}

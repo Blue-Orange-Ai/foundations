@@ -38,6 +38,9 @@ export * from './components/config/BlueOrangeMediaConfig';
 export * from './components/config/BlueOrangePassportConfig';
 
 
+// Breadcrumbs
+export * from './components/breadcrumbs/Breadcrumbs';
+
 // Context Menu
 export * from './components/contextmenu/contextmenu/ContextMenu';
 export * from './components/contextmenu/context-menu-heading/ContextMenuHeading';
