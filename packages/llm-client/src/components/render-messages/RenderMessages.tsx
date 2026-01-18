@@ -318,13 +318,14 @@ export const RenderMessagesComponent: React.ForwardRefRenderFunction<RenderMessa
         var msgGroup: HTMLDivElement = document.createElement("div");
         msgGroup.id = message.uuid;
         msgGroup.className = "blue-orange-message-group";
-        // msgGroup.style.background = message.backgroundLight;
+        if (message.message_type == "PROMPT") {
+            msgGroup.className = msgGroup.className + " blue-orange-message-group-prompt";
+        }
 
         var msgCont: HTMLDivElement = document.createElement("div");
         msgCont.id = message.uuid;
         msgCont.className = "blue-orange-message";
 
-        msgCont.appendChild(createMessageAvatar(message));
         msgCont.appendChild(createMessageText(message));
         msgGroup.appendChild(msgCont);
 
@@ -334,7 +335,6 @@ export const RenderMessagesComponent: React.ForwardRefRenderFunction<RenderMessa
     }
 
     const updateMessageGroup = (message: IChatMessage) => {
-        updateMessageAvatar(message);
         updateMessageText(message);
         updateStoredMessage(message);
     }

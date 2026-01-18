@@ -95,6 +95,7 @@ export interface IChatMessage {
 
 export interface IModelRequest {
     prompt: string,
+    model?: string,
     attachments?: string[],
     history?: IChatMessage[]
 }

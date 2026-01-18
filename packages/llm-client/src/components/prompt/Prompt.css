@@ -20,12 +20,6 @@
     outline: none;
 }
 
-@media screen and (min-width: 1041px) {
-    .blue-orange-prompt {
-        margin-left: 40px;
-    }
-}
-
 [contenteditable][placeholder]:empty:before {
     content: attr(placeholder);
     position: absolute;
