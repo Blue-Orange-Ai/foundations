@@ -88,25 +88,21 @@ export const SearchUsage: React.FC<Props> = ({index, client}) => {
                 <MetricCard
                     label="Name"
                     text={index?.name ?? "-"}
-                    style={firstMetricStyle}>
-                </MetricCard>
+                    style={firstMetricStyle} />
                 <MetricCard
                     label="Total Documents"
                     text={statsLoading ? "Loading..." : (stats?.total?.docs?.count?.toLocaleString() ?? "-")}
-                    style={middleMetricStyle}>
-
-                </MetricCard>
+                    style={middleMetricStyle} />
                 <MetricCard
                     label="Total Searches"
                     text={statsLoading ? "Loading..." : (stats?.total?.search?.query_total?.toLocaleString() ?? "-")}
-                    style={lastMetricStyle}>
-                </MetricCard>
+                    style={lastMetricStyle} />
             </div>
             {index &&
                 <>
                     <InputForm paddingTop={40}>
                         <CopyInput label="Id" value={index.id ?? ""}></CopyInput>
-                        <CopyInput label="Version" value={index.version ?? ""}></CopyInput>
+                        <CopyInput label="Version" value={index.version?.toString() ?? ""}></CopyInput>
                     </InputForm>
                 </>
             }

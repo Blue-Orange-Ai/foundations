@@ -318,6 +318,14 @@ export type QueryResponse<TDocument = SearchDocument> = {
     [key: string]: unknown;
 }
 
+export type Page<T> = {
+    content: T[];
+    totalElements: number;
+    totalPages: number;
+    size: number;
+    number: number;
+}
+
 export class BlueOrangeSearch {
 
     protected baseUrl: string;
@@ -441,6 +449,15 @@ export class BlueOrangeSearch {
 
     getAllIndexSearchStats(): Promise<SearchStats> {
         return this.request<SearchStats>("GET", `/api/v1/index/stats/search`);
+    }
+
+    searchAllIndexes(query: string = "", page: number = 0, size: number = 20): Promise<Page<Index>> {
+        const params = new URLSearchParams({
+            query,
+            page: page.toString(),
+            size: size.toString()
+        });
+        return this.request<Page<Index>>("GET", `/api/v1/indexes/search?${params.toString()}`);
     }
 }
 

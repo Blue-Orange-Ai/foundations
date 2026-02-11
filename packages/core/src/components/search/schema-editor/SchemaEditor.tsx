@@ -8,7 +8,6 @@ import {Dropdown} from "../../inputs/dropdown/basic/Dropdown";
 import {DropdownItemText} from "../../inputs/dropdown/items/DropdownItemText/DropdownItemText";
 import {Description} from "../../text-decorations/description/Description";
 import {GeneralHeading} from "../../text-decorations/general-heading/GeneralHeading";
-import {IBlueOrangeSearchSchema, IBlueOrangeSearchSchemaProperty} from "../search-query-editor/SearchQueryEditor";
 import {Modal} from "../../layouts/modal/modal/Modal";
 import {ModalHeader} from "../../layouts/modal/modal-header/ModalHeader";
 import {ModalBody} from "../../layouts/modal/modal-body/ModalBody";
@@ -19,17 +18,18 @@ import {FileUploadBtn} from "../../buttons/file-upload-btn/FileUploadBtn";
 import {TextArea} from "../../inputs/textarea/TextArea";
 import {TagInput} from "../../inputs/tags/simple/TagInput";
 import {Checkbox} from "../../inputs/checkbox/Checkbox";
+import {Schema, SchemaProperty, SchemaPropertyType} from "@blue-orange-ai/foundations-clients";
 
 interface Props {
-	schema?: IBlueOrangeSearchSchema,
+	schema?: Schema,
 	showHeader?: boolean,
 	headerTitle?: string,
 	headerDescription?: string,
     analyzers?: string[],
 	readOnly?: boolean,
-	onChange?: (schema: IBlueOrangeSearchSchema) => void,
+	onChange?: (schema: Schema) => void,
 	reportChangesOnSaveOnly?: boolean,
-	onSave?: (schema: IBlueOrangeSearchSchema) => void,
+	onSave?: (schema: Schema) => void,
 }
 
 type SchemaNode = {
@@ -67,7 +67,7 @@ const DEFAULT_TYPES = [
 	"STRING"
 ];
 
-const schemaSignature = (s?: IBlueOrangeSearchSchema): string => {
+const schemaSignature = (s?: Schema): string => {
 	const normalized = (s?.properties ?? [])
 		.map((p) => ({
 			apiName: String(p.apiName ?? ""),
@@ -97,12 +97,12 @@ export const SchemaEditor: React.FC<Props> = ({
 	onSave
 }) => {
 
-	const initSchema = (): IBlueOrangeSearchSchema => {
+	const initSchema = (): Schema => {
 		return schema ?? {properties: []};
 	}
 
-	const [internalSchema, setInternalSchema] = useState<IBlueOrangeSearchSchema>(initSchema());
-	const [initialSchemaSnapshot, setInitialSchemaSnapshot] = useState<IBlueOrangeSearchSchema>(initSchema());
+	const [internalSchema, setInternalSchema] = useState<Schema>(initSchema());
+	const [initialSchemaSnapshot, setInitialSchemaSnapshot] = useState<Schema>(initSchema());
 	const [nodes, setNodes] = useState<SchemaNode[]>([]);
     const nodeRef = useRef<SchemaNode[]>([]);
 	const lastEmittedSchemaSignatureRef = useRef<string | null>(null);
@@ -151,7 +151,7 @@ export const SchemaEditor: React.FC<Props> = ({
         nodeRef.current = nodes;
     }, [nodes]);
 
-	const dispatchChange = (updated: IBlueOrangeSearchSchema) => {
+	const dispatchChange = (updated: Schema) => {
 		if (readOnly) {
 			return;
 		}
@@ -200,7 +200,7 @@ export const SchemaEditor: React.FC<Props> = ({
 		return schemaType(type) === "VECTOR";
 	}
 
-	const schemaToNodes = (s: IBlueOrangeSearchSchema): SchemaNode[] => {
+	const schemaToNodes = (s: Schema): SchemaNode[] => {
 		const result: SchemaNode[] = [];
 		(s.properties ?? []).forEach((p) => {
 			const path = String(p.apiName ?? "").split(".").filter(Boolean);
@@ -245,15 +245,15 @@ export const SchemaEditor: React.FC<Props> = ({
 		return result;
 	}
 
-	const nodesToSchema = (tree: SchemaNode[]): IBlueOrangeSearchSchema => {
-		const props: IBlueOrangeSearchSchemaProperty[] = [];
+	const nodesToSchema = (tree: SchemaNode[]): Schema => {
+		const props: SchemaProperty[] = [];
 		const visit = (node: SchemaNode, prefix: string) => {
 			const fullName = prefix ? `${prefix}.${node.apiName}` : node.apiName;
 			const t = schemaType(node.type);
 				props.push({
 				apiName: fullName,
 				displayName: node.displayName,
-				type: node.type,
+				type: node.type as SchemaPropertyType,
 				analyzer: node.analyzer,
 				dims: node.dims,
 				similarity: node.similarity,
@@ -281,7 +281,7 @@ export const SchemaEditor: React.FC<Props> = ({
 		}
 	}
 
-	const applySchema = (nextSchema: IBlueOrangeSearchSchema) => {
+	const applySchema = (nextSchema: Schema) => {
 		if (readOnly) {
 			return;
 		}
@@ -341,8 +341,8 @@ export const SchemaEditor: React.FC<Props> = ({
 		return {type: "STRING"};
 	}
 
-	const buildSchemaFromJson = (example: any): IBlueOrangeSearchSchema => {
-		const properties: IBlueOrangeSearchSchemaProperty[] = [];
+	const buildSchemaFromJson = (example: any): Schema => {
+		const properties: SchemaProperty[] = [];
 
 		const visit = (obj: any, prefix: string) => {
 			if (!obj || typeof obj !== 'object') {
@@ -355,7 +355,7 @@ export const SchemaEditor: React.FC<Props> = ({
 				properties.push({
 					apiName: fullName,
 					displayName: formatDisplayName(key),
-					type: inferred.type,
+					type: inferred.type as SchemaPropertyType,
 					analyzer: inferred.analyzer,
 					dims: inferred.dims,
 					similarity: inferred.similarity
@@ -381,7 +381,7 @@ export const SchemaEditor: React.FC<Props> = ({
 		return {properties};
 	}
 
-	const isSchemaJson = (value: any): value is IBlueOrangeSearchSchema => {
+	const isSchemaJson = (value: any): value is Schema => {
 		if (!value || typeof value !== "object") {
 			return false;
 		}
@@ -564,7 +564,7 @@ export const SchemaEditor: React.FC<Props> = ({
 		if (readOnly) {
 			return;
 		}
-		const updated: IBlueOrangeSearchSchema = {properties: []};
+		const updated: Schema = {properties: []};
 		applySchema(updated);
 	}
 

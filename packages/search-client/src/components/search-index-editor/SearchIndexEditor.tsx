@@ -9,29 +9,31 @@ import {
 } from "@blue-orange-ai/foundations-clients";
 
 import './SearchIndexEditor.css';
-import {Tabs} from "../../layouts/tabs/tabs/Tabs";
-import {Tab} from "../../layouts/tabs/tab/Tab";
-import {PageHeading} from "../../text-decorations/page-heading/PageHeading";
-import {Description} from "../../text-decorations/description/Description";
-import {SearchPlayground} from "../search-playground/SearchPlayground";
-import {InputForm} from "../../inputs/form/InputForm";
-import {CopyInput} from "../../inputs/copy-input/CopyInput";
-import {PaddedPage} from "../../layouts/pages/padded-page/PaddedPage";
-import {Input} from "../../inputs/input/Input";
-import {TextArea} from "../../inputs/textarea/TextArea";
-import {TagInput} from "../../inputs/tags/simple/TagInput";
-import {SchemaEditor} from "../schema-editor/SchemaEditor";
-import {SearchUsage} from "../search-usage/SearchUsage";
-import {Modal} from "../../layouts/modal/modal/Modal";
-import {ModalHeader} from "../../layouts/modal/modal-header/ModalHeader";
-import {ModalBody} from "../../layouts/modal/modal-body/ModalBody";
-import {ModalFooter} from "../../layouts/modal/modal-footer/ModalFooter";
-import {ButtonIcon} from "../../buttons/button-icon/ButtonIcon";
-import {Button, ButtonType} from "../../buttons/button/Button";
-import {ModalFooterRight} from "../../layouts/modal/modal-footer-right/ModalFooterRight";
-import {ModalFooterLeft} from "../../layouts/modal/modal-footer-left/ModalFooterLeft";
-import {ToastContext, ToastLocation} from "../../alerts/toast/toastcontext/ToastContext";
-import {ToasterType} from "../../alerts/toast/toaster/Toaster";
+import {
+    Button,
+    ButtonIcon,
+    ButtonType,
+    Description,
+    Input,
+    InputForm,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    ModalFooterLeft,
+    ModalFooterRight,
+    ModalHeader,
+    PaddedPage,
+    PageHeading,
+    SchemaEditor,
+    Tab,
+    Tabs,
+    TextArea,
+    SearchPlayground,
+    SearchUsage,
+    ToastContext,
+    ToasterType,
+    ToastLocation
+} from "@blue-orange-ai/foundations-core";
 
 interface Props {
     searchClient?: BlueOrangeSearch;
@@ -213,6 +215,55 @@ export const SearchIndexEditor: React.FC<Props> = ({
         setIndexDataJson(value);
         const errors = validateJsonAgainstSchema(value);
         setJsonValidationErrors(errors);
+    };
+
+    const generatePlaceholderFromSchema = (): string => {
+        if (!savedIndex?.schema?.properties || savedIndex.schema.properties.length === 0) {
+            return '{\n  "field1": "value1",\n  "field2": 123\n}';
+        }
+
+        const exampleValues: Record<string, any> = {};
+        savedIndex.schema.properties.forEach(property => {
+            const { apiName, type, allowMultiple } = property;
+            
+            let exampleValue: any;
+            switch (type) {
+                case SchemaPropertyType.INTEGER:
+                case SchemaPropertyType.LONG:
+                    exampleValue = 123;
+                    break;
+                case SchemaPropertyType.FLOAT:
+                case SchemaPropertyType.DOUBLE:
+                    exampleValue = 123.45;
+                    break;
+                case SchemaPropertyType.TEXT:
+                case SchemaPropertyType.KEYWORDS:
+                case SchemaPropertyType.SEARCH_AS_YOU_TYPE:
+                    exampleValue = "example text";
+                    break;
+                case SchemaPropertyType.BOOLEAN:
+                    exampleValue = true;
+                    break;
+                case SchemaPropertyType.DATE:
+                    exampleValue = "2024-01-01T00:00:00Z";
+                    break;
+                case SchemaPropertyType.GEO_POINT:
+                    exampleValue = { lat: 40.7128, lng: -74.0060 };
+                    break;
+                case SchemaPropertyType.VECTOR:
+                    exampleValue = [0.1, 0.2, 0.3];
+                    break;
+                case SchemaPropertyType.OBJECT:
+                    exampleValue = { key: "value" };
+                    break;
+                default:
+                    exampleValue = "value";
+            }
+
+            exampleValues[apiName] = allowMultiple ? [exampleValue] : exampleValue;
+        });
+
+        return JSON.stringify(exampleValues, null, 2);
     };
 
     const handleIndexData = async () => {
@@ -415,7 +466,7 @@ export const SearchIndexEditor: React.FC<Props> = ({
         setBasicEditModal(false);
     };
 
-    const handleSchemaChange = (schema: IBlueOrangeSearchSchema) => {
+    const handleSchemaChange = (schema: Schema) => {
         editableIndexRef.current = {
             ...editableIndex,
             schema: schema
@@ -523,6 +574,7 @@ export const SearchIndexEditor: React.FC<Props> = ({
                         <ModalFooterRight>
                             <Button
                                 text={"Save"}
+                                buttonType={ButtonType.PRIMARY}
                                 isLoading={isUpdating}
                                 onClick={handleSaveBasicInfo}
                             ></Button>
@@ -607,7 +659,7 @@ export const SearchIndexEditor: React.FC<Props> = ({
                                 <InputForm>
                                     <TextArea
                                         label="Index Data (JSON)"
-                                        placeholder={'{\n  "field1": "value1",\n  "field2": 123\n}'}
+                                        placeholder={generatePlaceholderFromSchema()}
                                         style={{"minHeight": "200px", "fontFamily": "monospace"}}
                                         value={indexDataJson}
                                         onChange={handleIndexDataChange}

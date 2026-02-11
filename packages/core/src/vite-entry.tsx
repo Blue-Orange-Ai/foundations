@@ -213,6 +213,8 @@ export * from './components/rules/rule-editor/RuleEditor';
 // Search
 export * from './components/search/search-query-editor/SearchQueryEditor';
 export * from './components/search/schema-editor/SchemaEditor';
+export * from './components/search/search-playground/SearchPlayground';
+export * from './components/search/search-usage/SearchUsage';
 
 // Tooltips
 export * from './components/tooltips/simple-tooltip/SimpleTooltip';

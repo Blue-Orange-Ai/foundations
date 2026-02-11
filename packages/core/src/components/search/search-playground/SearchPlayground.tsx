@@ -1,9 +1,9 @@
 import React, {useCallback, useMemo, useState} from "react";
 
 import './SearchPlayground.css';
-import {BlueOrangeSearchQuery, BlueOrangeSearchQueryOperand, IBlueOrangeSearchIndex, IBlueOrangeSearchSchemaProperty, SearchQueryEditor} from "../search-query-editor/SearchQueryEditor";
+import {BlueOrangeSearchQuery, BlueOrangeSearchQueryOperand, BlueOrangeSearchQueryCompositeCondition, BlueOrangeSearchQueryComponent, IBlueOrangeSearchIndex, IBlueOrangeSearchSchemaProperty, SearchQueryEditor} from "../search-query-editor/SearchQueryEditor";
 import {DataTable, TableField, TableFieldSortState, TableFieldType} from "../../table/data-table/DataTable";
-import {BlueOrangeSearch, SearchDocument} from "@blue-orange-ai/foundations-clients";
+import {BlueOrangeSearch, SearchDocument, Query, QueryOperand, QueryCompositeCondition} from "@blue-orange-ai/foundations-clients";
 
 interface Props {
     searchClient?: BlueOrangeSearch;
@@ -60,8 +60,12 @@ export const SearchPlayground: React.FC<Props> = ({ searchClient, index: externa
 
         setLoading(true);
         try {
-            const queryWithPage = { ...searchQuery, page };
-            const response = await searchClient.search(queryWithPage);
+            const convertedQuery: Query = {
+                ...searchQuery,
+                page,
+                rootCondition: convertRootCondition(searchQuery.rootCondition)
+            };
+            const response = await searchClient.search(convertedQuery);
             
             if (append) {
                 setSearchResults(prev => [...prev, ...(response.result ?? [])]);
@@ -91,6 +95,24 @@ export const SearchPlayground: React.FC<Props> = ({ searchClient, index: externa
     }, [query, currentPage, loading, executeSearch]);
 
     const hasMoreResults = totalCount > searchResults.length;
+
+    const convertRootCondition = (condition: BlueOrangeSearchQueryCompositeCondition): QueryCompositeCondition => {
+        const operand = condition.operand === BlueOrangeSearchQueryOperand.OR 
+            ? QueryOperand.OR 
+            : condition.operand === BlueOrangeSearchQueryOperand.NOT 
+            ? QueryOperand.NOT 
+            : QueryOperand.AND;
+        
+        return {
+            operand,
+            components: condition.components.map((component: BlueOrangeSearchQueryComponent) => {
+                if ('operand' in component && 'components' in component) {
+                    return convertRootCondition(component as BlueOrangeSearchQueryCompositeCondition);
+                }
+                return component as any;
+            })
+        };
+    };
 
     const mapSchemaTypeToTableFieldType = (schemaType: string): TableFieldType => {
         const normalized = schemaType.toUpperCase();
