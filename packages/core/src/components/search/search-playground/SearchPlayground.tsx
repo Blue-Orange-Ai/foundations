@@ -1,32 +1,26 @@
-import React, {useCallback, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 
 import './SearchPlayground.css';
-import {BlueOrangeSearchQuery, BlueOrangeSearchQueryOperand, BlueOrangeSearchQueryCompositeCondition, BlueOrangeSearchQueryComponent, IBlueOrangeSearchIndex, IBlueOrangeSearchSchemaProperty, SearchQueryEditor} from "../search-query-editor/SearchQueryEditor";
+import {BlueOrangeSearchQuery, BlueOrangeSearchQueryOperand, BlueOrangeSearchQueryCompositeCondition, BlueOrangeSearchQueryComponent, SearchQueryEditor} from "../search-query-editor/SearchQueryEditor";
 import {DataTable, TableField, TableFieldSortState, TableFieldType} from "../../table/data-table/DataTable";
-import {BlueOrangeSearch, SearchDocument, Query, QueryOperand, QueryCompositeCondition} from "@blue-orange-ai/foundations-clients";
+import {
+    BlueOrangeSearch, Query, QueryOperand, QueryCompositeCondition, Index, SchemaProperty,
+    SearchRecord
+} from "@blue-orange-ai/foundations-clients";
 
 interface Props {
     searchClient?: BlueOrangeSearch;
-    index?: IBlueOrangeSearchIndex;
+    index?: Index;
 }
 
 export const SearchPlayground: React.FC<Props> = ({ searchClient, index: externalIndex }) => {
 
-    const defaultIndex: IBlueOrangeSearchIndex = {
+    const defaultIndex: Index = {
         name: "demo-index",
         displayName: "Demo Search Query",
         description: "Build a BlueOrange search Query using a schema",
         schema: {
-            properties: [
-                { apiName: "name", displayName: "Name", type: "TEXT" },
-                { apiName: "status", displayName: "Status", type: "KEYWORDS" },
-                { apiName: "createdAt", displayName: "Created At", type: "DATE" },
-                { apiName: "age", displayName: "Age", type: "INTEGER" },
-                { apiName: "active", displayName: "Active", type: "BOOLEAN" },
-                { apiName: "location", displayName: "Location", type: "GEO_POINT" },
-                { apiName: "metadata", displayName: "Metadata", type: "OBJECT" },
-                { apiName: "embedding", displayName: "Embedding", type: "VECTOR" }
-            ]
+            properties: []
         }
     }
 
@@ -45,7 +39,7 @@ export const SearchPlayground: React.FC<Props> = ({ searchClient, index: externa
         }
     });
 
-    const [searchResults, setSearchResults] = useState<SearchDocument[]>([]);
+    const [searchResults, setSearchResults] = useState<SearchRecord[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [loading, setLoading] = useState<boolean>(false);
@@ -53,6 +47,8 @@ export const SearchPlayground: React.FC<Props> = ({ searchClient, index: externa
 
     const handleQueryChange = (updatedQuery: BlueOrangeSearchQuery) => {
         setQuery(updatedQuery);
+        setCurrentPage(1);
+        executeSearch(updatedQuery, 1, false);
     };
 
     const executeSearch = useCallback(async (searchQuery: BlueOrangeSearchQuery, page: number, append: boolean = false) => {
@@ -68,9 +64,9 @@ export const SearchPlayground: React.FC<Props> = ({ searchClient, index: externa
             const response = await searchClient.search(convertedQuery);
             
             if (append) {
-                setSearchResults(prev => [...prev, ...(response.result ?? [])]);
+                setSearchResults(prev => [...prev, ...(response.results ?? [])]);
             } else {
-                setSearchResults(response.result ?? []);
+                setSearchResults(response.results ?? []);
             }
             setTotalCount(response.count ?? 0);
             setCurrentPage(page);
@@ -138,9 +134,10 @@ export const SearchPlayground: React.FC<Props> = ({ searchClient, index: externa
         }
     };
 
-    const convertPropertyToTableField = (property: IBlueOrangeSearchSchemaProperty): TableField => {
+    const convertPropertyToTableField = (property: SchemaProperty): TableField => {
         return {
             label: property.displayName ?? property.apiName,
+            apiName: property.apiName,
             type: mapSchemaTypeToTableFieldType(property.type),
             sortable: true,
             filterable: false,
@@ -153,6 +150,10 @@ export const SearchPlayground: React.FC<Props> = ({ searchClient, index: externa
         return index.schema.properties.map(convertPropertyToTableField);
     }, [index.schema.properties]);
 
+    useEffect(() => {
+        handleSearch()
+    }, []);
+
     return (
         <div className="blue-orange-search-playground">
             <div className="blue-orange-search-playground-query-cont">
@@ -160,7 +161,7 @@ export const SearchPlayground: React.FC<Props> = ({ searchClient, index: externa
                     showHeader={false}
                     index={index}
                     query={query}
-                    onChange={handleQueryChange}
+                    onSave={handleQueryChange}
                     reportChangesOnSaveOnly={false}></SearchQueryEditor>
             </div>
             <div className="blue-orange-search-playground-body-cont">

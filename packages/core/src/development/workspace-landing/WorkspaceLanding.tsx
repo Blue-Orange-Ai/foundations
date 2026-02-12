@@ -63,7 +63,6 @@ import {TruncatedTextDevelopment} from "../components/text-decorations/truncated
 import {MarkdownTextDevelopment} from "../components/text-decorations/markdown-text/MarkdownTextDevelopment";
 import {CopyInputDevelopment} from "../components/inputs/copy-input/CopyInputDevelopment";
 import {ComboChartDevelopment} from "../components/charts/combo/ComboChartDevelopment";
-import {SearchInput} from "../../components/inputs/search/SearchInput";
 import {SearchInputDevelopment} from "../components/inputs/search-input/SearchInputDevelopment";
 import {ToasterDevelopment} from "../components/alerts/toaster/ToasterDevelopment";
 import {InLineAlertsDevelopment} from "../components/alerts/in-line/InLineAlertsDevelopment";
@@ -71,10 +70,8 @@ import {AvatarDevelopment} from "../components/avatar/AvatarDevelopment";
 import {FileInputDevelopment} from "../components/inputs/file-input/FileInputDevelopment";
 import {HelpTooltipDevelopment} from "../components/inputs/help-tooltip/HelpTooltipDevelopment";
 import {ObjectTableDevelopment} from "../components/table/object-table/ObjectTableDevelopment";
-import {MediaFragment} from "@blue-orange-ai/foundations-clients";
 import {SearchQueryEditorDevelopment} from "../components/search/search-query-editor/SearchQueryEditorDevelopment";
 import {SchemaEditorDevelopment} from "../components/search/schema-editor/SchemaEditorDevelopment";
-import {SearchIndexEditorDevelopment} from "../components/search/search-index-editor/SearchIndexEditorDevelopment";
 import {ArrayInputDevelopment} from "../components/inputs/array-input/ArrayInputDevelopment";
 import {ObjectArrayInputDevelopment} from "../components/inputs/object-array-input/ObjectArrayInputDevelopment";
 import {
@@ -82,6 +79,7 @@ import {
 } from "../components/search/search-query-editor-small/SearchQueryEditorSmallDevelopment";
 import {FileUploadTableDevelopment} from "../components/inputs/file-upload-table/FileUploadTableDevelopment";
 import {BreadcrumbsDevelopment} from "../components/breadcrumbs/BreadcrumbsDevelopment";
+import {SearchPlaygroundDevelopment} from "../components/search/search-playground/SearchPlaygroundDevelopment";
 
 interface Props {
 }
@@ -535,13 +533,13 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
                             onClick={() => navigate("/schema-editor")}
                         ></SideBarBodyItem>
                         <SideBarBodyItem
-                            label={"Index Editor"}
-                            active={component == "search-index"}
+                            label={"Search Playground"}
+                            active={component == "search-playground"}
                             focused={false}
                             defaultStyle={inactiveStyle}
                             activeStyle={activeStyle}
                             icon={<i className="ri-git-repository-fill"></i>}
-                            onClick={() => navigate("/search-index")}
+                            onClick={() => navigate("/search-playground")}
                         ></SideBarBodyItem>
                     </SideBarBodyGroup>
 					<SideBarBodyGroup opened={sidebarTooltipState} openOnActiveChild={true} onOpenedChange={setSidebarTooltipState}>
@@ -802,7 +800,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "search-query" && <SearchQueryEditorDevelopment></SearchQueryEditorDevelopment>}
 			{component == "search-query-small" && <SearchQueryEditorSmallDevelopment></SearchQueryEditorSmallDevelopment>}
 			{component == "schema-editor" && <SchemaEditorDevelopment></SchemaEditorDevelopment>}
-            {component == "search-index" && <SearchIndexEditorDevelopment></SearchIndexEditorDevelopment>}
+            {component == "search-playground" && <SearchPlaygroundDevelopment></SearchPlaygroundDevelopment>}
 			{component == "file-system" && <FileSystemDevelopment></FileSystemDevelopment>}
 			{component == "inputs-color" && <ColorPickerDevelopment></ColorPickerDevelopment>}
 			{component == "inputs-icon" && <IconSelectorDevelopment></IconSelectorDevelopment>}

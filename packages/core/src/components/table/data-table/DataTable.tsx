@@ -15,6 +15,7 @@ import {CurrencyDataCell} from "../cells/currency-data-cell/CurrencyDataCell";
 import {NumberDataCell} from "../cells/number-data-cell/NumberDataCell";
 import {JsonObjDataCell} from "../cells/json-obj-data-cell/JsonObjDataCell";
 import {MarkdownDataCell} from "../cells/markdown-data-cell/MarkdownDataCell";
+import {BaseDataType, SearchRecord} from "@blue-orange-ai/foundations-clients";
 
 interface SimpleCellRef {
     rowIndex: number,
@@ -39,6 +40,7 @@ export enum TableFieldSortState {
 
 export interface TableField {
 	label: string,
+    apiName: string,
 	type: TableFieldType,
 	sortState: TableFieldSortState,
 	sortable: boolean,
@@ -56,7 +58,7 @@ export type DataTableCellClickPosition = {
 
 interface Props {
 	schema: Array<TableField>,
-    data: Array<any>,
+    data: Array<SearchRecord>,
     loading?: boolean,
 	loadingPlaceholderRows?: number,
 	showRowNumbers?: boolean,
@@ -141,16 +143,44 @@ export const DataTable: React.FC<Props> = ({
 		}
 	}, [schema, persistKey]);
 
-	const getCellValue = (row: any, field: TableField, colIdx: number) => {
-		if (Array.isArray(row)) {
-			return row[colIdx];
-		}
-		if (row && typeof row === "object") {
-			if (Object.prototype.hasOwnProperty.call(row, field.label)) {
-				return row[field.label];
-			}
-		}
-		return row;
+	const getSearchRecordField = (row: SearchRecord, field: TableField)=> {
+        return row.properties.find((p) => p.key === field.apiName);
+    }
+
+    const getCellValue = (row: SearchRecord, field: TableField, colIdx: number): string => {
+		const searchRecordProperty = getSearchRecordField(row, field);
+        if (searchRecordProperty?.type == BaseDataType.GEO_POINT) {
+            return JSON.stringify({
+                lat: searchRecordProperty.lat,
+                lon: searchRecordProperty.lon
+            })
+        } else if (searchRecordProperty?.type == BaseDataType.DATE) {
+            return new Date(searchRecordProperty.value as string).toISOString();
+        } else if (searchRecordProperty?.type == BaseDataType.ARRAY && field.type == TableFieldType.GEO_POINT) {
+            const geoPoints = [];
+            for (var i=0; i < (searchRecordProperty.array ?? []).length; i ++) {
+                geoPoints.push({
+                    lat: (searchRecordProperty.array ?? [])[i].lat,
+                    lon: (searchRecordProperty.array ?? [])[i].lon
+                })
+            }
+            return JSON.stringify(geoPoints);
+        } else if (searchRecordProperty?.type == BaseDataType.ARRAY && field.type == TableFieldType.DATE) {
+            const arrayValues = [];
+            for (var i=0; i < (searchRecordProperty.array ?? []).length; i ++) {
+                arrayValues.push(new Date((searchRecordProperty.array ?? [])[i].value as string).toISOString());
+            }
+            return JSON.stringify(arrayValues);
+        } else if (searchRecordProperty?.type == BaseDataType.ARRAY) {
+            const arrayValues = [];
+            for (var i=0; i < (searchRecordProperty.array ?? []).length; i ++) {
+                arrayValues.push((searchRecordProperty.array ?? [])[i].value);
+            }
+            return JSON.stringify(arrayValues);
+        } else if (searchRecordProperty) {
+            return searchRecordProperty.value as string;
+        }
+		return "Not Found";
 	}
 
 	const [columnWidths, setColumnWidths] = useState<Record<number, number>>({});
@@ -885,7 +915,7 @@ export const DataTable: React.FC<Props> = ({
 	return (
 		<>
 			<div className="blue-orange-tables-data-table">
-				<Table
+                <Table
 					containerRef={tableContainerRef}
 					theme={TableTheme.DATASET}
 					tableStyle={resizableColumns ? ({tableLayout: "fixed"} as React.CSSProperties) : undefined}

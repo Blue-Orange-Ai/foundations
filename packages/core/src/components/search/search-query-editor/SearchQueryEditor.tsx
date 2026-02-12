@@ -5,6 +5,7 @@ import {ButtonIcon} from "../../buttons/button-icon/ButtonIcon";
 import {Description} from "../../text-decorations/description/Description";
 import {GeneralHeading} from "../../text-decorations/general-heading/GeneralHeading";
 import {SearchQueryGroup} from "../search-query-group/SearchQueryGroup";
+import {Index, Schema, SchemaProperty} from "@blue-orange-ai/foundations-clients";
 
 export enum SearchQueryConditionType {
 	LEAF="LEAF",
@@ -37,28 +38,9 @@ export enum SearchQueryLeafOperand {
 	FALSE="FALSE"
 }
 
-export interface IBlueOrangeSearchSchemaProperty {
-	apiName: string,
-	displayName?: string,
-	type: string,
-	analyzer?: string,
-	dims?: number,
-	similarity?: string,
-	primaryKey?: boolean,
-	title?: boolean,
-	allowMultiple?: boolean
-}
-
-export interface IBlueOrangeSearchSchema {
-	properties: Array<IBlueOrangeSearchSchemaProperty>
-}
-
-export interface IBlueOrangeSearchIndex {
-	name: string,
-	displayName?: string,
-	description?: string,
-	schema: IBlueOrangeSearchSchema
-}
+export type IBlueOrangeSearchSchemaProperty = SchemaProperty;
+export type IBlueOrangeSearchSchema = Schema;
+export type IBlueOrangeSearchIndex = Index;
 
 export type BlueOrangeSearchQueryCondition =
 	| { fullTextCondition: BlueOrangeSearchQueryFullTextCondition }
@@ -179,7 +161,7 @@ export interface ISearchQueryEditorCondition {
 }
 
 interface Props {
-	index: IBlueOrangeSearchIndex,
+	index: Index,
 	query?: BlueOrangeSearchQuery,
 	page?: number,
 	size?: number,
@@ -428,6 +410,8 @@ export const SearchQueryEditor: React.FC<Props> = ({index, query, page=1, size=2
 		}
 	}, [query]);
 
+	const changeReportingMode = reportChangesOnSaveOnly ? "ON_SAVE" : "ON_CHANGE";
+
 	useEffect(() => {
 		const next = initRootGroup();
 		setInternalRoot(next);
@@ -435,12 +419,12 @@ export const SearchQueryEditor: React.FC<Props> = ({index, query, page=1, size=2
 	}, [index.name, schemaSignature]);
 
 	useEffect(() => {
-		if (query) {
+		if (query && changeReportingMode === "ON_SAVE") {
 			const converted = convertQueryToEditorCondition(query);
 			setInternalRoot(converted);
 			setInitialRootSnapshot(converted);
 		}
-	}, [querySignature]);
+	}, [querySignature, changeReportingMode]);
 
 	const dispatchChange = (condition: ISearchQueryEditorCondition) => {
 		const rootCondition = convertGroup(condition);
@@ -478,8 +462,6 @@ export const SearchQueryEditor: React.FC<Props> = ({index, query, page=1, size=2
 			return true;
 		}
 	}, [internalRoot, initialRootSnapshot]);
-
-	const changeReportingMode = reportChangesOnSaveOnly ? "ON_SAVE" : "ON_CHANGE";
 
 	const updateRoot = (condition: ISearchQueryEditorCondition) => {
 		setInternalRoot(condition);

@@ -121,11 +121,11 @@ export const SearchIndexEditor: React.FC<Props> = ({
                     break;
                 case SchemaPropertyType.GEO_POINT:
                     if (typeof val !== 'object' || val === null) {
-                        return `Field "${apiName}" expects a geo point object with lat/lng`;
+                        return `Field "${apiName}" expects a geo point object with lat/lon`;
                     }
                     const geoPoint = val as Record<string, unknown>;
-                    if (typeof geoPoint.lat !== 'number' || typeof geoPoint.lng !== 'number') {
-                        return `Field "${apiName}" expects a geo point object with numeric lat/lng properties`;
+                    if (typeof geoPoint.lat !== 'number' || typeof geoPoint.lon !== 'number') {
+                        return `Field "${apiName}" expects a geo point object with numeric lat/lon properties`;
                     }
                     break;
                 case SchemaPropertyType.VECTOR:
@@ -248,7 +248,7 @@ export const SearchIndexEditor: React.FC<Props> = ({
                     exampleValue = "2024-01-01T00:00:00Z";
                     break;
                 case SchemaPropertyType.GEO_POINT:
-                    exampleValue = { lat: 40.7128, lng: -74.0060 };
+                    exampleValue = { lat: 40.7128, lon: -74.0060 };
                     break;
                 case SchemaPropertyType.VECTOR:
                     exampleValue = [0.1, 0.2, 0.3];
@@ -686,7 +686,10 @@ export const SearchIndexEditor: React.FC<Props> = ({
                             </PaddedPage>
                         </Tab>
                         <Tab name="Plaground" uuid="search-index-editor-playground">
-                            <SearchPlayground></SearchPlayground>
+                            <SearchPlayground 
+                                searchClient={searchClient}
+                                index={savedIndex}
+                            ></SearchPlayground>
                         </Tab>
                     </Tabs>
                 }

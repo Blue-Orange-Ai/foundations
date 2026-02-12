@@ -223,6 +223,38 @@ export enum SchemaPropertyType {
     SEARCH_AS_YOU_TYPE = "SEARCH_AS_YOU_TYPE"
 }
 
+export enum BaseDataType {
+    INTEGER = "INTEGER",
+    LONG = "LONG",
+    TEXT = "TEXT",
+    FLOAT = "FLOAT",
+    DOUBLE = "DOUBLE",
+    GEO_POINT = "GEO_POINT",
+    DATE = "DATE",
+    KEYWORDS = "KEYWORDS",
+    OBJECT = "OBJECT",
+    VECTOR = "VECTOR",
+    BOOLEAN = "BOOLEAN",
+    SEARCH_AS_YOU_TYPE = "SEARCH_AS_YOU_TYPE",
+    ARRAY = "ARRAY"
+}
+
+export type BaseData = {
+    type: BaseDataType;
+    key: string;
+    value?: string;
+    lat?: number;
+    lon?: number;
+    array?: BaseData[];
+}
+
+export type SearchRecord = {
+    primaryKey: BaseData;
+    title: BaseData;
+    properties: BaseData[]
+
+}
+
 export type Analyzer = {
     id?: string;
     name: string;
@@ -230,8 +262,6 @@ export type Analyzer = {
     tokenizer: string;
     filter?: string[];
 }
-
-export type SearchDocument = Record<string, unknown>;
 
 export type SearchStats = {
     uuid?: string;
@@ -310,8 +340,8 @@ export type HttpStatus =
     | "INTERNAL_SERVER_ERROR"
     | string;
 
-export type QueryResponse<TDocument = SearchDocument> = {
-    result?: TDocument[];
+export type QueryResponse<TDocument = SearchRecord> = {
+    results?: TDocument[];
     count?: number;
     query?: Query;
     aggregations?: Record<string, unknown>;
@@ -383,7 +413,7 @@ export class BlueOrangeSearch {
         });
     }
 
-    search<TDocument = SearchDocument>(query: Query): Promise<QueryResponse<TDocument>> {
+    search<TDocument = SearchRecord>(query: Query): Promise<QueryResponse<TDocument>> {
         return this.request<QueryResponse<TDocument>>("POST", "/api/v1/search", query);
     }
 
@@ -417,7 +447,7 @@ export class BlueOrangeSearch {
         );
     }
 
-    indexDocument(name: string, document: SearchDocument): Promise<HttpStatus> {
+    indexDocument(name: string, document: SearchRecord): Promise<HttpStatus> {
         return this.request<HttpStatus>(
             "POST",
             `/api/v1/index/${encodeURIComponent(name)}/document`,
@@ -425,7 +455,7 @@ export class BlueOrangeSearch {
         );
     }
 
-    indexDocumentsBulk(name: string, documents: SearchDocument[]): Promise<HttpStatus> {
+    indexDocumentsBulk(name: string, documents: SearchRecord[]): Promise<HttpStatus> {
         return this.request<HttpStatus>(
             "POST",
             `/api/v1/index/${encodeURIComponent(name)}/document/bulk`,
