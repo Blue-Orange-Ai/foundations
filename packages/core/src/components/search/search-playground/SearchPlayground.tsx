@@ -3,9 +3,10 @@ import React, {useCallback, useEffect, useMemo, useState} from "react";
 import './SearchPlayground.css';
 import {BlueOrangeSearchQuery, BlueOrangeSearchQueryOperand, BlueOrangeSearchQueryCompositeCondition, BlueOrangeSearchQueryComponent, SearchQueryEditor} from "../search-query-editor/SearchQueryEditor";
 import {DataTable, TableField, TableFieldSortState, TableFieldType} from "../../table/data-table/DataTable";
+import {IContextMenuItem, IContextMenuType} from "../../contextmenu/contextmenu/ContextMenu";
 import {
     BlueOrangeSearch, Query, QueryOperand, QueryCompositeCondition, Index, SchemaProperty,
-    SearchRecord
+    SearchRecord, SortCondition, SortDirection
 } from "@blue-orange-ai/foundations-clients";
 
 interface Props {
@@ -36,7 +37,8 @@ export const SearchPlayground: React.FC<Props> = ({ searchClient, index: externa
         rootCondition: {
             operand: BlueOrangeSearchQueryOperand.AND,
             components: []
-        }
+        },
+        sortConditions: []
     });
 
     const [searchResults, setSearchResults] = useState<SearchRecord[]>([]);
@@ -59,7 +61,8 @@ export const SearchPlayground: React.FC<Props> = ({ searchClient, index: externa
             const convertedQuery: Query = {
                 ...searchQuery,
                 page,
-                rootCondition: convertRootCondition(searchQuery.rootCondition)
+                rootCondition: convertRootCondition(searchQuery.rootCondition),
+                sortConditions: searchQuery.sortConditions
             };
             const response = await searchClient.search(convertedQuery);
             
@@ -134,6 +137,53 @@ export const SearchPlayground: React.FC<Props> = ({ searchClient, index: externa
         }
     };
 
+    const handleColumnSort = (field: TableField, direction: SortDirection | null) => {
+        const updatedQuery = { ...query };
+        
+        if (direction === null) {
+            updatedQuery.sortConditions = [];
+        } else {
+            updatedQuery.sortConditions = [{
+                field: field.apiName,
+                direction: direction
+            }];
+        }
+        
+        setQuery(updatedQuery);
+        setCurrentPage(1);
+        executeSearch(updatedQuery, 1, false);
+    };
+
+    const getSortStateForField = (apiName: string): TableFieldSortState => {
+        const sortCondition = query.sortConditions?.find(sc => sc.field === apiName);
+        if (!sortCondition) {
+            return TableFieldSortState.UNSORTED;
+        }
+        return sortCondition.direction === SortDirection.ASC 
+            ? TableFieldSortState.SORTED_ASC 
+            : TableFieldSortState.SORTED_DESC;
+    };
+
+    const createSortMenuItems = (field: TableField): IContextMenuItem[] => {
+        return [
+            {
+                label: "Sort Ascending",
+                type: IContextMenuType.CONTENT,
+                value: { field, direction: SortDirection.ASC }
+            },
+            {
+                label: "Sort Descending",
+                type: IContextMenuType.CONTENT,
+                value: { field, direction: SortDirection.DESC }
+            },
+            {
+                label: "Clear Sort",
+                type: IContextMenuType.CONTENT,
+                value: { field, direction: null }
+            }
+        ];
+    };
+
     const convertPropertyToTableField = (property: SchemaProperty): TableField => {
         return {
             label: property.displayName ?? property.apiName,
@@ -142,13 +192,28 @@ export const SearchPlayground: React.FC<Props> = ({ searchClient, index: externa
             sortable: true,
             filterable: false,
             statistics: false,
-            sortState: TableFieldSortState.UNSORTED
+            sortState: getSortStateForField(property.apiName),
+            dropDownItems: createSortMenuItems({
+                label: property.displayName ?? property.apiName,
+                apiName: property.apiName,
+                type: mapSchemaTypeToTableFieldType(property.type),
+                sortable: true,
+                filterable: false,
+                statistics: false,
+                sortState: getSortStateForField(property.apiName)
+            })
         };
     };
 
     const displaySchema: Array<TableField> = useMemo(() => {
         return index.schema.properties.map(convertPropertyToTableField);
-    }, [index.schema.properties]);
+    }, [index.schema.properties, query.sortConditions]);
+
+    const handleHeaderDropdownSelected = (item: IContextMenuItem) => {
+        if (item.value && item.value.field && item.value.direction !== undefined) {
+            handleColumnSort(item.value.field, item.value.direction);
+        }
+    };
 
     useEffect(() => {
         handleSearch()
@@ -179,6 +244,7 @@ export const SearchPlayground: React.FC<Props> = ({ searchClient, index: externa
                     reorderableColumns={true}
                     cellsSelectable={false}
                     rowSelectable={true}
+                    onHeaderDropdownSelected={handleHeaderDropdownSelected}
                     ></DataTable>
             </div>
         </div>

@@ -4,7 +4,7 @@ import {Table, TableTheme} from "../table/Table";
 import {THead} from "../thead/THead";
 import {Row} from "../row/Row";
 import {HeaderCell} from "../cells/headercell/HeaderCell";
-import {IContextMenuItem} from "../../contextmenu/contextmenu/ContextMenu";
+import {IContextMenuItem, IContextMenuType, ContextMenu} from "../../contextmenu/contextmenu/ContextMenu";
 
 import './DataTable.css'
 import {TBody} from "../tbody/TBody";
@@ -76,7 +76,8 @@ interface Props {
 	onCellSelection?: (selection: Array<{rowIndex: number; colIndex: number}>) => void,
 	onRowSelectable?: (selection: Array<number>) => void,
 	onCellClick?: (colIdx: number, rowIdx: number, position: DataTableCellClickPosition) => void,
-	onCellRightClick?: (colIdx: number, rowIdx: number, position: DataTableCellClickPosition) => void
+	onCellRightClick?: (colIdx: number, rowIdx: number, position: DataTableCellClickPosition) => void,
+	onHeaderDropdownSelected?: (item: IContextMenuItem) => void
 }
 
 export const DataTable: React.FC<Props> = ({
@@ -99,7 +100,8 @@ export const DataTable: React.FC<Props> = ({
 												onCellSelection,
 												onRowSelectable,
 												onCellClick,
-												onCellRightClick}) => {
+												onCellRightClick,
+												onHeaderDropdownSelected}) => {
 
 	const clampWidth = (width: number): number => {
 		const next = Math.max(minColumnWidth, width);
@@ -218,6 +220,14 @@ export const DataTable: React.FC<Props> = ({
 	const lastClickedRowRef = useRef<number | null>(null);
 	const selectedRowsRef = useRef<Set<number>>(new Set());
 	const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
+
+	const [contextMenu, setContextMenu] = useState<{
+		visible: boolean;
+		x: number;
+		y: number;
+		rowIdx: number;
+		colIdx: number;
+	} | null>(null);
 
 	const [infiniteScrollObservedRow, setInfiniteScrollObservedRow] = useState<HTMLTableRowElement | null>(null);
 	const lastEndReachedDataLengthRef = useRef<number | null>(null);
@@ -401,6 +411,125 @@ export const DataTable: React.FC<Props> = ({
 		}
 	}, [effectiveRowSelectable]);
 
+	const copyToClipboard = (text: string) => {
+		if (navigator.clipboard && navigator.clipboard.writeText) {
+			navigator.clipboard.writeText(text).catch(err => {
+				console.error('Failed to copy to clipboard:', err);
+			});
+		}
+	};
+
+	const copyCellValue = (rowIdx: number, colIdx: number) => {
+		if (rowIdx < 0 || rowIdx >= data.length || colIdx < 0 || colIdx >= orderedSchema.length) {
+			return;
+		}
+		const row = data[rowIdx];
+		const field = orderedSchema[colIdx];
+		const cellValue = getCellValue(row, field, colIdx);
+		copyToClipboard(cellValue);
+	};
+
+	const copyRowData = (rowIdx: number) => {
+		if (rowIdx < 0 || rowIdx >= data.length) {
+			return;
+		}
+		const row = data[rowIdx];
+		const rowValues = orderedSchema.map((field, colIdx) => getCellValue(row, field, colIdx));
+		const rowText = rowValues.join('\t');
+		copyToClipboard(rowText);
+	};
+
+	const copyColumnValues = (colIdx: number) => {
+		if (colIdx < 0 || colIdx >= orderedSchema.length) {
+			return;
+		}
+		const field = orderedSchema[colIdx];
+		const selectedRowIndices = getSelectedRows();
+		if (selectedRowIndices.length === 0) {
+			return;
+		}
+		const columnValues = selectedRowIndices.map(rowIdx => {
+			if (rowIdx < data.length) {
+				return getCellValue(data[rowIdx], field, colIdx);
+			}
+			return '';
+		});
+		const columnText = columnValues.join('\n');
+		copyToClipboard(columnText);
+	};
+
+	const copyAllSelectedData = () => {
+		const selectedRowIndices = getSelectedRows();
+		if (selectedRowIndices.length === 0) {
+			return;
+		}
+		const rows = selectedRowIndices.map(rowIdx => {
+			if (rowIdx < data.length) {
+				const row = data[rowIdx];
+				return orderedSchema.map((field, colIdx) => getCellValue(row, field, colIdx)).join('\t');
+			}
+			return '';
+		});
+		const allText = rows.join('\n');
+		copyToClipboard(allText);
+	};
+
+	const getContextMenuItems = (rowIdx: number, colIdx: number): IContextMenuItem[] => {
+		const items: IContextMenuItem[] = [];
+		const selectedRowIndices = getSelectedRows();
+		const hasMultipleRowsSelected = selectedRowIndices.length > 1;
+
+		items.push({
+			label: 'Copy Cell Value',
+			type: IContextMenuType.CONTENT,
+			value: { action: 'copyCellValue', rowIdx, colIdx }
+		});
+
+		items.push({
+			label: 'Copy Row Data',
+			type: IContextMenuType.CONTENT,
+			value: { action: 'copyRowData', rowIdx }
+		});
+
+		if (hasMultipleRowsSelected) {
+			items.push({
+				label: 'Copy Column Values (Selected Rows)',
+				type: IContextMenuType.CONTENT,
+				value: { action: 'copyColumnValues', colIdx }
+			});
+
+			items.push({
+				label: 'Copy All Selected Data',
+				type: IContextMenuType.CONTENT,
+				value: { action: 'copyAllSelectedData' }
+			});
+		}
+
+		return items;
+	};
+
+	const handleContextMenuItemClick = (item: IContextMenuItem) => {
+		if (!item.value || !item.value.action) {
+			return;
+		}
+
+		switch (item.value.action) {
+			case 'copyCellValue':
+				copyCellValue(item.value.rowIdx, item.value.colIdx);
+				break;
+			case 'copyRowData':
+				copyRowData(item.value.rowIdx);
+				break;
+			case 'copyColumnValues':
+				copyColumnValues(item.value.colIdx);
+				break;
+			case 'copyAllSelectedData':
+				copyAllSelectedData();
+				break;
+		}
+		setContextMenu(null);
+	};
+
 	const beginCellSelection = (rowIdx: number, colIdx: number) => (e: React.MouseEvent) => {
 		if (!cellsSelectable) {
 			return;
@@ -484,14 +613,22 @@ export const DataTable: React.FC<Props> = ({
 	}
 
 	const handleCellRightClick = (colIdx: number, rowIdx: number) => (e: React.MouseEvent<HTMLTableCellElement>) => {
-		if (!onCellRightClick) {
-			return;
-		}
 		if (!canFireCellCallbacks()) {
 			return;
 		}
 		e.preventDefault();
-		onCellRightClick(colIdx, rowIdx, getEventPosition(e));
+		
+		setContextMenu({
+			visible: true,
+			x: e.clientX,
+			y: e.clientY,
+			rowIdx,
+			colIdx
+		});
+
+		if (onCellRightClick) {
+			onCellRightClick(colIdx, rowIdx, getEventPosition(e));
+		}
 	}
 
 	const extendCellSelectionTo = (rowIdx: number, colIdx: number) => {
@@ -965,7 +1102,12 @@ export const DataTable: React.FC<Props> = ({
 											onMouseDown={beginReorder(index)}
 											resizable={resizableColumns && !isReordering}
 											onResizeMouseDown={beginResize(index)}
+											sorted={item.sortState === TableFieldSortState.SORTED_ASC || item.sortState === TableFieldSortState.SORTED_DESC}
+											sortAsc={item.sortState === TableFieldSortState.SORTED_ASC}
 											onDropdownSelected={(item: IContextMenuItem) => {
+												if (onHeaderDropdownSelected) {
+													onHeaderDropdownSelected(item);
+												}
 											}}>
 											<div className="blue-orange-data-table-header-cell-group">
 									        <span className="blue-orange-data-table-header-cell-primary-text">{item.label}</span>
@@ -1040,11 +1182,10 @@ export const DataTable: React.FC<Props> = ({
 																				}
 																				: undefined);
 
-																		const shouldAttachClickHandler = !!onCellClick && !cellsSelectable;
 																		const tdProps = {
 																			...(tdPropsBase ?? {}),
-																			...(shouldAttachClickHandler ? {onClick: handleCellClick(colIdx, rowIdx)} : {}),
-																			...(onCellRightClick ? {onContextMenu: handleCellRightClick(colIdx, rowIdx)} : {}),
+																			onContextMenu: handleCellRightClick(colIdx, rowIdx),
+																			...(!!onCellClick && !cellsSelectable ? {onClick: handleCellClick(colIdx, rowIdx)} : {}),
 																		};
 
 																		return (
@@ -1118,7 +1259,18 @@ export const DataTable: React.FC<Props> = ({
 					</TBody>
 				</Table>
 			</div>
-
+			{contextMenu && contextMenu.visible && (
+				<ContextMenu
+					items={getContextMenuItems(contextMenu.rowIdx, contextMenu.colIdx)}
+					onClick={handleContextMenuItemClick}
+					open={true}
+					startingX={contextMenu.x}
+					startingY={contextMenu.y}
+					rightClick={false}
+				>
+					<div style={{ display: 'none' }} />
+				</ContextMenu>
+			)}
 		</>
 	)
 }

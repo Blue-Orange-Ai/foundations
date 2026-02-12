@@ -100,6 +100,13 @@ export const ContextMenu: React.FC<Props> = ({
 		visibleRef.current = visible;
 	}, [visible]);
 
+	useEffect(() => {
+		if (open) {
+			setContextMenuStyleClickPos(startingX, startingY);
+			setVisible(true);
+		}
+	}, [open, startingX, startingY]);
+
 	const handleClick = (e:MouseEvent) => {
 		if (!isDifferenceBelowThreshold(new Date(), lastChanged.current, blockingDelayMs)) {
 			lastChanged.current = new Date();
