@@ -6,6 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Foundations** is a React component library monorepo by Blue Orange AI, published as `@blue-orange-ai/foundations-*` packages to GitHub Packages. It uses Lerna (v8) with npm workspaces for monorepo management, and all packages share a single version (fixed mode, currently in `lerna.json`).
 
+## Git workflow
+
+- **Never commit directly to the `develop` branch.**
+- When asked to create a branch, create a feature branch off `develop` (e.g., `feature/description`).
+- When asked to create a PR, target the `develop` branch.
+
 ## Working with packages
 
 Each package under `packages/` is standalone. Always `cd` into the specific package directory before running commands — each has its own `package.json` with its own scripts.
