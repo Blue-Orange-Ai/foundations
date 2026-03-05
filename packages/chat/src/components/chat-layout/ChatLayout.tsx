@@ -1,0 +1,299 @@
+import React, { useState, useCallback } from 'react';
+import {
+    VerticalSplitPage,
+    SplitPageMajor,
+    SplitPageMinor,
+    SplitDirectionVerticalPage
+} from '@blue-orange-ai/foundations-core';
+import {
+    IChatGroup,
+    IChatMessage,
+    IChatUser,
+    IChatConversation,
+    ChatUserStatus
+} from '../../interfaces/ChatInterfaces';
+import { ChatSidebar } from '../sidebar/ChatSidebar';
+import { ChatSidebarHeader } from '../sidebar/header/ChatSidebarHeader';
+import { ChatSidebarGroup } from '../sidebar/group/ChatSidebarGroup';
+import { ChatSidebarFooter } from '../sidebar/footer/ChatSidebarFooter';
+import { ChatWindow } from '../chat-window/ChatWindow';
+import { ChatMessage } from '../chat-window/message/ChatMessage';
+import { DateSeparator } from '../chat-window/date-separator/DateSeparator';
+import { TypingIndicator } from '../chat-window/typing-indicator/TypingIndicator';
+import { SnoozedBar } from '../chat-window/snoozed-bar/SnoozedBar';
+import { MessageReactions } from '../chat-window/message/reactions/MessageReactions';
+import { ChatInput } from '../chat-input/ChatInput';
+import { UserDetailPanel } from '../user-detail/UserDetailPanel';
+import { ThreadPanel } from '../thread-panel/ThreadPanel';
+import { shouldShowDateSeparator } from '../../utils/dateUtils';
+
+import './ChatLayout.css';
+
+interface ChatLayoutProps {
+    groups: IChatGroup[];
+    messages: IChatMessage[];
+    currentUser: IChatUser;
+    activeConversation?: IChatConversation;
+    typingUsers?: IChatUser[];
+    snoozedUsers?: IChatUser[];
+    sidebarHeader?: React.ReactNode;
+    onConversationClick?: (conversation: IChatConversation) => void;
+    onSendMessage?: (content: string, mentions: string[], attachments: any[]) => void;
+    onLoadMoreMessages?: () => void;
+    hasMoreMessages?: boolean;
+    loadingMessages?: boolean;
+    onNewChat?: () => void;
+    onSearch?: (query: string) => void;
+    onStatusChange?: (status: ChatUserStatus) => void;
+    onSettingsClick?: () => void;
+    onProfileClick?: () => void;
+    onReactToMessage?: (message: IChatMessage, emoji: string) => void;
+    onReplyToMessage?: (message: IChatMessage) => void;
+    onAvatarClick?: (user: IChatUser) => void;
+    threadParentMessage?: IChatMessage;
+    threadReplies?: IChatMessage[];
+    onSendThreadReply?: (content: string, mentions: string[], attachments: any[]) => void;
+    onCloseThread?: () => void;
+    threadTypingUsers?: IChatUser[];
+    detailUser?: IChatUser;
+    onCloseUserDetail?: () => void;
+    onGroupToggle?: (label: string) => void;
+    onGroupCreateNew?: (label: string) => void;
+    onConversationContextMenu?: (e: React.MouseEvent, conversation: IChatConversation) => void;
+}
+
+const CONSECUTIVE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
+
+export const ChatLayout: React.FC<ChatLayoutProps> = ({
+    groups,
+    messages,
+    currentUser,
+    activeConversation,
+    typingUsers = [],
+    snoozedUsers = [],
+    sidebarHeader,
+    onConversationClick,
+    onSendMessage,
+    onLoadMoreMessages,
+    hasMoreMessages = false,
+    loadingMessages = false,
+    onNewChat,
+    onSearch,
+    onStatusChange,
+    onSettingsClick,
+    onProfileClick,
+    onReactToMessage,
+    onReplyToMessage,
+    onAvatarClick,
+    threadParentMessage,
+    threadReplies = [],
+    onSendThreadReply,
+    onCloseThread,
+    threadTypingUsers = [],
+    detailUser,
+    onCloseUserDetail,
+    onGroupToggle,
+    onGroupCreateNew,
+    onConversationContextMenu
+}) => {
+    const [replyTo, setReplyTo] = useState<IChatMessage | null>(null);
+
+    const handleReply = useCallback((message: IChatMessage) => {
+        setReplyTo(message);
+        if (onReplyToMessage) {
+            onReplyToMessage(message);
+        }
+    }, [onReplyToMessage]);
+
+    const handleCancelReply = useCallback(() => {
+        setReplyTo(null);
+    }, []);
+
+    const handleSend = useCallback((content: string, mentions: string[], attachments: any[]) => {
+        if (onSendMessage) {
+            onSendMessage(content, mentions, attachments);
+        }
+        setReplyTo(null);
+    }, [onSendMessage]);
+
+    const handleLoadMore = useCallback(() => {
+        if (onLoadMoreMessages) {
+            onLoadMoreMessages();
+        }
+    }, [onLoadMoreMessages]);
+
+    const isConsecutive = (message: IChatMessage, prevMessage: IChatMessage | null): boolean => {
+        if (!prevMessage) return false;
+        if (prevMessage.sender.user.id !== message.sender.user.id) return false;
+        const timeDiff = new Date(message.timestamp).getTime() - new Date(prevMessage.timestamp).getTime();
+        if (timeDiff > CONSECUTIVE_THRESHOLD_MS) return false;
+        if (shouldShowDateSeparator(message.timestamp, prevMessage.timestamp)) return false;
+        return true;
+    };
+
+    const renderMessages = () => {
+        const elements: React.ReactNode[] = [];
+
+        messages.forEach((message, index) => {
+            const prevMessage = index > 0 ? messages[index - 1] : null;
+            const prevDate = prevMessage ? prevMessage.timestamp : null;
+
+            if (shouldShowDateSeparator(message.timestamp, prevDate)) {
+                elements.push(
+                    <DateSeparator key={`date-${message.id}`} date={message.timestamp} />
+                );
+            }
+
+            const consecutive = isConsecutive(message, prevMessage);
+
+            elements.push(
+                <ChatMessage
+                    key={message.id}
+                    message={message}
+                    isConsecutive={consecutive}
+                    onReply={handleReply}
+                    onReact={onReactToMessage ? () => onReactToMessage(message, '') : undefined}
+                    onAvatarClick={onAvatarClick}
+                >
+                    {message.reactions && message.reactions.length > 0 && (
+                        <MessageReactions
+                            reactions={message.reactions}
+                            currentUserId={currentUser.user.id}
+                            onToggleReaction={(emoji) => {
+                                if (onReactToMessage) {
+                                    onReactToMessage(message, emoji);
+                                }
+                            }}
+                            onAddReaction={(emoji) => {
+                                if (onReactToMessage) {
+                                    onReactToMessage(message, emoji);
+                                }
+                            }}
+                        />
+                    )}
+                </ChatMessage>
+            );
+        });
+
+        return elements;
+    };
+
+    const renderSidebar = () => (
+        <ChatSidebar
+            header={
+                <ChatSidebarHeader onNewChat={onNewChat} onSearch={onSearch}>
+                    {sidebarHeader}
+                </ChatSidebarHeader>
+            }
+            footer={
+                <ChatSidebarFooter
+                    user={currentUser}
+                    onStatusChange={onStatusChange}
+                    onSettingsClick={onSettingsClick}
+                    onProfileClick={onProfileClick}
+                />
+            }
+        >
+            {groups.map((group) => (
+                <ChatSidebarGroup
+                    key={group.label}
+                    label={group.label}
+                    conversations={group.conversations}
+                    collapsed={group.collapsed}
+                    icon={group.icon}
+                    activeConversationId={activeConversation?.id}
+                    onConversationClick={onConversationClick}
+                    onConversationContextMenu={onConversationContextMenu}
+                    onToggle={onGroupToggle ? () => onGroupToggle(group.label) : undefined}
+                    onCreateNew={onGroupCreateNew ? () => onGroupCreateNew(group.label) : undefined}
+                />
+            ))}
+        </ChatSidebar>
+    );
+
+    const renderCenter = () => (
+        <div className="blue-orange-chat-layout-center">
+            {activeConversation ? (
+                <>
+                    <div className="blue-orange-chat-layout-conversation-header">
+                        <span className="blue-orange-chat-layout-conversation-name">
+                            {activeConversation.name}
+                        </span>
+                        <span className="blue-orange-chat-layout-member-count">
+                            {activeConversation.members.length} {activeConversation.members.length === 1 ? 'member' : 'members'}
+                        </span>
+                    </div>
+                    <ChatWindow
+                        messages={messages}
+                        onLoadMore={handleLoadMore}
+                        loading={loadingMessages}
+                        hasMore={hasMoreMessages}
+                    >
+                        {renderMessages()}
+                        {typingUsers.length > 0 && (
+                            <TypingIndicator typingUsers={typingUsers} />
+                        )}
+                        {snoozedUsers.length > 0 && (
+                            <SnoozedBar snoozedUsers={snoozedUsers} />
+                        )}
+                    </ChatWindow>
+                    <ChatInput
+                        onSend={handleSend}
+                        replyTo={replyTo}
+                        onCancelReply={handleCancelReply}
+                    />
+                </>
+            ) : (
+                <div className="blue-orange-chat-layout-empty-state">
+                    Select a conversation to start chatting
+                </div>
+            )}
+        </div>
+    );
+
+    const hasRightPanel = !!detailUser || !!threadParentMessage;
+
+    const renderRightPanel = () => {
+        if (detailUser && onCloseUserDetail) {
+            return (
+                <UserDetailPanel
+                    chatUser={detailUser}
+                    onClose={onCloseUserDetail}
+                />
+            );
+        }
+        if (threadParentMessage && onSendThreadReply && onCloseThread) {
+            return (
+                <ThreadPanel
+                    parentMessage={threadParentMessage}
+                    replies={threadReplies}
+                    onSendReply={onSendThreadReply}
+                    onClose={onCloseThread}
+                    typingUsers={threadTypingUsers}
+                    currentUserId={currentUser.user.id}
+                    onReact={onReactToMessage ? (msg) => onReactToMessage(msg, '') : undefined}
+                    onAvatarClick={onAvatarClick}
+                />
+            );
+        }
+        return null;
+    };
+
+    return (
+        <div className="blue-orange-chat-layout-container">
+            {renderSidebar()}
+            {hasRightPanel ? (
+                <VerticalSplitPage splitDirection={SplitDirectionVerticalPage.RIGHT}>
+                    <SplitPageMajor>
+                        {renderCenter()}
+                    </SplitPageMajor>
+                    <SplitPageMinor>
+                        {renderRightPanel()}
+                    </SplitPageMinor>
+                </VerticalSplitPage>
+            ) : (
+                renderCenter()
+            )}
+        </div>
+    );
+};

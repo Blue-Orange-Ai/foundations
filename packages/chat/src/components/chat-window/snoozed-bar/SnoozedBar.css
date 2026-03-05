@@ -1,0 +1,53 @@
+
+.blue-orange-chat-snoozed-bar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4px 16px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.dark .blue-orange-chat-snoozed-bar {
+    border-top: 1px solid #444444;
+}
+
+.blue-orange-chat-snoozed-icon {
+    font-size: 14px;
+    color: #999999;
+    margin-right: 6px;
+    display: flex;
+    align-items: center;
+}
+
+.dark .blue-orange-chat-snoozed-icon {
+    color: #777777;
+}
+
+.blue-orange-chat-snoozed-text {
+    font-size: 12px;
+    color: #999999;
+    font-style: italic;
+}
+
+.dark .blue-orange-chat-snoozed-text {
+    color: #777777;
+}
+
+.blue-orange-chat-snoozed-toggle {
+    font-size: 12px;
+    color: #999999;
+    font-style: italic;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+}
+
+.blue-orange-chat-snoozed-toggle:hover {
+    text-decoration: underline;
+}
+
+.dark .blue-orange-chat-snoozed-toggle {
+    color: #777777;
+}
