@@ -127,6 +127,7 @@ export const SearchQueryCondition: React.FC<Props> = ({condition, schema, onChan
 
 	const updateVariable = (variable: string) => {
 		const nextVariable = variable != "-1" ? variable : (schema.length > 0 ? schema[0].apiName : "");
+		if (nextVariable === internalCondition.variable) return;
 		const schemaProperty = getSchemaPropertyFromVariableName(nextVariable);
 		const nextType = normalizeSchemaType(schemaProperty?.type ?? "");
 
@@ -190,6 +191,7 @@ export const SearchQueryCondition: React.FC<Props> = ({condition, schema, onChan
 	const updateOperand = (operand: string) => {
 		if (operand in SearchQueryLeafOperand) {
 			const nextOperand = operand as SearchQueryLeafOperand;
+			if (nextOperand === internalCondition.operand) return;
 			const modCondition: ISearchQueryEditorCondition = {
 				...internalCondition,
 				operand: nextOperand,
