@@ -11,7 +11,7 @@
 .blue-orange-search-playground-query-cont {
     max-height: 100%;
     overflow-y: auto;
-    width: 450px;
+    width: 550px;
     display: flex;
     flex-direction: column;
     border-right: 1px solid var(--blue-orange-light-default-border-color);

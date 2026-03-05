@@ -8,9 +8,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Git workflow
 
-- **Never commit directly to the `develop` branch.**
-- When asked to create a branch, create a feature branch off `develop` (e.g., `feature/description`).
-- When asked to create a PR, target the `develop` branch.
+- **Never commit directly to the `main` branch.**
+- When asked to create a branch, create a feature branch off `main` (e.g., `feature/description`).
+- When asked to create a PR, target the `main` branch.
 
 ## Working with packages
 

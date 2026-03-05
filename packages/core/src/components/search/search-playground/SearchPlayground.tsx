@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 
 import './SearchPlayground.css';
-import {BlueOrangeSearchQuery, BlueOrangeSearchQueryOperand, BlueOrangeSearchQueryCompositeCondition, BlueOrangeSearchQueryComponent, SearchQueryEditor} from "../search-query-editor/SearchQueryEditor";
+import {BlueOrangeSearchQuery, BlueOrangeSearchQueryOperand, BlueOrangeSearchQueryCompositeCondition, BlueOrangeSearchQueryComponent, BlueOrangeSearchQueryTermType, SearchQueryEditor} from "../search-query-editor/SearchQueryEditor";
 import {DataTable, TableField, TableFieldSortState, TableFieldType} from "../../table/data-table/DataTable";
 import {IContextMenuItem, IContextMenuType} from "../../contextmenu/contextmenu/ContextMenu";
 import {
@@ -215,6 +215,119 @@ export const SearchPlayground: React.FC<Props> = ({ searchClient, index: externa
         }
     };
 
+    const handleAddAsFilter = (field: TableField, values: string[], fieldType: TableFieldType) => {
+        if (values.length === 0) return;
+
+        const property = index.schema.properties.find(p => p.apiName === field.apiName);
+        if (!property) return;
+
+        let newComponent: BlueOrangeSearchQueryComponent;
+
+        if (fieldType === TableFieldType.NUMBER || fieldType === TableFieldType.CURRENCY) {
+            const numericValues = values.map(v => parseFloat(v)).filter(v => !isNaN(v));
+            if (numericValues.length === 0) return;
+
+            if (numericValues.length === 1) {
+                newComponent = {
+                    numericCondition: {
+                        field: field.apiName,
+                        gte: numericValues[0].toString(),
+                        lte: numericValues[0].toString()
+                    }
+                };
+            } else {
+                const min = Math.min(...numericValues);
+                const max = Math.max(...numericValues);
+                newComponent = {
+                    operand: BlueOrangeSearchQueryOperand.AND,
+                    components: [
+                        {
+                            numericCondition: {
+                                field: field.apiName,
+                                gte: min.toString()
+                            }
+                        },
+                        {
+                            numericCondition: {
+                                field: field.apiName,
+                                lte: max.toString()
+                            }
+                        }
+                    ]
+                };
+            }
+        } else if (fieldType === TableFieldType.DATE) {
+            const dateValues = values.map(v => new Date(v)).filter(d => !isNaN(d.getTime()));
+            if (dateValues.length === 0) return;
+
+            if (dateValues.length === 1) {
+                newComponent = {
+                    dateCondition: {
+                        field: field.apiName,
+                        gte: dateValues[0].toISOString(),
+                        lte: dateValues[0].toISOString()
+                    }
+                };
+            } else {
+                const minDate = new Date(Math.min(...dateValues.map(d => d.getTime())));
+                const maxDate = new Date(Math.max(...dateValues.map(d => d.getTime())));
+                newComponent = {
+                    operand: BlueOrangeSearchQueryOperand.AND,
+                    components: [
+                        {
+                            dateCondition: {
+                                field: field.apiName,
+                                gte: minDate.toISOString()
+                            }
+                        },
+                        {
+                            dateCondition: {
+                                field: field.apiName,
+                                lte: maxDate.toISOString()
+                            }
+                        }
+                    ]
+                };
+            }
+        } else {
+            if (values.length === 1) {
+                newComponent = {
+                    termCondition: {
+                        field: field.apiName,
+                        query: values[0],
+                        type: BlueOrangeSearchQueryTermType.PHRASE
+                    }
+                };
+            } else {
+                newComponent = {
+                    operand: BlueOrangeSearchQueryOperand.OR,
+                    components: values.map(value => ({
+                        termCondition: {
+                            field: field.apiName,
+                            query: value,
+                            type: BlueOrangeSearchQueryTermType.PHRASE
+                        }
+                    }))
+                };
+            }
+        }
+
+        const updatedQuery = {
+            ...query,
+            rootCondition: {
+                ...query.rootCondition,
+                components: [...query.rootCondition.components, newComponent]
+            }
+        };
+
+        console.log('New filter component:', JSON.stringify(newComponent, null, 2));
+        console.log('Updated query:', JSON.stringify(updatedQuery, null, 2));
+
+        setQuery(updatedQuery);
+        setCurrentPage(1);
+        executeSearch(updatedQuery, 1, false);
+    };
+
     useEffect(() => {
         handleSearch()
     }, []);
@@ -226,8 +339,8 @@ export const SearchPlayground: React.FC<Props> = ({ searchClient, index: externa
                     showHeader={false}
                     index={index}
                     query={query}
-                    onSave={handleQueryChange}
-                    reportChangesOnSaveOnly={false}></SearchQueryEditor>
+                    onChange={handleQueryChange}
+                    reportChangesOnSaveOnly={true}></SearchQueryEditor>
             </div>
             <div className="blue-orange-search-playground-body-cont">
                 <DataTable
@@ -245,6 +358,7 @@ export const SearchPlayground: React.FC<Props> = ({ searchClient, index: externa
                     cellsSelectable={false}
                     rowSelectable={true}
                     onHeaderDropdownSelected={handleHeaderDropdownSelected}
+                    onAddAsFilter={handleAddAsFilter}
                     ></DataTable>
             </div>
         </div>

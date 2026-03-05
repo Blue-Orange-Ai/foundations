@@ -77,7 +77,8 @@ interface Props {
 	onRowSelectable?: (selection: Array<number>) => void,
 	onCellClick?: (colIdx: number, rowIdx: number, position: DataTableCellClickPosition) => void,
 	onCellRightClick?: (colIdx: number, rowIdx: number, position: DataTableCellClickPosition) => void,
-	onHeaderDropdownSelected?: (item: IContextMenuItem) => void
+	onHeaderDropdownSelected?: (item: IContextMenuItem) => void,
+	onAddAsFilter?: (field: TableField, values: string[], fieldType: TableFieldType) => void
 }
 
 export const DataTable: React.FC<Props> = ({
@@ -101,7 +102,8 @@ export const DataTable: React.FC<Props> = ({
 												onRowSelectable,
 												onCellClick,
 												onCellRightClick,
-												onHeaderDropdownSelected}) => {
+												onHeaderDropdownSelected,
+												onAddAsFilter}) => {
 
 	const clampWidth = (width: number): number => {
 		const next = Math.max(minColumnWidth, width);
@@ -474,6 +476,30 @@ export const DataTable: React.FC<Props> = ({
 		copyToClipboard(allText);
 	};
 
+	const addAsFilter = (rowIdx: number, colIdx: number) => {
+		if (!onAddAsFilter || colIdx < 0 || colIdx >= orderedSchema.length) {
+			return;
+		}
+
+		const field = orderedSchema[colIdx];
+		const selectedRowIndices = getSelectedRows();
+		const rowsToUse = selectedRowIndices.length > 0 ? selectedRowIndices : [rowIdx];
+
+		const values: string[] = [];
+		for (const rIdx of rowsToUse) {
+			if (rIdx < data.length) {
+				const cellValue = getCellValue(data[rIdx], field, colIdx);
+				if (cellValue && !values.includes(cellValue)) {
+					values.push(cellValue);
+				}
+			}
+		}
+
+		if (values.length > 0) {
+			onAddAsFilter(field, values, field.type);
+		}
+	};
+
 	const getContextMenuItems = (rowIdx: number, colIdx: number): IContextMenuItem[] => {
 		const items: IContextMenuItem[] = [];
 		const selectedRowIndices = getSelectedRows();
@@ -505,6 +531,14 @@ export const DataTable: React.FC<Props> = ({
 			});
 		}
 
+		if (onAddAsFilter) {
+			items.push({
+				label: 'Add as Filter',
+				type: IContextMenuType.CONTENT,
+				value: { action: 'addAsFilter', rowIdx, colIdx }
+			});
+		}
+
 		return items;
 	};
 
@@ -525,6 +559,9 @@ export const DataTable: React.FC<Props> = ({
 				break;
 			case 'copyAllSelectedData':
 				copyAllSelectedData();
+				break;
+			case 'addAsFilter':
+				addAsFilter(item.value.rowIdx, item.value.colIdx);
 				break;
 		}
 		setContextMenu(null);
