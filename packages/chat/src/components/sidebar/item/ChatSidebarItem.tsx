@@ -1,8 +1,83 @@
 import React from "react";
+import { SideBarBodyItem, Avatar } from "@blue-orange-ai/foundations-core";
+import { IChatConversation, ChatConversationType, ChatUserStatus } from "../../../interfaces/ChatInterfaces";
 
 import './ChatSidebarItem.css';
-import {Avatar, AvatarList} from "@blue-orange-ai/foundations-core";
-import {IChatConversation, ChatConversationType} from "../../../interfaces/ChatInterfaces";
+
+const getStatusClass = (status: ChatUserStatus): string => {
+    switch (status) {
+        case ChatUserStatus.ONLINE:
+            return 'blue-orange-chat-sidebar-item-status-online';
+        case ChatUserStatus.AWAY:
+            return 'blue-orange-chat-sidebar-item-status-away';
+        case ChatUserStatus.DND:
+            return 'blue-orange-chat-sidebar-item-status-dnd';
+        case ChatUserStatus.OFFLINE:
+        default:
+            return 'blue-orange-chat-sidebar-item-status-offline';
+    }
+};
+
+export const getConversationIcon = (conversation: IChatConversation): React.ReactNode => {
+    if (conversation.type === ChatConversationType.CHANNEL) {
+        return <i className="ri-hashtag blue-orange-chat-sidebar-item-channel-icon" />;
+    }
+
+    // Group DM — group icon
+    if (conversation.type === ChatConversationType.GROUP) {
+        return <i className="ri-group-line blue-orange-chat-sidebar-item-channel-icon" />;
+    }
+
+    // DM — show avatar with presence status overlay
+    if (conversation.type === ChatConversationType.DM) {
+        const otherMember = conversation.members.length >= 2
+            ? conversation.members[1]
+            : conversation.members[0];
+
+        if (otherMember) {
+            const statusClass = getStatusClass(otherMember.status);
+            return (
+                <div className="blue-orange-chat-sidebar-item-avatar-wrapper">
+                    <Avatar user={otherMember.user} height={20} width={20} />
+                    <span className={`blue-orange-chat-sidebar-item-avatar-status ${statusClass}`} />
+                </div>
+            );
+        }
+    }
+
+    return <i className="ri-chat-1-line" />;
+};
+
+export const getConversationBadge = (conversation: IChatConversation): React.ReactNode | undefined => {
+    const hasUnread = conversation.unreadCount > 0;
+    const isTyping = conversation.typingUsers && conversation.typingUsers.length > 0;
+
+    if (hasUnread) {
+        return (
+            <span className="blue-orange-chat-sidebar-item-unread-badge">
+                {conversation.unreadCount}
+            </span>
+        );
+    }
+
+    if (isTyping) {
+        return (
+            <span className="blue-orange-chat-sidebar-item-typing-badge">
+                <span className="blue-orange-chat-sidebar-item-typing-dot" />
+                <span className="blue-orange-chat-sidebar-item-typing-dot" />
+                <span className="blue-orange-chat-sidebar-item-typing-dot" />
+            </span>
+        );
+    }
+
+    return undefined;
+};
+
+export const getConversationLabelStyle = (conversation: IChatConversation): React.CSSProperties => {
+    return conversation.unreadCount > 0
+        ? { fontWeight: 700, color: '#ffffff' }
+        : {};
+};
 
 interface Props {
     conversation: IChatConversation;
@@ -15,90 +90,25 @@ export const ChatSidebarItem: React.FC<Props> = ({
     conversation,
     active = false,
     onClick,
-    onContextMenu
 }) => {
-
     const handleClick = () => {
         if (onClick) {
             onClick(conversation);
         }
     };
 
-    const handleContextMenu = (e: React.MouseEvent) => {
-        if (onContextMenu) {
-            e.preventDefault();
-            onContextMenu(e, conversation);
-        }
-    };
-
-    const isTyping = conversation.typingUsers && conversation.typingUsers.length > 0;
     const hasUnread = conversation.unreadCount > 0;
-    const isDM = conversation.type === ChatConversationType.DM;
-
-    const lastMessagePreview = conversation.lastMessage
-        ? conversation.lastMessage.content
-        : "";
-
-    const containerClassName = [
-        "blue-orange-chat-sidebar-item",
-        active ? "blue-orange-chat-sidebar-item-active" : ""
-    ].filter(Boolean).join(" ");
-
-    const nameClassName = [
-        "blue-orange-chat-sidebar-item-name",
-        hasUnread ? "blue-orange-chat-sidebar-item-name-unread" : ""
-    ].filter(Boolean).join(" ");
 
     return (
-        <div
-            className={containerClassName}
+        <SideBarBodyItem
+            label={conversation.name}
+            active={active}
+            focused={false}
+            icon={getConversationIcon(conversation)}
+            badge={getConversationBadge(conversation)}
+            defaultStyle={getConversationLabelStyle(conversation)}
+            activeStyle={{ fontWeight: hasUnread ? 700 : 400, color: '#ffffff' }}
             onClick={handleClick}
-            onContextMenu={handleContextMenu}
-        >
-            {/* LEFT: Avatar area */}
-            <div className="blue-orange-chat-sidebar-item-avatar">
-                {isDM ? (
-                    <Avatar
-                        user={conversation.members[0]?.user}
-                        height={36}
-                        width={36}
-                    />
-                ) : (
-                    <AvatarList
-                        users={conversation.members.map(m => m.user)}
-                        height={36}
-                        overflowNum={3}
-                    />
-                )}
-                {isTyping && (
-                    <div className="blue-orange-chat-sidebar-item-typing-overlay">
-                        <div className="blue-orange-chat-sidebar-item-typing-dot" />
-                        <div className="blue-orange-chat-sidebar-item-typing-dot" />
-                        <div className="blue-orange-chat-sidebar-item-typing-dot" />
-                    </div>
-                )}
-            </div>
-
-            {/* MIDDLE: Name and preview */}
-            <div className="blue-orange-chat-sidebar-item-content">
-                <div className={nameClassName}>
-                    {conversation.name}
-                </div>
-                {lastMessagePreview && (
-                    <div className="blue-orange-chat-sidebar-item-preview">
-                        {lastMessagePreview}
-                    </div>
-                )}
-            </div>
-
-            {/* RIGHT: Unread pill */}
-            {hasUnread && (
-                <div className="blue-orange-chat-sidebar-item-right">
-                    <div className="blue-orange-chat-sidebar-item-unread-pill">
-                        {conversation.unreadCount}
-                    </div>
-                </div>
-            )}
-        </div>
+        />
     );
 };

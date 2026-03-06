@@ -12,6 +12,11 @@
     flex-grow: 1;
     min-width: 0;
     overflow: hidden;
+    background-color: #ffffff;
+}
+
+.dark .blue-orange-chat-layout-center {
+    background-color: #1a1d21;
 }
 
 .blue-orange-chat-layout-conversation-header {

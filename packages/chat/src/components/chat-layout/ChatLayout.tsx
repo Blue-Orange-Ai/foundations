@@ -1,5 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import {
+    SideBarState,
+    SideBarBodyItem,
     VerticalSplitPage,
     SplitPageMajor,
     SplitPageMinor,
@@ -10,6 +12,7 @@ import {
     IChatMessage,
     IChatUser,
     IChatConversation,
+    IChatNavItem,
     ChatUserStatus
 } from '../../interfaces/ChatInterfaces';
 import { ChatSidebar } from '../sidebar/ChatSidebar';
@@ -26,6 +29,7 @@ import { ChatInput } from '../chat-input/ChatInput';
 import { UserDetailPanel } from '../user-detail/UserDetailPanel';
 import { ThreadPanel } from '../thread-panel/ThreadPanel';
 import { shouldShowDateSeparator } from '../../utils/dateUtils';
+import { Media } from '@blue-orange-ai/foundations-clients';
 
 import './ChatLayout.css';
 
@@ -36,7 +40,12 @@ interface ChatLayoutProps {
     activeConversation?: IChatConversation;
     typingUsers?: IChatUser[];
     snoozedUsers?: IChatUser[];
-    sidebarHeader?: React.ReactNode;
+    workspaceName?: string;
+    workspaceMedia?: Media;
+    navItems?: IChatNavItem[];
+    activeNavItemId?: string;
+    sidebarState?: SideBarState;
+    onSidebarStateChange?: (state: SideBarState) => void;
     onConversationClick?: (conversation: IChatConversation) => void;
     onSendMessage?: (content: string, mentions: string[], attachments: any[]) => void;
     onLoadMoreMessages?: () => void;
@@ -47,6 +56,7 @@ interface ChatLayoutProps {
     onStatusChange?: (status: ChatUserStatus) => void;
     onSettingsClick?: () => void;
     onProfileClick?: () => void;
+    onWorkspaceClick?: () => void;
     onReactToMessage?: (message: IChatMessage, emoji: string) => void;
     onReplyToMessage?: (message: IChatMessage) => void;
     onAvatarClick?: (user: IChatUser) => void;
@@ -71,7 +81,12 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     activeConversation,
     typingUsers = [],
     snoozedUsers = [],
-    sidebarHeader,
+    workspaceName = 'Chat',
+    workspaceMedia,
+    navItems = [],
+    activeNavItemId,
+    sidebarState = SideBarState.OPEN,
+    onSidebarStateChange,
     onConversationClick,
     onSendMessage,
     onLoadMoreMessages,
@@ -82,6 +97,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     onStatusChange,
     onSettingsClick,
     onProfileClick,
+    onWorkspaceClick,
     onReactToMessage,
     onReplyToMessage,
     onAvatarClick,
@@ -158,7 +174,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                     {message.reactions && message.reactions.length > 0 && (
                         <MessageReactions
                             reactions={message.reactions}
-                            currentUserId={currentUser.user.id}
+                            currentUserId={currentUser.user.id!}
                             onToggleReaction={(emoji) => {
                                 if (onReactToMessage) {
                                     onReactToMessage(message, emoji);
@@ -178,12 +194,40 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
         return elements;
     };
 
+    const renderNavItems = () => {
+        if (navItems.length === 0) return null;
+
+        return (
+            <>
+                {navItems.map(item => (
+                    <SideBarBodyItem
+                        key={item.id}
+                        label={item.label}
+                        sortable={false}
+                        active={activeNavItemId === item.id}
+                        focused={false}
+                        icon={<i className={item.icon} />}
+                        badge={item.badge}
+                        onClick={item.onClick}
+                    />
+                ))}
+            </>
+        );
+    };
+
     const renderSidebar = () => (
         <ChatSidebar
+            state={sidebarState}
+            onStateChange={onSidebarStateChange}
             header={
-                <ChatSidebarHeader onNewChat={onNewChat} onSearch={onSearch}>
-                    {sidebarHeader}
-                </ChatSidebarHeader>
+                <ChatSidebarHeader
+                    workspaceName={workspaceName}
+                    workspaceMedia={workspaceMedia}
+                    sidebarState={sidebarState}
+                    onStateChange={onSidebarStateChange}
+                    onNewChat={onNewChat}
+                    onWorkspaceClick={onWorkspaceClick}
+                />
             }
             footer={
                 <ChatSidebarFooter
@@ -193,6 +237,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                     onProfileClick={onProfileClick}
                 />
             }
+            navItems={renderNavItems()}
         >
             {groups.map((group) => (
                 <ChatSidebarGroup

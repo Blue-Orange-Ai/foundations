@@ -38,9 +38,9 @@ export const UserDetailPanel: React.FC<Props> = ({chatUser, onClose, children}) 
         });
     };
 
-    const formatPhone = (phone: string | undefined): string | null => {
-        if (!phone) return null;
-        return phone;
+    const formatPhone = (phone: { number?: string | null; code?: string | null } | undefined): string | null => {
+        if (!phone || !phone.number) return null;
+        return phone.code ? `+${phone.code} ${phone.number}` : phone.number;
     };
 
     return (

@@ -2,11 +2,11 @@
 export * from './interfaces/ChatInterfaces';
 
 // Sidebar
-export * from './components/sidebar/ChatSidebar';
-export * from './components/sidebar/header/ChatSidebarHeader';
-export * from './components/sidebar/item/ChatSidebarItem';
-export * from './components/sidebar/group/ChatSidebarGroup';
-export * from './components/sidebar/footer/ChatSidebarFooter';
+export { ChatSidebar, ChatSidebarState } from './components/sidebar/ChatSidebar';
+export { ChatSidebarHeader } from './components/sidebar/header/ChatSidebarHeader';
+export { ChatSidebarItem } from './components/sidebar/item/ChatSidebarItem';
+export { ChatSidebarGroup } from './components/sidebar/group/ChatSidebarGroup';
+export { ChatSidebarFooter } from './components/sidebar/footer/ChatSidebarFooter';
 
 // Chat Window
 export * from './components/chat-window/ChatWindow';

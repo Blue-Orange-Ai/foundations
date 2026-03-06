@@ -1,104 +1,40 @@
-.blue-orange-chat-sidebar-group {
-    width: 100%;
-}
-
-.blue-orange-chat-sidebar-group-header {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 8px 12px;
-    cursor: pointer;
-    border-radius: 6px;
-    user-select: none;
-    gap: 6px;
-}
-
-.blue-orange-chat-sidebar-group-header:hover {
-    background: rgba(0, 0, 0, 0.04);
-}
-
-.blue-orange-chat-sidebar-group-chevron {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    color: #888;
-    transition: transform 0.2s ease;
-}
-
 .blue-orange-chat-sidebar-group-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    color: #888;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
 }
 
-.blue-orange-chat-sidebar-group-label {
-    font-size: 12px;
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    color: #888;
-    flex: 1;
+.blue-orange-chat-sidebar-group-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
 }
 
-.blue-orange-chat-sidebar-group-add {
+.blue-orange-chat-sidebar-group-caret {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.6);
     display: flex;
     align-items: center;
+}
+
+/* "+" button: hidden by default, shown on hover of the label row */
+.blue-orange-chat-sidebar-group-add-btn {
+    display: none;
+    align-items: center;
     justify-content: center;
-    font-size: 16px;
-    color: #888;
-    cursor: pointer;
-    border: none;
-    background: none;
-    padding: 2px;
+    width: 22px;
+    height: 22px;
     border-radius: 4px;
-    opacity: 0;
-    transition: opacity 0.15s ease;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 16px;
 }
 
-.blue-orange-chat-sidebar-group-header:hover .blue-orange-chat-sidebar-group-add {
-    opacity: 1;
+.blue-orange-chat-sidebar-group-add-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
 }
 
-.blue-orange-chat-sidebar-group-add:hover {
-    background: rgba(0, 0, 0, 0.08);
-    color: #555;
-}
-
-.blue-orange-chat-sidebar-group-body {
-    max-height: 1000px;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-}
-
-.blue-orange-chat-sidebar-group-body-collapsed {
-    max-height: 0;
-}
-
-/* Dark theme */
-.dark .blue-orange-chat-sidebar-group-header:hover {
-    background: rgba(255, 255, 255, 0.06);
-}
-
-.dark .blue-orange-chat-sidebar-group-chevron {
-    color: #aaa;
-}
-
-.dark .blue-orange-chat-sidebar-group-icon {
-    color: #aaa;
-}
-
-.dark .blue-orange-chat-sidebar-group-label {
-    color: #aaa;
-}
-
-.dark .blue-orange-chat-sidebar-group-add {
-    color: #aaa;
-}
-
-.dark .blue-orange-chat-sidebar-group-add:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #ccc;
+/* Show the "+" button when hovering the label row */
+.blue-orange-sidebar-body-label:hover .blue-orange-chat-sidebar-group-add-btn {
+    display: flex;
 }

@@ -18,4 +18,5 @@ const DateSeparator: React.FC<DateSeparatorProps> = ({ date }) => {
     );
 };
 
-export { DateSeparator, DateSeparatorProps };
+export { DateSeparator };
+export type { DateSeparatorProps };

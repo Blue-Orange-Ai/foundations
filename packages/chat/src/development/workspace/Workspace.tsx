@@ -1,10 +1,12 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import { SideBarState } from '@blue-orange-ai/foundations-core';
 import { ChatLayout } from '../../components/chat-layout/ChatLayout';
 import {
     IChatGroup,
     IChatMessage,
     IChatUser,
     IChatConversation,
+    IChatNavItem,
     ChatUserStatus
 } from '../../interfaces/ChatInterfaces';
 import {
@@ -13,8 +15,6 @@ import {
     messagesByConversation,
     allConversations,
     threadRepliesForMsg11,
-    engineeringMessages,
-    userFrank,
 } from '../data/mockData';
 
 import './Workspace.css';
@@ -31,18 +31,53 @@ export const Workspace: React.FC = () => {
     const [threadReplies, setThreadReplies] = useState<IChatMessage[]>([]);
     const [groups, setGroups] = useState<IChatGroup[]>(mockGroups);
     const [searchQuery, setSearchQuery] = useState('');
+    const [sidebarState, setSidebarState] = useState<SideBarState>(SideBarState.OPEN);
+    const [activeNavItemId, setActiveNavItemId] = useState<string | undefined>();
 
-    // ── Conversation click ─────────────────────────────────────────────
+    // -- Nav items (Slack-style top navigation) --
+
+    const navItems: IChatNavItem[] = useMemo(() => [
+        {
+            id: 'all-unreads',
+            label: 'All unreads',
+            icon: 'ri-mail-unread-line',
+            onClick: () => {
+                setActiveNavItemId('all-unreads');
+                setActiveConversation(undefined);
+            }
+        },
+        {
+            id: 'threads',
+            label: 'Threads',
+            icon: 'ri-chat-thread-line',
+            onClick: () => {
+                setActiveNavItemId('threads');
+                setActiveConversation(undefined);
+            }
+        },
+        {
+            id: 'mentions',
+            label: 'Mentions & reactions',
+            icon: 'ri-at-line',
+            onClick: () => {
+                setActiveNavItemId('mentions');
+                setActiveConversation(undefined);
+            }
+        },
+    ], []);
+
+    // -- Conversation click --
 
     const handleConversationClick = useCallback((conversation: IChatConversation) => {
         setActiveConversation(conversation);
+        setActiveNavItemId(undefined);
         setMessages(messagesByConversation[conversation.id] || []);
         setThreadParent(null);
         setThreadReplies([]);
         setDetailUser(null);
     }, []);
 
-    // ── Send message ───────────────────────────────────────────────────
+    // -- Send message --
 
     const handleSendMessage = useCallback(
         (content: string, _mentions: string[], _attachments: any[]) => {
@@ -58,20 +93,19 @@ export const Workspace: React.FC = () => {
         []
     );
 
-    // ── Avatar click (show user detail panel) ──────────────────────────
+    // -- Avatar click (show user detail panel) --
 
     const handleAvatarClick = useCallback((user: IChatUser) => {
         setDetailUser(user);
         setThreadParent(null);
     }, []);
 
-    // ── Reply to message (show thread panel) ───────────────────────────
+    // -- Reply to message (show thread panel) --
 
     const handleReplyToMessage = useCallback((message: IChatMessage) => {
         setThreadParent(message);
         setDetailUser(null);
 
-        // If clicking on msg-11 (the PR message), load the pre-built thread replies
         if (message.id === 'msg-11') {
             setThreadReplies(threadRepliesForMsg11);
         } else {
@@ -79,7 +113,7 @@ export const Workspace: React.FC = () => {
         }
     }, []);
 
-    // ── Send thread reply ──────────────────────────────────────────────
+    // -- Send thread reply --
 
     const handleSendThreadReply = useCallback(
         (content: string, _mentions: string[], _attachments: any[]) => {
@@ -95,7 +129,7 @@ export const Workspace: React.FC = () => {
         []
     );
 
-    // ── Close panels ───────────────────────────────────────────────────
+    // -- Close panels --
 
     const handleCloseThread = useCallback(() => {
         setThreadParent(null);
@@ -106,7 +140,7 @@ export const Workspace: React.FC = () => {
         setDetailUser(null);
     }, []);
 
-    // ── React to message ───────────────────────────────────────────────
+    // -- React to message --
 
     const handleReactToMessage = useCallback((message: IChatMessage, emoji: string) => {
         if (!emoji) return;
@@ -145,7 +179,7 @@ export const Workspace: React.FC = () => {
         setThreadReplies(toggleReaction);
     }, []);
 
-    // ── Group toggle ───────────────────────────────────────────────────
+    // -- Group toggle --
 
     const handleGroupToggle = useCallback((label: string) => {
         setGroups((prev) =>
@@ -153,7 +187,13 @@ export const Workspace: React.FC = () => {
         );
     }, []);
 
-    // ── Search ─────────────────────────────────────────────────────────
+    // -- Sidebar state --
+
+    const handleSidebarStateChange = useCallback((state: SideBarState) => {
+        setSidebarState(state);
+    }, []);
+
+    // -- Search --
 
     const handleSearch = useCallback((query: string) => {
         setSearchQuery(query);
@@ -171,7 +211,7 @@ export const Workspace: React.FC = () => {
         }));
     }, [groups, searchQuery]);
 
-    // ── Typing and snoozed users for active conversation ───────────────
+    // -- Typing and snoozed users for active conversation --
 
     const typingUsers = useMemo(() => {
         return activeConversation?.typingUsers || [];
@@ -182,7 +222,7 @@ export const Workspace: React.FC = () => {
         return activeConversation.members.filter((m) => m.snoozeUntil && m.snoozeUntil > new Date());
     }, [activeConversation]);
 
-    // ── Placeholder handlers ───────────────────────────────────────────
+    // -- Placeholder handlers --
 
     const handleNewChat = useCallback(() => {
         console.log('[Workspace] New chat clicked');
@@ -192,7 +232,7 @@ export const Workspace: React.FC = () => {
         console.log('[Workspace] Status changed to:', status);
     }, []);
 
-    // ── Render ─────────────────────────────────────────────────────────
+    // -- Render --
 
     return (
         <div className="chat-dev-workspace">
@@ -203,6 +243,11 @@ export const Workspace: React.FC = () => {
                 activeConversation={activeConversation}
                 typingUsers={typingUsers}
                 snoozedUsers={snoozedUsers}
+                workspaceName="Blue Orange AI"
+                navItems={navItems}
+                activeNavItemId={activeNavItemId}
+                sidebarState={sidebarState}
+                onSidebarStateChange={handleSidebarStateChange}
                 onConversationClick={handleConversationClick}
                 onSendMessage={handleSendMessage}
                 onNewChat={handleNewChat}

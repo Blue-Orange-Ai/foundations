@@ -1,3 +1,4 @@
+import React from "react";
 import {User} from "@blue-orange-ai/foundations-clients";
 
 export enum ChatConversationType {
@@ -51,4 +52,12 @@ export interface IChatGroup {
     conversations: IChatConversation[];
     collapsed: boolean;
     icon?: string;
+}
+
+export interface IChatNavItem {
+    id: string;
+    label: string;
+    icon: string;
+    badge?: React.ReactNode;
+    onClick?: () => void;
 }
