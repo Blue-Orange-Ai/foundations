@@ -1,0 +1,32 @@
+:root {
+  --blue-orange-gantt-timeline-bg: #f9fafb;
+  --blue-orange-gantt-timeline-border: #e5e7eb;
+  --blue-orange-gantt-timeline-text: #6b7280;
+}
+.dark {
+  --blue-orange-gantt-timeline-bg: #1f2937;
+  --blue-orange-gantt-timeline-border: #374151;
+  --blue-orange-gantt-timeline-text: #9ca3af;
+}
+.blue-orange-gantt-timeline {
+  display: flex;
+  flex-direction: row;
+  background: var(--blue-orange-gantt-timeline-bg);
+  border-bottom: 1px solid var(--blue-orange-gantt-timeline-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.blue-orange-gantt-timeline-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--blue-orange-gantt-timeline-border);
+  font-size: 0.75rem;
+  color: var(--blue-orange-gantt-timeline-text);
+  padding: 6px 4px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  font-weight: 500;
+  user-select: none;
+}
