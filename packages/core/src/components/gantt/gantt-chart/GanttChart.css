@@ -1,0 +1,62 @@
+:root {
+  --blue-orange-gantt-chart-bg: #ffffff;
+  --blue-orange-gantt-chart-border: #e5e7eb;
+}
+
+.dark {
+  --blue-orange-gantt-chart-bg: #111827;
+  --blue-orange-gantt-chart-border: #374151;
+}
+
+.blue-orange-gantt-chart {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--blue-orange-gantt-chart-bg);
+  border: 1px solid var(--blue-orange-gantt-chart-border);
+  border-radius: 8px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.blue-orange-gantt-chart-header-row {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+}
+
+.blue-orange-gantt-chart-label-header {
+  flex-shrink: 0;
+  border-right: 1px solid var(--blue-orange-gantt-chart-border);
+  border-bottom: 1px solid var(--blue-orange-gantt-chart-border);
+  background: var(--blue-orange-gantt-chart-bg);
+  box-sizing: border-box;
+}
+
+.blue-orange-gantt-chart-timeline-scroll {
+  flex: 1;
+  overflow-x: hidden;
+}
+
+.blue-orange-gantt-chart-body {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  overflow: hidden;
+}
+
+.blue-orange-gantt-chart-label-column {
+  flex-shrink: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 1px solid var(--blue-orange-gantt-chart-border);
+  box-sizing: border-box;
+}
+
+.blue-orange-gantt-chart-timeline-panel {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: auto;
+  position: relative;
+}
