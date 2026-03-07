@@ -1,0 +1,28 @@
+:root {
+  --blue-orange-gantt-bar-text: #ffffff;
+  --blue-orange-gantt-bar-shadow: rgba(0,0,0,0.15);
+}
+.blue-orange-gantt-bar {
+  position: absolute;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  cursor: pointer;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px var(--blue-orange-gantt-bar-shadow);
+  transition: filter 0.15s ease;
+  min-width: 4px;
+}
+.blue-orange-gantt-bar:hover {
+  filter: brightness(1.1);
+}
+.blue-orange-gantt-bar-label {
+  color: var(--blue-orange-gantt-bar-text);
+  font-size: 0.75rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  user-select: none;
+}

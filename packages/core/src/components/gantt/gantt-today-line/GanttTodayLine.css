@@ -1,0 +1,13 @@
+.blue-orange-gantt-today-line-wrapper {
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+.blue-orange-gantt-today-line {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  background-color: #E74C3C;
+  pointer-events: none;
+}
