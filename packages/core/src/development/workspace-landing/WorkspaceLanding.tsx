@@ -79,6 +79,7 @@ import {
 } from "../components/search/search-query-editor-small/SearchQueryEditorSmallDevelopment";
 import {FileUploadTableDevelopment} from "../components/inputs/file-upload-table/FileUploadTableDevelopment";
 import {BreadcrumbsDevelopment} from "../components/breadcrumbs/BreadcrumbsDevelopment";
+import {GanttChartDevelopment} from "../components/gantt/GanttChartDevelopment";
 import {SearchPlaygroundDevelopment} from "../components/search/search-playground/SearchPlaygroundDevelopment";
 
 interface Props {
@@ -291,6 +292,16 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						activeStyle={activeStyle}
 						icon={<i className="ri-folder-6-fill"></i>}
 						onClick={() => navigate("/file-system")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
+						label={"Gantt Chart"}
+						active={component == "gantt"}
+						focused={true}
+						defaultStyle={inactiveStyle}
+						focusedStyle={activeStyle}
+						hoverEffects={true}
+						onClick={() => navigate("/gantt")}
+						icon={<i className="ri-bar-chart-grouped-fill"></i>}
 					></SideBarBodyItem>
 					<SideBarBodyGroup opened={sidebarInputState} openOnActiveChild={true} onOpenedChange={setSidebarInputState}>
 						<SideBarBodyLabel
@@ -791,6 +802,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 				</SideBarBody>
 			</SideBar>
 			{component == "breadcrumbs" && <BreadcrumbsDevelopment></BreadcrumbsDevelopment>}
+			{component == "gantt" && <GanttChartDevelopment></GanttChartDevelopment>}
 			{component == "buttons" && <ButtonDevelopment></ButtonDevelopment>}
 			{component == "charts-line" && <LineChartDevelopment></LineChartDevelopment>}
 			{component == "charts-bar" && <BarChartDevelopment></BarChartDevelopment>}

@@ -41,6 +41,16 @@ export * from './components/config/BlueOrangePassportConfig';
 // Breadcrumbs
 export * from './components/breadcrumbs/Breadcrumbs';
 
+// Gantt
+export * from './components/gantt/types/GanttTypes';
+export * from './components/gantt/gantt-chart/GanttChart';
+export * from './components/gantt/gantt-timeline/GanttTimeline';
+export * from './components/gantt/gantt-bar/GanttBar';
+export * from './components/gantt/gantt-today-line/GanttTodayLine';
+export * from './components/gantt/gantt-row/GanttRow';
+export * from './components/gantt/gantt-dependency-layer/GanttDependencyLayer';
+export * from './components/gantt/gantt-group/GanttGroup';
+
 // Context Menu
 export * from './components/contextmenu/contextmenu/ContextMenu';
 export * from './components/contextmenu/context-menu-heading/ContextMenuHeading';
