@@ -1,0 +1,46 @@
+:root {
+  --blue-orange-gantt-group-bg: #f3f4f6;
+  --blue-orange-gantt-group-border: #e5e7eb;
+  --blue-orange-gantt-group-label-color: #111827;
+}
+.dark {
+  --blue-orange-gantt-group-bg: #1f2937;
+  --blue-orange-gantt-group-border: #374151;
+  --blue-orange-gantt-group-label-color: #f9fafb;
+}
+.blue-orange-gantt-group {
+  width: 100%;
+}
+.blue-orange-gantt-group-header {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  background: var(--blue-orange-gantt-group-bg);
+  border-bottom: 1px solid var(--blue-orange-gantt-group-border);
+  cursor: pointer;
+  box-sizing: border-box;
+  user-select: none;
+}
+.blue-orange-gantt-group-header:hover {
+  filter: brightness(0.97);
+}
+.blue-orange-gantt-group-label-panel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-right: 1px solid var(--blue-orange-gantt-group-border);
+  box-sizing: border-box;
+}
+.blue-orange-gantt-group-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--blue-orange-gantt-group-label-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.blue-orange-gantt-group-timeline-spacer {
+  flex: 1;
+}
