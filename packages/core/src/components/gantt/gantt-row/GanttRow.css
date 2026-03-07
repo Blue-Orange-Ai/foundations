@@ -1,0 +1,53 @@
+:root {
+  --blue-orange-gantt-row-bg: #ffffff;
+  --blue-orange-gantt-row-hover-bg: #f9fafb;
+  --blue-orange-gantt-row-border: #f3f4f6;
+  --blue-orange-gantt-row-label-color: #374151;
+  --blue-orange-gantt-col-line-color: #f3f4f6;
+}
+.dark {
+  --blue-orange-gantt-row-bg: #111827;
+  --blue-orange-gantt-row-hover-bg: #1f2937;
+  --blue-orange-gantt-row-border: #1f2937;
+  --blue-orange-gantt-row-label-color: #e5e7eb;
+  --blue-orange-gantt-col-line-color: #1f2937;
+}
+.blue-orange-gantt-row {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  background: var(--blue-orange-gantt-row-bg);
+  border-bottom: 1px solid var(--blue-orange-gantt-row-border);
+  box-sizing: border-box;
+}
+.blue-orange-gantt-row:hover {
+  background: var(--blue-orange-gantt-row-hover-bg);
+}
+.blue-orange-gantt-row-label-panel {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-right: 1px solid var(--blue-orange-gantt-row-border);
+  box-sizing: border-box;
+}
+.blue-orange-gantt-row-label {
+  font-size: 0.875rem;
+  color: var(--blue-orange-gantt-row-label-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.blue-orange-gantt-row-timeline {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+.blue-orange-gantt-col-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--blue-orange-gantt-col-line-color);
+  pointer-events: none;
+}
