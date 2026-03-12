@@ -101,18 +101,9 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                     </div>
                 )}
 
-                {/* Render messages in order (newest last) */}
-                {messages.map((message) => (
-                    <div key={message.id} className="blue-orange-chat-window-message">
-                        <div className="blue-orange-chat-window-message-content">
-                            {message.content}
-                        </div>
-                    </div>
-                ))}
+                {/* Render message components passed as children */}
+                {children}
             </div>
-
-            {/* Children rendered at bottom (typing indicators, snoozed bar, etc.) */}
-            {children}
         </div>
     );
 };
