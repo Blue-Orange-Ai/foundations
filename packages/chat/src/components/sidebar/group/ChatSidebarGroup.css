@@ -75,7 +75,27 @@
     color: #ffffff;
 }
 
-/* Show action buttons when hovering the group row */
+/* Show action buttons when hovering the group row, hide unread badge */
 .blue-orange-chat-sidebar-group:hover .blue-orange-chat-sidebar-group-action-btn {
     display: flex;
+}
+
+.blue-orange-chat-sidebar-group:hover .blue-orange-chat-sidebar-group-unread-badge {
+    display: none;
+}
+
+/* Unread badge on collapsed group */
+.blue-orange-chat-sidebar-group-unread-badge {
+    font-size: 11px;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    text-align: center;
+    line-height: 18px;
+    padding: 0 5px;
+    background-color: #e74c3c;
+    color: #ffffff;
+    font-weight: 600;
+    box-sizing: border-box;
+    display: inline-block;
 }

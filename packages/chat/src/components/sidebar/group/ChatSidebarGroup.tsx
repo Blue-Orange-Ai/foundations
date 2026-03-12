@@ -75,8 +75,16 @@ export const ChatSidebarGroup: React.FC<Props> = ({
         </span>
     );
 
+    const totalUnread = conversations.reduce((sum, c) => sum + c.unreadCount, 0);
+    const hasUnread = !isOpen && totalUnread > 0;
+
     const rightContent = (
         <span className="blue-orange-chat-sidebar-group-right">
+            {hasUnread && (
+                <span className="blue-orange-chat-sidebar-group-unread-badge">
+                    {totalUnread}
+                </span>
+            )}
             {onCreateNew && (
                 <span
                     className="blue-orange-chat-sidebar-group-action-btn"
@@ -94,13 +102,20 @@ export const ChatSidebarGroup: React.FC<Props> = ({
         </span>
     );
 
+    const labelStyle: React.CSSProperties | undefined = hasUnread
+        ? { fontWeight: 700, color: '#ffffff' }
+        : undefined;
+
     return (
-        <div className="blue-orange-chat-sidebar-group" onClick={handleToggle}>
-            <SideBarBodyLabel
-                label={label}
-                icon={iconWithChevron}
-                rightItems={rightContent}
-            />
+        <div className="blue-orange-chat-sidebar-group">
+            <div onClick={handleToggle}>
+                <SideBarBodyLabel
+                    label={label}
+                    icon={iconWithChevron}
+                    style={labelStyle}
+                    rightItems={rightContent}
+                />
+            </div>
             {isOpen && filteredConversations.map(conversation => {
                 const isActive = activeConversationId === conversation.id;
                 const hasUnread = conversation.unreadCount > 0;
