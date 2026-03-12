@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from "react";
 import {
     SideBarBodyLabel,
     SideBarBodyItem,
+    ContextMenu,
+    IContextMenuItem,
 } from "@blue-orange-ai/foundations-core";
 import {
     getConversationIcon,
@@ -24,6 +26,10 @@ interface Props {
     activeConversationId?: string;
     onConversationClick?: (conversation: IChatConversation) => void;
     onConversationContextMenu?: (e: React.MouseEvent, conversation: IChatConversation) => void;
+    groupContextMenuItems?: IContextMenuItem[];
+    onGroupContextMenuClick?: (item: IContextMenuItem) => void;
+    conversationContextMenuItems?: (conversation: IChatConversation) => IContextMenuItem[];
+    onConversationContextMenuClick?: (item: IContextMenuItem, conversation: IChatConversation) => void;
 }
 
 export const ChatSidebarGroup: React.FC<Props> = ({
@@ -36,7 +42,11 @@ export const ChatSidebarGroup: React.FC<Props> = ({
     icon,
     activeConversationId,
     onConversationClick,
-    onConversationContextMenu
+    onConversationContextMenu,
+    groupContextMenuItems,
+    onGroupContextMenuClick,
+    conversationContextMenuItems,
+    onConversationContextMenuClick
 }) => {
     const { filterQuery } = useContext(ChatSidebarContext);
 
@@ -106,21 +116,36 @@ export const ChatSidebarGroup: React.FC<Props> = ({
         ? { fontWeight: 700, color: '#ffffff' }
         : undefined;
 
+    const groupLabel = (
+        <div onClick={handleToggle}>
+            <SideBarBodyLabel
+                label={label}
+                icon={iconWithChevron}
+                style={labelStyle}
+                rightItems={rightContent}
+            />
+        </div>
+    );
+
     return (
         <div className="blue-orange-chat-sidebar-group">
-            <div onClick={handleToggle}>
-                <SideBarBodyLabel
-                    label={label}
-                    icon={iconWithChevron}
-                    style={labelStyle}
-                    rightItems={rightContent}
-                />
-            </div>
+            {groupContextMenuItems && groupContextMenuItems.length > 0 ? (
+                <ContextMenu
+                    items={groupContextMenuItems}
+                    onClick={onGroupContextMenuClick}
+                    rightClick={true}
+                >
+                    {groupLabel}
+                </ContextMenu>
+            ) : groupLabel}
             {isOpen && filteredConversations.map(conversation => {
                 const isActive = activeConversationId === conversation.id;
-                const hasUnread = conversation.unreadCount > 0;
+                const hasUnreadItem = conversation.unreadCount > 0;
+                const itemContextMenuItems = conversationContextMenuItems
+                    ? conversationContextMenuItems(conversation)
+                    : undefined;
 
-                return (
+                const conversationItem = (
                     <SideBarBodyItem
                         key={conversation.id}
                         label={conversation.name}
@@ -129,10 +154,25 @@ export const ChatSidebarGroup: React.FC<Props> = ({
                         icon={getConversationIcon(conversation)}
                         badge={getConversationBadge(conversation)}
                         defaultStyle={getConversationLabelStyle(conversation)}
-                        activeStyle={{ fontWeight: hasUnread ? 700 : 400, color: '#ffffff' }}
+                        activeStyle={{ fontWeight: hasUnreadItem ? 700 : 400, color: '#ffffff' }}
                         onClick={onConversationClick ? () => onConversationClick(conversation) : undefined}
                     />
                 );
+
+                if (itemContextMenuItems && itemContextMenuItems.length > 0) {
+                    return (
+                        <ContextMenu
+                            key={conversation.id}
+                            items={itemContextMenuItems}
+                            onClick={(item) => onConversationContextMenuClick?.(item, conversation)}
+                            rightClick={true}
+                        >
+                            {conversationItem}
+                        </ContextMenu>
+                    );
+                }
+
+                return conversationItem;
             })}
         </div>
     );

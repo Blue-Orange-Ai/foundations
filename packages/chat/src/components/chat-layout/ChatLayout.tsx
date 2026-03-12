@@ -5,7 +5,8 @@ import {
     VerticalSplitPage,
     SplitPageMajor,
     SplitPageMinor,
-    SplitDirectionVerticalPage
+    SplitDirectionVerticalPage,
+    IContextMenuItem,
 } from '@blue-orange-ai/foundations-core';
 import {
     IChatGroup,
@@ -70,6 +71,10 @@ interface ChatLayoutProps {
     onGroupToggle?: (label: string) => void;
     onGroupCreateNew?: (label: string) => void;
     onConversationContextMenu?: (e: React.MouseEvent, conversation: IChatConversation) => void;
+    groupContextMenuItems?: IContextMenuItem[];
+    onGroupContextMenuClick?: (item: IContextMenuItem, groupLabel: string) => void;
+    conversationContextMenuItems?: (conversation: IChatConversation) => IContextMenuItem[];
+    onConversationContextMenuClick?: (item: IContextMenuItem, conversation: IChatConversation) => void;
 }
 
 const CONSECUTIVE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
@@ -110,7 +115,11 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     onCloseUserDetail,
     onGroupToggle,
     onGroupCreateNew,
-    onConversationContextMenu
+    onConversationContextMenu,
+    groupContextMenuItems,
+    onGroupContextMenuClick,
+    conversationContextMenuItems,
+    onConversationContextMenuClick
 }) => {
     const [replyTo, setReplyTo] = useState<IChatMessage | null>(null);
 
@@ -251,6 +260,10 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                     onConversationContextMenu={onConversationContextMenu}
                     onToggle={onGroupToggle ? () => onGroupToggle(group.label) : undefined}
                     onCreateNew={onGroupCreateNew ? () => onGroupCreateNew(group.label) : undefined}
+                    groupContextMenuItems={groupContextMenuItems}
+                    onGroupContextMenuClick={onGroupContextMenuClick ? (item) => onGroupContextMenuClick(item, group.label) : undefined}
+                    conversationContextMenuItems={conversationContextMenuItems}
+                    onConversationContextMenuClick={onConversationContextMenuClick}
                 />
             ))}
         </ChatSidebar>

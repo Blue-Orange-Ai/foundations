@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { SideBarState } from '@blue-orange-ai/foundations-core';
+import { SideBarState, IContextMenuItem, IContextMenuType } from '@blue-orange-ai/foundations-core';
 import { ChatLayout } from '../../components/chat-layout/ChatLayout';
 import {
     IChatGroup,
@@ -222,6 +222,38 @@ export const Workspace: React.FC = () => {
         return activeConversation.members.filter((m) => m.snoozeUntil && m.snoozeUntil > new Date());
     }, [activeConversation]);
 
+    // -- Context menus --
+
+    const groupContextMenuItems: IContextMenuItem[] = useMemo(() => [
+        { type: IContextMenuType.HEADING, label: 'Group Actions', value: '' },
+        { type: IContextMenuType.CONTENT, label: 'Create Channel', icon: 'ri-add-line', value: 'create-channel' },
+        { type: IContextMenuType.CONTENT, label: 'Browse Channels', icon: 'ri-search-line', value: 'browse' },
+        { type: IContextMenuType.SEPARATOR, label: '' },
+        { type: IContextMenuType.CONTENT, label: 'Collapse All', icon: 'ri-contract-up-down-line', value: 'collapse-all' },
+        { type: IContextMenuType.CONTENT, label: 'Mark All as Read', icon: 'ri-check-double-line', value: 'mark-all-read' },
+    ], []);
+
+    const handleGroupContextMenuClick = useCallback((item: IContextMenuItem, groupLabel: string) => {
+        console.log(`[Workspace] Group "${groupLabel}" context menu:`, item.value);
+    }, []);
+
+    const getConversationContextMenuItems = useCallback((conversation: IChatConversation): IContextMenuItem[] => [
+        { type: IContextMenuType.HEADING, label: conversation.name, value: '' },
+        { type: IContextMenuType.CONTENT, label: 'Mark as Read', icon: 'ri-check-line', value: 'mark-read' },
+        { type: IContextMenuType.CONTENT, label: conversation.starred ? 'Unstar' : 'Star', icon: conversation.starred ? 'ri-star-fill' : 'ri-star-line', value: 'toggle-star' },
+        { type: IContextMenuType.CONTENT, label: 'Mute Conversation', icon: 'ri-volume-mute-line', value: 'mute' },
+        { type: IContextMenuType.SEPARATOR, label: '' },
+        { type: IContextMenuType.CONTENT, label: 'Copy Link', icon: 'ri-link', value: 'copy-link' },
+        { type: IContextMenuType.CONTENT, label: 'Move to...', icon: 'ri-folder-transfer-line', value: 'move' },
+        { type: IContextMenuType.SEPARATOR, label: '' },
+        { type: IContextMenuType.CONTENT, label: 'Leave Conversation', icon: 'ri-logout-box-line', value: 'leave' },
+    ], []);
+
+    const handleConversationContextMenuClick = useCallback((item: IContextMenuItem, conversation: IChatConversation) => {
+        console.log(`[Workspace] Conversation "${conversation.name}" context menu:`, item.value);
+    }, []);
+
+
     // -- Placeholder handlers --
 
     const handleNewChat = useCallback(() => {
@@ -263,6 +295,10 @@ export const Workspace: React.FC = () => {
                 detailUser={detailUser || undefined}
                 onCloseUserDetail={handleCloseUserDetail}
                 onGroupToggle={handleGroupToggle}
+                groupContextMenuItems={groupContextMenuItems}
+                onGroupContextMenuClick={handleGroupContextMenuClick}
+                conversationContextMenuItems={getConversationContextMenuItems}
+                onConversationContextMenuClick={handleConversationContextMenuClick}
             />
         </div>
     );

@@ -146,6 +146,27 @@
     color: #ffffff;
 }
 
+/* Context menu styling */
+.blue-orange-chat-sidebar-wrapper .blue-orange-default-context-menu {
+    background-color: #ffffff;
+    color: #1d1c1d;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.blue-orange-chat-sidebar-wrapper .blue-orange-default-context-menu-row:hover {
+    background-color: #1264A3;
+    color: #ffffff;
+}
+
+.blue-orange-chat-sidebar-wrapper .blue-orange-default-context-menu-row-icon {
+    color: inherit;
+}
+
+.blue-orange-chat-sidebar-wrapper .blue-orange-default-context-menu-row-general-text {
+    color: inherit;
+}
+
 /* Empty state for search */
 .blue-orange-chat-sidebar-wrapper .blue-orange-sidebar-body-empty {
     color: rgba(255, 255, 255, 0.5);
