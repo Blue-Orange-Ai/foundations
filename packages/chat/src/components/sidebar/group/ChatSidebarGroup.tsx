@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import {
-    SideBarBodyGroup,
     SideBarBodyLabel,
     SideBarBodyItem,
-    ButtonIcon
 } from "@blue-orange-ai/foundations-core";
 import {
     getConversationIcon,
@@ -60,13 +58,6 @@ export const ChatSidebarGroup: React.FC<Props> = ({
         }
     };
 
-    const handleOpenedChange = (opened: boolean) => {
-        setIsOpen(opened);
-        if (onToggle) {
-            onToggle();
-        }
-    };
-
     const caretClass = isOpen
         ? "ri-arrow-down-s-line"
         : "ri-arrow-right-s-line";
@@ -86,17 +77,14 @@ export const ChatSidebarGroup: React.FC<Props> = ({
     );
 
     return (
-        <SideBarBodyGroup
-            opened={isOpen}
-            onOpenedChange={handleOpenedChange}
-        >
+        <div className="blue-orange-chat-sidebar-group">
             <SideBarBodyLabel
                 label={label}
                 icon={icon ? <i className={`${icon} blue-orange-chat-sidebar-group-icon`} /> : undefined}
                 onClick={handleToggle}
                 rightItems={rightContent}
             />
-            {filteredConversations.map(conversation => {
+            {isOpen && filteredConversations.map(conversation => {
                 const isActive = activeConversationId === conversation.id;
                 const hasUnread = conversation.unreadCount > 0;
 
@@ -114,6 +102,6 @@ export const ChatSidebarGroup: React.FC<Props> = ({
                     />
                 );
             })}
-        </SideBarBodyGroup>
+        </div>
     );
 };
