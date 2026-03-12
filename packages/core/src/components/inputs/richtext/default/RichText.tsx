@@ -36,12 +36,14 @@ interface Props {
 	displayFormatting?: boolean,
 	editorHeight?: number,
 	minEditorHeight?: number,
+	singleLine?: boolean,
 	allowMentions?: boolean,
 	allowEmojis?: boolean,
 	uploadPermissions?: Array<MediaPermission>,
 	disabled?: boolean,
 	clearState?: string,
-	onChange?: (content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean) => void
+	onChange?: (content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean) => void,
+	onEnter?: () => void
 }
 
 const defaultUploadPermission: MediaPermission[] = [{
@@ -57,12 +59,14 @@ export const RichText: React.FC<Props> = ({
 											  placeholder,
 											  displayFormatting= true,
 											  minEditorHeight = 10,
+											  singleLine = false,
 											  allowMentions=true,
 											  allowEmojis=true,
 											  uploadPermissions=defaultUploadPermission,
 											  disabled = false,
 											  clearState = "",
-											  onChange
+											  onChange,
+											  onEnter
 										  }) => {
 
 
@@ -113,6 +117,8 @@ export const RichText: React.FC<Props> = ({
 	const initRef = useRef(false);
 
 	const disabledRef = useRef(disabled);
+
+	const onEnterRef = useRef(onEnter);
 
 	const initialClearState = useRef(clearState);
 
@@ -308,6 +314,10 @@ export const RichText: React.FC<Props> = ({
 
 	}
 
+	useEffect(() => {
+		onEnterRef.current = onEnter;
+	}, [onEnter]);
+
 	const initialise = () => {
 		const intervalId = setInterval(() => {
 			if (editorContainerRef.current) {
@@ -326,6 +336,11 @@ export const RichText: React.FC<Props> = ({
 			editorContainerRef.current.addEventListener("keydown", (ev) => {
 				if (disabledRef.current === true) {
 					ev.preventDefault();
+					return;
+				}
+				if (ev.key === 'Enter' && !ev.shiftKey && onEnterRef.current) {
+					ev.preventDefault();
+					onEnterRef.current();
 				}
 			})
 		}
@@ -388,7 +403,7 @@ export const RichText: React.FC<Props> = ({
 	}, [clearState]);
 
 	return (
-		<div className='blue-orange-rich-text-editor'>
+		<div className={`blue-orange-rich-text-editor${singleLine ? ' blue-orange-rich-text-editor-single-line' : ''}`}>
 			{displayHeading &&
 				<div className="blue-orange-rich-text-editor-heading">
 					<ButtonIcon
@@ -450,20 +465,22 @@ export const RichText: React.FC<Props> = ({
 			<div ref={editorContainerRef}>
 				<EditorContent editor={editor}></EditorContent>
 			</div>
-			<div className="blue-orange-rich-text-editor-uploaded-files">
-				{storedFiles.map((item, index) => (
-					<UploadedFile
-						key={item.uuid}
-						upload={item}
-						uploadPermissions={uploadPermissions}
-						onRemove={removeStoredFile}
-						onMediaUploaded={(media: Media) => {
-							item.media = media;
-							editorChanged();
-						}}
-					></UploadedFile>
-				))}
-			</div>
+			{storedFiles.length > 0 &&
+				<div className="blue-orange-rich-text-editor-uploaded-files">
+					{storedFiles.map((item, index) => (
+						<UploadedFile
+							key={item.uuid}
+							upload={item}
+							uploadPermissions={uploadPermissions}
+							onRemove={removeStoredFile}
+							onMediaUploaded={(media: Media) => {
+								item.media = media;
+								editorChanged();
+							}}
+						></UploadedFile>
+					))}
+				</div>
+			}
 			<div className="blue-orange-rich-text-editor-heading-footer">
 				<div className="blue-orange-rich-text-editor-heading-footer-left-cont">
 					<FileInputWrapper accept={"*/*"} onFileSelect={fileSelected}>

@@ -91,9 +91,11 @@ export const ChatInput: React.FC<Props> = ({
                         placeholder={placeholder}
                         allowEmojis={true}
                         allowMentions={true}
-                        displayFormatting={false}
+                        displayFormatting={true}
+                        singleLine={true}
                         clearState={clearState}
                         onChange={handleChange}
+                        onEnter={handleSend}
                     />
                 </div>
                 <button
