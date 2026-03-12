@@ -1,14 +1,15 @@
 
 .blue-orange-chat-input-container {
-    width: 100%;
-    border-top: 1px solid #e0e0e0;
+    margin: 0 20px 16px 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     padding: 8px 16px;
     box-sizing: border-box;
     background-color: #ffffff;
 }
 
 .dark .blue-orange-chat-input-container {
-    border-top: 1px solid #3a3a3a;
+    border-color: #3a3a3a;
     background-color: #1e1e1e;
 }
 
