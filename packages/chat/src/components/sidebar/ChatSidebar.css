@@ -1,5 +1,14 @@
 
 .blue-orange-chat-sidebar-wrapper {
+    --chat-sidebar-item-padding-y: 8px;
+    --chat-sidebar-item-padding-x: 10px;
+    --chat-sidebar-item-font-size: 0.8rem;
+    --chat-sidebar-item-icon-gap: 8px;
+    --chat-sidebar-item-border-radius: 5px;
+    --chat-sidebar-label-height: 32px;
+    --chat-sidebar-label-font-size: 0.75rem;
+    --chat-sidebar-label-icon-gap: 8px;
+
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -58,8 +67,17 @@
 /* Body items */
 .blue-orange-chat-sidebar-wrapper .blue-orange-sidebar-body-item {
     color: #cfc3cf;
-    border-radius: 6px;
+    border-radius: var(--chat-sidebar-item-border-radius);
     margin: 0 8px;
+    padding-top: var(--chat-sidebar-item-padding-y);
+    padding-bottom: var(--chat-sidebar-item-padding-y);
+    padding-left: var(--chat-sidebar-item-padding-x);
+    padding-right: var(--chat-sidebar-item-padding-x);
+    font-size: var(--chat-sidebar-item-font-size);
+}
+
+.blue-orange-chat-sidebar-wrapper .blue-orange-sidebar-body-item-icon {
+    margin-right: var(--chat-sidebar-item-icon-gap);
 }
 
 .blue-orange-chat-sidebar-wrapper .blue-orange-sidebar-body-item:hover {
@@ -78,6 +96,12 @@
 /* Body labels (group headers) */
 .blue-orange-chat-sidebar-wrapper .blue-orange-sidebar-body-label {
     color: #cfc3cf;
+    height: var(--chat-sidebar-label-height);
+    font-size: var(--chat-sidebar-label-font-size);
+}
+
+.blue-orange-chat-sidebar-wrapper .blue-orange-sidebar-body-label-icon {
+    margin-right: var(--chat-sidebar-label-icon-gap);
 }
 
 .blue-orange-chat-sidebar-wrapper .blue-orange-sidebar-body-label-text {
@@ -130,4 +154,20 @@
 /* Accordion chevron icons */
 .blue-orange-chat-sidebar-wrapper .blue-orange-accordion-header-icon {
     color: #cfc3cf;
+}
+
+.blue-orange-sidebar-body-item {
+    margin: 0px 0px !important;
+    width: calc(100% - 10px) !important;
+    padding-right: 10px;
+}
+
+.blue-orange-chat-sidebar-group {
+    padding-left: 0px !important;
+}
+
+.blue-orange-sidebar-body-label {
+    width: calc(100% - 20px);
+    padding-left: 10px;
+    padding-right: 10px;
 }

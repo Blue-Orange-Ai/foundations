@@ -1,11 +1,54 @@
 .blue-orange-chat-sidebar-group {
     padding-left: 10px;
     width: calc(100% - 10px);
+    cursor: pointer;
+}
+
+/* Icon wrapper: positions chevron over the icon */
+.blue-orange-chat-sidebar-group-icon-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
 }
 
 .blue-orange-chat-sidebar-group-icon {
     font-size: 13px;
     color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Chevron: hidden by default, overlays the icon on hover */
+.blue-orange-chat-sidebar-group-caret {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+/* When no icon exists, always show the chevron */
+.blue-orange-chat-sidebar-group-caret-always {
+    display: flex;
+    position: static;
+    transform: none;
+}
+
+/* On hover: show chevron, hide icon */
+.blue-orange-chat-sidebar-group:hover .blue-orange-chat-sidebar-group-icon {
+    visibility: hidden;
+}
+
+.blue-orange-chat-sidebar-group:hover .blue-orange-chat-sidebar-group-caret {
+    display: flex;
 }
 
 .blue-orange-chat-sidebar-group-right {
@@ -14,14 +57,7 @@
     gap: 2px;
 }
 
-.blue-orange-chat-sidebar-group-caret {
-    font-size: 18px;
-    color: rgba(255, 255, 255, 0.6);
-    display: flex;
-    align-items: center;
-}
-
-/* "+" button: hidden by default, shown on hover of the label row */
+/* "+" button: hidden by default, shown on hover of the group row */
 .blue-orange-chat-sidebar-group-add-btn {
     display: none;
     align-items: center;
@@ -39,7 +75,7 @@
     color: #ffffff;
 }
 
-/* Show the "+" button when hovering the label row */
-.blue-orange-sidebar-body-label:hover .blue-orange-chat-sidebar-group-add-btn {
+/* Show the "+" button when hovering the group row */
+.blue-orange-chat-sidebar-group:hover .blue-orange-chat-sidebar-group-add-btn {
     display: flex;
 }

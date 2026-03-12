@@ -62,26 +62,33 @@ export const ChatSidebarGroup: React.FC<Props> = ({
         ? "ri-arrow-down-s-line"
         : "ri-arrow-right-s-line";
 
-    const rightContent = (
-        <span className="blue-orange-chat-sidebar-group-right">
-            {onCreateNew && (
-                <span
-                    className="blue-orange-chat-sidebar-group-add-btn"
-                    onClick={(e) => { e.stopPropagation(); onCreateNew(); }}
-                >
-                    <i className="ri-add-line" />
-                </span>
-            )}
+    const iconWithChevron = icon ? (
+        <span className="blue-orange-chat-sidebar-group-icon-wrapper">
+            <i className={`${icon} blue-orange-chat-sidebar-group-icon`} />
             <i className={`${caretClass} blue-orange-chat-sidebar-group-caret`} />
+        </span>
+    ) : (
+        <span className="blue-orange-chat-sidebar-group-icon-wrapper">
+            <i className={`${caretClass} blue-orange-chat-sidebar-group-caret blue-orange-chat-sidebar-group-caret-always`} />
         </span>
     );
 
+    const rightContent = onCreateNew ? (
+        <span className="blue-orange-chat-sidebar-group-right">
+            <span
+                className="blue-orange-chat-sidebar-group-add-btn"
+                onClick={(e) => { e.stopPropagation(); onCreateNew(); }}
+            >
+                <i className="ri-add-line" />
+            </span>
+        </span>
+    ) : undefined;
+
     return (
-        <div className="blue-orange-chat-sidebar-group">
+        <div className="blue-orange-chat-sidebar-group" onClick={handleToggle}>
             <SideBarBodyLabel
                 label={label}
-                icon={icon ? <i className={`${icon} blue-orange-chat-sidebar-group-icon`} /> : undefined}
-                onClick={handleToggle}
+                icon={iconWithChevron}
                 rightItems={rightContent}
             />
             {isOpen && filteredConversations.map(conversation => {

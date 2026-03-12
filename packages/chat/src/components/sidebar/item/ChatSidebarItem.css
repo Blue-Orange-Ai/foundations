@@ -2,6 +2,9 @@
 .blue-orange-chat-sidebar-item-channel-icon {
     font-size: 14px;
     opacity: 0.7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* DM avatar with status overlay */
