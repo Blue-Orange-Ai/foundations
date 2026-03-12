@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
     SideBarBodyGroup,
     SideBarBodyLabel,
@@ -11,6 +11,7 @@ import {
     getConversationLabelStyle
 } from "../item/ChatSidebarItem";
 import { IChatConversation } from "../../../interfaces/ChatInterfaces";
+import { ChatSidebarContext } from "../ChatSidebar";
 
 import './ChatSidebarGroup.css';
 
@@ -37,6 +38,14 @@ export const ChatSidebarGroup: React.FC<Props> = ({
     onConversationClick,
     onConversationContextMenu
 }) => {
+    const { filterQuery } = useContext(ChatSidebarContext);
+
+    const filteredConversations = filterQuery.trim()
+        ? conversations.filter(c =>
+            c.name.toLowerCase().includes(filterQuery.trim().toLowerCase())
+        )
+        : conversations;
+
     const [isOpen, setIsOpen] = useState(!collapsed);
 
     useEffect(() => {
@@ -87,7 +96,7 @@ export const ChatSidebarGroup: React.FC<Props> = ({
                 onClick={handleToggle}
                 rightItems={rightContent}
             />
-            {conversations.map(conversation => {
+            {filteredConversations.map(conversation => {
                 const isActive = activeConversationId === conversation.id;
                 const hasUnread = conversation.unreadCount > 0;
 
