@@ -342,6 +342,10 @@ export const RichText: React.FC<Props> = ({
 					ev.preventDefault();
 					onEnterRef.current();
 				}
+				if (ev.key === 'Enter' && ev.shiftKey && onEnterRef.current && editor) {
+					ev.preventDefault();
+					editor.commands.enter();
+				}
 			})
 		}
 	}
