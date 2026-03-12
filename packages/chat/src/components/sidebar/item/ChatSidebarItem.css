@@ -88,12 +88,14 @@
     display: inline-block;
 }
 
-/* Typing badge (three dots) */
-.blue-orange-chat-sidebar-item-typing-badge {
+/* Typing indicator replacing the icon */
+.blue-orange-chat-sidebar-item-typing-icon {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 2px;
-    padding: 0 4px;
+    width: 20px;
+    height: 20px;
 }
 
 .blue-orange-chat-sidebar-item-typing-dot {

@@ -19,6 +19,7 @@ interface Props {
     collapsed?: boolean;
     onToggle?: () => void;
     onCreateNew?: () => void;
+    onMoreActions?: (e: React.MouseEvent) => void;
     icon?: string;
     activeConversationId?: string;
     onConversationClick?: (conversation: IChatConversation) => void;
@@ -31,6 +32,7 @@ export const ChatSidebarGroup: React.FC<Props> = ({
     collapsed = false,
     onToggle,
     onCreateNew,
+    onMoreActions,
     icon,
     activeConversationId,
     onConversationClick,
@@ -73,16 +75,24 @@ export const ChatSidebarGroup: React.FC<Props> = ({
         </span>
     );
 
-    const rightContent = onCreateNew ? (
+    const rightContent = (
         <span className="blue-orange-chat-sidebar-group-right">
+            {onCreateNew && (
+                <span
+                    className="blue-orange-chat-sidebar-group-action-btn"
+                    onClick={(e) => { e.stopPropagation(); onCreateNew(); }}
+                >
+                    <i className="ri-add-line" />
+                </span>
+            )}
             <span
-                className="blue-orange-chat-sidebar-group-add-btn"
-                onClick={(e) => { e.stopPropagation(); onCreateNew(); }}
+                className="blue-orange-chat-sidebar-group-action-btn"
+                onClick={(e) => { e.stopPropagation(); if (onMoreActions) onMoreActions(e); }}
             >
-                <i className="ri-add-line" />
+                <i className="ri-more-fill" />
             </span>
         </span>
-    ) : undefined;
+    );
 
     return (
         <div className="blue-orange-chat-sidebar-group" onClick={handleToggle}>

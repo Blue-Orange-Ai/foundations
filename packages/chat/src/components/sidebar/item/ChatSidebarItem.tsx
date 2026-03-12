@@ -19,6 +19,18 @@ const getStatusClass = (status: ChatUserStatus): string => {
 };
 
 export const getConversationIcon = (conversation: IChatConversation): React.ReactNode => {
+    const isTyping = conversation.typingUsers && conversation.typingUsers.length > 0;
+
+    if (isTyping) {
+        return (
+            <span className="blue-orange-chat-sidebar-item-typing-icon">
+                <span className="blue-orange-chat-sidebar-item-typing-dot" />
+                <span className="blue-orange-chat-sidebar-item-typing-dot" />
+                <span className="blue-orange-chat-sidebar-item-typing-dot" />
+            </span>
+        );
+    }
+
     if (conversation.type === ChatConversationType.CHANNEL) {
         return <i className="ri-hashtag blue-orange-chat-sidebar-item-channel-icon" />;
     }
@@ -49,23 +61,10 @@ export const getConversationIcon = (conversation: IChatConversation): React.Reac
 };
 
 export const getConversationBadge = (conversation: IChatConversation): React.ReactNode | undefined => {
-    const hasUnread = conversation.unreadCount > 0;
-    const isTyping = conversation.typingUsers && conversation.typingUsers.length > 0;
-
-    if (hasUnread) {
+    if (conversation.unreadCount > 0) {
         return (
             <span className="blue-orange-chat-sidebar-item-unread-badge">
                 {conversation.unreadCount}
-            </span>
-        );
-    }
-
-    if (isTyping) {
-        return (
-            <span className="blue-orange-chat-sidebar-item-typing-badge">
-                <span className="blue-orange-chat-sidebar-item-typing-dot" />
-                <span className="blue-orange-chat-sidebar-item-typing-dot" />
-                <span className="blue-orange-chat-sidebar-item-typing-dot" />
             </span>
         );
     }

@@ -57,8 +57,8 @@
     gap: 2px;
 }
 
-/* "+" button: hidden by default, shown on hover of the group row */
-.blue-orange-chat-sidebar-group-add-btn {
+/* Action buttons: hidden by default, shown on hover of the group row */
+.blue-orange-chat-sidebar-group-action-btn {
     display: none;
     align-items: center;
     justify-content: center;
@@ -70,12 +70,12 @@
     font-size: 16px;
 }
 
-.blue-orange-chat-sidebar-group-add-btn:hover {
+.blue-orange-chat-sidebar-group-action-btn:hover {
     background-color: rgba(255, 255, 255, 0.1);
     color: #ffffff;
 }
 
-/* Show the "+" button when hovering the group row */
-.blue-orange-chat-sidebar-group:hover .blue-orange-chat-sidebar-group-add-btn {
+/* Show action buttons when hovering the group row */
+.blue-orange-chat-sidebar-group:hover .blue-orange-chat-sidebar-group-action-btn {
     display: flex;
 }
