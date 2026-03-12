@@ -26,6 +26,10 @@ const formatShortTimestamp = (date: Date): string => {
     return moment(date).format('h:mm');
 };
 
+const stripTrailingEmptyParagraphs = (html: string): string => {
+    return html.replace(/(<p>(\s|<br\s*\/?>)*<\/p>)+$/gi, '');
+};
+
 const truncateContent = (content: string, maxLength: number): string => {
     const text = content.replace(/<[^>]*>/g, '');
     if (text.length <= maxLength) {
@@ -116,7 +120,7 @@ export const ChatMessage: React.FC<Props> = ({
                     {renderReplyReference()}
                     <div
                         className="blue-orange-chat-message-content"
-                        dangerouslySetInnerHTML={{ __html: message.content }}
+                        dangerouslySetInnerHTML={{ __html: stripTrailingEmptyParagraphs(message.content) }}
                     />
                     {children}
                 </div>
@@ -142,7 +146,7 @@ export const ChatMessage: React.FC<Props> = ({
                 {renderReplyReference()}
                 <div
                     className="blue-orange-chat-message-content"
-                    dangerouslySetInnerHTML={{ __html: message.content }}
+                    dangerouslySetInnerHTML={{ __html: stripTrailingEmptyParagraphs(message.content) }}
                 />
                 {children}
             </div>

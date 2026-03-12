@@ -43,11 +43,16 @@ export const ChatInput: React.FC<Props> = ({
         return text.trim().length === 0;
     };
 
+    const stripTrailingEmptyParagraphs = (html: string): string => {
+        return html.replace(/(<p>(\s|<br\s*\/?>)*<\/p>)+$/gi, "");
+    };
+
     const handleSend = useCallback(() => {
         if (isContentEmpty(content) && attachments.length === 0) {
             return;
         }
-        onSend(content, mentions, attachments);
+        const cleanedContent = stripTrailingEmptyParagraphs(content);
+        onSend(cleanedContent, mentions, attachments);
         setContent("");
         setMentions([]);
         setAttachments([]);

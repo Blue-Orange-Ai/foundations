@@ -3,7 +3,7 @@
     margin: 0 20px 16px 20px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    padding: 8px 16px;
+    /*padding: 8px 16px;*/
     box-sizing: border-box;
     background-color: #ffffff;
 }
@@ -116,7 +116,8 @@
     color: #999999;
     font-size: 1.1rem;
     flex-shrink: 0;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
+    margin-right: 8px;
     transition: background-color 0.15s ease, color 0.15s ease;
 }
 
@@ -148,4 +149,10 @@
 
 .dark .blue-orange-chat-input-send-btn-active:hover {
     background-color: #4a8be5;
+}
+
+.blue-orange-rich-text-editor-single-line .tiptap {
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    font-size: 0.9rem;
 }
