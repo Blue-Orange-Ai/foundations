@@ -211,7 +211,14 @@ export const RichText: React.FC<Props> = ({
 						return editor.commands.newlineInCode();
 					}
 					if (editor.isActive('listItem')) {
-						return editor.commands.splitListItem('listItem');
+						if (editor.commands.splitListItem('listItem')) return true;
+						if (editor.isActive('bulletList')) {
+							return editor.chain().focus().toggleBulletList().run();
+						}
+						if (editor.isActive('orderedList')) {
+							return editor.chain().focus().toggleOrderedList().run();
+						}
+						return true;
 					}
 					if (editor.commands.liftEmptyBlock()) {
 						return true;
