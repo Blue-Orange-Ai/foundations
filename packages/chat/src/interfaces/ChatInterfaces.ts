@@ -25,6 +25,12 @@ export interface IChatReaction {
     userIds: string[];
 }
 
+export interface IChatThread {
+    replyCount: number;
+    participants: IChatUser[];
+    lastReplyTimestamp?: Date;
+}
+
 export interface IChatMessage {
     id: string;
     content: string;
@@ -34,6 +40,7 @@ export interface IChatMessage {
     replyTo?: IChatMessage;
     attachments?: string[];
     edited?: boolean;
+    thread?: IChatThread;
 }
 
 export interface IChatConversation {

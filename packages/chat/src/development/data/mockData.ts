@@ -124,6 +124,31 @@ export const engineeringMessages: IChatMessage[] = [
 engineeringMessages[7].replyTo = engineeringMessages[6];
 engineeringMessages[12].replyTo = engineeringMessages[10];
 
+// Thread indicators on engineering messages
+engineeringMessages[0].thread = {
+    replyCount: 3,
+    participants: [userCarla, userBob, userEva],
+    lastReplyTimestamp: daysAgo(5),
+};
+
+engineeringMessages[3].thread = {
+    replyCount: 5,
+    participants: [currentUser, userDave, userFrank, userEva, userGrace],
+    lastReplyTimestamp: daysAgo(3),
+};
+
+engineeringMessages[10].thread = {
+    replyCount: 4,
+    participants: [userDave, userBob, currentUser, userCarla],
+    lastReplyTimestamp: hoursAgo(1),
+};
+
+engineeringMessages[13].thread = {
+    replyCount: 2,
+    participants: [userFrank, currentUser],
+    lastReplyTimestamp: minutesAgo(28),
+};
+
 // -- Mock Messages: DM with Bob --
 
 export const dmBobMessages: IChatMessage[] = [

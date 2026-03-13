@@ -178,6 +178,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                     onReply={handleReply}
                     onReact={onReactToMessage ? () => onReactToMessage(message, '') : undefined}
                     onAvatarClick={onAvatarClick}
+                    onThreadClick={handleReply}
                 >
                     {message.reactions && message.reactions.length > 0 && (
                         <MessageReactions

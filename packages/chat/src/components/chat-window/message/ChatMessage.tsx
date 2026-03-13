@@ -5,12 +5,15 @@ import { IChatMessage, IChatUser } from '../../../interfaces/ChatInterfaces';
 
 import './ChatMessage.css';
 
+const MAX_THREAD_AVATARS = 5;
+
 interface Props {
     message: IChatMessage;
     isConsecutive?: boolean;
     onReply?: (message: IChatMessage) => void;
     onReact?: (message: IChatMessage) => void;
     onAvatarClick?: (user: IChatUser) => void;
+    onThreadClick?: (message: IChatMessage) => void;
     children?: React.ReactNode;
 }
 
@@ -44,6 +47,7 @@ export const ChatMessage: React.FC<Props> = ({
     onReply,
     onReact,
     onAvatarClick,
+    onThreadClick,
     children
 }) => {
 
@@ -78,6 +82,45 @@ export const ChatMessage: React.FC<Props> = ({
                 <span className="blue-orange-chat-message-reply-ref-content">
                     {truncateContent(message.replyTo.content, 50)}
                 </span>
+            </div>
+        );
+    };
+
+    const handleThreadClick = () => {
+        if (onThreadClick) {
+            onThreadClick(message);
+        }
+    };
+
+    const renderThreadIndicator = () => {
+        if (!message.thread || message.thread.replyCount === 0) return null;
+        const { replyCount, participants, lastReplyTimestamp } = message.thread;
+        const shown = participants.slice(0, MAX_THREAD_AVATARS);
+        const replyLabel = replyCount === 1 ? '1 reply' : `${replyCount} replies`;
+
+        return (
+            <div
+                className="blue-orange-chat-message-thread-indicator"
+                onClick={handleThreadClick}
+            >
+                <div className="blue-orange-chat-message-thread-avatars">
+                    {shown.map((participant) => (
+                        <Avatar
+                            key={participant.user.id}
+                            user={participant.user}
+                            height={20}
+                            width={20}
+                        />
+                    ))}
+                </div>
+                <span className="blue-orange-chat-message-thread-count">
+                    {replyLabel}
+                </span>
+                {lastReplyTimestamp && (
+                    <span className="blue-orange-chat-message-thread-last-reply">
+                        Last reply {formatTimestamp(lastReplyTimestamp)}
+                    </span>
+                )}
             </div>
         );
     };
@@ -123,6 +166,7 @@ export const ChatMessage: React.FC<Props> = ({
                         dangerouslySetInnerHTML={{ __html: stripTrailingEmptyParagraphs(message.content) }}
                     />
                     {children}
+                    {renderThreadIndicator()}
                 </div>
             </div>
         );
@@ -149,6 +193,7 @@ export const ChatMessage: React.FC<Props> = ({
                     dangerouslySetInnerHTML={{ __html: stripTrailingEmptyParagraphs(message.content) }}
                 />
                 {children}
+                {renderThreadIndicator()}
             </div>
         </div>
     );

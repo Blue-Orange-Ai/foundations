@@ -63,6 +63,10 @@
     padding: 8px 0;
 }
 
+.blue-orange-chat-thread-container .blue-orange-chat-message-thread-indicator {
+    display: none;
+}
+
 .blue-orange-chat-thread-separator {
     display: flex;
     flex-direction: row;
