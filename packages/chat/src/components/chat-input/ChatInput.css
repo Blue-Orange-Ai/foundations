@@ -152,7 +152,14 @@
 }
 
 .blue-orange-rich-text-editor-single-line .tiptap {
-    padding-top: 0px !important;
     padding-bottom: 0px !important;
     font-size: 0.9rem;
+}
+
+.blue-orange-chat-input-editor .blue-orange-rich-text-editor {
+    border: none;
+}
+
+.blue-orange-chat-input-editor .blue-orange-rich-text-editor-heading {
+    width: calc(100% + 38px);
 }

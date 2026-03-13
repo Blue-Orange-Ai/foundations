@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 
 import {StarterKit} from "@tiptap/starter-kit";
 import {AnyExtension, EditorContent, Extensions, useEditor} from "@tiptap/react";
+import {Extension} from "@tiptap/core";
 import {ButtonIcon} from "../../../buttons/button-icon/ButtonIcon";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -191,6 +192,36 @@ export const RichText: React.FC<Props> = ({
 		},
 	})
 
+	const enterKeymapExtension = Extension.create({
+		name: 'enterKeymap',
+		priority: 200,
+		addKeyboardShortcuts() {
+			return {
+				Enter: ({ editor }) => {
+					if (!onEnterRef.current) return false;
+					if (editor.isActive('codeBlock') || editor.isActive('listItem') || editor.isActive('blockquote')) {
+						return false;
+					}
+					onEnterRef.current();
+					return true;
+				},
+				'Shift-Enter': ({ editor }) => {
+					if (!onEnterRef.current) return false;
+					if (editor.isActive('codeBlock')) {
+						return editor.commands.newlineInCode();
+					}
+					if (editor.isActive('listItem')) {
+						return editor.commands.splitListItem('listItem');
+					}
+					if (editor.commands.liftEmptyBlock()) {
+						return true;
+					}
+					return editor.commands.splitBlock();
+				}
+			};
+		}
+	});
+
 	var extensions = [
 		StarterKit,
 		Placeholder.configure({
@@ -201,7 +232,8 @@ export const RichText: React.FC<Props> = ({
 			openOnClick: true,
 		}),
 		mentionExtension,
-		emojiExtension
+		emojiExtension,
+		enterKeymapExtension
 	]
 
 	const extensionsNoMentions = [
@@ -213,7 +245,8 @@ export const RichText: React.FC<Props> = ({
 			protocols: ['ftp', 'mailto'],
 			openOnClick: true,
 		}),
-		emojiExtension
+		emojiExtension,
+		enterKeymapExtension
 	]
 
 	const extensionsNoEmojis = [
@@ -225,7 +258,8 @@ export const RichText: React.FC<Props> = ({
 			protocols: ['ftp', 'mailto'],
 			openOnClick: true,
 		}),
-		mentionExtension
+		mentionExtension,
+		enterKeymapExtension
 	]
 
 	const extensionsNoMentionsNoEmojis: AnyExtension[] = [
@@ -236,7 +270,8 @@ export const RichText: React.FC<Props> = ({
 		Link.configure({
 			protocols: ['ftp', 'mailto'],
 			openOnClick: true,
-		})
+		}),
+		enterKeymapExtension
 	]
 
 	const initExtensions = () => {
@@ -337,14 +372,6 @@ export const RichText: React.FC<Props> = ({
 				if (disabledRef.current === true) {
 					ev.preventDefault();
 					return;
-				}
-				if (ev.key === 'Enter' && !ev.shiftKey && onEnterRef.current) {
-					ev.preventDefault();
-					onEnterRef.current();
-				}
-				if (ev.key === 'Enter' && ev.shiftKey && onEnterRef.current && editor) {
-					ev.preventDefault();
-					editor.commands.enter();
 				}
 			})
 		}
