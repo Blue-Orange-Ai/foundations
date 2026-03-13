@@ -176,7 +176,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                     message={message}
                     isConsecutive={consecutive}
                     onReply={handleReply}
-                    onReact={onReactToMessage ? () => onReactToMessage(message, '') : undefined}
+                    onReact={onReactToMessage ? (_msg, emoji) => onReactToMessage(message, emoji) : undefined}
                     onAvatarClick={onAvatarClick}
                     onThreadClick={handleReply}
                 >
@@ -325,7 +325,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                     onClose={onCloseThread}
                     typingUsers={threadTypingUsers}
                     currentUserId={currentUser.user.id}
-                    onReact={onReactToMessage ? (msg) => onReactToMessage(msg, '') : undefined}
+                    onReact={onReactToMessage ? (msg, emoji) => onReactToMessage(msg, emoji) : undefined}
                     onAvatarClick={onAvatarClick}
                 />
             );

@@ -12,78 +12,37 @@ interface Props {
 
 export const EmojiWrapper: React.FC<Props> = ({children, onSelection}) => {
 
-	const getClientTop = () => {
-		try {
-			const rect = inputRef.current?.getBoundingClientRect() as DOMRect;
-			return rect.top;
-		} catch (e) {
-			return 0;
-		}
-
-	}
-
-	const getClientBottom = () => {
-		try {
-			const rect = inputRef.current?.getBoundingClientRect() as DOMRect;
-			return window.innerHeight - rect.bottom;
-		} catch (e) {
-			return 0;
-		}
-
-	}
-
-	const getClientHeight = () => {
-		try{
-			const rect = inputRef.current?.getBoundingClientRect() as DOMRect;
-			return rect.height;
-		} catch (e) {
-			return 0;
-		}
-
-	}
-
-	const calculateLeftPosition = () => {
-		try{
-			const rect = inputRef.current?.getBoundingClientRect() as DOMRect;
-			const clientWidth = rect.width;
-			const clientLeft = rect.left;
-			const width = 278;
-			const offset = (width - clientWidth) / 2;
-			return Math.max(0, clientLeft - offset);
-		} catch (e) {
-			return 0;
-		}
-
-	}
-
-	const isPosAbove = () => {
-		if (getClientTop() > window.innerHeight / 2) {
-			return true;
-		}
-		return false;
-	}
+	const POPUP_WIDTH = 382;
+	const POPUP_HEIGHT = 400;
+	const GAP = 10;
 
 	const calculateContextWindowPos = () : React.CSSProperties => {
-		if (isPosAbove() && (getClientBottom() + getClientHeight() + 10) < window.innerHeight) {
-			return {
-				left: calculateLeftPosition() + "px",
-				bottom: getClientBottom() + getClientHeight() + 10 + "px"
+		try {
+			const rect = inputRef.current?.getBoundingClientRect() as DOMRect;
+			const vw = window.innerWidth;
+			const vh = window.innerHeight;
+
+			// Horizontal: center on the trigger, then clamp to viewport
+			let left = rect.left + rect.width / 2 - POPUP_WIDTH / 2;
+			left = Math.max(GAP, Math.min(left, vw - POPUP_WIDTH - GAP));
+
+			// Vertical: prefer below the trigger; if not enough space, show above
+			const spaceBelow = vh - rect.bottom - GAP;
+			const spaceAbove = rect.top - GAP;
+
+			if (spaceBelow >= POPUP_HEIGHT) {
+				return { left: left + "px", top: (rect.bottom + GAP) + "px" };
+			} else if (spaceAbove >= POPUP_HEIGHT) {
+				return { left: left + "px", top: (rect.top - GAP - POPUP_HEIGHT) + "px" };
+			} else if (spaceBelow >= spaceAbove) {
+				// Not enough space either way — pin to bottom edge
+				return { left: left + "px", top: (vh - POPUP_HEIGHT - GAP) + "px" };
+			} else {
+				// Pin to top edge
+				return { left: left + "px", top: GAP + "px" };
 			}
-		} else if (isPosAbove()) {
-			return {
-				left: calculateLeftPosition() + "px",
-				top: "20px"
-			}
-		} else if (!isPosAbove() && (getClientTop() - getClientHeight() + 20) > 0) {
-			return {
-				left: calculateLeftPosition() + "px",
-				top: getClientTop() + getClientHeight() + 20 + "px"
-			}
-		} else {
-			return {
-				left: calculateLeftPosition() + "px",
-				bottom: "20px"
-			}
+		} catch (e) {
+			return { left: GAP + "px", top: GAP + "px" };
 		}
 	}
 

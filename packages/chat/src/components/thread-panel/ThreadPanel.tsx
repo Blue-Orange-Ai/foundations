@@ -17,7 +17,7 @@ interface Props {
     loading?: boolean;
     typingUsers?: IChatUser[];
     currentUserId?: string;
-    onReact?: (message: IChatMessage) => void;
+    onReact?: (message: IChatMessage, emoji: string) => void;
     onAvatarClick?: (user: IChatUser) => void;
 }
 

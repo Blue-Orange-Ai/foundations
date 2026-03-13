@@ -1,6 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import { Avatar } from '@blue-orange-ai/foundations-core';
+import { Avatar, EmojiWrapper } from '@blue-orange-ai/foundations-core';
 import { IChatMessage, IChatUser } from '../../../interfaces/ChatInterfaces';
 
 import './ChatMessage.css';
@@ -11,7 +11,7 @@ interface Props {
     message: IChatMessage;
     isConsecutive?: boolean;
     onReply?: (message: IChatMessage) => void;
-    onReact?: (message: IChatMessage) => void;
+    onReact?: (message: IChatMessage, emoji: string) => void;
     onAvatarClick?: (user: IChatUser) => void;
     onThreadClick?: (message: IChatMessage) => void;
     children?: React.ReactNode;
@@ -57,15 +57,15 @@ export const ChatMessage: React.FC<Props> = ({
         }
     };
 
-    const handleReact = () => {
-        if (onReact) {
-            onReact(message);
-        }
-    };
-
     const handleAvatarClick = () => {
         if (onAvatarClick) {
             onAvatarClick(message.sender);
+        }
+    };
+
+    const handleEmojiSelection = (emoji: string) => {
+        if (onReact) {
+            onReact(message, emoji);
         }
     };
 
@@ -135,13 +135,14 @@ export const ChatMessage: React.FC<Props> = ({
                 >
                     <i className="ri-reply-line" />
                 </button>
-                <button
-                    className="blue-orange-chat-message-toolbar-btn"
-                    onClick={handleReact}
-                    title="React"
-                >
-                    <i className="ri-emoji-sticker-line" />
-                </button>
+                <EmojiWrapper onSelection={handleEmojiSelection}>
+                    <button
+                        className="blue-orange-chat-message-toolbar-btn"
+                        title="React"
+                    >
+                        <i className="ri-emoji-sticker-line" />
+                    </button>
+                </EmojiWrapper>
                 <button
                     className="blue-orange-chat-message-toolbar-btn"
                     title="More options"
