@@ -197,11 +197,8 @@ export const RichText: React.FC<Props> = ({
 		priority: 200,
 		addKeyboardShortcuts() {
 			return {
-				Enter: ({ editor }) => {
+				Enter: () => {
 					if (!onEnterRef.current) return false;
-					if (editor.isActive('codeBlock') || editor.isActive('listItem') || editor.isActive('blockquote')) {
-						return false;
-					}
 					onEnterRef.current();
 					return true;
 				},
