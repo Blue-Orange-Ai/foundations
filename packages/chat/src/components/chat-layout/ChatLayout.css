@@ -13,6 +13,7 @@
     min-width: 0;
     overflow: hidden;
     background-color: #ffffff;
+    max-height: 100vh;
 }
 
 .dark .blue-orange-chat-layout-center {
