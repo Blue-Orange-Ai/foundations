@@ -199,6 +199,10 @@ export const RichText: React.FC<Props> = ({
 			return {
 				Enter: () => {
 					if (!onEnterRef.current) return false;
+					const suggestionPopup = document.querySelector(
+						'[data-tippy-root] .tippy-box[data-theme="blue-orange-rich-text-editor-mention-tippy"]'
+					);
+					if (suggestionPopup) return false;
 					onEnterRef.current();
 					return true;
 				},
