@@ -11,6 +11,7 @@ import {
 } from '../../interfaces/ChatInterfaces';
 import {
     currentUser,
+    userDave,
     mockGroups,
     messagesByConversation,
     allConversations,
@@ -29,6 +30,7 @@ export const Workspace: React.FC = () => {
     const [detailUser, setDetailUser] = useState<IChatUser | null>(null);
     const [threadParent, setThreadParent] = useState<IChatMessage | null>(null);
     const [threadReplies, setThreadReplies] = useState<IChatMessage[]>([]);
+    const [threadTypingUsers, setThreadTypingUsers] = useState<IChatUser[]>([]);
     const [groups, setGroups] = useState<IChatGroup[]>(mockGroups);
     const [searchQuery, setSearchQuery] = useState('');
     const [sidebarState, setSidebarState] = useState<SideBarState>(SideBarState.OPEN);
@@ -108,8 +110,10 @@ export const Workspace: React.FC = () => {
 
         if (message.id === 'msg-11') {
             setThreadReplies(threadRepliesForMsg11);
+            setThreadTypingUsers([userDave]);
         } else {
             setThreadReplies([]);
+            setThreadTypingUsers([]);
         }
     }, []);
 
@@ -134,6 +138,7 @@ export const Workspace: React.FC = () => {
     const handleCloseThread = useCallback(() => {
         setThreadParent(null);
         setThreadReplies([]);
+        setThreadTypingUsers([]);
     }, []);
 
     const handleCloseUserDetail = useCallback(() => {
@@ -292,6 +297,7 @@ export const Workspace: React.FC = () => {
                 threadReplies={threadReplies}
                 onSendThreadReply={handleSendThreadReply}
                 onCloseThread={handleCloseThread}
+                threadTypingUsers={threadTypingUsers}
                 detailUser={detailUser || undefined}
                 onCloseUserDetail={handleCloseUserDetail}
                 onGroupToggle={handleGroupToggle}

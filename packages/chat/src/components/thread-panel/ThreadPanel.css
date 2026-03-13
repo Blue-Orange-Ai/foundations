@@ -100,6 +100,10 @@
     flex-shrink: 0;
 }
 
+.blue-orange-chat-thread-input .blue-orange-chat-input-wrapper {
+    margin: 0 16px 8px 16px;
+}
+
 /* Dark theme */
 
 .dark .blue-orange-chat-thread-container {

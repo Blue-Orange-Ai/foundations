@@ -136,11 +136,9 @@ export const ChatInput: React.FC<Props> = ({
                     </button>
                 </div>
             </div>
-            {typingText && (
-                <div className="blue-orange-chat-input-typing">
-                    {typingText}
-                </div>
-            )}
+            <div className="blue-orange-chat-input-typing">
+                {typingText || '\u00A0'}
+            </div>
         </div>
     );
 };
