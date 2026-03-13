@@ -63,7 +63,7 @@ export const ThreadPanel: React.FC<Props> = ({
 
         replies.forEach((reply, index) => {
             const prevDate = index > 0 ? replies[index - 1].timestamp : null;
-            if (shouldShowDateSeparator(reply.timestamp, prevDate)) {
+            if (index > 0 && shouldShowDateSeparator(reply.timestamp, prevDate)) {
                 elements.push(
                     <DateSeparator key={`date-${reply.id}`} date={reply.timestamp} />
                 );
@@ -108,29 +108,29 @@ export const ThreadPanel: React.FC<Props> = ({
                 </button>
             </div>
 
-            <div className="blue-orange-chat-thread-parent">
-                <ChatMessage
-                    message={parentMessage}
-                    onReact={onReact}
-                    onAvatarClick={onAvatarClick}
-                />
-            </div>
-
-            {replies.length > 0 && (
-                <div className="blue-orange-chat-thread-separator">
-                    <hr className="blue-orange-chat-thread-separator-line" />
-                    <span className="blue-orange-chat-thread-separator-text">
-                        {replies.length} {replies.length === 1 ? 'reply' : 'replies'}
-                    </span>
-                    <hr className="blue-orange-chat-thread-separator-line" />
-                </div>
-            )}
-
             <div
-                className="blue-orange-chat-thread-replies-body"
+                className="blue-orange-chat-thread-body"
                 ref={repliesBodyRef}
                 onScroll={handleScroll}
             >
+                <div className="blue-orange-chat-thread-parent">
+                    <ChatMessage
+                        message={parentMessage}
+                        onReact={onReact}
+                        onAvatarClick={onAvatarClick}
+                    />
+                </div>
+
+                {replies.length > 0 && (
+                    <div className="blue-orange-chat-thread-separator">
+                        <hr className="blue-orange-chat-thread-separator-line" />
+                        <span className="blue-orange-chat-thread-separator-text">
+                            {replies.length} {replies.length === 1 ? 'reply' : 'replies'}
+                        </span>
+                        <hr className="blue-orange-chat-thread-separator-line" />
+                    </div>
+                )}
+
                 {loading && (
                     <div className="blue-orange-chat-thread-loading">Loading...</div>
                 )}
