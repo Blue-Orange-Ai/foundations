@@ -124,9 +124,10 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     const [replyTo, setReplyTo] = useState<IChatMessage | null>(null);
 
     const handleReply = useCallback((message: IChatMessage) => {
-        setReplyTo(message);
         if (onReplyToMessage) {
             onReplyToMessage(message);
+        } else {
+            setReplyTo(message);
         }
     }, [onReplyToMessage]);
 
