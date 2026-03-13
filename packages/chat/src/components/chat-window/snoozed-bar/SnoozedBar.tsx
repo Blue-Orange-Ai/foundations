@@ -61,8 +61,10 @@ export const SnoozedBar: FC<SnoozedBarProps> = ({snoozedUsers}) => {
 
     return (
         <div className="blue-orange-chat-snoozed-bar">
-            <i className="ri-notification-off-line blue-orange-chat-snoozed-icon" />
-            {formatNames()}
+            <span className="blue-orange-chat-snoozed-pill">
+                <i className="ri-notification-off-line blue-orange-chat-snoozed-icon" />
+                {formatNames()}
+            </span>
         </div>
     );
 };

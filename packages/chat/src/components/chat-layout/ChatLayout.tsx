@@ -23,8 +23,6 @@ import { ChatSidebarFooter } from '../sidebar/footer/ChatSidebarFooter';
 import { ChatWindow } from '../chat-window/ChatWindow';
 import { ChatMessage } from '../chat-window/message/ChatMessage';
 import { DateSeparator } from '../chat-window/date-separator/DateSeparator';
-import { TypingIndicator } from '../chat-window/typing-indicator/TypingIndicator';
-import { SnoozedBar } from '../chat-window/snoozed-bar/SnoozedBar';
 import { MessageReactions } from '../chat-window/message/reactions/MessageReactions';
 import { ChatInput } from '../chat-input/ChatInput';
 import { UserDetailPanel } from '../user-detail/UserDetailPanel';
@@ -289,17 +287,13 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                         hasMore={hasMoreMessages}
                     >
                         {renderMessages()}
-                        {typingUsers.length > 0 && (
-                            <TypingIndicator typingUsers={typingUsers} />
-                        )}
-                        {snoozedUsers.length > 0 && (
-                            <SnoozedBar snoozedUsers={snoozedUsers} />
-                        )}
                     </ChatWindow>
                     <ChatInput
                         onSend={handleSend}
                         replyTo={replyTo}
                         onCancelReply={handleCancelReply}
+                        typingUsers={typingUsers}
+                        snoozedUsers={snoozedUsers}
                     />
                 </>
             ) : (

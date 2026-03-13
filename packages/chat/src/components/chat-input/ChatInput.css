@@ -1,11 +1,24 @@
 
+.blue-orange-chat-input-wrapper {
+    margin: 0 20px 8px 20px;
+}
+
 .blue-orange-chat-input-container {
-    margin: 0 20px 16px 20px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    /*padding: 8px 16px;*/
     box-sizing: border-box;
     background-color: #ffffff;
+}
+
+.blue-orange-chat-input-typing {
+    font-size: 11px;
+    color: #888888;
+    padding: 2px 4px 0 4px;
+    min-height: 16px;
+}
+
+.dark .blue-orange-chat-input-typing {
+    color: #aaaaaa;
 }
 
 .dark .blue-orange-chat-input-container {

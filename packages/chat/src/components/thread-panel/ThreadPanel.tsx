@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import { IChatMessage, IChatUser } from '../../interfaces/ChatInterfaces';
 import { ChatMessage } from '../chat-window/message/ChatMessage';
 import { ChatInput } from '../chat-input/ChatInput';
-import { TypingIndicator } from '../chat-window/typing-indicator/TypingIndicator';
 import { DateSeparator } from '../chat-window/date-separator/DateSeparator';
 import { shouldShowDateSeparator } from '../../utils/dateUtils';
 
@@ -135,9 +134,6 @@ export const ThreadPanel: React.FC<Props> = ({
                     <div className="blue-orange-chat-thread-loading">Loading...</div>
                 )}
                 {renderReplies()}
-                {typingUsers.length > 0 && (
-                    <TypingIndicator typingUsers={typingUsers} />
-                )}
                 <div ref={repliesEndRef} />
             </div>
 
@@ -145,6 +141,7 @@ export const ThreadPanel: React.FC<Props> = ({
                 <ChatInput
                     onSend={onSendReply}
                     placeholder="Reply..."
+                    typingUsers={typingUsers}
                 />
             </div>
         </div>
