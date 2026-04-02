@@ -18,3 +18,4 @@ packages/*/src/**/[A-Z]*.d.ts
 # Debug logs
 lerna-debug.log
 npm-debug.log*
+/packages/core/plans/

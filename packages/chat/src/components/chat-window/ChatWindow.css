@@ -1,0 +1,83 @@
+.blue-orange-chat-window {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    background: var(--blue-orange-chat-window-bg, #ffffff);
+}
+
+.blue-orange-chat-window::-webkit-scrollbar {
+    width: 6px;
+}
+
+.blue-orange-chat-window::-webkit-scrollbar-track {
+    background: var(--blue-orange-chat-window-scrollbar-track, #f1f1f1);
+    border-radius: 3px;
+}
+
+.blue-orange-chat-window::-webkit-scrollbar-thumb {
+    background: var(--blue-orange-chat-window-scrollbar-thumb, #c1c1c1);
+    border-radius: 3px;
+}
+
+.blue-orange-chat-window::-webkit-scrollbar-thumb:hover {
+    background: var(--blue-orange-chat-window-scrollbar-thumb-hover, #a1a1a1);
+}
+
+.blue-orange-chat-window-messages {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    flex-grow: 1;
+}
+
+.blue-orange-chat-window-sentinel {
+    width: 100%;
+    height: 1px;
+    flex-shrink: 0;
+}
+
+.blue-orange-chat-window-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 0;
+}
+
+.blue-orange-chat-window-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid var(--blue-orange-chat-window-spinner-track, #e0e0e0);
+    border-top-color: var(--blue-orange-chat-window-spinner-color, #3b82f6);
+    border-radius: 50%;
+    animation: blue-orange-chat-window-spin 0.8s linear infinite;
+}
+
+@keyframes blue-orange-chat-window-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.blue-orange-chat-window-message {
+    padding: 4px 0;
+}
+
+.blue-orange-chat-window-message-content {
+    color: var(--blue-orange-chat-window-text, #1a1a1a);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+}
+
+/* Dark theme */
+.dark .blue-orange-chat-window {
+    --blue-orange-chat-window-bg: #1e1e1e;
+    --blue-orange-chat-window-text: #e0e0e0;
+    --blue-orange-chat-window-scrollbar-track: #2a2a2a;
+    --blue-orange-chat-window-scrollbar-thumb: #555555;
+    --blue-orange-chat-window-scrollbar-thumb-hover: #777777;
+    --blue-orange-chat-window-spinner-track: #3a3a3a;
+    --blue-orange-chat-window-spinner-color: #60a5fa;
+}

@@ -1,0 +1,95 @@
+.blue-orange-chat-reactions-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.blue-orange-chat-reactions-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    cursor: pointer;
+    font-size: 13px;
+    background: transparent;
+    transition: background-color 0.15s ease;
+}
+
+.blue-orange-chat-reactions-pill:hover {
+    background-color: #f0f0f0;
+}
+
+.blue-orange-chat-reactions-pill-active {
+    border-color: #4a90d9;
+    background-color: #e8f0fe;
+}
+
+.blue-orange-chat-reactions-pill-active:hover {
+    background-color: #d4e4fc;
+}
+
+.blue-orange-chat-reactions-emoji {
+    line-height: 1;
+}
+
+.blue-orange-chat-reactions-count {
+    font-size: 12px;
+    color: #555;
+}
+
+.blue-orange-chat-reactions-add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px dashed #ccc;
+    cursor: pointer;
+    font-size: 13px;
+    background: transparent;
+    color: #888;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.blue-orange-chat-reactions-add:hover {
+    background-color: #f0f0f0;
+    border-color: #aaa;
+    color: #555;
+}
+
+/* Dark theme */
+.dark .blue-orange-chat-reactions-pill {
+    border-color: #444;
+    color: #ddd;
+}
+
+.dark .blue-orange-chat-reactions-pill:hover {
+    background-color: #333;
+}
+
+.dark .blue-orange-chat-reactions-pill-active {
+    border-color: #4a90d9;
+    background-color: #1e3a5f;
+}
+
+.dark .blue-orange-chat-reactions-pill-active:hover {
+    background-color: #264a73;
+}
+
+.dark .blue-orange-chat-reactions-count {
+    color: #aaa;
+}
+
+.dark .blue-orange-chat-reactions-add {
+    border-color: #555;
+    color: #777;
+}
+
+.dark .blue-orange-chat-reactions-add:hover {
+    background-color: #333;
+    border-color: #777;
+    color: #aaa;
+}

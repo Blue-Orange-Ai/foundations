@@ -1,0 +1,101 @@
+.blue-orange-chat-sidebar-group {
+    padding-left: 10px;
+    width: calc(100% - 10px);
+    cursor: pointer;
+}
+
+/* Icon wrapper: positions chevron over the icon */
+.blue-orange-chat-sidebar-group-icon-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+}
+
+.blue-orange-chat-sidebar-group-icon {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Chevron: hidden by default, overlays the icon on hover */
+.blue-orange-chat-sidebar-group-caret {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+/* When no icon exists, always show the chevron */
+.blue-orange-chat-sidebar-group-caret-always {
+    display: flex;
+    position: static;
+    transform: none;
+}
+
+/* On hover: show chevron, hide icon */
+.blue-orange-chat-sidebar-group:hover .blue-orange-chat-sidebar-group-icon {
+    visibility: hidden;
+}
+
+.blue-orange-chat-sidebar-group:hover .blue-orange-chat-sidebar-group-caret {
+    display: flex;
+}
+
+.blue-orange-chat-sidebar-group-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+/* Action buttons: hidden by default, shown on hover of the group row */
+.blue-orange-chat-sidebar-group-action-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 16px;
+}
+
+.blue-orange-chat-sidebar-group-action-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+/* Show action buttons when hovering the group row, hide unread badge */
+.blue-orange-chat-sidebar-group:hover .blue-orange-chat-sidebar-group-action-btn {
+    display: flex;
+}
+
+.blue-orange-chat-sidebar-group:hover .blue-orange-chat-sidebar-group-unread-badge {
+    display: none;
+}
+
+/* Unread badge on collapsed group */
+.blue-orange-chat-sidebar-group-unread-badge {
+    font-size: 11px;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    text-align: center;
+    line-height: 18px;
+    padding: 0 5px;
+    background-color: #e74c3c;
+    color: #ffffff;
+    font-weight: 600;
+    box-sizing: border-box;
+    display: inline-block;
+}

@@ -49,6 +49,12 @@
     width: calc(100% - 30px);
 }
 
+.blue-orange-rich-text-editor-single-line .tiptap {
+    min-height: unset;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
 .tiptap:focus {
     outline: none;
 }

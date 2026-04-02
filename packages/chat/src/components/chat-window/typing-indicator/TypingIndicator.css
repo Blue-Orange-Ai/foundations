@@ -1,0 +1,60 @@
+.blue-orange-chat-typing-container {
+    display: flex;
+    align-items: center;
+    padding: 4px 16px;
+    min-height: 20px;
+    gap: 6px;
+}
+
+.blue-orange-chat-typing-text {
+    font-size: 13px;
+    font-style: italic;
+    color: #888888;
+    user-select: none;
+}
+
+.blue-orange-chat-typing-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.blue-orange-chat-typing-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: #888888;
+    animation: typingDot 1.2s ease-in-out infinite;
+}
+
+.blue-orange-chat-typing-dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.blue-orange-chat-typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.blue-orange-chat-typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typingDot {
+    0%, 60%, 100% {
+        opacity: 0.3;
+        transform: translateY(0);
+    }
+    30% {
+        opacity: 1;
+        transform: translateY(-3px);
+    }
+}
+
+/* Dark theme */
+.dark .blue-orange-chat-typing-text {
+    color: #aaaaaa;
+}
+
+.dark .blue-orange-chat-typing-dot {
+    background-color: #aaaaaa;
+}

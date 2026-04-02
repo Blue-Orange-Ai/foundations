@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 
 import {StarterKit} from "@tiptap/starter-kit";
 import {AnyExtension, EditorContent, Extensions, useEditor} from "@tiptap/react";
+import {Extension} from "@tiptap/core";
 import {ButtonIcon} from "../../../buttons/button-icon/ButtonIcon";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -36,12 +37,14 @@ interface Props {
 	displayFormatting?: boolean,
 	editorHeight?: number,
 	minEditorHeight?: number,
+	singleLine?: boolean,
 	allowMentions?: boolean,
 	allowEmojis?: boolean,
 	uploadPermissions?: Array<MediaPermission>,
 	disabled?: boolean,
 	clearState?: string,
-	onChange?: (content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean) => void
+	onChange?: (content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean) => void,
+	onEnter?: () => void
 }
 
 const defaultUploadPermission: MediaPermission[] = [{
@@ -57,12 +60,14 @@ export const RichText: React.FC<Props> = ({
 											  placeholder,
 											  displayFormatting= true,
 											  minEditorHeight = 10,
+											  singleLine = false,
 											  allowMentions=true,
 											  allowEmojis=true,
 											  uploadPermissions=defaultUploadPermission,
 											  disabled = false,
 											  clearState = "",
-											  onChange
+											  onChange,
+											  onEnter
 										  }) => {
 
 
@@ -113,6 +118,8 @@ export const RichText: React.FC<Props> = ({
 	const initRef = useRef(false);
 
 	const disabledRef = useRef(disabled);
+
+	const onEnterRef = useRef(onEnter);
 
 	const initialClearState = useRef(clearState);
 
@@ -185,6 +192,44 @@ export const RichText: React.FC<Props> = ({
 		},
 	})
 
+	const enterKeymapExtension = Extension.create({
+		name: 'enterKeymap',
+		priority: 200,
+		addKeyboardShortcuts() {
+			return {
+				Enter: () => {
+					if (!onEnterRef.current) return false;
+					const suggestionPopup = document.querySelector(
+						'[data-tippy-root] .tippy-box[data-theme="blue-orange-rich-text-editor-mention-tippy"]'
+					);
+					if (suggestionPopup) return false;
+					onEnterRef.current();
+					return true;
+				},
+				'Shift-Enter': ({ editor }) => {
+					if (!onEnterRef.current) return false;
+					if (editor.isActive('codeBlock')) {
+						return editor.commands.newlineInCode();
+					}
+					if (editor.isActive('listItem')) {
+						if (editor.commands.splitListItem('listItem')) return true;
+						if (editor.isActive('bulletList')) {
+							return editor.chain().focus().toggleBulletList().run();
+						}
+						if (editor.isActive('orderedList')) {
+							return editor.chain().focus().toggleOrderedList().run();
+						}
+						return true;
+					}
+					if (editor.commands.liftEmptyBlock()) {
+						return true;
+					}
+					return editor.commands.splitBlock();
+				}
+			};
+		}
+	});
+
 	var extensions = [
 		StarterKit,
 		Placeholder.configure({
@@ -195,7 +240,8 @@ export const RichText: React.FC<Props> = ({
 			openOnClick: true,
 		}),
 		mentionExtension,
-		emojiExtension
+		emojiExtension,
+		enterKeymapExtension
 	]
 
 	const extensionsNoMentions = [
@@ -207,7 +253,8 @@ export const RichText: React.FC<Props> = ({
 			protocols: ['ftp', 'mailto'],
 			openOnClick: true,
 		}),
-		emojiExtension
+		emojiExtension,
+		enterKeymapExtension
 	]
 
 	const extensionsNoEmojis = [
@@ -219,7 +266,8 @@ export const RichText: React.FC<Props> = ({
 			protocols: ['ftp', 'mailto'],
 			openOnClick: true,
 		}),
-		mentionExtension
+		mentionExtension,
+		enterKeymapExtension
 	]
 
 	const extensionsNoMentionsNoEmojis: AnyExtension[] = [
@@ -230,7 +278,8 @@ export const RichText: React.FC<Props> = ({
 		Link.configure({
 			protocols: ['ftp', 'mailto'],
 			openOnClick: true,
-		})
+		}),
+		enterKeymapExtension
 	]
 
 	const initExtensions = () => {
@@ -308,6 +357,10 @@ export const RichText: React.FC<Props> = ({
 
 	}
 
+	useEffect(() => {
+		onEnterRef.current = onEnter;
+	}, [onEnter]);
+
 	const initialise = () => {
 		const intervalId = setInterval(() => {
 			if (editorContainerRef.current) {
@@ -326,6 +379,7 @@ export const RichText: React.FC<Props> = ({
 			editorContainerRef.current.addEventListener("keydown", (ev) => {
 				if (disabledRef.current === true) {
 					ev.preventDefault();
+					return;
 				}
 			})
 		}
@@ -388,7 +442,7 @@ export const RichText: React.FC<Props> = ({
 	}, [clearState]);
 
 	return (
-		<div className='blue-orange-rich-text-editor'>
+		<div className={`blue-orange-rich-text-editor${singleLine ? ' blue-orange-rich-text-editor-single-line' : ''}`}>
 			{displayHeading &&
 				<div className="blue-orange-rich-text-editor-heading">
 					<ButtonIcon
@@ -450,20 +504,22 @@ export const RichText: React.FC<Props> = ({
 			<div ref={editorContainerRef}>
 				<EditorContent editor={editor}></EditorContent>
 			</div>
-			<div className="blue-orange-rich-text-editor-uploaded-files">
-				{storedFiles.map((item, index) => (
-					<UploadedFile
-						key={item.uuid}
-						upload={item}
-						uploadPermissions={uploadPermissions}
-						onRemove={removeStoredFile}
-						onMediaUploaded={(media: Media) => {
-							item.media = media;
-							editorChanged();
-						}}
-					></UploadedFile>
-				))}
-			</div>
+			{storedFiles.length > 0 &&
+				<div className="blue-orange-rich-text-editor-uploaded-files">
+					{storedFiles.map((item, index) => (
+						<UploadedFile
+							key={item.uuid}
+							upload={item}
+							uploadPermissions={uploadPermissions}
+							onRemove={removeStoredFile}
+							onMediaUploaded={(media: Media) => {
+								item.media = media;
+								editorChanged();
+							}}
+						></UploadedFile>
+					))}
+				</div>
+			}
 			<div className="blue-orange-rich-text-editor-heading-footer">
 				<div className="blue-orange-rich-text-editor-heading-footer-left-cont">
 					<FileInputWrapper accept={"*/*"} onFileSelect={fileSelected}>
