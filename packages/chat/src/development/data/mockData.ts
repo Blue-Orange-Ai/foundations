@@ -107,7 +107,7 @@ export const engineeringMessages: IChatMessage[] = [
     { id: 'msg-2', content: 'Thanks for the heads up. Will there be any downtime?', sender: userCarla, timestamp: daysAgo(5), reactions: [] },
     { id: 'msg-3', content: 'About 15 minutes max. I will post in <strong>#incidents</strong> if anything comes up.', sender: userBob, timestamp: daysAgo(5), reactions: [{ emoji: '🙏', userIds: ['u3'] }] },
     { id: 'msg-4', content: 'Has anyone looked at the new <code>@blue-orange-ai/foundations-core</code> release? The accordion component got a nice overhaul.', sender: userDave, timestamp: daysAgo(3), reactions: [{ emoji: '🔥', userIds: ['u1', 'u2'] }, { emoji: '👀', userIds: ['u5', 'u6'] }] },
-    { id: 'msg-5', content: 'Yeah I tested it locally. The animation is much smoother now.', sender: currentUser, timestamp: daysAgo(3), reactions: [] },
+    { id: 'msg-5', content: 'Yeah I tested it locally. The animation is much smoother now.', sender: currentUser, timestamp: daysAgo(3), reactions: [], edited: true },
     { id: 'msg-6', content: '<em>Nice work team.</em> Merging the graph package update as well.', sender: userEva, timestamp: daysAgo(2), reactions: [] },
     { id: 'msg-7', content: 'Quick question: are we still using <code>elkjs</code> for all the layout work or switching to dagre?', sender: userFrank, timestamp: daysAgo(2), reactions: [] },
     { id: 'msg-8', content: 'Sticking with ELK. The layered algorithm handles our edge cases better.', sender: userDave, timestamp: daysAgo(2), reactions: [{ emoji: '✅', userIds: ['u6'] }] },

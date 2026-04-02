@@ -58,6 +58,7 @@ interface ChatLayoutProps {
     onWorkspaceClick?: () => void;
     onReactToMessage?: (message: IChatMessage, emoji: string) => void;
     onReplyToMessage?: (message: IChatMessage) => void;
+    onEditMessage?: (message: IChatMessage, newContent: string) => void;
     onAvatarClick?: (user: IChatUser) => void;
     threadParentMessage?: IChatMessage;
     threadReplies?: IChatMessage[];
@@ -103,6 +104,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     onWorkspaceClick,
     onReactToMessage,
     onReplyToMessage,
+    onEditMessage,
     onAvatarClick,
     threadParentMessage,
     threadReplies = [],
@@ -175,8 +177,10 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                     key={message.id}
                     message={message}
                     isConsecutive={consecutive}
+                    currentUserId={currentUser.user.id}
                     onReply={handleReply}
                     onReact={onReactToMessage ? (_msg, emoji) => onReactToMessage(message, emoji) : undefined}
+                    onEdit={onEditMessage}
                     onAvatarClick={onAvatarClick}
                     onThreadClick={handleReply}
                 >
@@ -326,6 +330,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                     typingUsers={threadTypingUsers}
                     currentUserId={currentUser.user.id}
                     onReact={onReactToMessage ? (msg, emoji) => onReactToMessage(msg, emoji) : undefined}
+                    onEdit={onEditMessage}
                     onAvatarClick={onAvatarClick}
                 />
             );

@@ -95,6 +95,19 @@ export const Workspace: React.FC = () => {
         []
     );
 
+    // -- Edit message --
+
+    const handleEditMessage = useCallback((message: IChatMessage, newContent: string) => {
+        const updateMessages = (msgs: IChatMessage[]): IChatMessage[] =>
+            msgs.map((msg) =>
+                msg.id === message.id
+                    ? { ...msg, content: newContent, edited: true }
+                    : msg
+            );
+        setMessages(updateMessages);
+        setThreadReplies(updateMessages);
+    }, []);
+
     // -- Avatar click (show user detail panel) --
 
     const handleAvatarClick = useCallback((user: IChatUser) => {
@@ -291,6 +304,7 @@ export const Workspace: React.FC = () => {
                 onSearch={handleSearch}
                 onStatusChange={handleStatusChange}
                 onReactToMessage={handleReactToMessage}
+                onEditMessage={handleEditMessage}
                 onReplyToMessage={handleReplyToMessage}
                 onAvatarClick={handleAvatarClick}
                 threadParentMessage={threadParent || undefined}

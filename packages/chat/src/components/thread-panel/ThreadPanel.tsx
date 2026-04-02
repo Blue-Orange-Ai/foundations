@@ -18,6 +18,7 @@ interface Props {
     typingUsers?: IChatUser[];
     currentUserId?: string;
     onReact?: (message: IChatMessage, emoji: string) => void;
+    onEdit?: (message: IChatMessage, newContent: string) => void;
     onAvatarClick?: (user: IChatUser) => void;
 }
 
@@ -32,6 +33,7 @@ export const ThreadPanel: React.FC<Props> = ({
     typingUsers = [],
     currentUserId,
     onReact,
+    onEdit,
     onAvatarClick
 }) => {
     const repliesEndRef = useRef<HTMLDivElement>(null);
@@ -78,7 +80,9 @@ export const ThreadPanel: React.FC<Props> = ({
                     key={reply.id}
                     message={reply}
                     isConsecutive={isConsecutive}
+                    currentUserId={currentUserId}
                     onReact={onReact}
+                    onEdit={onEdit}
                     onAvatarClick={onAvatarClick}
                 />
             );
@@ -115,7 +119,9 @@ export const ThreadPanel: React.FC<Props> = ({
                 <div className="blue-orange-chat-thread-parent">
                     <ChatMessage
                         message={parentMessage}
+                        currentUserId={currentUserId}
                         onReact={onReact}
+                        onEdit={onEdit}
                         onAvatarClick={onAvatarClick}
                     />
                 </div>

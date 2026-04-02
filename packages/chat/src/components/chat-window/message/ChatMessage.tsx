@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import moment from 'moment';
-import { Avatar, EmojiWrapper } from '@blue-orange-ai/foundations-core';
+import { Avatar, EmojiWrapper, RichText } from '@blue-orange-ai/foundations-core';
 import { IChatMessage, IChatUser } from '../../../interfaces/ChatInterfaces';
 
 import './ChatMessage.css';
@@ -10,8 +10,10 @@ const MAX_THREAD_AVATARS = 5;
 interface Props {
     message: IChatMessage;
     isConsecutive?: boolean;
+    currentUserId?: string;
     onReply?: (message: IChatMessage) => void;
     onReact?: (message: IChatMessage, emoji: string) => void;
+    onEdit?: (message: IChatMessage, newContent: string) => void;
     onAvatarClick?: (user: IChatUser) => void;
     onThreadClick?: (message: IChatMessage) => void;
     children?: React.ReactNode;
@@ -44,12 +46,18 @@ const truncateContent = (content: string, maxLength: number): string => {
 export const ChatMessage: React.FC<Props> = ({
     message,
     isConsecutive = false,
+    currentUserId,
     onReply,
     onReact,
+    onEdit,
     onAvatarClick,
     onThreadClick,
     children
 }) => {
+    const [editing, setEditing] = useState(false);
+    const [editContent, setEditContent] = useState('');
+
+    const isOwnMessage = currentUserId != null && message.sender.user.id === currentUserId;
 
     const handleReply = () => {
         if (onReply) {
@@ -68,6 +76,27 @@ export const ChatMessage: React.FC<Props> = ({
             onReact(message, emoji);
         }
     };
+
+    const handleStartEdit = () => {
+        setEditContent(message.content);
+        setEditing(true);
+    };
+
+    const handleEditChange = useCallback((content: string) => {
+        setEditContent(content);
+    }, []);
+
+    const handleSaveEdit = useCallback(() => {
+        const cleaned = stripTrailingEmptyParagraphs(editContent);
+        if (onEdit && cleaned.trim()) {
+            onEdit(message, cleaned);
+        }
+        setEditing(false);
+    }, [editContent, message, onEdit]);
+
+    const handleCancelEdit = useCallback(() => {
+        setEditing(false);
+    }, []);
 
     const renderReplyReference = () => {
         if (!message.replyTo) return null;
@@ -125,7 +154,64 @@ export const ChatMessage: React.FC<Props> = ({
         );
     };
 
+    const renderEditedLabel = () => {
+        if (!message.edited) return null;
+        return (
+            <span className="blue-orange-chat-message-edited">(edited)</span>
+        );
+    };
+
+    const renderEditMode = () => {
+        return (
+            <div className="blue-orange-chat-message-edit-container">
+                <div className="blue-orange-chat-message-edit-editor">
+                    <RichText
+                        placeholder="Edit message..."
+                        allowEmojis={true}
+                        allowMentions={true}
+                        displayFormatting={true}
+                        singleLine={true}
+                        content={message.content}
+                        focus={true}
+                        onChange={(content) => handleEditChange(content)}
+                        onEnter={handleSaveEdit}
+                    />
+                </div>
+                <div className="blue-orange-chat-message-edit-actions">
+                    <button
+                        className="blue-orange-chat-message-edit-cancel"
+                        onClick={handleCancelEdit}
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        className="blue-orange-chat-message-edit-save"
+                        onClick={handleSaveEdit}
+                    >
+                        Save
+                    </button>
+                </div>
+            </div>
+        );
+    };
+
+    const renderContent = () => {
+        if (editing) {
+            return renderEditMode();
+        }
+        return (
+            <>
+                <div
+                    className="blue-orange-chat-message-content"
+                    dangerouslySetInnerHTML={{ __html: stripTrailingEmptyParagraphs(message.content) }}
+                />
+                {renderEditedLabel()}
+            </>
+        );
+    };
+
     const renderToolbar = () => {
+        if (editing) return null;
         return (
             <div className="blue-orange-chat-message-toolbar">
                 <button
@@ -143,6 +229,15 @@ export const ChatMessage: React.FC<Props> = ({
                         <i className="ri-emoji-sticker-line" />
                     </button>
                 </EmojiWrapper>
+                {isOwnMessage && onEdit && (
+                    <button
+                        className="blue-orange-chat-message-toolbar-btn"
+                        onClick={handleStartEdit}
+                        title="Edit"
+                    >
+                        <i className="ri-pencil-line" />
+                    </button>
+                )}
                 <button
                     className="blue-orange-chat-message-toolbar-btn"
                     title="More options"
@@ -162,10 +257,7 @@ export const ChatMessage: React.FC<Props> = ({
                 </span>
                 <div className="blue-orange-chat-message-body">
                     {renderReplyReference()}
-                    <div
-                        className="blue-orange-chat-message-content"
-                        dangerouslySetInnerHTML={{ __html: stripTrailingEmptyParagraphs(message.content) }}
-                    />
+                    {renderContent()}
                     {children}
                     {renderThreadIndicator()}
                 </div>
@@ -189,10 +281,7 @@ export const ChatMessage: React.FC<Props> = ({
                     </span>
                 </div>
                 {renderReplyReference()}
-                <div
-                    className="blue-orange-chat-message-content"
-                    dangerouslySetInnerHTML={{ __html: stripTrailingEmptyParagraphs(message.content) }}
-                />
+                {renderContent()}
                 {children}
                 {renderThreadIndicator()}
             </div>
