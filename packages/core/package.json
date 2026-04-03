@@ -76,6 +76,14 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "jest": {
+    "transformIgnorePatterns": [
+      "/node_modules/(?!(.+\\.mjs$|remark-.*|rehype-.*|unified|bail|devlop|is-plain-obj|trough|vfile|vfile-.*|mdast-util-.*|unist-util-.*|micromark|micromark-.*|decode-named-character-reference|character-entities|character-entities-.*|character-reference-invalid|ccount|escape-string-regexp|markdown-table|zwitch|longest-streak|hast-util-.*|property-information|comma-separated-tokens|space-separated-tokens|web-namespaces|trim-lines|katex|stringify-entities|hastscript|parse5|direction|html-void-elements|estree-util-.*|permerror|shiki|@shikijs|oniguruma-to-es|regex|regex-recursion|regex-utilities|unicode-escape))"
+    ],
+    "moduleNameMapper": {
+      "\\.(css|less|scss|sass)$": "<rootDir>/src/__mocks__/styleMock.js"
+    }
+  },
   "eslintConfig": {
     "extends": [
       "react-app",

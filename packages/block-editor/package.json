@@ -8,7 +8,7 @@
   "private": false,
   "dependencies": {
     "@blue-orange-ai/foundations-core": "^0.0.87",
-    "@blue-orange-ai/primitives-block-editor": "^0.55.0",
+    "@blue-orange-ai/primitives-block-editor": "^0.56.0",
     "codemirror": "^5.65.17",
     "katex": "^0.16.11",
     "plyr": "^3.7.8",
