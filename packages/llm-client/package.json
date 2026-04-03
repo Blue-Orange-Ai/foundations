@@ -1,13 +1,13 @@
 {
   "name": "@blue-orange-ai/foundations-llm-client",
-  "version": "0.0.87",
+  "version": "0.1.0",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
   "author": "Blue Orange AI",
   "private": false,
   "dependencies": {
-    "@blue-orange-ai/foundations-core": "^0.0.87",
+    "@blue-orange-ai/foundations-core": "^0.1.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
