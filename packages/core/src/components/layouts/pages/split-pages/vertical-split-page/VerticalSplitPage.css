@@ -3,15 +3,18 @@
     display: flex;
     flex-direction: row;
     height: 100%;
+    overflow: hidden;
 }
 
 .blue-orange-layouts-vertical-split-page-main {
     flex-grow: 1;
+    min-width: 0;
     height: 100%;
 }
 
 .blue-orange-layouts-vertical-split-page-minor-right {
     position: relative;
+    flex-shrink: 0;
     border-left: 2px solid var(--blue-orange-light-default-border-color);
     overflow-x: hidden;
 }
@@ -22,6 +25,7 @@
 
 .blue-orange-layouts-vertical-split-page-minor-left {
     position: relative;
+    flex-shrink: 0;
     border-right: 2px solid var(--blue-orange-light-default-border-color);
     overflow-x: hidden;
 }
