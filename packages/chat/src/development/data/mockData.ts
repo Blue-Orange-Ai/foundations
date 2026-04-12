@@ -119,6 +119,47 @@ export const engineeringMessages: IChatMessage[] = [
     { id: 'msg-14', content: 'Is anyone free to pair on the chat layout component? I have the sidebar done but want a second pair of eyes on the split-panel logic.', sender: currentUser, timestamp: minutesAgo(45), reactions: [] },
     { id: 'msg-15', content: 'I can jump in after my 1:1. Give me about 20 minutes.', sender: userFrank, timestamp: minutesAgo(30), reactions: [{ emoji: '👍', userIds: ['u1'] }] },
     { id: 'msg-16', content: 'Perfect, ping me when you are ready.', sender: currentUser, timestamp: minutesAgo(28), reactions: [] },
+    {
+        id: 'msg-17',
+        content: 'Here is the latest build report from the CI pipeline:',
+        sender: userBob,
+        timestamp: minutesAgo(10),
+        reactions: [{ emoji: '👀', userIds: ['u1'] }],
+        blocks: [
+            {
+                html: `<div class="build-report">
+    <div class="build-header">
+        <span class="build-status">&#9679; Build #1042 — Passed</span>
+        <span class="build-time">2m 34s</span>
+    </div>
+    <div class="build-stats">
+        <div class="stat"><span class="stat-value">142</span><span class="stat-label">Tests passed</span></div>
+        <div class="stat"><span class="stat-value">0</span><span class="stat-label">Failed</span></div>
+        <div class="stat"><span class="stat-value">98.2%</span><span class="stat-label">Coverage</span></div>
+    </div>
+    <div class="build-stages">
+        <div class="stage"><span class="stage-dot done"></span> Install deps <span class="stage-time">18s</span></div>
+        <div class="stage"><span class="stage-dot done"></span> Lint &amp; typecheck <span class="stage-time">32s</span></div>
+        <div class="stage"><span class="stage-dot done"></span> Unit tests <span class="stage-time">1m 12s</span></div>
+        <div class="stage"><span class="stage-dot done"></span> Build <span class="stage-time">32s</span></div>
+    </div>
+</div>`,
+                css: `.build-report { padding: 12px 16px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; color: #1d1c1d; }
+.build-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.build-status { font-weight: 700; color: #22c55e; }
+.build-time { font-size: 12px; color: #616061; }
+.build-stats { display: flex; gap: 24px; margin-bottom: 12px; padding: 8px 0; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; }
+.stat { display: flex; flex-direction: column; align-items: center; }
+.stat-value { font-size: 18px; font-weight: 700; color: #1d1c1d; }
+.stat-label { font-size: 11px; color: #616061; margin-top: 2px; }
+.build-stages { display: flex; flex-direction: column; gap: 6px; }
+.stage { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #1d1c1d; }
+.stage-dot { width: 8px; height: 8px; border-radius: 50%; }
+.stage-dot.done { background-color: #22c55e; }
+.stage-time { margin-left: auto; color: #616061; font-size: 11px; }`,
+            }
+        ]
+    },
 ];
 
 engineeringMessages[7].replyTo = engineeringMessages[6];

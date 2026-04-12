@@ -31,6 +31,12 @@ export interface IChatThread {
     lastReplyTimestamp?: Date;
 }
 
+export interface IChatMessageBlock {
+    html: string;
+    css?: string;
+    js?: string;
+}
+
 export interface IChatMessage {
     id: string;
     content: string;
@@ -41,6 +47,7 @@ export interface IChatMessage {
     attachments?: string[];
     edited?: boolean;
     thread?: IChatThread;
+    blocks?: IChatMessageBlock[];
 }
 
 export interface IChatConversation {
