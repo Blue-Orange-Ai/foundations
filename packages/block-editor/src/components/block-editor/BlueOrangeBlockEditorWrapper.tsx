@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState, useImperativeHandle, forwardRef} from "react";
 
 import '../../../../../node_modules/codemirror/lib/codemirror.css'
 import '../../../../../node_modules/plyr/dist/plyr.css'
@@ -7,7 +7,7 @@ import './BlueOrangeBlockEditorWrapper.css'
 
 import '@blue-orange-ai/primitives-block-editor/dist/css/primitives-block-editor.min.css'
 
-import {BlockEditor} from "@blue-orange-ai/primitives-block-editor";
+import {BlockEditor, BlueOrangeDocument, BlueOrangeDocumentOptions} from "@blue-orange-ai/primitives-block-editor";
 import {
 	Drawer,
 	DrawerBody,
@@ -37,11 +37,52 @@ interface EditorMention {
 	inlineHtml: string,
 }
 
-interface Props {
-	documentId: string,
-	handleMentionAdded?: (mentionId: string, userId: string) => void
+interface ReferenceDetail {
+	referenceUuid: string,
+	referenceNumber: number,
+	referenceLink?: string,
+	referenceDescription?: string,
 }
-export const BlueOrangeBlockEditorWrapper: React.FC<Props> = ({documentId, handleMentionAdded}) => {
+
+export interface BlueOrangeBlockEditorHandle {
+	getEditor: () => BlockEditor | null,
+	toJson: () => BlueOrangeDocument | null,
+	toHtmlCopy: () => string | null,
+	reviveDocument: (doc: BlueOrangeDocument) => void,
+	clearDocument: () => void,
+}
+
+export interface BlueOrangeBlockEditorWrapperProps {
+	documentId?: string,
+	document?: BlueOrangeDocument,
+	options?: Partial<BlueOrangeDocumentOptions>,
+	mediaUri?: string,
+	disableMediaServer?: boolean,
+	enableMentions?: boolean,
+	enableComments?: boolean,
+	handleMentionAdded?: (mentionId: string, userId: string) => void,
+	onReferenceAdded?: (detail: ReferenceDetail) => void,
+	onReferenceUpdated?: (detail: ReferenceDetail) => void,
+	onReferenceRemoved?: (detail: ReferenceDetail) => void,
+	onReferenceClicked?: (detail: ReferenceDetail) => void,
+	onChange?: (doc: BlueOrangeDocument) => void,
+}
+
+export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHandle, BlueOrangeBlockEditorWrapperProps>(({
+	documentId,
+	document: initialDocument,
+	options: userOptions,
+	mediaUri,
+	disableMediaServer = false,
+	enableMentions = true,
+	enableComments = true,
+	handleMentionAdded,
+	onReferenceAdded,
+	onReferenceUpdated,
+	onReferenceRemoved,
+	onReferenceClicked,
+	onChange,
+}, ref) => {
 
 	const editorRef = useRef<HTMLDivElement | null>(null);
 
@@ -211,29 +252,70 @@ export const BlueOrangeBlockEditorWrapper: React.FC<Props> = ({documentId, handl
 		closeCommentWindow();
 	}
 
+	useImperativeHandle(ref, () => ({
+		getEditor: () => blueOrangeEditorRef.current,
+		toJson: () => blueOrangeEditorRef.current?.toJson() ?? null,
+		toHtmlCopy: () => blueOrangeEditorRef.current?.toHtmlCopy() ?? null,
+		reviveDocument: (doc: BlueOrangeDocument) => blueOrangeEditorRef.current?.reviveDocument(doc),
+		clearDocument: () => blueOrangeEditorRef.current?.clearDocument(),
+	}));
+
 	useEffect(() => {
 		const current = editorRef.current as HTMLElement;
 		if (blueOrangeEditorRef.current == null) {
+			const editorOptions: BlueOrangeDocumentOptions = {
+				...userOptions,
+				comments: enableComments,
+			};
+
+			if (disableMediaServer) {
+				editorOptions.mediaUri = undefined;
+			} else if (mediaUri) {
+				editorOptions.mediaUri = mediaUri;
+			}
+
 			blueOrangeEditorRef.current = new BlockEditor(
-				current);
-			current.addEventListener("blue-orange-editor-new-comment-added", (ev) => {
-				// @ts-ignore
-				const commentId = ev.detail.commentUuid;
-				const state = {
-					display: true,
-					commentId: [commentId]
-				}
-				setCommentWindowState(state);
+				current,
+				initialDocument,
+				editorOptions);
+
+			// Comment events
+			if (enableComments) {
+				current.addEventListener("blue-orange-editor-new-comment-added", (ev) => {
+					// @ts-ignore
+					const commentId = ev.detail.commentUuid;
+					const state = {
+						display: true,
+						commentId: [commentId]
+					}
+					setCommentWindowState(state);
+				})
+				current.addEventListener("blue-orange-editor-comment-tooltip-clicked", (ev) => {
+					// @ts-ignore
+					const commentIds = ev.detail.commentIds;
+					const state = {
+						display: true,
+						commentId: commentIds
+					}
+					setCommentWindowState(state);
+				})
+			}
+
+			// Reference events
+			current.addEventListener("blue-orange-editor-new-reference-added", (ev: any) => {
+				onReferenceAdded?.(ev.detail);
 			})
-			current.addEventListener("blue-orange-editor-comment-tooltip-clicked", (ev) => {
-				// @ts-ignore
-				const commentIds = ev.detail.commentIds;
-				const state = {
-					display: true,
-					commentId: commentIds
-				}
-				setCommentWindowState(state);
+			current.addEventListener("blue-orange-editor-reference-updated", (ev: any) => {
+				onReferenceUpdated?.(ev.detail);
 			})
+			current.addEventListener("blue-orange-editor-reference-removed", (ev: any) => {
+				onReferenceRemoved?.(ev.detail);
+			})
+			current.addEventListener("blue-orange-editor-reference-clicked", (ev: any) => {
+				onReferenceClicked?.(ev.detail);
+			})
+
+			// Inline context (mentions & emoji)
 			current.addEventListener("blueorangeeditorinlinecontextselectionevent", (ev: any) => {
 				const selectedMention = ev.detail;
 				try {
@@ -243,7 +325,7 @@ export const BlueOrangeBlockEditorWrapper: React.FC<Props> = ({documentId, handl
 				} catch (e) {}
 			})
 			current.addEventListener("blueorangeeditorinlinecontextopen", (ev:any) => {
-				if (ev.detail.listener.key == "@" && blueOrangeEditorRef.current) {
+				if (ev.detail.listener.key == "@" && blueOrangeEditorRef.current && enableMentions) {
 					fetchUsers("").then(users => {
 						if (blueOrangeEditorRef.current) {
 							blueOrangeEditorRef.current.updateInlineContext(users);
@@ -256,7 +338,7 @@ export const BlueOrangeBlockEditorWrapper: React.FC<Props> = ({documentId, handl
 				}
 			})
 			current.addEventListener("blueorangeeditorinlinecontextupdateevent", (ev:any) => {
-				if (ev.detail.listener.key == "@") {
+				if (ev.detail.listener.key == "@" && enableMentions) {
 					var query = ev.detail.filter;
 					fetchUsers(query).then(users => {
 						if (blueOrangeEditorRef.current) {
@@ -269,6 +351,13 @@ export const BlueOrangeBlockEditorWrapper: React.FC<Props> = ({documentId, handl
 					blueOrangeEditorRef.current.closeInlineContextWindowToolbar();
 				}
 			})
+
+			// Data change event
+			current.addEventListener("datachange", () => {
+				if (onChange && blueOrangeEditorRef.current) {
+					onChange(blueOrangeEditorRef.current.toJson());
+				}
+			})
 		}
 	}, []);
 
@@ -276,7 +365,7 @@ export const BlueOrangeBlockEditorWrapper: React.FC<Props> = ({documentId, handl
 	return (
 		<>
 			<div ref={editorRef} className="blue-orange-block-editor-parent"></div>
-			{commentWindowState.display &&
+			{enableComments && commentWindowState.display &&
 				<Drawer position={DrawerPosition.RIGHT} width={"450px"} onClose={closeCommentWindow}>
 					<DrawerHeader label={"Comments"} onClose={closeCommentWindow}></DrawerHeader>
 					{commentWindowState.commentId.length > 1 &&
@@ -298,4 +387,4 @@ export const BlueOrangeBlockEditorWrapper: React.FC<Props> = ({documentId, handl
 			}
 		</>
 	)
-}
+})

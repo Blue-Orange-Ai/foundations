@@ -6,6 +6,10 @@
     overflow: hidden;
 }
 
+.blue-orange-layouts-vertical-split-page {
+    width: 100% !important;
+}
+
 .blue-orange-chat-layout-center {
     display: flex;
     flex-direction: column;

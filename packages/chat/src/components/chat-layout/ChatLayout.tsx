@@ -342,7 +342,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
         <div className="blue-orange-chat-layout-container">
             {renderSidebar()}
             {hasRightPanel ? (
-                <VerticalSplitPage splitDirection={SplitDirectionVerticalPage.RIGHT}>
+                <VerticalSplitPage splitDirection={SplitDirectionVerticalPage.RIGHT} defaultWidth={562}>
                     <SplitPageMajor>
                         {renderCenter()}
                     </SplitPageMajor>
