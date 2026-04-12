@@ -16,6 +16,7 @@ interface Props {
     onEdit?: (message: IChatMessage, newContent: string) => void;
     onAvatarClick?: (user: IChatUser) => void;
     onThreadClick?: (message: IChatMessage) => void;
+    onLinkedMessageClick?: (message: IChatMessage) => void;
     children?: React.ReactNode;
 }
 
@@ -52,6 +53,7 @@ export const ChatMessage: React.FC<Props> = ({
     onEdit,
     onAvatarClick,
     onThreadClick,
+    onLinkedMessageClick,
     children
 }) => {
     const [editing, setEditing] = useState(false);
@@ -98,19 +100,44 @@ export const ChatMessage: React.FC<Props> = ({
         setEditing(false);
     }, []);
 
+    const handleLinkedMessageClick = () => {
+        if (message.replyTo && onLinkedMessageClick) {
+            onLinkedMessageClick(message.replyTo);
+        }
+    };
+
     const renderReplyReference = () => {
         if (!message.replyTo) return null;
+        const linked = message.replyTo;
         return (
             <div
-                className="blue-orange-chat-message-reply-ref"
-                data-message-id={message.replyTo.id}
+                className="blue-orange-chat-message-linked"
+                data-message-id={linked.id}
+                onClick={handleLinkedMessageClick}
             >
-                <span className="blue-orange-chat-message-reply-ref-sender">
-                    {message.replyTo.sender.user.name}
-                </span>
-                <span className="blue-orange-chat-message-reply-ref-content">
-                    {truncateContent(message.replyTo.content, 50)}
-                </span>
+                <div className="blue-orange-chat-message-linked-line" />
+                <div className="blue-orange-chat-message-linked-content">
+                    <div className="blue-orange-chat-message-linked-avatar">
+                        <Avatar user={linked.sender.user} height={36} width={36} />
+                    </div>
+                    <div className="blue-orange-chat-message-linked-body">
+                        <div className="blue-orange-chat-message-header">
+                            <span className="blue-orange-chat-message-sender">
+                                {linked.sender.user.name}
+                            </span>
+                            <span className="blue-orange-chat-message-timestamp">
+                                {formatTimestamp(linked.timestamp)}
+                            </span>
+                        </div>
+                        <div
+                            className="blue-orange-chat-message-content"
+                            dangerouslySetInnerHTML={{ __html: stripTrailingEmptyParagraphs(linked.content) }}
+                        />
+                        {linked.edited && (
+                            <span className="blue-orange-chat-message-edited">(edited)</span>
+                        )}
+                    </div>
+                </div>
             </div>
         );
     };

@@ -74,6 +74,7 @@ interface ChatLayoutProps {
     onGroupContextMenuClick?: (item: IContextMenuItem, groupLabel: string) => void;
     conversationContextMenuItems?: (conversation: IChatConversation) => IContextMenuItem[];
     onConversationContextMenuClick?: (item: IContextMenuItem, conversation: IChatConversation) => void;
+    onLinkedMessageClick?: (message: IChatMessage) => void;
 }
 
 const CONSECUTIVE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
@@ -119,7 +120,8 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     groupContextMenuItems,
     onGroupContextMenuClick,
     conversationContextMenuItems,
-    onConversationContextMenuClick
+    onConversationContextMenuClick,
+    onLinkedMessageClick
 }) => {
     const [replyTo, setReplyTo] = useState<IChatMessage | null>(null);
 
@@ -130,6 +132,17 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
             setReplyTo(message);
         }
     }, [onReplyToMessage]);
+
+    const handleLinkedMessageClick = useCallback((linkedMessage: IChatMessage) => {
+        if (onLinkedMessageClick) {
+            onLinkedMessageClick(linkedMessage);
+        } else {
+            const el = document.querySelector(`[data-message-id="${linkedMessage.id}"]`);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    }, [onLinkedMessageClick]);
 
     const handleCancelReply = useCallback(() => {
         setReplyTo(null);
@@ -183,6 +196,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                     onEdit={onEditMessage}
                     onAvatarClick={onAvatarClick}
                     onThreadClick={handleReply}
+                    onLinkedMessageClick={handleLinkedMessageClick}
                 >
                     {message.reactions && message.reactions.length > 0 && (
                         <MessageReactions

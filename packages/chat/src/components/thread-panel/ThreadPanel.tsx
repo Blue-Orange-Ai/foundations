@@ -148,6 +148,7 @@ export const ThreadPanel: React.FC<Props> = ({
                     onSend={onSendReply}
                     placeholder="Reply..."
                     typingUsers={typingUsers}
+                    focus={true}
                 />
             </div>
         </div>
