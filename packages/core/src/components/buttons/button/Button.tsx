@@ -20,9 +20,16 @@ export enum ButtonIconPos {
 	RIGHT
 }
 
+export enum ButtonSize {
+	SMALL = "SMALL",
+	MEDIUM = "MEDIUM",
+	LARGE = "LARGE"
+}
+
 interface Props {
 	text: string;
 	buttonType: ButtonType;
+	size?: ButtonSize;
 	tooltip?: string;
 	icon?: string;
 	iconPos?: ButtonIconPos;
@@ -40,9 +47,16 @@ interface Props {
 	style?: React.CSSProperties
 }
 
+const sizeClassName: Record<ButtonSize, string> = {
+	[ButtonSize.SMALL]: "foundations-btn-sm",
+	[ButtonSize.MEDIUM]: "",
+	[ButtonSize.LARGE]: "foundations-btn-lg",
+};
+
 export const Button: React.FC<Props> = ({
 											text,
 											buttonType,
+											size = ButtonSize.MEDIUM,
 											tooltip,
 											icon,
 											iconPos,
@@ -71,21 +85,23 @@ export const Button: React.FC<Props> = ({
 		}
 	};
 
+	const sizeClass = sizeClassName[size] ? " " + sizeClassName[size] : "";
+
 	const generateDefaultStyle = () => {
 		if (buttonType == ButtonType.SECONDARY) {
-			return "foundations-default-btn no-select foundations-secondary-btn";
+			return "foundations-default-btn no-select foundations-secondary-btn" + sizeClass;
 		} else if (buttonType == ButtonType.SUCCESS) {
-			return "foundations-default-btn no-select foundations-success-btn";
+			return "foundations-default-btn no-select foundations-success-btn" + sizeClass;
 		} else if (buttonType == ButtonType.DANGER) {
-			return "foundations-default-btn no-select foundations-danger-btn";
+			return "foundations-default-btn no-select foundations-danger-btn" + sizeClass;
 		} else if (buttonType == ButtonType.WARNING) {
-			return "foundations-default-btn no-select foundations-warning-btn";
+			return "foundations-default-btn no-select foundations-warning-btn" + sizeClass;
 		} else if (buttonType == ButtonType.CUSTOM) {
-			return "foundations-default-btn no-select";
+			return "foundations-default-btn no-select" + sizeClass;
 		} else if (buttonType == ButtonType.CLEAR) {
-			return "foundations-default-btn no-select foundations-clear-btn";
+			return "foundations-default-btn no-select foundations-clear-btn" + sizeClass;
 		}
-		return "foundations-default-btn no-select foundations-primary-btn";
+		return "foundations-default-btn no-select foundations-primary-btn" + sizeClass;
 	}
 
 	const defaultStyle = generateDefaultStyle()

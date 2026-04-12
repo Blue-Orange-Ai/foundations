@@ -25,6 +25,7 @@ export * from './components/thread-panel/ThreadPanel';
 
 // Layout
 export * from './components/chat-layout/ChatLayout';
+export * from './components/chat-layout/members-modal/ChatMembersModal';
 
 // Utils
 export * from './utils/dateUtils';

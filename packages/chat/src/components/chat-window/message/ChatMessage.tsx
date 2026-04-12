@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import moment from 'moment';
-import { Avatar, EmojiWrapper, RichText } from '@blue-orange-ai/foundations-core';
+import { Avatar, EmojiWrapper, RichText, Button, ButtonType, ButtonSize } from '@blue-orange-ai/foundations-core';
 import { IChatMessage, IChatUser } from '../../../interfaces/ChatInterfaces';
 
 import './ChatMessage.css';
@@ -205,18 +205,18 @@ export const ChatMessage: React.FC<Props> = ({
                     />
                 </div>
                 <div className="blue-orange-chat-message-edit-actions">
-                    <button
-                        className="blue-orange-chat-message-edit-cancel"
+                    <Button
+                        text="Cancel"
+                        buttonType={ButtonType.SECONDARY}
+                        size={ButtonSize.SMALL}
                         onClick={handleCancelEdit}
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        className="blue-orange-chat-message-edit-save"
+                    />
+                    <Button
+                        text="Save"
+                        buttonType={ButtonType.PRIMARY}
+                        size={ButtonSize.SMALL}
                         onClick={handleSaveEdit}
-                    >
-                        Save
-                    </button>
+                    />
                 </div>
             </div>
         );

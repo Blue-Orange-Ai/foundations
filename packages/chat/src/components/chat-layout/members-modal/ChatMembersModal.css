@@ -1,0 +1,114 @@
+.blue-orange-chat-members-modal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.blue-orange-chat-members-modal-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.blue-orange-chat-members-modal-item:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.blue-orange-chat-members-modal-item-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex-grow: 1;
+}
+
+.blue-orange-chat-members-modal-item-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d1c1d;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.blue-orange-chat-members-modal-item-status {
+    font-size: 12px;
+    color: #616061;
+}
+
+.blue-orange-chat-members-modal-status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+.blue-orange-chat-members-modal-status-dot--online {
+    background-color: #22c55e;
+}
+
+.blue-orange-chat-members-modal-status-dot--away {
+    background-color: #eab308;
+}
+
+.blue-orange-chat-members-modal-status-dot--dnd {
+    background-color: #ef4444;
+}
+
+.blue-orange-chat-members-modal-status-dot--offline {
+    background-color: transparent;
+    border: 1.5px solid #999999;
+}
+
+.blue-orange-chat-members-modal-add-section {
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+}
+
+.blue-orange-chat-members-modal-add-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1d1c1d;
+    margin-bottom: 8px;
+}
+
+.blue-orange-chat-members-modal-footer-btns {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Dark theme */
+.dark .blue-orange-chat-members-modal-item:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+.dark .blue-orange-chat-members-modal-item-name {
+    color: #e0e0e0;
+}
+
+.dark .blue-orange-chat-members-modal-item-status {
+    color: #9e9e9e;
+}
+
+.dark .blue-orange-chat-members-modal-status-dot--offline {
+    border-color: #666666;
+}
+
+.dark .blue-orange-chat-members-modal-add-section {
+    border-bottom-color: #374151;
+}
+
+.dark .blue-orange-chat-members-modal-add-label {
+    color: #e0e0e0;
+}
+

@@ -45,6 +45,17 @@
     margin-left: 8px;
 }
 
+.blue-orange-chat-layout-member-count-clickable {
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+
+.blue-orange-chat-layout-member-count-clickable:hover {
+    background-color: rgba(0, 0, 0, 0.06);
+    color: #1d1c1d;
+}
+
 .blue-orange-chat-layout-messages-area {
     flex: 1;
     overflow-y: auto;
@@ -81,6 +92,11 @@
 
 .dark .blue-orange-chat-layout-member-count {
     color: #9ca3af;
+}
+
+.dark .blue-orange-chat-layout-member-count-clickable:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #e0e0e0;
 }
 
 .dark .blue-orange-chat-layout-empty-state {

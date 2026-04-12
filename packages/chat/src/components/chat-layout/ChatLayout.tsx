@@ -27,6 +27,7 @@ import { MessageReactions } from '../chat-window/message/reactions/MessageReacti
 import { ChatInput } from '../chat-input/ChatInput';
 import { UserDetailPanel } from '../user-detail/UserDetailPanel';
 import { ThreadPanel } from '../thread-panel/ThreadPanel';
+import { ChatMembersModal } from './members-modal/ChatMembersModal';
 import { shouldShowDateSeparator } from '../../utils/dateUtils';
 import { Media } from '@blue-orange-ai/foundations-clients';
 
@@ -75,6 +76,7 @@ interface ChatLayoutProps {
     conversationContextMenuItems?: (conversation: IChatConversation) => IContextMenuItem[];
     onConversationContextMenuClick?: (item: IContextMenuItem, conversation: IChatConversation) => void;
     onLinkedMessageClick?: (message: IChatMessage) => void;
+    onAddMembers?: (userIds: string[]) => void;
 }
 
 const CONSECUTIVE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
@@ -121,9 +123,11 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     onGroupContextMenuClick,
     conversationContextMenuItems,
     onConversationContextMenuClick,
-    onLinkedMessageClick
+    onLinkedMessageClick,
+    onAddMembers
 }) => {
     const [replyTo, setReplyTo] = useState<IChatMessage | null>(null);
+    const [showMembersModal, setShowMembersModal] = useState(false);
 
     const handleReply = useCallback((message: IChatMessage) => {
         if (onReplyToMessage) {
@@ -295,7 +299,10 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                         <span className="blue-orange-chat-layout-conversation-name">
                             {activeConversation.name}
                         </span>
-                        <span className="blue-orange-chat-layout-member-count">
+                        <span
+                            className="blue-orange-chat-layout-member-count blue-orange-chat-layout-member-count-clickable"
+                            onClick={() => setShowMembersModal(true)}
+                        >
                             {activeConversation.members.length} {activeConversation.members.length === 1 ? 'member' : 'members'}
                         </span>
                     </div>
@@ -366,6 +373,14 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                 </VerticalSplitPage>
             ) : (
                 renderCenter()
+            )}
+            {showMembersModal && activeConversation && (
+                <ChatMembersModal
+                    members={activeConversation.members}
+                    onClose={() => setShowMembersModal(false)}
+                    onMemberClick={onAvatarClick}
+                    onAddMembers={onAddMembers}
+                />
             )}
         </div>
     );
