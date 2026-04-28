@@ -1,5 +1,5 @@
 import React from "react";
-import {User, Media} from "@blue-orange-ai/foundations-clients";
+import {Avatar as AvatarObj, User, Media} from "@blue-orange-ai/foundations-clients";
 
 export enum ChatConversationType {
     DM = "DM",
@@ -19,11 +19,29 @@ export enum ChatMemberRole {
     PARTICIPANT = "PARTICIPANT"
 }
 
+export interface IUserNotificationSettings {
+    quietHoursStart?: string;
+    quietHoursEnd?: string;
+    pausedUntil?: Date;
+}
+
 export interface IChatUser {
     user: User;
     status: ChatUserStatus;
     snoozeUntil?: Date;
     role?: ChatMemberRole;
+    statusText?: string;
+    statusEmoji?: string;
+    notificationSettings?: IUserNotificationSettings;
+}
+
+export interface IUserSettings {
+    name: string;
+    avatar?: AvatarObj;
+    status: ChatUserStatus;
+    statusText?: string;
+    statusEmoji?: string;
+    notificationSettings: IUserNotificationSettings;
 }
 
 export interface IChatReaction {
@@ -77,6 +95,7 @@ export interface IChatConversation {
     description?: string;
     isPrivate?: boolean;
     archived?: boolean;
+    userCreated?: boolean;
 }
 
 export interface IChatConversationSettings {

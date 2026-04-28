@@ -10,11 +10,13 @@ import {
     IChatConversationSettings,
     IChatNavItem,
     IChatBookmark,
+    IUserSettings,
+    ChatConversationType,
     ChatMemberRole,
     ChatUserStatus
 } from '../../interfaces/ChatInterfaces';
 import {
-    currentUser,
+    currentUser as initialCurrentUser,
     userDave,
     mockGroups,
     messagesByConversation,
@@ -26,6 +28,7 @@ import {
 import './Workspace.css';
 
 export const Workspace: React.FC = () => {
+    const [currentUser, setCurrentUser] = useState<IChatUser>(initialCurrentUser);
     const [activeConversation, setActiveConversation] = useState<IChatConversation | undefined>(
         allConversations[0]
     );
@@ -248,32 +251,47 @@ export const Workspace: React.FC = () => {
     // -- Context menus --
 
     const groupContextMenuItems: IContextMenuItem[] = useMemo(() => [
-        { type: IContextMenuType.HEADING, label: 'Group Actions', value: '' },
-        { type: IContextMenuType.CONTENT, label: 'Create Channel', icon: 'ri-add-line', value: 'create-channel' },
-        { type: IContextMenuType.CONTENT, label: 'Browse Channels', icon: 'ri-search-line', value: 'browse' },
+        { type: IContextMenuType.HEADING, label: 'Channels', value: '' },
+        { type: IContextMenuType.CONTENT, label: 'Create channel', icon: 'ri-add-line', value: 'create-channel' },
         { type: IContextMenuType.SEPARATOR, label: '' },
-        { type: IContextMenuType.CONTENT, label: 'Collapse All', icon: 'ri-contract-up-down-line', value: 'collapse-all' },
-        { type: IContextMenuType.CONTENT, label: 'Mark All as Read', icon: 'ri-check-double-line', value: 'mark-all-read' },
+        { type: IContextMenuType.CONTENT, label: 'Collapse all', icon: 'ri-contract-up-down-line', value: 'collapse-all' },
+        { type: IContextMenuType.CONTENT, label: 'Mark all as read', icon: 'ri-check-double-line', value: 'mark-all-read' },
     ], []);
 
     const handleGroupContextMenuClick = useCallback((item: IContextMenuItem, groupLabel: string) => {
+        if (item.value === 'collapse-all') {
+            setGroups((prev) => prev.map((g) => ({ ...g, collapsed: true })));
+            return;
+        }
         console.log(`[Workspace] Group "${groupLabel}" context menu:`, item.value);
     }, []);
 
-    const getConversationContextMenuItems = useCallback((conversation: IChatConversation): IContextMenuItem[] => [
-        { type: IContextMenuType.HEADING, label: conversation.name, value: '' },
-        { type: IContextMenuType.CONTENT, label: 'Mark as Read', icon: 'ri-check-line', value: 'mark-read' },
-        { type: IContextMenuType.CONTENT, label: conversation.starred ? 'Unstar' : 'Star', icon: conversation.starred ? 'ri-star-fill' : 'ri-star-line', value: 'toggle-star' },
-        { type: IContextMenuType.CONTENT, label: 'Mute Conversation', icon: 'ri-volume-mute-line', value: 'mute' },
-        { type: IContextMenuType.SEPARATOR, label: '' },
-        { type: IContextMenuType.CONTENT, label: 'Copy Link', icon: 'ri-link', value: 'copy-link' },
-        { type: IContextMenuType.CONTENT, label: 'Move to...', icon: 'ri-folder-transfer-line', value: 'move' },
-        { type: IContextMenuType.SEPARATOR, label: '' },
-        { type: IContextMenuType.CONTENT, label: 'Leave Conversation', icon: 'ri-logout-box-line', value: 'leave' },
-    ], []);
+    const getConversationContextMenuItems = useCallback((conversation: IChatConversation): IContextMenuItem[] => {
+        const items: IContextMenuItem[] = [
+            { type: IContextMenuType.HEADING, label: conversation.name, value: '' },
+            { type: IContextMenuType.CONTENT, label: 'Mark as Read', icon: 'ri-check-line', value: 'mark-read' },
+            { type: IContextMenuType.CONTENT, label: conversation.starred ? 'Unstar' : 'Star', icon: conversation.starred ? 'ri-star-fill' : 'ri-star-line', value: 'toggle-star' },
+            { type: IContextMenuType.CONTENT, label: 'Mute Conversation', icon: 'ri-volume-mute-line', value: 'mute' },
+            { type: IContextMenuType.SEPARATOR, label: '' },
+            { type: IContextMenuType.CONTENT, label: 'Copy Link', icon: 'ri-link', value: 'copy-link' },
+            { type: IContextMenuType.CONTENT, label: 'Move to...', icon: 'ri-folder-transfer-line', value: 'move' },
+            { type: IContextMenuType.SEPARATOR, label: '' },
+            { type: IContextMenuType.CONTENT, label: 'Leave Conversation', icon: 'ri-logout-box-line', value: 'leave' },
+        ];
+        if (conversation.type === ChatConversationType.CHANNEL && conversation.userCreated) {
+            items.push({ type: IContextMenuType.SEPARATOR, label: '' });
+            items.push({ type: IContextMenuType.CONTENT, label: 'Delete channel', icon: 'ri-delete-bin-7-line', value: 'delete-channel' });
+        }
+        return items;
+    }, []);
 
     const handleConversationContextMenuClick = useCallback((item: IContextMenuItem, conversation: IChatConversation) => {
+        if (item.value === 'delete-channel') {
+            handleDeleteConversation(conversation.id);
+            return;
+        }
         console.log(`[Workspace] Conversation "${conversation.name}" context menu:`, item.value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
 
@@ -331,6 +349,105 @@ export const Workspace: React.FC = () => {
     const handleArchiveConversation = useCallback((conversationId: string) => {
         updateConversationEverywhere(conversationId, (c) => ({ ...c, archived: true }));
     }, [updateConversationEverywhere]);
+
+    const handleCreateConversation = useCallback((userIds: string[], encrypted: boolean, firstMessage: { content: string; mentions: string[]; attachments: any[] }) => {
+        if (userIds.length === 0) return;
+        const selected = userIds
+            .map((id) => allUsers.find((u) => u.user.id === id))
+            .filter((u): u is IChatUser => !!u);
+        if (selected.length === 0) return;
+
+        const isDm = selected.length === 1;
+        const otherNames = selected.map((u) => u.user.name).join(', ');
+        const initialMessage: IChatMessage = {
+            id: `msg-new-${Date.now()}`,
+            content: firstMessage.content,
+            sender: currentUser,
+            timestamp: new Date(),
+            reactions: [],
+            attachments: firstMessage.attachments,
+        };
+        const newConversation: IChatConversation = {
+            id: `conv-new-${Date.now()}`,
+            name: isDm ? selected[0].user.name : otherNames,
+            type: isDm ? ChatConversationType.DM : ChatConversationType.GROUP,
+            members: [
+                { ...currentUser, role: ChatMemberRole.ADMIN },
+                ...selected.map((u) => ({ ...u, role: ChatMemberRole.PARTICIPANT })),
+            ],
+            lastMessage: initialMessage,
+            unreadCount: 0,
+            starred: false,
+            encrypted,
+        };
+
+        const targetGroupLabel = 'Direct Messages';
+        setGroups((prev) => prev.map((group) => (
+            group.label === targetGroupLabel
+                ? { ...group, conversations: [newConversation, ...group.conversations] }
+                : group
+        )));
+        setActiveConversation(newConversation);
+        setMessages([initialMessage]);
+    }, [currentUser]);
+
+    const handleCreateChannel = useCallback((
+        name: string,
+        userIds: string[],
+        encrypted: boolean,
+        firstMessage: { content: string; mentions: string[]; attachments: any[] },
+        userCreated: boolean,
+    ) => {
+        const trimmedName = name.trim();
+        if (!trimmedName || userIds.length === 0) return;
+        const selected = userIds
+            .map((id) => allUsers.find((u) => u.user.id === id))
+            .filter((u): u is IChatUser => !!u);
+        const initialMessage: IChatMessage = {
+            id: `msg-channel-${Date.now()}`,
+            content: firstMessage.content,
+            sender: currentUser,
+            timestamp: new Date(),
+            reactions: [],
+            attachments: firstMessage.attachments,
+        };
+        const newChannel: IChatConversation = {
+            id: `conv-channel-${Date.now()}`,
+            name: trimmedName,
+            type: ChatConversationType.CHANNEL,
+            members: [
+                { ...currentUser, role: ChatMemberRole.ADMIN },
+                ...selected.map((u) => ({ ...u, role: ChatMemberRole.PARTICIPANT })),
+            ],
+            lastMessage: initialMessage,
+            unreadCount: 0,
+            starred: false,
+            encrypted,
+            userCreated,
+        };
+        setGroups((prev) => prev.map((group) => (
+            group.label === 'Channels'
+                ? { ...group, conversations: [newChannel, ...group.conversations] }
+                : group
+        )));
+        setActiveConversation(newChannel);
+        setMessages([initialMessage]);
+    }, [currentUser]);
+
+    const handleUpdateUserSettings = useCallback((settings: IUserSettings) => {
+        setCurrentUser((prev) => ({
+            ...prev,
+            user: {
+                ...prev.user,
+                name: settings.name,
+                avatar: settings.avatar,
+            },
+            status: settings.status,
+            statusText: settings.statusText,
+            statusEmoji: settings.statusEmoji,
+            notificationSettings: settings.notificationSettings,
+        }));
+    }, []);
 
     const handleAddMembers = useCallback((conversationId: string, userIds: string[]) => {
         if (userIds.length === 0) return;
@@ -417,6 +534,9 @@ export const Workspace: React.FC = () => {
                 onDeleteConversation={handleDeleteConversation}
                 onUpdateMemberRole={handleUpdateMemberRole}
                 onAddMembers={handleAddMembers}
+                onUpdateUserSettings={handleUpdateUserSettings}
+                onCreateConversation={handleCreateConversation}
+                onCreateChannel={handleCreateChannel}
             />
         </div>
     );

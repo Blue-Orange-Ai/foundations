@@ -18,6 +18,7 @@ import {
     IChatConversationSettings,
     IChatNavItem,
     IChatBookmark,
+    IUserSettings,
     ChatConversationType,
     ChatMemberRole,
     ChatUserStatus
@@ -36,6 +37,9 @@ import { ThreadPanel } from '../thread-panel/ThreadPanel';
 import { ChatMembersModal } from './members-modal/ChatMembersModal';
 import { BookmarksView } from '../bookmarks/BookmarksView';
 import { ChatSettingsView } from '../chat-settings/ChatSettingsView';
+import { UserSettingsView } from '../user-settings/UserSettingsView';
+import { NewChatView, INewChatInitialMessage } from '../new-chat/NewChatView';
+import { NewChannelView, INewChannelInitialMessage } from '../new-channel/NewChannelView';
 import { shouldShowDateSeparator } from '../../utils/dateUtils';
 import { Media } from '@blue-orange-ai/foundations-clients';
 
@@ -92,6 +96,15 @@ interface ChatLayoutProps {
     onUpdateConversation?: (conversationId: string, settings: IChatConversationSettings) => void;
     onArchiveConversation?: (conversationId: string) => void;
     onDeleteConversation?: (conversationId: string) => void;
+    onUpdateUserSettings?: (settings: IUserSettings) => void;
+    onCreateConversation?: (userIds: string[], encrypted: boolean, firstMessage: INewChatInitialMessage) => void;
+    onCreateChannel?: (
+        name: string,
+        userIds: string[],
+        encrypted: boolean,
+        firstMessage: INewChannelInitialMessage,
+        userCreated: boolean,
+    ) => void;
 }
 
 const CONSECUTIVE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
@@ -146,17 +159,54 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     onBookmarkClick,
     onUpdateConversation,
     onArchiveConversation,
-    onDeleteConversation
+    onDeleteConversation,
+    onUpdateUserSettings,
+    onCreateConversation,
+    onCreateChannel
 }) => {
     const [replyTo, setReplyTo] = useState<IChatMessage | null>(null);
     const [showMembersModal, setShowMembersModal] = useState(false);
     const [showBookmarksView, setShowBookmarksView] = useState(false);
     const [showSettingsView, setShowSettingsView] = useState(false);
+    const [showUserSettingsView, setShowUserSettingsView] = useState(false);
+    const [showNewChatView, setShowNewChatView] = useState(false);
+    const [newChannelMode, setNewChannelMode] = useState<null | { userCreated: boolean }>(null);
 
     useEffect(() => {
         setShowBookmarksView(false);
         setShowSettingsView(false);
+        setShowNewChatView(false);
+        setNewChannelMode(null);
     }, [activeConversation?.id]);
+
+    const handleSidebarSettingsClick = useCallback(() => {
+        setShowBookmarksView(false);
+        setShowSettingsView(false);
+        setShowNewChatView(false);
+        setShowUserSettingsView(true);
+        onSettingsClick?.();
+    }, [onSettingsClick]);
+
+    const handleNewChatClick = useCallback(() => {
+        setShowBookmarksView(false);
+        setShowSettingsView(false);
+        setShowUserSettingsView(false);
+        setNewChannelMode(null);
+        setShowNewChatView(true);
+        onNewChat?.();
+    }, [onNewChat]);
+
+    const handleGroupCtxMenuClickWrapped = useCallback((item: IContextMenuItem, groupLabel: string) => {
+        if (item.value === 'create-channel' || item.value === 'create-system-channel') {
+            setShowBookmarksView(false);
+            setShowSettingsView(false);
+            setShowUserSettingsView(false);
+            setShowNewChatView(false);
+            setNewChannelMode({ userCreated: item.value === 'create-channel' });
+            return;
+        }
+        onGroupContextMenuClick?.(item, groupLabel);
+    }, [onGroupContextMenuClick]);
 
     const headerMenuItems: IContextMenuItem[] = [
         { label: 'Settings', type: IContextMenuType.CONTENT, icon: 'ri-settings-3-line' },
@@ -300,7 +350,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                     workspaceMedia={workspaceMedia}
                     sidebarState={sidebarState}
                     onStateChange={onSidebarStateChange}
-                    onNewChat={onNewChat}
+                    onNewChat={handleNewChatClick}
                     onWorkspaceClick={onWorkspaceClick}
                 />
             }
@@ -308,7 +358,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                 <ChatSidebarFooter
                     user={currentUser}
                     onStatusChange={onStatusChange}
-                    onSettingsClick={onSettingsClick}
+                    onSettingsClick={handleSidebarSettingsClick}
                     onProfileClick={onProfileClick}
                 />
             }
@@ -327,7 +377,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                     onToggle={onGroupToggle ? () => onGroupToggle(group.label) : undefined}
                     onCreateNew={onGroupCreateNew ? () => onGroupCreateNew(group.label) : undefined}
                     groupContextMenuItems={groupContextMenuItems}
-                    onGroupContextMenuClick={onGroupContextMenuClick ? (item) => onGroupContextMenuClick(item, group.label) : undefined}
+                    onGroupContextMenuClick={(item) => handleGroupCtxMenuClickWrapped(item, group.label)}
                     conversationContextMenuItems={conversationContextMenuItems}
                     onConversationContextMenuClick={onConversationContextMenuClick}
                 />
@@ -337,7 +387,33 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
 
     const renderCenter = () => (
         <div className="blue-orange-chat-layout-center">
-            {activeConversation ? (
+            {newChannelMode ? (
+                <NewChannelView
+                    headerLabel={newChannelMode.userCreated ? 'New channel' : 'New system channel'}
+                    onCreate={(name, userIds, encrypted, firstMessage) => {
+                        onCreateChannel?.(name, userIds, encrypted, firstMessage, newChannelMode.userCreated);
+                        setNewChannelMode(null);
+                    }}
+                    onClose={() => setNewChannelMode(null)}
+                />
+            ) : showNewChatView ? (
+                <NewChatView
+                    onCreate={(userIds, encrypted, firstMessage) => {
+                        onCreateConversation?.(userIds, encrypted, firstMessage);
+                        setShowNewChatView(false);
+                    }}
+                    onClose={() => setShowNewChatView(false)}
+                />
+            ) : showUserSettingsView ? (
+                <UserSettingsView
+                    user={currentUser}
+                    onSave={(settings) => {
+                        onUpdateUserSettings?.(settings);
+                        setShowUserSettingsView(false);
+                    }}
+                    onClose={() => setShowUserSettingsView(false)}
+                />
+            ) : activeConversation ? (
                 <>
                     <div className="blue-orange-chat-layout-conversation-header">
                         <span className="blue-orange-chat-layout-conversation-name">

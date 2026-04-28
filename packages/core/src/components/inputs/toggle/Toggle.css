@@ -52,5 +52,5 @@
 
 
 .blue-orange-toggle-switch-input:checked + .blue-orange-toggle-switch-slider:before {
-    transform: translateX(18px);
+    transform: translateX(11px);
 }

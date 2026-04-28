@@ -1,6 +1,7 @@
 import React from "react";
 import { Avatar } from "@blue-orange-ai/foundations-core";
 import { IChatUser, ChatUserStatus } from "../../../interfaces/ChatInterfaces";
+import { DEFAULT_STATUS_EMOJI } from "../../user-settings/UserSettingsView";
 
 import './ChatSidebarFooter.css';
 
@@ -31,6 +32,9 @@ export const ChatSidebarFooter: React.FC<Props> = ({
     onSettingsClick,
     onProfileClick,
 }) => {
+    const emoji = user.statusEmoji || DEFAULT_STATUS_EMOJI[user.status];
+    const label = user.statusText || statusLabel[user.status];
+
     return (
         <div className="blue-orange-chat-sidebar-footer-container">
             <div
@@ -40,7 +44,18 @@ export const ChatSidebarFooter: React.FC<Props> = ({
                 <Avatar user={user.user} height={28} width={28} />
                 <span
                     className={`blue-orange-chat-sidebar-footer-status-dot ${statusDotClass[user.status]}`}
-                />
+                    tabIndex={0}
+                >
+                    <span className="blue-orange-chat-sidebar-footer-status-popover" role="tooltip">
+                        <span
+                            className="blue-orange-chat-sidebar-footer-status-popover-emoji"
+                            dangerouslySetInnerHTML={{ __html: emoji }}
+                        />
+                        <span className="blue-orange-chat-sidebar-footer-status-popover-label">
+                            {label}
+                        </span>
+                    </span>
+                </span>
             </div>
             <div className="blue-orange-chat-sidebar-footer-info">
                 <span className="blue-orange-chat-sidebar-footer-name">

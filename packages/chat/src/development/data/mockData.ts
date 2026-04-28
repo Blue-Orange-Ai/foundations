@@ -38,6 +38,12 @@ const baseUser = {
 export const currentUser: IChatUser = {
     user: { ...baseUser, id: 'u1', name: 'Alice Chen', username: 'alice.chen', email: 'alice.chen@blue-orange.ai', color: '#6366f1' },
     status: ChatUserStatus.ONLINE,
+    statusText: 'Heads down on the release',
+    statusEmoji: '&#x1F4BB;',
+    notificationSettings: {
+        quietHoursStart: '22:00',
+        quietHoursEnd: '07:00',
+    },
 };
 
 export const userBob: IChatUser = {
