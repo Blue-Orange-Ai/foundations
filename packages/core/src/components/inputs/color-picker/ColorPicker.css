@@ -1,8 +1,8 @@
 
-.blue-orange-default-input-cont {
+.blue-orange-default-color-input-cont {
     width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 .blue-orange-color-picker-input-cont {

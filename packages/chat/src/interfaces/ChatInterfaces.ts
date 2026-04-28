@@ -14,10 +14,16 @@ export enum ChatUserStatus {
     OFFLINE = "OFFLINE"
 }
 
+export enum ChatMemberRole {
+    ADMIN = "ADMIN",
+    PARTICIPANT = "PARTICIPANT"
+}
+
 export interface IChatUser {
     user: User;
     status: ChatUserStatus;
     snoozeUntil?: Date;
+    role?: ChatMemberRole;
 }
 
 export interface IChatReaction {
@@ -68,6 +74,15 @@ export interface IChatConversation {
     typingUsers?: IChatUser[];
     encrypted?: boolean;
     bookmarks?: IChatBookmark[];
+    description?: string;
+    isPrivate?: boolean;
+    archived?: boolean;
+}
+
+export interface IChatConversationSettings {
+    name: string;
+    description?: string;
+    isPrivate: boolean;
 }
 
 export interface IChatGroup {

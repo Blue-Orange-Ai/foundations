@@ -140,6 +140,14 @@
     --blue-orange-dark-input-background-color: black;
     --blue-orange-light-input-focus-border-color: black;
     --blue-orange-dark-input-focus-border-color: white;
+    --blue-orange-light-input-label-font-size: 0.8rem;
+    --blue-orange-dark-input-label-font-size: 0.8rem;
+    --blue-orange-light-input-label-font-weight: 700;
+    --blue-orange-dark-input-label-font-weight: 700;
+    --blue-orange-light-input-label-margin-bottom: 10px;
+    --blue-orange-dark-input-label-margin-bottom: 10px;
+    --blue-orange-light-input-label-opacity: 0.8;
+    --blue-orange-dark-input-label-opacity: 0.8;
     --blue-orange-light-input-select-background: #f7f7f9;
     --blue-orange-dark-input-select-background: #28282a;
     --blue-orange-light-input-search-background: #f7f7f9;
@@ -307,6 +315,24 @@ body {
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.blue-orange-default-input-label-cont {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: var(--blue-orange-light-input-label-font-size);
+    font-weight: var(--blue-orange-light-input-label-font-weight);
+    margin-bottom: var(--blue-orange-light-input-label-margin-bottom);
+    opacity: var(--blue-orange-light-input-label-opacity);
+    gap: 4px;
+}
+
+.dark .blue-orange-default-input-label-cont {
+    font-size: var(--blue-orange-dark-input-label-font-size);
+    font-weight: var(--blue-orange-dark-input-label-font-weight);
+    margin-bottom: var(--blue-orange-dark-input-label-margin-bottom);
+    opacity: var(--blue-orange-dark-input-label-opacity);
 }
 
 

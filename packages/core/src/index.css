@@ -299,6 +299,14 @@
   --blue-orange-light-file-system-selected-row-color: white;
   --blue-orange-dark-file-system-selected-row-color: white;
 
+  --blue-orange-light-input-label-font-size: 0.8rem;
+  --blue-orange-dark-input-label-font-size: 0.8rem;
+  --blue-orange-light-input-label-font-weight: 700;
+  --blue-orange-dark-input-label-font-weight: 700;
+  --blue-orange-light-input-label-margin-bottom: 10px;
+  --blue-orange-dark-input-label-margin-bottom: 10px;
+  --blue-orange-light-input-label-opacity: 0.8;
+  --blue-orange-dark-input-label-opacity: 0.8;
 
 }
 
@@ -320,9 +328,16 @@ code {
     display: flex;
     flex-direction: row;
     align-items: center;
-    font-size: 0.8rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    opacity: 0.8;
+    font-size: var(--blue-orange-light-input-label-font-size);
+    font-weight: var(--blue-orange-light-input-label-font-weight);
+    margin-bottom: var(--blue-orange-light-input-label-margin-bottom);
+    opacity: var(--blue-orange-light-input-label-opacity);
     gap: 4px;
+}
+
+.dark .blue-orange-default-input-label-cont {
+    font-size: var(--blue-orange-dark-input-label-font-size);
+    font-weight: var(--blue-orange-dark-input-label-font-weight);
+    margin-bottom: var(--blue-orange-dark-input-label-margin-bottom);
+    opacity: var(--blue-orange-dark-input-label-opacity);
 }

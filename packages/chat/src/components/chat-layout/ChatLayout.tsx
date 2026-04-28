@@ -15,8 +15,11 @@ import {
     IChatMessage,
     IChatUser,
     IChatConversation,
+    IChatConversationSettings,
     IChatNavItem,
     IChatBookmark,
+    ChatConversationType,
+    ChatMemberRole,
     ChatUserStatus
 } from '../../interfaces/ChatInterfaces';
 import { ChatSidebar } from '../sidebar/ChatSidebar';
@@ -32,6 +35,7 @@ import { UserDetailPanel } from '../user-detail/UserDetailPanel';
 import { ThreadPanel } from '../thread-panel/ThreadPanel';
 import { ChatMembersModal } from './members-modal/ChatMembersModal';
 import { BookmarksView } from '../bookmarks/BookmarksView';
+import { ChatSettingsView } from '../chat-settings/ChatSettingsView';
 import { shouldShowDateSeparator } from '../../utils/dateUtils';
 import { Media } from '@blue-orange-ai/foundations-clients';
 
@@ -80,10 +84,14 @@ interface ChatLayoutProps {
     conversationContextMenuItems?: (conversation: IChatConversation) => IContextMenuItem[];
     onConversationContextMenuClick?: (item: IContextMenuItem, conversation: IChatConversation) => void;
     onLinkedMessageClick?: (message: IChatMessage) => void;
-    onAddMembers?: (userIds: string[]) => void;
+    onUpdateMemberRole?: (conversationId: string, userId: string, role: ChatMemberRole) => void;
+    onAddMembers?: (conversationId: string, userIds: string[]) => void;
     onAddBookmark?: (conversationId: string, label: string, payload: { url: string } | { media: Media }) => void;
     onRemoveBookmark?: (conversationId: string, bookmarkId: string) => void;
     onBookmarkClick?: (bookmark: IChatBookmark) => void;
+    onUpdateConversation?: (conversationId: string, settings: IChatConversationSettings) => void;
+    onArchiveConversation?: (conversationId: string) => void;
+    onDeleteConversation?: (conversationId: string) => void;
 }
 
 const CONSECUTIVE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
@@ -131,17 +139,23 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     conversationContextMenuItems,
     onConversationContextMenuClick,
     onLinkedMessageClick,
+    onUpdateMemberRole,
     onAddMembers,
     onAddBookmark,
     onRemoveBookmark,
-    onBookmarkClick
+    onBookmarkClick,
+    onUpdateConversation,
+    onArchiveConversation,
+    onDeleteConversation
 }) => {
     const [replyTo, setReplyTo] = useState<IChatMessage | null>(null);
     const [showMembersModal, setShowMembersModal] = useState(false);
     const [showBookmarksView, setShowBookmarksView] = useState(false);
+    const [showSettingsView, setShowSettingsView] = useState(false);
 
     useEffect(() => {
         setShowBookmarksView(false);
+        setShowSettingsView(false);
     }, [activeConversation?.id]);
 
     const headerMenuItems: IContextMenuItem[] = [
@@ -150,12 +164,14 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     ];
 
     const handleHeaderMenuClick = useCallback((item: IContextMenuItem) => {
-        if (item.label === 'Settings' && onSettingsClick) {
-            onSettingsClick();
+        if (item.label === 'Settings') {
+            setShowBookmarksView(false);
+            setShowSettingsView(true);
         } else if (item.label === 'Bookmarks') {
+            setShowSettingsView(false);
             setShowBookmarksView(true);
         }
-    }, [onSettingsClick]);
+    }, []);
 
     const handleReply = useCallback((message: IChatMessage) => {
         if (onReplyToMessage) {
@@ -364,7 +380,20 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                             ))}
                         </div>
                     )}
-                    {showBookmarksView ? (
+                    {showSettingsView ? (
+                        <ChatSettingsView
+                            conversation={activeConversation}
+                            onSave={(settings) => onUpdateConversation?.(activeConversation.id, settings)}
+                            onArchive={() => onArchiveConversation?.(activeConversation.id)}
+                            onDelete={() => {
+                                onDeleteConversation?.(activeConversation.id);
+                                setShowSettingsView(false);
+                            }}
+                            onUpdateMemberRole={(userId, role) => onUpdateMemberRole?.(activeConversation.id, userId, role)}
+                            onAddMembers={(userIds) => onAddMembers?.(activeConversation.id, userIds)}
+                            onClose={() => setShowSettingsView(false)}
+                        />
+                    ) : showBookmarksView ? (
                         <BookmarksView
                             bookmarks={activeConversation.bookmarks ?? []}
                             onAddBookmark={(label, payload) => onAddBookmark?.(activeConversation.id, label, payload)}
@@ -448,7 +477,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                     members={activeConversation.members}
                     onClose={() => setShowMembersModal(false)}
                     onMemberClick={onAvatarClick}
-                    onAddMembers={onAddMembers}
+                    showRoles={activeConversation.type === ChatConversationType.CHANNEL}
                 />
             )}
         </div>

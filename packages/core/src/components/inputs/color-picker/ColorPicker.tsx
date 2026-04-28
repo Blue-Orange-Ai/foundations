@@ -71,7 +71,7 @@ export const ColorPicker: React.FC<Props> = ({
 	}
 
 	return (
-		<div className="blue-orange-default-input-cont">
+		<div className="blue-orange-default-color-input-cont">
 			{label &&
 				<div className={"blue-orange-default-input-label-cont"} style={labelStyle}>
 					{label}

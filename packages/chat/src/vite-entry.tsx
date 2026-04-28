@@ -30,5 +30,8 @@ export * from './components/chat-layout/members-modal/ChatMembersModal';
 // Bookmarks
 export * from './components/bookmarks/BookmarksView';
 
+// Chat settings
+export * from './components/chat-settings/ChatSettingsView';
+
 // Utils
 export * from './utils/dateUtils';

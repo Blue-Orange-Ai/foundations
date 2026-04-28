@@ -5,6 +5,7 @@ import {
     IChatConversation,
     IChatGroup,
     ChatConversationType,
+    ChatMemberRole,
     ChatUserStatus
 } from '../../interfaces/ChatInterfaces';
 
@@ -303,7 +304,15 @@ export const convEngineering: IChatConversation = {
     id: 'conv-1',
     name: 'engineering',
     type: ChatConversationType.CHANNEL,
-    members: [currentUser, userBob, userCarla, userDave, userEva, userFrank, userGrace],
+    members: [
+        { ...currentUser, role: ChatMemberRole.ADMIN },
+        { ...userBob, role: ChatMemberRole.ADMIN },
+        { ...userCarla, role: ChatMemberRole.PARTICIPANT },
+        { ...userDave, role: ChatMemberRole.PARTICIPANT },
+        { ...userEva, role: ChatMemberRole.PARTICIPANT },
+        { ...userFrank, role: ChatMemberRole.PARTICIPANT },
+        { ...userGrace, role: ChatMemberRole.PARTICIPANT },
+    ],
     lastMessage: engineeringMessages[engineeringMessages.length - 1],
     unreadCount: 3,
     starred: true,
@@ -313,16 +322,25 @@ export const convEngineering: IChatConversation = {
         { id: 'bm-1', label: 'Sprint Board', url: 'https://linear.app/team/sprint' },
         { id: 'bm-2', label: 'API Docs', url: 'https://docs.example.com/api' },
     ],
+    description: 'Where the engineering team coordinates day-to-day work, releases, and incidents.',
+    isPrivate: false,
 };
 
 export const convDesign: IChatConversation = {
     id: 'conv-2',
     name: 'design-team',
     type: ChatConversationType.CHANNEL,
-    members: [currentUser, userGrace, userEva, userDave],
+    members: [
+        { ...currentUser, role: ChatMemberRole.PARTICIPANT },
+        { ...userGrace, role: ChatMemberRole.ADMIN },
+        { ...userEva, role: ChatMemberRole.PARTICIPANT },
+        { ...userDave, role: ChatMemberRole.PARTICIPANT },
+    ],
     lastMessage: designMessages[designMessages.length - 1],
     unreadCount: 0,
     starred: false,
+    description: 'Design crits, brand work, and ongoing product UX threads.',
+    isPrivate: true,
 };
 
 export const convGeneral: IChatConversation = {

@@ -7,8 +7,10 @@ import {
     IChatMessage,
     IChatUser,
     IChatConversation,
+    IChatConversationSettings,
     IChatNavItem,
     IChatBookmark,
+    ChatMemberRole,
     ChatUserStatus
 } from '../../interfaces/ChatInterfaces';
 import {
@@ -17,6 +19,7 @@ import {
     mockGroups,
     messagesByConversation,
     allConversations,
+    allUsers,
     threadRepliesForMsg11,
 } from '../data/mockData';
 
@@ -306,6 +309,59 @@ export const Workspace: React.FC = () => {
         window.open(bookmark.url, '_blank');
     }, []);
 
+    // -- Conversation settings --
+
+    const updateConversationEverywhere = useCallback((conversationId: string, updater: (c: IChatConversation) => IChatConversation) => {
+        setActiveConversation((prev) => (prev && prev.id === conversationId ? updater(prev) : prev));
+        setGroups((prev) => prev.map((group) => ({
+            ...group,
+            conversations: group.conversations.map((c) => (c.id === conversationId ? updater(c) : c)),
+        })));
+    }, []);
+
+    const handleUpdateConversation = useCallback((conversationId: string, settings: IChatConversationSettings) => {
+        updateConversationEverywhere(conversationId, (c) => ({
+            ...c,
+            name: settings.name,
+            description: settings.description,
+            isPrivate: settings.isPrivate,
+        }));
+    }, [updateConversationEverywhere]);
+
+    const handleArchiveConversation = useCallback((conversationId: string) => {
+        updateConversationEverywhere(conversationId, (c) => ({ ...c, archived: true }));
+    }, [updateConversationEverywhere]);
+
+    const handleAddMembers = useCallback((conversationId: string, userIds: string[]) => {
+        if (userIds.length === 0) return;
+        updateConversationEverywhere(conversationId, (c) => {
+            const existingIds = new Set(c.members.map((m) => m.user.id));
+            const additions = userIds
+                .filter((id) => !existingIds.has(id))
+                .map((id) => allUsers.find((u) => u.user.id === id))
+                .filter((u): u is IChatUser => !!u)
+                .map((u) => ({ ...u, role: ChatMemberRole.PARTICIPANT }));
+            if (additions.length === 0) return c;
+            return { ...c, members: [...c.members, ...additions] };
+        });
+    }, [updateConversationEverywhere]);
+
+    const handleUpdateMemberRole = useCallback((conversationId: string, userId: string, role: ChatMemberRole) => {
+        updateConversationEverywhere(conversationId, (c) => ({
+            ...c,
+            members: c.members.map((m) => (m.user.id === userId ? { ...m, role } : m)),
+        }));
+    }, [updateConversationEverywhere]);
+
+    const handleDeleteConversation = useCallback((conversationId: string) => {
+        setGroups((prev) => prev.map((group) => ({
+            ...group,
+            conversations: group.conversations.filter((c) => c.id !== conversationId),
+        })));
+        setActiveConversation((prev) => (prev && prev.id === conversationId ? undefined : prev));
+        setMessages([]);
+    }, []);
+
     // -- Placeholder handlers --
 
     const handleNewChat = useCallback(() => {
@@ -356,6 +412,11 @@ export const Workspace: React.FC = () => {
                 onAddBookmark={handleAddBookmark}
                 onRemoveBookmark={handleRemoveBookmark}
                 onBookmarkClick={handleBookmarkClick}
+                onUpdateConversation={handleUpdateConversation}
+                onArchiveConversation={handleArchiveConversation}
+                onDeleteConversation={handleDeleteConversation}
+                onUpdateMemberRole={handleUpdateMemberRole}
+                onAddMembers={handleAddMembers}
             />
         </div>
     );

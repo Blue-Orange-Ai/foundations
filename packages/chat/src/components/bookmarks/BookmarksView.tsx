@@ -151,7 +151,7 @@ export const BookmarksView: React.FC<Props> = ({
                             </div>
                         ) : (
                             <div className="blue-orange-chat-bookmarks-add-field">
-                                <div className="blue-orange-chat-bookmarks-add-field-label">File</div>
+                                <div className="blue-orange-default-input-label-cont">File</div>
                                 <div className="blue-orange-chat-bookmarks-file-picker">
                                     <div className="blue-orange-chat-bookmarks-file-btn">
                                         <FileUploadBtn

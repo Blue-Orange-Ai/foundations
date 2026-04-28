@@ -1,17 +1,12 @@
-import React, { useState, useCallback } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
     Modal,
     ModalHeader,
     ModalBody,
-    ModalFooter,
-    ModalFooterRight,
     Avatar,
-    TagInputUsers,
-    Button,
-    ButtonType,
-    ButtonSize,
+    SearchInput,
 } from '@blue-orange-ai/foundations-core';
-import { IChatUser, ChatUserStatus } from '../../../interfaces/ChatInterfaces';
+import { ChatMemberRole, IChatUser, ChatUserStatus } from '../../../interfaces/ChatInterfaces';
 
 import './ChatMembersModal.css';
 
@@ -29,85 +24,80 @@ const statusDotClass: Record<ChatUserStatus, string> = {
     [ChatUserStatus.OFFLINE]: 'blue-orange-chat-members-modal-status-dot--offline',
 };
 
+const roleLabel: Record<ChatMemberRole, string> = {
+    [ChatMemberRole.ADMIN]: 'Admin',
+    [ChatMemberRole.PARTICIPANT]: 'Participant',
+};
+
 interface Props {
     members: IChatUser[];
     onClose: () => void;
     onMemberClick?: (user: IChatUser) => void;
-    onAddMembers?: (userIds: string[]) => void;
+    showRoles?: boolean;
 }
 
 export const ChatMembersModal: React.FC<Props> = ({
     members,
     onClose,
     onMemberClick,
-    onAddMembers,
+    showRoles = false,
 }) => {
-    const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+    const [query, setQuery] = useState('');
 
-    const handleTagChange = useCallback((userIds: string[]) => {
-        setSelectedUserIds(userIds);
-    }, []);
-
-    const handleAddMembers = () => {
-        if (onAddMembers && selectedUserIds.length > 0) {
-            onAddMembers(selectedUserIds);
-        }
-    };
+    const filteredMembers = useMemo(() => {
+        const q = query.trim().toLowerCase();
+        if (!q) return members;
+        return members.filter((m) => m.user.name.toLowerCase().includes(q));
+    }, [members, query]);
 
     return (
         <Modal width={450} onClose={onClose}>
-            <ModalHeader label="Members" onClose={onClose} />
+            <ModalHeader label={`Members (${members.length})`} onClose={onClose} />
             <ModalBody>
-                <div className="blue-orange-chat-members-modal-add-section">
-                    <div className="blue-orange-chat-members-modal-add-label">Add members</div>
-                    <TagInputUsers
-                        placeholder="Search users to add..."
-                        onChange={handleTagChange}
+                <div className="blue-orange-chat-members-modal-search">
+                    <SearchInput
+                        label="Search members"
+                        icon="ri-search-line"
+                        value={query}
+                        onChange={setQuery}
+                        timeout={0}
+                        deletable
                     />
                 </div>
                 <div className="blue-orange-chat-members-modal-list">
-                    {members.map((member) => (
-                        <div
-                            key={member.user.id}
-                            className="blue-orange-chat-members-modal-item"
-                            onClick={() => onMemberClick?.(member)}
-                        >
-                            <Avatar user={member.user} height={32} width={32} />
-                            <div className="blue-orange-chat-members-modal-item-info">
-                                <span className="blue-orange-chat-members-modal-item-name">
-                                    {member.user.name}
-                                </span>
-                                <span className="blue-orange-chat-members-modal-item-status">
-                                    <span
-                                        className={`blue-orange-chat-members-modal-status-dot ${statusDotClass[member.status]}`}
-                                    />
-                                    {statusLabel[member.status]}
-                                </span>
-                            </div>
+                    {filteredMembers.length === 0 ? (
+                        <div className="blue-orange-chat-members-modal-empty">
+                            No members match "{query}".
                         </div>
-                    ))}
+                    ) : (
+                        filteredMembers.map((member) => (
+                            <div
+                                key={member.user.id}
+                                className="blue-orange-chat-members-modal-item"
+                                onClick={() => onMemberClick?.(member)}
+                            >
+                                <Avatar user={member.user} height={32} width={32} />
+                                <div className="blue-orange-chat-members-modal-item-info">
+                                    <span className="blue-orange-chat-members-modal-item-name">
+                                        {member.user.name}
+                                    </span>
+                                    <span className="blue-orange-chat-members-modal-item-status">
+                                        <span
+                                            className={`blue-orange-chat-members-modal-status-dot ${statusDotClass[member.status]}`}
+                                        />
+                                        {statusLabel[member.status]}
+                                    </span>
+                                </div>
+                                {showRoles && member.role && (
+                                    <span className="blue-orange-chat-members-modal-item-role">
+                                        {roleLabel[member.role]}
+                                    </span>
+                                )}
+                            </div>
+                        ))
+                    )}
                 </div>
             </ModalBody>
-            <ModalFooter>
-                <ModalFooterRight>
-                    <div className="blue-orange-chat-members-modal-footer-btns">
-                        <Button
-                            text="Cancel"
-                            buttonType={ButtonType.SECONDARY}
-                            size={ButtonSize.SMALL}
-                            onClick={onClose}
-                        />
-                        <Button
-                            text="Add"
-                            buttonType={ButtonType.PRIMARY}
-                            size={ButtonSize.SMALL}
-                            onClick={handleAddMembers}
-                            isDisabled={selectedUserIds.length === 0}
-                        />
-                    </div>
-
-                </ModalFooterRight>
-            </ModalFooter>
         </Modal>
     );
 };
