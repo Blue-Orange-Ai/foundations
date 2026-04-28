@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import {
     SideBarState,
     SideBarBodyItem,
@@ -9,6 +9,8 @@ import {
     IContextMenuItem,
     IContextMenuType,
     ContextMenu,
+    SearchSuggestion,
+    SearchSuggestionGroup,
 } from '@blue-orange-ai/foundations-core';
 import {
     IChatGroup,
@@ -40,6 +42,7 @@ import { ChatSettingsView } from '../chat-settings/ChatSettingsView';
 import { UserSettingsView } from '../user-settings/UserSettingsView';
 import { NewChatView, INewChatInitialMessage } from '../new-chat/NewChatView';
 import { NewChannelView, INewChannelInitialMessage } from '../new-channel/NewChannelView';
+import { ChatHeaderBar } from '../header-bar/ChatHeaderBar';
 import { shouldShowDateSeparator } from '../../utils/dateUtils';
 import { Media } from '@blue-orange-ai/foundations-clients';
 
@@ -105,6 +108,11 @@ interface ChatLayoutProps {
         firstMessage: INewChannelInitialMessage,
         userCreated: boolean,
     ) => void;
+    onHeaderSearch?: (query: string) => void;
+    headerSearchSuggestions?: SearchSuggestionGroup[];
+    onHeaderSuggestionSelect?: (suggestion: SearchSuggestion) => void;
+    onHelpClick?: () => void;
+    onLogoutClick?: () => void;
 }
 
 const CONSECUTIVE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
@@ -162,7 +170,12 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     onDeleteConversation,
     onUpdateUserSettings,
     onCreateConversation,
-    onCreateChannel
+    onCreateChannel,
+    onHeaderSearch,
+    headerSearchSuggestions,
+    onHeaderSuggestionSelect,
+    onHelpClick,
+    onLogoutClick
 }) => {
     const [replyTo, setReplyTo] = useState<IChatMessage | null>(null);
     const [showMembersModal, setShowMembersModal] = useState(false);
@@ -195,6 +208,61 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
         setShowNewChatView(true);
         onNewChat?.();
     }, [onNewChat]);
+
+    // -- Navigation history (conversation IDs) --
+    const [navHistory, setNavHistory] = useState<{ stack: string[]; index: number }>({ stack: [], index: -1 });
+    const navigatingRef = useRef(false);
+
+    useEffect(() => {
+        const id = activeConversation?.id;
+        if (!id) return;
+        if (navigatingRef.current) {
+            navigatingRef.current = false;
+            return;
+        }
+        setNavHistory((prev) => {
+            const truncated = prev.stack.slice(0, prev.index + 1);
+            if (truncated[truncated.length - 1] === id) return prev;
+            const stack = [...truncated, id];
+            return { stack, index: stack.length - 1 };
+        });
+    }, [activeConversation?.id]);
+
+    const allConversationsById = useMemo(() => {
+        const map = new Map<string, IChatConversation>();
+        groups.forEach((g) => g.conversations.forEach((c) => map.set(c.id, c)));
+        return map;
+    }, [groups]);
+
+    const navigateTo = useCallback((id: string) => {
+        const conv = allConversationsById.get(id);
+        if (!conv) return;
+        navigatingRef.current = true;
+        onConversationClick?.(conv);
+    }, [allConversationsById, onConversationClick]);
+
+    const handleUndo = useCallback(() => {
+        setNavHistory((prev) => {
+            if (prev.index <= 0) return prev;
+            const nextIndex = prev.index - 1;
+            const targetId = prev.stack[nextIndex];
+            navigateTo(targetId);
+            return { ...prev, index: nextIndex };
+        });
+    }, [navigateTo]);
+
+    const handleRedo = useCallback(() => {
+        setNavHistory((prev) => {
+            if (prev.index >= prev.stack.length - 1) return prev;
+            const nextIndex = prev.index + 1;
+            const targetId = prev.stack[nextIndex];
+            navigateTo(targetId);
+            return { ...prev, index: nextIndex };
+        });
+    }, [navigateTo]);
+
+    const canUndo = navHistory.index > 0;
+    const canRedo = navHistory.index < navHistory.stack.length - 1;
 
     const handleGroupCtxMenuClickWrapped = useCallback((item: IContextMenuItem, groupLabel: string) => {
         if (item.value === 'create-channel' || item.value === 'create-system-channel') {
@@ -534,7 +602,19 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     };
 
     return (
-        <div className="blue-orange-chat-layout-container">
+        <div className="blue-orange-chat-layout-app">
+            <ChatHeaderBar
+                canUndo={canUndo}
+                canRedo={canRedo}
+                onUndo={handleUndo}
+                onRedo={handleRedo}
+                onSearch={onHeaderSearch}
+                suggestionGroups={headerSearchSuggestions}
+                onSuggestionSelect={onHeaderSuggestionSelect}
+                onHelpClick={onHelpClick}
+                onLogoutClick={onLogoutClick}
+            />
+            <div className="blue-orange-chat-layout-container">
             {renderSidebar()}
             {hasRightPanel ? (
                 <VerticalSplitPage splitDirection={SplitDirectionVerticalPage.RIGHT} defaultWidth={562}>
@@ -556,6 +636,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                     showRoles={activeConversation.type === ChatConversationType.CHANNEL}
                 />
             )}
+            </div>
         </div>
     );
 };

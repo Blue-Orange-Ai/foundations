@@ -42,5 +42,8 @@ export * from './components/new-chat/NewChatView';
 // New channel
 export * from './components/new-channel/NewChannelView';
 
+// Header bar
+export * from './components/header-bar/ChatHeaderBar';
+
 // Utils
 export * from './utils/dateUtils';

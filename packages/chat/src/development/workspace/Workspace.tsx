@@ -1,5 +1,11 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { SideBarState, IContextMenuItem, IContextMenuType } from '@blue-orange-ai/foundations-core';
+import {
+    SideBarState,
+    IContextMenuItem,
+    IContextMenuType,
+    SearchSuggestion,
+    SearchSuggestionGroup,
+} from '@blue-orange-ai/foundations-core';
 import { Media } from '@blue-orange-ai/foundations-clients';
 import { ChatLayout } from '../../components/chat-layout/ChatLayout';
 import {
@@ -41,6 +47,7 @@ export const Workspace: React.FC = () => {
     const [threadTypingUsers, setThreadTypingUsers] = useState<IChatUser[]>([]);
     const [groups, setGroups] = useState<IChatGroup[]>(mockGroups);
     const [searchQuery, setSearchQuery] = useState('');
+    const [headerSearchQuery, setHeaderSearchQuery] = useState('');
     const [sidebarState, setSidebarState] = useState<SideBarState>(SideBarState.OPEN);
     const [activeNavItemId, setActiveNavItemId] = useState<string | undefined>();
 
@@ -220,6 +227,71 @@ export const Workspace: React.FC = () => {
     }, []);
 
     // -- Search --
+
+    const headerSearchSuggestions: SearchSuggestionGroup[] = useMemo(() => {
+        const q = headerSearchQuery.trim().toLowerCase();
+        const allConvs = groups.flatMap((g) => g.conversations);
+        const seenIds = new Set<string>();
+        const dedupedConvs = allConvs.filter((c) => {
+            if (seenIds.has(c.id)) return false;
+            seenIds.add(c.id);
+            return true;
+        });
+        const matches = (text: string) => !q || text.toLowerCase().includes(q);
+
+        const channelSuggestions: SearchSuggestion[] = dedupedConvs
+            .filter((c) => c.type === ChatConversationType.CHANNEL && matches(c.name))
+            .slice(0, 6)
+            .map((c) => ({ label: `#${c.name}`, value: `conv:${c.id}`, icon: 'ri-hashtag' }));
+
+        const dmSuggestions: SearchSuggestion[] = dedupedConvs
+            .filter((c) => c.type !== ChatConversationType.CHANNEL && matches(c.name))
+            .slice(0, 6)
+            .map((c) => ({
+                label: c.name,
+                value: `conv:${c.id}`,
+                icon: c.type === ChatConversationType.GROUP ? 'ri-team-line' : 'ri-chat-1-line',
+            }));
+
+        const seenUserIds = new Set<string>();
+        const peopleSuggestions: SearchSuggestion[] = allUsers
+            .filter((u) => {
+                if (!u.user.id || seenUserIds.has(u.user.id)) return false;
+                seenUserIds.add(u.user.id);
+                return matches(u.user.name);
+            })
+            .slice(0, 6)
+            .map((u) => ({ label: u.user.name, value: `user:${u.user.id}`, icon: 'ri-user-3-line' }));
+
+        const groupsOut: SearchSuggestionGroup[] = [];
+        if (channelSuggestions.length) groupsOut.push({ groupLabel: 'Channels', suggestions: channelSuggestions });
+        if (dmSuggestions.length) groupsOut.push({ groupLabel: 'Direct Messages', suggestions: dmSuggestions });
+        if (peopleSuggestions.length) groupsOut.push({ groupLabel: 'People', suggestions: peopleSuggestions });
+        return groupsOut;
+    }, [groups, headerSearchQuery]);
+
+    const handleHeaderSuggestionSelect = useCallback((suggestion: SearchSuggestion) => {
+        const [kind, id] = suggestion.value.split(':');
+        if (kind === 'conv') {
+            const conv = groups.flatMap((g) => g.conversations).find((c) => c.id === id);
+            if (conv) {
+                handleConversationClick(conv);
+            }
+        } else if (kind === 'user') {
+            const dm = groups
+                .flatMap((g) => g.conversations)
+                .find((c) =>
+                    c.type === ChatConversationType.DM && c.members.some((m) => m.user.id === id),
+                );
+            if (dm) {
+                handleConversationClick(dm);
+            } else {
+                console.log('[Workspace] no existing DM for user', id);
+            }
+        }
+        setHeaderSearchQuery('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [groups]);
 
     const handleSearch = useCallback((query: string) => {
         setSearchQuery(query);
@@ -537,6 +609,11 @@ export const Workspace: React.FC = () => {
                 onUpdateUserSettings={handleUpdateUserSettings}
                 onCreateConversation={handleCreateConversation}
                 onCreateChannel={handleCreateChannel}
+                onHeaderSearch={setHeaderSearchQuery}
+                headerSearchSuggestions={headerSearchSuggestions}
+                onHeaderSuggestionSelect={handleHeaderSuggestionSelect}
+                onHelpClick={() => console.log('[Workspace] help clicked')}
+                onLogoutClick={() => console.log('[Workspace] logout clicked')}
             />
         </div>
     );
