@@ -1,5 +1,5 @@
 import React from "react";
-import {User} from "@blue-orange-ai/foundations-clients";
+import {User, Media} from "@blue-orange-ai/foundations-clients";
 
 export enum ChatConversationType {
     DM = "DM",
@@ -50,6 +50,13 @@ export interface IChatMessage {
     blocks?: IChatMessageBlock[];
 }
 
+export interface IChatBookmark {
+    id: string;
+    label: string;
+    url: string;
+    media?: Media;
+}
+
 export interface IChatConversation {
     id: string;
     name: string;
@@ -59,6 +66,8 @@ export interface IChatConversation {
     unreadCount: number;
     starred: boolean;
     typingUsers?: IChatUser[];
+    encrypted?: boolean;
+    bookmarks?: IChatBookmark[];
 }
 
 export interface IChatGroup {

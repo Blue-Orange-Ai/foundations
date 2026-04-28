@@ -27,5 +27,8 @@ export * from './components/thread-panel/ThreadPanel';
 export * from './components/chat-layout/ChatLayout';
 export * from './components/chat-layout/members-modal/ChatMembersModal';
 
+// Bookmarks
+export * from './components/bookmarks/BookmarksView';
+
 // Utils
 export * from './utils/dateUtils';

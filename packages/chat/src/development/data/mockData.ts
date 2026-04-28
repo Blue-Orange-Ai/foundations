@@ -308,6 +308,11 @@ export const convEngineering: IChatConversation = {
     unreadCount: 3,
     starred: true,
     typingUsers: [userFrank],
+    encrypted: true,
+    bookmarks: [
+        { id: 'bm-1', label: 'Sprint Board', url: 'https://linear.app/team/sprint' },
+        { id: 'bm-2', label: 'API Docs', url: 'https://docs.example.com/api' },
+    ],
 };
 
 export const convDesign: IChatConversation = {

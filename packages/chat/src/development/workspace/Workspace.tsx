@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { SideBarState, IContextMenuItem, IContextMenuType } from '@blue-orange-ai/foundations-core';
+import { Media } from '@blue-orange-ai/foundations-clients';
 import { ChatLayout } from '../../components/chat-layout/ChatLayout';
 import {
     IChatGroup,
@@ -7,6 +8,7 @@ import {
     IChatUser,
     IChatConversation,
     IChatNavItem,
+    IChatBookmark,
     ChatUserStatus
 } from '../../interfaces/ChatInterfaces';
 import {
@@ -272,6 +274,38 @@ export const Workspace: React.FC = () => {
     }, []);
 
 
+    // -- Bookmarks --
+
+    const handleAddBookmark = useCallback((conversationId: string, label: string, payload: { url: string } | { media: Media }) => {
+        const newBookmark: IChatBookmark = 'media' in payload
+            ? {
+                  id: `bm-${Date.now()}`,
+                  label,
+                  url: payload.media.url,
+                  media: payload.media,
+              }
+            : {
+                  id: `bm-${Date.now()}`,
+                  label,
+                  url: payload.url,
+              };
+        setActiveConversation((prev) => {
+            if (!prev || prev.id !== conversationId) return prev;
+            return { ...prev, bookmarks: [...(prev.bookmarks || []), newBookmark] };
+        });
+    }, []);
+
+    const handleRemoveBookmark = useCallback((conversationId: string, bookmarkId: string) => {
+        setActiveConversation((prev) => {
+            if (!prev || prev.id !== conversationId) return prev;
+            return { ...prev, bookmarks: (prev.bookmarks || []).filter((bm) => bm.id !== bookmarkId) };
+        });
+    }, []);
+
+    const handleBookmarkClick = useCallback((bookmark: IChatBookmark) => {
+        window.open(bookmark.url, '_blank');
+    }, []);
+
     // -- Placeholder handlers --
 
     const handleNewChat = useCallback(() => {
@@ -319,6 +353,9 @@ export const Workspace: React.FC = () => {
                 onGroupContextMenuClick={handleGroupContextMenuClick}
                 conversationContextMenuItems={getConversationContextMenuItems}
                 onConversationContextMenuClick={handleConversationContextMenuClick}
+                onAddBookmark={handleAddBookmark}
+                onRemoveBookmark={handleRemoveBookmark}
+                onBookmarkClick={handleBookmarkClick}
             />
         </div>
     );

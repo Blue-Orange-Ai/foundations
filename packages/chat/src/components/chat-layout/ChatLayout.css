@@ -56,6 +56,73 @@
     color: #1d1c1d;
 }
 
+/* Header actions */
+.blue-orange-chat-layout-conversation-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+}
+
+.blue-orange-chat-layout-encryption-icon {
+    color: #6b7280;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.blue-orange-chat-layout-more-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #6b7280;
+    font-size: 18px;
+}
+
+.blue-orange-chat-layout-more-btn:hover {
+    background-color: rgba(0, 0, 0, 0.06);
+    color: #1d1c1d;
+}
+
+/* Bookmarks bar */
+.blue-orange-chat-layout-bookmarks-bar {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    padding: 6px 20px;
+    border-bottom: 1px solid #e5e7eb;
+    flex-shrink: 0;
+    overflow-x: auto;
+}
+
+.blue-orange-chat-layout-bookmark-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background-color: #f3f4f6;
+    color: #374151;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.blue-orange-chat-layout-bookmark-chip:hover {
+    background-color: #e5e7eb;
+}
+
+.blue-orange-chat-layout-bookmark-chip i {
+    font-size: 12px;
+    color: #1264a3;
+}
+
 .blue-orange-chat-layout-messages-area {
     flex: 1;
     overflow-y: auto;
@@ -101,4 +168,34 @@
 
 .dark .blue-orange-chat-layout-empty-state {
     color: #6b7280;
+}
+
+.dark .blue-orange-chat-layout-encryption-icon {
+    color: #9ca3af;
+}
+
+.dark .blue-orange-chat-layout-more-btn {
+    color: #9ca3af;
+}
+
+.dark .blue-orange-chat-layout-more-btn:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #e0e0e0;
+}
+
+.dark .blue-orange-chat-layout-bookmarks-bar {
+    border-bottom-color: #374151;
+}
+
+.dark .blue-orange-chat-layout-bookmark-chip {
+    background-color: #374151;
+    color: #d1d5db;
+}
+
+.dark .blue-orange-chat-layout-bookmark-chip:hover {
+    background-color: #4b5563;
+}
+
+.dark .blue-orange-chat-layout-bookmark-chip i {
+    color: #5b9cf6;
 }

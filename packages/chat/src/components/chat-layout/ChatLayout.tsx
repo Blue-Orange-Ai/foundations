@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
     SideBarState,
     SideBarBodyItem,
@@ -7,6 +7,8 @@ import {
     SplitPageMinor,
     SplitDirectionVerticalPage,
     IContextMenuItem,
+    IContextMenuType,
+    ContextMenu,
 } from '@blue-orange-ai/foundations-core';
 import {
     IChatGroup,
@@ -14,6 +16,7 @@ import {
     IChatUser,
     IChatConversation,
     IChatNavItem,
+    IChatBookmark,
     ChatUserStatus
 } from '../../interfaces/ChatInterfaces';
 import { ChatSidebar } from '../sidebar/ChatSidebar';
@@ -28,6 +31,7 @@ import { ChatInput } from '../chat-input/ChatInput';
 import { UserDetailPanel } from '../user-detail/UserDetailPanel';
 import { ThreadPanel } from '../thread-panel/ThreadPanel';
 import { ChatMembersModal } from './members-modal/ChatMembersModal';
+import { BookmarksView } from '../bookmarks/BookmarksView';
 import { shouldShowDateSeparator } from '../../utils/dateUtils';
 import { Media } from '@blue-orange-ai/foundations-clients';
 
@@ -77,6 +81,9 @@ interface ChatLayoutProps {
     onConversationContextMenuClick?: (item: IContextMenuItem, conversation: IChatConversation) => void;
     onLinkedMessageClick?: (message: IChatMessage) => void;
     onAddMembers?: (userIds: string[]) => void;
+    onAddBookmark?: (conversationId: string, label: string, payload: { url: string } | { media: Media }) => void;
+    onRemoveBookmark?: (conversationId: string, bookmarkId: string) => void;
+    onBookmarkClick?: (bookmark: IChatBookmark) => void;
 }
 
 const CONSECUTIVE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
@@ -124,10 +131,31 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     conversationContextMenuItems,
     onConversationContextMenuClick,
     onLinkedMessageClick,
-    onAddMembers
+    onAddMembers,
+    onAddBookmark,
+    onRemoveBookmark,
+    onBookmarkClick
 }) => {
     const [replyTo, setReplyTo] = useState<IChatMessage | null>(null);
     const [showMembersModal, setShowMembersModal] = useState(false);
+    const [showBookmarksView, setShowBookmarksView] = useState(false);
+
+    useEffect(() => {
+        setShowBookmarksView(false);
+    }, [activeConversation?.id]);
+
+    const headerMenuItems: IContextMenuItem[] = [
+        { label: 'Settings', type: IContextMenuType.CONTENT, icon: 'ri-settings-3-line' },
+        { label: 'Bookmarks', type: IContextMenuType.CONTENT, icon: 'ri-bookmark-line' },
+    ];
+
+    const handleHeaderMenuClick = useCallback((item: IContextMenuItem) => {
+        if (item.label === 'Settings' && onSettingsClick) {
+            onSettingsClick();
+        } else if (item.label === 'Bookmarks') {
+            setShowBookmarksView(true);
+        }
+    }, [onSettingsClick]);
 
     const handleReply = useCallback((message: IChatMessage) => {
         if (onReplyToMessage) {
@@ -305,22 +333,63 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                         >
                             {activeConversation.members.length} {activeConversation.members.length === 1 ? 'member' : 'members'}
                         </span>
+                        <div className="blue-orange-chat-layout-conversation-header-actions">
+                            {activeConversation.encrypted && (
+                                <span className="blue-orange-chat-layout-encryption-icon" title="End-to-end encrypted">
+                                    <i className="ri-lock-line" />
+                                </span>
+                            )}
+                            <ContextMenu
+                                items={headerMenuItems}
+                                onClick={handleHeaderMenuClick}
+                                width={200}
+                            >
+                                <button className="blue-orange-chat-layout-more-btn">
+                                    <i className="ri-more-2-fill" />
+                                </button>
+                            </ContextMenu>
+                        </div>
                     </div>
-                    <ChatWindow
-                        messages={messages}
-                        onLoadMore={handleLoadMore}
-                        loading={loadingMessages}
-                        hasMore={hasMoreMessages}
-                    >
-                        {renderMessages()}
-                    </ChatWindow>
-                    <ChatInput
-                        onSend={handleSend}
-                        replyTo={replyTo}
-                        onCancelReply={handleCancelReply}
-                        typingUsers={typingUsers}
-                        snoozedUsers={snoozedUsers}
-                    />
+                    {activeConversation.bookmarks && activeConversation.bookmarks.length > 0 && (
+                        <div className="blue-orange-chat-layout-bookmarks-bar">
+                            {activeConversation.bookmarks.map((bm) => (
+                                <span
+                                    key={bm.id}
+                                    className="blue-orange-chat-layout-bookmark-chip"
+                                    onClick={() => onBookmarkClick?.(bm)}
+                                >
+                                    <i className={bm.media ? 'ri-file-line' : 'ri-bookmark-fill'} />
+                                    {bm.label}
+                                </span>
+                            ))}
+                        </div>
+                    )}
+                    {showBookmarksView ? (
+                        <BookmarksView
+                            bookmarks={activeConversation.bookmarks ?? []}
+                            onAddBookmark={(label, payload) => onAddBookmark?.(activeConversation.id, label, payload)}
+                            onRemoveBookmark={(bmId) => onRemoveBookmark?.(activeConversation.id, bmId)}
+                            onClose={() => setShowBookmarksView(false)}
+                        />
+                    ) : (
+                        <>
+                            <ChatWindow
+                                messages={messages}
+                                onLoadMore={handleLoadMore}
+                                loading={loadingMessages}
+                                hasMore={hasMoreMessages}
+                            >
+                                {renderMessages()}
+                            </ChatWindow>
+                            <ChatInput
+                                onSend={handleSend}
+                                replyTo={replyTo}
+                                onCancelReply={handleCancelReply}
+                                typingUsers={typingUsers}
+                                snoozedUsers={snoozedUsers}
+                            />
+                        </>
+                    )}
                 </>
             ) : (
                 <div className="blue-orange-chat-layout-empty-state">

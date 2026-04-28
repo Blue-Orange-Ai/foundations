@@ -1,0 +1,7 @@
+.breadcrumbs-dev-section {
+    margin-bottom: 32px;
+}
+
+.breadcrumbs-dev-section:last-child {
+    margin-bottom: 0;
+}

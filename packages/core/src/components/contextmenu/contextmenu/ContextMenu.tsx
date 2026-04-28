@@ -96,6 +96,22 @@ export const ContextMenu: React.FC<Props> = ({
 		}
 	}, [visible]);
 
+	useLayoutEffect(() => {
+		if (!visible) return;
+		const measured = panelSizes[0];
+		if (!measured) return;
+		setStyle((prev) => {
+			if (prev.left == null) return prev;
+			const leftPx = parseFloat(prev.left as string);
+			if (isNaN(leftPx)) return prev;
+			if (leftPx + measured.width <= window.innerWidth - 15) return prev;
+			const next = {...prev};
+			delete next.left;
+			next.right = "15px";
+			return next;
+		});
+	}, [visible, panelSizes]);
+
 	useEffect(() => {
 		visibleRef.current = visible;
 	}, [visible]);
@@ -181,7 +197,7 @@ export const ContextMenu: React.FC<Props> = ({
 			style.top = (rect.bottom + 10) + "px";
 		}
 		if (buttonCenterWidth + (width ?? 0) / 2 > innerWidth - 15) {
-			style.right = (innerWidth + 15) + "px";
+			style.right = "15px";
 		} else {
 			style.left = Math.max(buttonCenterWidth - (width ?? 0) / 2, 15) + "px"
 		}
@@ -200,7 +216,7 @@ export const ContextMenu: React.FC<Props> = ({
 			style.top = (y + 10) + "px";
 		}
 		if ((x - ((width ?? 0) / 2)) > innerWidth - 15) {
-			style.right = (innerWidth + 15) + "px";
+			style.right = "15px";
 		} else {
 			style.left = Math.max((x - ((width ?? 0) / 2)), 15) + "px"
 		}

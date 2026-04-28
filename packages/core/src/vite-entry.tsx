@@ -23,6 +23,7 @@ export * from './components/buttons/file-upload-btn/FileUploadBtn';
 export * from './components/buttons/button/Button';
 export * from './components/buttons/button-icon/ButtonIcon';
 export * from './components/buttons/button-dropdown/ButtonDropdown';
+export * from './components/buttons/button-toggle/ButtonToggle';
 export * from './components/buttons/utils/erroranimation/ErrorAnimation'
 export * from './components/buttons/utils/successanimation/SuccessAnimation'
 
