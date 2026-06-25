@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 
 import '../../../../../node_modules/codemirror/lib/codemirror.css'
 import '../../../../../node_modules/plyr/dist/plyr.css'
@@ -7,7 +7,15 @@ import './BlueOrangeBlockEditorWrapper.css'
 
 import '@blue-orange-ai/primitives-block-editor/dist/css/primitives-block-editor.min.css'
 
-import {BlockEditor} from "@blue-orange-ai/primitives-block-editor";
+import {
+	BlockEditor,
+	BlueOrangeDocument,
+	BlueOrangeDocumentOptions,
+	DiffEngine,
+	DiffViewer,
+	DiffViewerOptions,
+	openReferenceModal
+} from "@blue-orange-ai/primitives-block-editor";
 import {
 	Drawer,
 	DrawerBody,
@@ -37,15 +45,120 @@ interface EditorMention {
 	inlineHtml: string,
 }
 
-interface Props {
-	documentId: string,
-	handleMentionAdded?: (mentionId: string, userId: string) => void
+/**
+ * Detail payloads surfaced by the editor's reference events. The shape mirrors
+ * the `detail` of the underlying primitives CustomEvents.
+ */
+export interface ReferenceEventDetail {
+	referenceUuid?: string,
+	referenceNumber?: number,
+	referenceLink?: string,
+	referenceDescription?: string,
+	[key: string]: any
 }
-export const BlueOrangeBlockEditorWrapper: React.FC<Props> = ({documentId, handleMentionAdded}) => {
+
+/**
+ * Imperative API exposed via a ref. Lets a parent component drive the editor:
+ * read/replace content, undo/redo, manage references and collaboration cursors,
+ * and open a diff viewer. All methods are no-ops (returning undefined) until the
+ * editor has mounted.
+ */
+export interface BlueOrangeBlockEditorHandle {
+	/** The underlying primitives editor instance, or null before mount. */
+	getEditor: () => BlockEditor | null,
+
+	// --- Content I/O ---
+	/** Serialised live document (may share references with editor internals). */
+	toJson: () => BlueOrangeDocument | undefined,
+	/** Deep-copied serialised document, safe to persist/mutate. */
+	toJsonCopy: () => BlueOrangeDocument | undefined,
+	/** Current document rendered as an HTML string. */
+	toHtmlCopy: () => string | undefined,
+	/** Replace the editor's content with the supplied document. */
+	reviveDocument: (doc: BlueOrangeDocument) => void,
+	/** Remove all content from the editor. */
+	clearDocument: () => void,
+
+	// --- History ---
+	undo: () => void,
+	redo: () => void,
+
+	// --- References / citations ---
+	addReferenceSuperscript: (referenceUuid: string, referenceNumber: number, referenceLink?: string, referenceDescription?: string) => void,
+	getNextReferenceNumber: () => number | undefined,
+	showReferenceNumberEditor: (referenceUuid: string, currentNumber: number) => void,
+	updateReferenceNumber: (referenceUuid: string, newNumber: number) => void,
+	/** Open the built-in reference editing modal for the given reference. */
+	openReferenceModal: (referenceUuid: string, currentNumber: number) => HTMLElement | undefined,
+
+	// --- Collaboration ---
+	updateCollaborationCursor: (reference: string, color: string, userId: string, pos: number) => void,
+	removeCollaborationCursors: () => void,
+	removeCollaborationCursor: (userId: string) => void,
+
+	// --- Comments ---
+	resolveComment: (commentId: string) => void,
+
+	// --- Inline context (mentions / emoji) ---
+	updateInlineContext: (options: Array<any>) => void,
+	closeInlineContextWindowToolbar: () => void,
+
+	// --- Diff viewer ---
+	/**
+	 * Open a side-by-side diff between `otherDoc` (treated as the original) and
+	 * the current editor state (treated as the modified version). Returns the
+	 * DiffViewer instance so callers can drive accept/reject/close, or undefined
+	 * if the editor is not mounted.
+	 */
+	showDiff: (otherDoc: BlueOrangeDocument, options?: DiffViewerOptions) => DiffViewer | undefined,
+}
+
+interface Props {
+	/**
+	 * Optional document identifier. When provided and `options.reference` is not
+	 * set, it is forwarded as the document reference so save/collaboration events
+	 * carry a meaningful docId.
+	 */
+	documentId?: string,
+	/** Initial document to seed the editor with. */
+	doc?: BlueOrangeDocument,
+	/** Editor configuration (plugins, toolbar, collaboration, listeners, ...). */
+	options?: BlueOrangeDocumentOptions,
+	handleMentionAdded?: (mentionId: string, userId: string) => void,
+	/** Fired whenever the document content changes (debounced by the editor). */
+	onChange?: (doc: BlueOrangeDocument) => void,
+	/** Fired when the editor requests a save; receives the serialised document. */
+	onSave?: (doc: BlueOrangeDocument, docId?: string) => void,
+	/** Fired on inline text changes; receives the raw CustomEvent. */
+	onTextChange?: (event: CustomEvent) => void,
+	/** Fired when the caret/cursor position changes. */
+	onCursorChange?: (event: CustomEvent) => void,
+	/** Fired once the editor has finished loading its initial document. */
+	onLoadingFinished?: (event: CustomEvent) => void,
+	/** Fired when a new reference/citation is added. */
+	onReferenceAdded?: (detail: ReferenceEventDetail) => void,
+	/** Fired when an existing reference superscript is clicked. */
+	onReferenceClicked?: (detail: ReferenceEventDetail) => void,
+	/** Fired when a reference is removed. */
+	onReferenceRemoved?: (detail: ReferenceEventDetail) => void,
+	/** Fired when a reference's number/metadata is updated. */
+	onReferenceUpdated?: (detail: ReferenceEventDetail) => void,
+	/** Fired for collaboration lifecycle/state events. */
+	onCollaborate?: (detail: any) => void,
+	/** Fired when the block metadata panel is opened. */
+	onOpenMetadata?: (detail: any) => void,
+}
+
+export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHandle, Props>((props, ref) => {
 
 	const editorRef = useRef<HTMLDivElement | null>(null);
 
 	const blueOrangeEditorRef = useRef<BlockEditor | null>(null);
+
+	// Holds the latest props so the once-created event handlers always invoke
+	// the current callbacks instead of the ones captured at mount.
+	const propsRef = useRef(props);
+	propsRef.current = props;
 
 	const [commentWindowState, setCommentWindowState] = useState<CommentState>({
 		display: false,
@@ -213,64 +326,167 @@ export const BlueOrangeBlockEditorWrapper: React.FC<Props> = ({documentId, handl
 
 	useEffect(() => {
 		const current = editorRef.current as HTMLElement;
-		if (blueOrangeEditorRef.current == null) {
-			blueOrangeEditorRef.current = new BlockEditor(
-				current);
-			current.addEventListener("blue-orange-editor-new-comment-added", (ev) => {
-				// @ts-ignore
-				const commentId = ev.detail.commentUuid;
-				const state = {
-					display: true,
-					commentId: [commentId]
-				}
-				setCommentWindowState(state);
-			})
-			current.addEventListener("blue-orange-editor-comment-tooltip-clicked", (ev) => {
-				// @ts-ignore
-				const commentIds = ev.detail.commentIds;
-				const state = {
-					display: true,
-					commentId: commentIds
-				}
-				setCommentWindowState(state);
-			})
-			current.addEventListener("blueorangeeditorinlinecontextselectionevent", (ev: any) => {
-				const selectedMention = ev.detail;
-				try {
-					if (selectedMention.type == "mention" && handleMentionAdded) {
-						handleMentionAdded(selectedMention.uuid, selectedMention.userId)
-					}
-				} catch (e) {}
-			})
-			current.addEventListener("blueorangeeditorinlinecontextopen", (ev:any) => {
-				if (ev.detail.listener.key == "@" && blueOrangeEditorRef.current) {
-					fetchUsers("").then(users => {
-						if (blueOrangeEditorRef.current) {
-							blueOrangeEditorRef.current.updateInlineContext(users);
-						}
-					}).catch(reason => console.error(reason));
-				} else if (ev.detail.listener.key == ":" && blueOrangeEditorRef.current) {
-					blueOrangeEditorRef.current.updateInlineContext(processEmojiObjects(fetchEmojiItems("")))
-				} else if (blueOrangeEditorRef.current) {
-					blueOrangeEditorRef.current.closeInlineContextWindowToolbar();
-				}
-			})
-			current.addEventListener("blueorangeeditorinlinecontextupdateevent", (ev:any) => {
-				if (ev.detail.listener.key == "@") {
-					var query = ev.detail.filter;
-					fetchUsers(query).then(users => {
-						if (blueOrangeEditorRef.current) {
-							blueOrangeEditorRef.current.updateInlineContext(users);
-						}
-					}).catch(reason => console.error(reason));
-				} else if (ev.detail.listener.key == ":" && blueOrangeEditorRef.current) {
-					blueOrangeEditorRef.current.updateInlineContext(processEmojiObjects(fetchEmojiItems(ev.detail.filter)))
-				} else if (blueOrangeEditorRef.current) {
-					blueOrangeEditorRef.current.closeInlineContextWindowToolbar();
-				}
-			})
+		if (current == null || blueOrangeEditorRef.current != null) {
+			return;
 		}
+
+		// Forward documentId as the document reference when not otherwise set, so
+		// save/collaboration events carry a meaningful docId.
+		const editorOptions: BlueOrangeDocumentOptions = {...(propsRef.current.options || {})};
+		if (propsRef.current.documentId && editorOptions.reference == undefined) {
+			editorOptions.reference = propsRef.current.documentId;
+		}
+
+		const editor = new BlockEditor(current, propsRef.current.doc, editorOptions);
+		blueOrangeEditorRef.current = editor;
+
+		// --- Comments ---
+		const onNewComment = (ev: Event) => {
+			const commentId = (ev as CustomEvent).detail.commentUuid;
+			setCommentWindowState({display: true, commentId: [commentId]});
+		};
+		const onCommentTooltipClicked = (ev: Event) => {
+			const commentIds = (ev as CustomEvent).detail.commentIds;
+			setCommentWindowState({display: true, commentId: commentIds});
+		};
+
+		// --- Inline context (mentions / emoji) ---
+		const onInlineContextSelection = (ev: Event) => {
+			const selectedMention = (ev as CustomEvent).detail;
+			try {
+				if (selectedMention.type == "mention" && propsRef.current.handleMentionAdded) {
+					propsRef.current.handleMentionAdded(selectedMention.uuid, selectedMention.userId)
+				}
+			} catch (e) {}
+		};
+		const onInlineContextOpen = (ev: Event) => {
+			const detail = (ev as CustomEvent).detail;
+			if (detail.listener.key == "@" && blueOrangeEditorRef.current) {
+				fetchUsers("").then(users => {
+					blueOrangeEditorRef.current?.updateInlineContext(users);
+				}).catch(reason => console.error(reason));
+			} else if (detail.listener.key == ":" && blueOrangeEditorRef.current) {
+				blueOrangeEditorRef.current.updateInlineContext(processEmojiObjects(fetchEmojiItems("")))
+			} else if (blueOrangeEditorRef.current) {
+				blueOrangeEditorRef.current.closeInlineContextWindowToolbar();
+			}
+		};
+		const onInlineContextUpdate = (ev: Event) => {
+			const detail = (ev as CustomEvent).detail;
+			if (detail.listener.key == "@") {
+				fetchUsers(detail.filter).then(users => {
+					blueOrangeEditorRef.current?.updateInlineContext(users);
+				}).catch(reason => console.error(reason));
+			} else if (detail.listener.key == ":" && blueOrangeEditorRef.current) {
+				blueOrangeEditorRef.current.updateInlineContext(processEmojiObjects(fetchEmojiItems(detail.filter)))
+			} else if (blueOrangeEditorRef.current) {
+				blueOrangeEditorRef.current.closeInlineContextWindowToolbar();
+			}
+		};
+
+		// --- Content change / save / lifecycle ---
+		const onDataChange = () => {
+			if (propsRef.current.onChange && blueOrangeEditorRef.current) {
+				propsRef.current.onChange(blueOrangeEditorRef.current.toJsonCopy());
+			}
+		};
+		const onSave = (ev: Event) => {
+			const detail = (ev as CustomEvent).detail;
+			propsRef.current.onSave?.(detail?.document, detail?.docId);
+		};
+		const onTextChange = (ev: Event) => propsRef.current.onTextChange?.(ev as CustomEvent);
+		const onCursorChange = (ev: Event) => propsRef.current.onCursorChange?.(ev as CustomEvent);
+		const onLoadingFinished = (ev: Event) => propsRef.current.onLoadingFinished?.(ev as CustomEvent);
+		const onOpenMetadata = (ev: Event) => propsRef.current.onOpenMetadata?.((ev as CustomEvent).detail);
+
+		// --- References / citations ---
+		const onReferenceAdded = (ev: Event) => propsRef.current.onReferenceAdded?.((ev as CustomEvent).detail);
+		const onReferenceClicked = (ev: Event) => propsRef.current.onReferenceClicked?.((ev as CustomEvent).detail);
+		const onReferenceRemoved = (ev: Event) => propsRef.current.onReferenceRemoved?.((ev as CustomEvent).detail);
+		const onReferenceUpdated = (ev: Event) => propsRef.current.onReferenceUpdated?.((ev as CustomEvent).detail);
+
+		// --- Collaboration ---
+		const onCollaborate = (ev: Event) => propsRef.current.onCollaborate?.((ev as CustomEvent).detail);
+
+		// Events dispatched on the container (or its parent) are caught at the
+		// target/bubble phase; content-change events are dispatched on inner
+		// elements without bubbling, so we register every listener in the capture
+		// phase, which observes events on descendants regardless of `bubbles`.
+		const listeners: Array<[string, EventListener]> = [
+			["blue-orange-editor-new-comment-added", onNewComment as EventListener],
+			["blue-orange-editor-comment-tooltip-clicked", onCommentTooltipClicked as EventListener],
+			["blueorangeeditorinlinecontextselectionevent", onInlineContextSelection as EventListener],
+			["blueorangeeditorinlinecontextopen", onInlineContextOpen as EventListener],
+			["blueorangeeditorinlinecontextupdateevent", onInlineContextUpdate as EventListener],
+			["datachange", onDataChange as EventListener],
+			["blueorangeeditorsave", onSave as EventListener],
+			["textchange", onTextChange as EventListener],
+			["cursorchange", onCursorChange as EventListener],
+			["loadingfinished", onLoadingFinished as EventListener],
+			["blueorangeeditoropenmetadata", onOpenMetadata as EventListener],
+			["blue-orange-editor-new-reference-added", onReferenceAdded as EventListener],
+			["blue-orange-editor-reference-clicked", onReferenceClicked as EventListener],
+			["blue-orange-editor-reference-removed", onReferenceRemoved as EventListener],
+			["blue-orange-editor-reference-updated", onReferenceUpdated as EventListener],
+			["blueorangeeditorcollaborate", onCollaborate as EventListener],
+		];
+
+		listeners.forEach(([name, handler]) => current.addEventListener(name, handler, true));
+
+		return () => {
+			listeners.forEach(([name, handler]) => current.removeEventListener(name, handler, true));
+			try {
+				blueOrangeEditorRef.current?.destroy();
+			} catch (e) {
+				console.error("Failed to destroy block editor:", e);
+			}
+			blueOrangeEditorRef.current = null;
+		};
 	}, []);
+
+	useImperativeHandle(ref, (): BlueOrangeBlockEditorHandle => ({
+		getEditor: () => blueOrangeEditorRef.current,
+
+		toJson: () => blueOrangeEditorRef.current?.toJson(),
+		toJsonCopy: () => blueOrangeEditorRef.current?.toJsonCopy(),
+		toHtmlCopy: () => blueOrangeEditorRef.current?.toHtmlCopy(),
+		reviveDocument: (doc) => blueOrangeEditorRef.current?.reviveDocument(doc),
+		clearDocument: () => blueOrangeEditorRef.current?.clearDocument(),
+
+		undo: () => blueOrangeEditorRef.current?.undo(),
+		redo: () => blueOrangeEditorRef.current?.redo(),
+
+		addReferenceSuperscript: (referenceUuid, referenceNumber, referenceLink, referenceDescription) =>
+			blueOrangeEditorRef.current?.addReferenceSuperscript(referenceUuid, referenceNumber, referenceLink, referenceDescription),
+		getNextReferenceNumber: () => blueOrangeEditorRef.current?.getNextReferenceNumber(),
+		showReferenceNumberEditor: (referenceUuid, currentNumber) =>
+			blueOrangeEditorRef.current?.showReferenceNumberEditor(referenceUuid, currentNumber),
+		updateReferenceNumber: (referenceUuid, newNumber) =>
+			blueOrangeEditorRef.current?.updateReferenceNumber(referenceUuid, newNumber),
+		openReferenceModal: (referenceUuid, currentNumber) =>
+			blueOrangeEditorRef.current ? openReferenceModal(blueOrangeEditorRef.current, referenceUuid, currentNumber) : undefined,
+
+		updateCollaborationCursor: (reference, color, userId, pos) =>
+			blueOrangeEditorRef.current?.updateCollaborationCursor(reference, color, userId, pos),
+		removeCollaborationCursors: () => blueOrangeEditorRef.current?.removeCollaborationCursors(),
+		removeCollaborationCursor: (userId) => blueOrangeEditorRef.current?.removeCollaborationCursor(userId),
+
+		resolveComment: (commentId) => resolveComment(commentId),
+
+		updateInlineContext: (options) => blueOrangeEditorRef.current?.updateInlineContext(options),
+		closeInlineContextWindowToolbar: () => blueOrangeEditorRef.current?.closeInlineContextWindowToolbar(),
+
+		showDiff: (otherDoc, options) => {
+			const editor = blueOrangeEditorRef.current;
+			if (editor == null) {
+				return undefined;
+			}
+			const currentDoc = editor.toJson();
+			const engine = new DiffEngine();
+			const entries = engine.diff(otherDoc, currentDoc);
+			return new DiffViewer(editor, entries, otherDoc, currentDoc, options || {});
+		},
+	}), []);
 
 
 	return (
@@ -298,4 +514,6 @@ export const BlueOrangeBlockEditorWrapper: React.FC<Props> = ({documentId, handl
 			}
 		</>
 	)
-}
+})
+
+BlueOrangeBlockEditorWrapper.displayName = "BlueOrangeBlockEditorWrapper";
