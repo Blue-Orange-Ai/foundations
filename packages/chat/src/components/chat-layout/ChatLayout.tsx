@@ -43,6 +43,7 @@ import { UserSettingsView } from '../user-settings/UserSettingsView';
 import { NewChatView, INewChatInitialMessage } from '../new-chat/NewChatView';
 import { NewChannelView, INewChannelInitialMessage } from '../new-channel/NewChannelView';
 import { ChatHeaderBar } from '../header-bar/ChatHeaderBar';
+import { AllUnreadsView, IUnreadMessageItem } from '../all-unreads/AllUnreadsView';
 import { shouldShowDateSeparator } from '../../utils/dateUtils';
 import { Media } from '@blue-orange-ai/foundations-clients';
 
@@ -113,6 +114,9 @@ interface ChatLayoutProps {
     onHeaderSuggestionSelect?: (suggestion: SearchSuggestion) => void;
     onHelpClick?: () => void;
     onLogoutClick?: () => void;
+    unreadMessages?: IUnreadMessageItem[];
+    messagesByConversation?: Record<string, IChatMessage[]>;
+    onSendMessageToConversation?: (conversationId: string, content: string, mentions: string[], attachments: any[]) => void;
 }
 
 const CONSECUTIVE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
@@ -175,7 +179,10 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     headerSearchSuggestions,
     onHeaderSuggestionSelect,
     onHelpClick,
-    onLogoutClick
+    onLogoutClick,
+    unreadMessages = [],
+    messagesByConversation = {},
+    onSendMessageToConversation
 }) => {
     const [replyTo, setReplyTo] = useState<IChatMessage | null>(null);
     const [showMembersModal, setShowMembersModal] = useState(false);
@@ -455,7 +462,19 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
 
     const renderCenter = () => (
         <div className="blue-orange-chat-layout-center">
-            {newChannelMode ? (
+            {activeNavItemId === 'all-unreads' && !newChannelMode && !showNewChatView && !showUserSettingsView && !showSettingsView && !showBookmarksView ? (
+                <AllUnreadsView
+                    unreadMessages={unreadMessages}
+                    messagesByConversation={messagesByConversation}
+                    currentUser={currentUser}
+                    onSendMessage={onSendMessageToConversation}
+                    onReactToMessage={onReactToMessage}
+                    onReplyToMessage={onReplyToMessage}
+                    onEditMessage={onEditMessage}
+                    onAvatarClick={onAvatarClick}
+                    onLinkedMessageClick={handleLinkedMessageClick}
+                />
+            ) : newChannelMode ? (
                 <NewChannelView
                     headerLabel={newChannelMode.userCreated ? 'New channel' : 'New system channel'}
                     onCreate={(name, userIds, encrypted, firstMessage) => {

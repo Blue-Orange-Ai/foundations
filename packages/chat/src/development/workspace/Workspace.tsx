@@ -110,6 +110,24 @@ export const Workspace: React.FC = () => {
         []
     );
 
+    const handleSendMessageToConversation = useCallback(
+        (conversationId: string, content: string, _mentions: string[], _attachments: any[]) => {
+            const newMessage: IChatMessage = {
+                id: `msg-${Date.now()}`,
+                content,
+                sender: currentUser,
+                timestamp: new Date(),
+                reactions: [],
+            };
+            if (activeConversation?.id === conversationId) {
+                setMessages((prev) => [...prev, newMessage]);
+            } else {
+                console.log('[Workspace] message to non-active conversation', conversationId, content);
+            }
+        },
+        [activeConversation?.id, currentUser]
+    );
+
     // -- Edit message --
 
     const handleEditMessage = useCallback((message: IChatMessage, newContent: string) => {
@@ -227,6 +245,26 @@ export const Workspace: React.FC = () => {
     }, []);
 
     // -- Search --
+
+    const unreadMessages = useMemo(() => {
+        const items: { message: IChatMessage; conversation: IChatConversation }[] = [];
+        groups.forEach((g) => {
+            g.conversations.forEach((c) => {
+                if (c.unreadCount <= 0) return;
+                const msgs = messagesByConversation[c.id] ?? [];
+                const slice = msgs.slice(-c.unreadCount);
+                slice.forEach((m) => items.push({ message: m, conversation: c }));
+            });
+        });
+        items.sort((a, b) => new Date(b.message.timestamp).getTime() - new Date(a.message.timestamp).getTime());
+        const seen = new Set<string>();
+        return items.filter((i) => {
+            const key = `${i.conversation.id}-${i.message.id}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        });
+    }, [groups]);
 
     const headerSearchSuggestions: SearchSuggestionGroup[] = useMemo(() => {
         const q = headerSearchQuery.trim().toLowerCase();
@@ -614,6 +652,9 @@ export const Workspace: React.FC = () => {
                 onHeaderSuggestionSelect={handleHeaderSuggestionSelect}
                 onHelpClick={() => console.log('[Workspace] help clicked')}
                 onLogoutClick={() => console.log('[Workspace] logout clicked')}
+                unreadMessages={unreadMessages}
+                messagesByConversation={messagesByConversation}
+                onSendMessageToConversation={handleSendMessageToConversation}
             />
         </div>
     );
