@@ -7,7 +7,16 @@ import './BlueOrangeBlockEditorWrapper.css'
 
 import '@blue-orange-ai/primitives-block-editor/dist/css/primitives-block-editor.min.css'
 
-import {BlockEditor, BlueOrangeDocument, BlueOrangeDocumentOptions} from "@blue-orange-ai/primitives-block-editor";
+import {BlockEditor} from "@blue-orange-ai/primitives-block-editor";
+// The published primitives bundle only exports `BlockEditor` as a runtime
+// value; everything else below is type-only (erased at build time).
+import type {
+	BlockSpec,
+	BlueOrangeDocument,
+	BlueOrangeDocumentOptions,
+	DiffViewer,
+	DiffViewerOptions
+} from "@blue-orange-ai/primitives-block-editor";
 import {
 	Drawer,
 	DrawerBody,
@@ -24,6 +33,14 @@ import passport from "./config/BlueOrangePassportConfig";
 import CodeMirror from "codemirror";
 import {v4 as uuidv4} from "uuid";
 
+
+// Markdown serialization is implemented on the BlockEditor instance at
+// runtime (delegated to its internal DocumentSerializer) but is not part of
+// the published BlockEditor type, so we narrow to it explicitly.
+type MarkdownCapableEditor = {
+	toMarkdown: () => string,
+	fromMarkdown: (markdown: string) => void,
+}
 
 interface CommentState {
 	display: boolean,
@@ -50,6 +67,25 @@ export interface BlueOrangeBlockEditorHandle {
 	toHtmlCopy: () => string | null,
 	reviveDocument: (doc: BlueOrangeDocument) => void,
 	clearDocument: () => void,
+	// Markdown serialization (primitives >= 0.56.3)
+	toMarkdown: () => string | null,
+	fromMarkdown: (markdown: string) => void,
+	// History
+	undo: () => void,
+	redo: () => void,
+	// Diff & merge against another document version
+	diffDocuments: (otherDoc: BlueOrangeDocument, options?: DiffViewerOptions) => DiffViewer | null,
+	// Programmatic block creation
+	createBlock: (spec: BlockSpec) => void,
+	// Template fields (active when `template` is enabled)
+	isTemplateMode: () => boolean,
+	getTemplateVariables: () => string[],
+	getTemplateLoops: () => Array<{ name: string; fields: string[] }>,
+	getTemplateSchema: () => Record<string, string | Array<Record<string, string>>>,
+	substituteTemplateData: (data: Record<string, unknown>) => void,
+	substituteVariables: (substitutions: Record<string, string>) => void,
+	substituteLoops: (loopData: Record<string, Array<Record<string, string>>>) => void,
+	applyTemplateModeToBlocks: () => void,
 }
 
 export interface BlueOrangeBlockEditorWrapperProps {
@@ -60,6 +96,7 @@ export interface BlueOrangeBlockEditorWrapperProps {
 	disableMediaServer?: boolean,
 	enableMentions?: boolean,
 	enableComments?: boolean,
+	template?: boolean,
 	handleMentionAdded?: (mentionId: string, userId: string) => void,
 	onReferenceAdded?: (detail: ReferenceDetail) => void,
 	onReferenceUpdated?: (detail: ReferenceDetail) => void,
@@ -76,6 +113,7 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 	disableMediaServer = false,
 	enableMentions = true,
 	enableComments = true,
+	template = false,
 	handleMentionAdded,
 	onReferenceAdded,
 	onReferenceUpdated,
@@ -258,6 +296,30 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 		toHtmlCopy: () => blueOrangeEditorRef.current?.toHtmlCopy() ?? null,
 		reviveDocument: (doc: BlueOrangeDocument) => blueOrangeEditorRef.current?.reviveDocument(doc),
 		clearDocument: () => blueOrangeEditorRef.current?.clearDocument(),
+		toMarkdown: () => {
+			const editor = blueOrangeEditorRef.current as MarkdownCapableEditor | null;
+			return editor?.toMarkdown() ?? null;
+		},
+		fromMarkdown: (markdown: string) => {
+			const editor = blueOrangeEditorRef.current as MarkdownCapableEditor | null;
+			editor?.fromMarkdown(markdown);
+		},
+		undo: () => blueOrangeEditorRef.current?.undo(),
+		redo: () => blueOrangeEditorRef.current?.redo(),
+		diffDocuments: (otherDoc: BlueOrangeDocument, options?: DiffViewerOptions) =>
+			blueOrangeEditorRef.current?.diffDocuments(otherDoc, options) ?? null,
+		createBlock: (spec: BlockSpec) => blueOrangeEditorRef.current?.createBlock(spec),
+		isTemplateMode: () => blueOrangeEditorRef.current?.isTemplateMode() ?? false,
+		getTemplateVariables: () => blueOrangeEditorRef.current?.getTemplateVariables() ?? [],
+		getTemplateLoops: () => blueOrangeEditorRef.current?.getTemplateLoops() ?? [],
+		getTemplateSchema: () => blueOrangeEditorRef.current?.getTemplateSchema() ?? {},
+		substituteTemplateData: (data: Record<string, unknown>) =>
+			blueOrangeEditorRef.current?.substituteTemplateData(data),
+		substituteVariables: (substitutions: Record<string, string>) =>
+			blueOrangeEditorRef.current?.substituteVariables(substitutions),
+		substituteLoops: (loopData: Record<string, Array<Record<string, string>>>) =>
+			blueOrangeEditorRef.current?.substituteLoops(loopData),
+		applyTemplateModeToBlocks: () => blueOrangeEditorRef.current?.applyTemplateModeToBlocks(),
 	}));
 
 	useEffect(() => {
@@ -266,6 +328,7 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 			const editorOptions: BlueOrangeDocumentOptions = {
 				...userOptions,
 				comments: enableComments,
+				template: template,
 			};
 
 			if (disableMediaServer) {
