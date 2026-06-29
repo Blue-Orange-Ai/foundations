@@ -1,6 +1,6 @@
 {
   "name": "@blue-orange-ai/foundations-passport-client",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
@@ -8,7 +8,7 @@
   "private": false,
   "dependencies": {
     "@blue-orange-ai/foundations-clients": "^0.1.0",
-    "@blue-orange-ai/foundations-core": "^0.1.0",
+    "@blue-orange-ai/foundations-core": "^0.1.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
