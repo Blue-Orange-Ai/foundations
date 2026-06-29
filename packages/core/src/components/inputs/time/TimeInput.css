@@ -1,0 +1,7 @@
+.blue-orange-time-input {
+    color-scheme: light;
+}
+
+.dark .blue-orange-time-input {
+    color-scheme: dark;
+}
