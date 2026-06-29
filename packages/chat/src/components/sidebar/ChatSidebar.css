@@ -9,10 +9,11 @@
     --chat-sidebar-label-font-size: 0.75rem;
     --chat-sidebar-label-icon-gap: 8px;
 
-    height: 100vh;
+    height: 100%;
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
+    min-height: 0;
 }
 
 .blue-orange-chat-sidebar-wrapper .blue-orange-sidebar {
@@ -57,11 +58,24 @@
 
 /* Header item */
 .blue-orange-chat-sidebar-wrapper .blue-orange-sidebar-header-item {
+    padding-bottom: 10px;
     color: #ffffff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 10px;
 }
 
 .blue-orange-chat-sidebar-wrapper .blue-orange-sidebar-header-item-media-body {
     color: #ffffff;
+}
+
+/* Hide scrollbar but keep scrolling */
+.blue-orange-chat-sidebar-wrapper .blue-orange-sidebar-body-list {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+.blue-orange-chat-sidebar-wrapper .blue-orange-sidebar-body-list::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 /* Body items */
@@ -74,6 +88,9 @@
     padding-left: var(--chat-sidebar-item-padding-x);
     padding-right: var(--chat-sidebar-item-padding-x);
     font-size: var(--chat-sidebar-item-font-size);
+    height: 36px;
+    min-height: 36px;
+    overflow-y: hidden;
 }
 
 .blue-orange-chat-sidebar-wrapper .blue-orange-sidebar-body-item-icon {
@@ -152,6 +169,10 @@
     color: #1d1c1d;
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    text-transform: none;
+    font-weight: 400;
+    font-size: 0.875rem;
+    letter-spacing: normal;
 }
 
 .blue-orange-chat-sidebar-wrapper .blue-orange-default-context-menu-row:hover {
@@ -179,16 +200,20 @@
 
 .blue-orange-sidebar-body-item {
     margin: 0px 0px !important;
-    width: calc(100% - 10px) !important;
+    width: calc(100%) !important;
+    box-sizing: border-box;
+    overflow-x: hidden;
     padding-right: 10px;
 }
 
 .blue-orange-chat-sidebar-group {
+    width: 100% !important;
     padding-left: 0px !important;
 }
 
 .blue-orange-sidebar-body-label {
-    width: calc(100% - 8px);
+    width: 100%;
+    box-sizing: border-box;
     padding-left: 10px;
     padding-right: 10px;
 }

@@ -1,0 +1,86 @@
+.blue-orange-chat-header-bar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    flex-shrink: 0;
+    padding: 0 10px;
+    background-color: #3F0E40;
+    color: rgba(255, 255, 255, 0.85);
+    box-sizing: border-box;
+    -webkit-app-region: drag;
+    border-bottom: 1px solid #270227;
+}
+
+.blue-orange-chat-header-bar-left,
+.blue-orange-chat-header-bar-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+    -webkit-app-region: no-drag;
+}
+
+.blue-orange-chat-header-bar-center {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    -webkit-app-region: no-drag;
+}
+
+.blue-orange-chat-header-bar-center .blue-orange-search-group {
+    width: 100%;
+    max-width: 480px;
+}
+
+.blue-orange-chat-header-bar-center .blue-orange-search-group-input {
+    height: 28px;
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: transparent;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 0.8rem;
+}
+
+.blue-orange-chat-header-bar-center .blue-orange-search-group-input:focus {
+    background-color: rgba(255, 255, 255, 0.22);
+    outline-color: rgba(255, 255, 255, 0.6);
+}
+
+.blue-orange-chat-header-bar-center .blue-orange-search-group-input::placeholder {
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.blue-orange-chat-header-bar-center .blue-orange-search-group-icon {
+    color: rgba(255, 255, 255, 0.65);
+    width: 32px;
+}
+
+.blue-orange-chat-header-bar-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 0;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 16px;
+    line-height: 1;
+}
+
+.blue-orange-chat-header-bar-btn:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+}
+
+.blue-orange-chat-header-bar-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}

@@ -1,1 +1,2 @@
-export * from './components/block-editor/BlueOrangeBlockEditorWrapper';
+export { BlueOrangeBlockEditorWrapper } from './components/block-editor/BlueOrangeBlockEditorWrapper';
+export type { BlueOrangeBlockEditorHandle, BlueOrangeBlockEditorWrapperProps } from './components/block-editor/BlueOrangeBlockEditorWrapper';

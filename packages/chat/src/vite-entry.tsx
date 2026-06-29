@@ -15,6 +15,7 @@ export * from './components/chat-window/message/ChatMessage';
 export * from './components/chat-window/message/reactions/MessageReactions';
 export * from './components/chat-window/typing-indicator/TypingIndicator';
 export * from './components/chat-window/snoozed-bar/SnoozedBar';
+export * from './components/chat-window/message-list/MessageList';
 
 // Chat Input
 export * from './components/chat-input/ChatInput';
@@ -25,6 +26,28 @@ export * from './components/thread-panel/ThreadPanel';
 
 // Layout
 export * from './components/chat-layout/ChatLayout';
+export * from './components/chat-layout/members-modal/ChatMembersModal';
+
+// Bookmarks
+export * from './components/bookmarks/BookmarksView';
+
+// Chat settings
+export * from './components/chat-settings/ChatSettingsView';
+
+// User settings
+export * from './components/user-settings/UserSettingsView';
+
+// New chat
+export * from './components/new-chat/NewChatView';
+
+// New channel
+export * from './components/new-channel/NewChannelView';
+
+// Header bar
+export * from './components/header-bar/ChatHeaderBar';
+
+// All unreads
+export * from './components/all-unreads/AllUnreadsView';
 
 // Utils
 export * from './utils/dateUtils';

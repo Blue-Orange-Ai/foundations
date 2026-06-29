@@ -1,5 +1,5 @@
 import React from "react";
-import {User} from "@blue-orange-ai/foundations-clients";
+import {Avatar as AvatarObj, User, Media} from "@blue-orange-ai/foundations-clients";
 
 export enum ChatConversationType {
     DM = "DM",
@@ -14,10 +14,34 @@ export enum ChatUserStatus {
     OFFLINE = "OFFLINE"
 }
 
+export enum ChatMemberRole {
+    ADMIN = "ADMIN",
+    PARTICIPANT = "PARTICIPANT"
+}
+
+export interface IUserNotificationSettings {
+    quietHoursStart?: string;
+    quietHoursEnd?: string;
+    pausedUntil?: Date;
+}
+
 export interface IChatUser {
     user: User;
     status: ChatUserStatus;
     snoozeUntil?: Date;
+    role?: ChatMemberRole;
+    statusText?: string;
+    statusEmoji?: string;
+    notificationSettings?: IUserNotificationSettings;
+}
+
+export interface IUserSettings {
+    name: string;
+    avatar?: AvatarObj;
+    status: ChatUserStatus;
+    statusText?: string;
+    statusEmoji?: string;
+    notificationSettings: IUserNotificationSettings;
 }
 
 export interface IChatReaction {
@@ -31,6 +55,12 @@ export interface IChatThread {
     lastReplyTimestamp?: Date;
 }
 
+export interface IChatMessageBlock {
+    html: string;
+    css?: string;
+    js?: string;
+}
+
 export interface IChatMessage {
     id: string;
     content: string;
@@ -41,6 +71,14 @@ export interface IChatMessage {
     attachments?: string[];
     edited?: boolean;
     thread?: IChatThread;
+    blocks?: IChatMessageBlock[];
+}
+
+export interface IChatBookmark {
+    id: string;
+    label: string;
+    url: string;
+    media?: Media;
 }
 
 export interface IChatConversation {
@@ -52,6 +90,18 @@ export interface IChatConversation {
     unreadCount: number;
     starred: boolean;
     typingUsers?: IChatUser[];
+    encrypted?: boolean;
+    bookmarks?: IChatBookmark[];
+    description?: string;
+    isPrivate?: boolean;
+    archived?: boolean;
+    userCreated?: boolean;
+}
+
+export interface IChatConversationSettings {
+    name: string;
+    description?: string;
+    isPrivate: boolean;
 }
 
 export interface IChatGroup {

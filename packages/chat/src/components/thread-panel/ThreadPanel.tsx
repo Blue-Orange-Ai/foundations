@@ -3,6 +3,7 @@ import { IChatMessage, IChatUser } from '../../interfaces/ChatInterfaces';
 import { ChatMessage } from '../chat-window/message/ChatMessage';
 import { ChatInput } from '../chat-input/ChatInput';
 import { DateSeparator } from '../chat-window/date-separator/DateSeparator';
+import { MessageReactions } from '../chat-window/message/reactions/MessageReactions';
 import { shouldShowDateSeparator } from '../../utils/dateUtils';
 
 import './ThreadPanel.css';
@@ -84,7 +85,20 @@ export const ThreadPanel: React.FC<Props> = ({
                     onReact={onReact}
                     onEdit={onEdit}
                     onAvatarClick={onAvatarClick}
-                />
+                >
+                    {reply.reactions && reply.reactions.length > 0 && (
+                        <MessageReactions
+                            reactions={reply.reactions}
+                            currentUserId={currentUserId!}
+                            onToggleReaction={(emoji) => {
+                                if (onReact) onReact(reply, emoji);
+                            }}
+                            onAddReaction={(emoji) => {
+                                if (onReact) onReact(reply, emoji);
+                            }}
+                        />
+                    )}
+                </ChatMessage>
             );
         });
 
@@ -123,7 +137,20 @@ export const ThreadPanel: React.FC<Props> = ({
                         onReact={onReact}
                         onEdit={onEdit}
                         onAvatarClick={onAvatarClick}
-                    />
+                    >
+                        {parentMessage.reactions && parentMessage.reactions.length > 0 && (
+                            <MessageReactions
+                                reactions={parentMessage.reactions}
+                                currentUserId={currentUserId!}
+                                onToggleReaction={(emoji) => {
+                                    if (onReact) onReact(parentMessage, emoji);
+                                }}
+                                onAddReaction={(emoji) => {
+                                    if (onReact) onReact(parentMessage, emoji);
+                                }}
+                            />
+                        )}
+                    </ChatMessage>
                 </div>
 
                 {replies.length > 0 && (
@@ -148,6 +175,7 @@ export const ThreadPanel: React.FC<Props> = ({
                     onSend={onSendReply}
                     placeholder="Reply..."
                     typingUsers={typingUsers}
+                    focus={true}
                 />
             </div>
         </div>

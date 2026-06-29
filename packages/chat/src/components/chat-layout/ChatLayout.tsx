@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import {
     SideBarState,
     SideBarBodyItem,
@@ -7,13 +7,22 @@ import {
     SplitPageMinor,
     SplitDirectionVerticalPage,
     IContextMenuItem,
+    IContextMenuType,
+    ContextMenu,
+    SearchSuggestion,
+    SearchSuggestionGroup,
 } from '@blue-orange-ai/foundations-core';
 import {
     IChatGroup,
     IChatMessage,
     IChatUser,
     IChatConversation,
+    IChatConversationSettings,
     IChatNavItem,
+    IChatBookmark,
+    IUserSettings,
+    ChatConversationType,
+    ChatMemberRole,
     ChatUserStatus
 } from '../../interfaces/ChatInterfaces';
 import { ChatSidebar } from '../sidebar/ChatSidebar';
@@ -27,6 +36,14 @@ import { MessageReactions } from '../chat-window/message/reactions/MessageReacti
 import { ChatInput } from '../chat-input/ChatInput';
 import { UserDetailPanel } from '../user-detail/UserDetailPanel';
 import { ThreadPanel } from '../thread-panel/ThreadPanel';
+import { ChatMembersModal } from './members-modal/ChatMembersModal';
+import { BookmarksView } from '../bookmarks/BookmarksView';
+import { ChatSettingsView } from '../chat-settings/ChatSettingsView';
+import { UserSettingsView } from '../user-settings/UserSettingsView';
+import { NewChatView, INewChatInitialMessage } from '../new-chat/NewChatView';
+import { NewChannelView, INewChannelInitialMessage } from '../new-channel/NewChannelView';
+import { ChatHeaderBar } from '../header-bar/ChatHeaderBar';
+import { AllUnreadsView, IUnreadMessageItem } from '../all-unreads/AllUnreadsView';
 import { shouldShowDateSeparator } from '../../utils/dateUtils';
 import { Media } from '@blue-orange-ai/foundations-clients';
 
@@ -74,6 +91,32 @@ interface ChatLayoutProps {
     onGroupContextMenuClick?: (item: IContextMenuItem, groupLabel: string) => void;
     conversationContextMenuItems?: (conversation: IChatConversation) => IContextMenuItem[];
     onConversationContextMenuClick?: (item: IContextMenuItem, conversation: IChatConversation) => void;
+    onLinkedMessageClick?: (message: IChatMessage) => void;
+    onUpdateMemberRole?: (conversationId: string, userId: string, role: ChatMemberRole) => void;
+    onAddMembers?: (conversationId: string, userIds: string[]) => void;
+    onAddBookmark?: (conversationId: string, label: string, payload: { url: string } | { media: Media }) => void;
+    onRemoveBookmark?: (conversationId: string, bookmarkId: string) => void;
+    onBookmarkClick?: (bookmark: IChatBookmark) => void;
+    onUpdateConversation?: (conversationId: string, settings: IChatConversationSettings) => void;
+    onArchiveConversation?: (conversationId: string) => void;
+    onDeleteConversation?: (conversationId: string) => void;
+    onUpdateUserSettings?: (settings: IUserSettings) => void;
+    onCreateConversation?: (userIds: string[], encrypted: boolean, firstMessage: INewChatInitialMessage) => void;
+    onCreateChannel?: (
+        name: string,
+        userIds: string[],
+        encrypted: boolean,
+        firstMessage: INewChannelInitialMessage,
+        userCreated: boolean,
+    ) => void;
+    onHeaderSearch?: (query: string) => void;
+    headerSearchSuggestions?: SearchSuggestionGroup[];
+    onHeaderSuggestionSelect?: (suggestion: SearchSuggestion) => void;
+    onHelpClick?: () => void;
+    onLogoutClick?: () => void;
+    unreadMessages?: IUnreadMessageItem[];
+    messagesByConversation?: Record<string, IChatMessage[]>;
+    onSendMessageToConversation?: (conversationId: string, content: string, mentions: string[], attachments: any[]) => void;
 }
 
 const CONSECUTIVE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
@@ -119,9 +162,141 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     groupContextMenuItems,
     onGroupContextMenuClick,
     conversationContextMenuItems,
-    onConversationContextMenuClick
+    onConversationContextMenuClick,
+    onLinkedMessageClick,
+    onUpdateMemberRole,
+    onAddMembers,
+    onAddBookmark,
+    onRemoveBookmark,
+    onBookmarkClick,
+    onUpdateConversation,
+    onArchiveConversation,
+    onDeleteConversation,
+    onUpdateUserSettings,
+    onCreateConversation,
+    onCreateChannel,
+    onHeaderSearch,
+    headerSearchSuggestions,
+    onHeaderSuggestionSelect,
+    onHelpClick,
+    onLogoutClick,
+    unreadMessages = [],
+    messagesByConversation = {},
+    onSendMessageToConversation
 }) => {
     const [replyTo, setReplyTo] = useState<IChatMessage | null>(null);
+    const [showMembersModal, setShowMembersModal] = useState(false);
+    const [showBookmarksView, setShowBookmarksView] = useState(false);
+    const [showSettingsView, setShowSettingsView] = useState(false);
+    const [showUserSettingsView, setShowUserSettingsView] = useState(false);
+    const [showNewChatView, setShowNewChatView] = useState(false);
+    const [newChannelMode, setNewChannelMode] = useState<null | { userCreated: boolean }>(null);
+
+    useEffect(() => {
+        setShowBookmarksView(false);
+        setShowSettingsView(false);
+        setShowNewChatView(false);
+        setNewChannelMode(null);
+    }, [activeConversation?.id]);
+
+    const handleSidebarSettingsClick = useCallback(() => {
+        setShowBookmarksView(false);
+        setShowSettingsView(false);
+        setShowNewChatView(false);
+        setShowUserSettingsView(true);
+        onSettingsClick?.();
+    }, [onSettingsClick]);
+
+    const handleNewChatClick = useCallback(() => {
+        setShowBookmarksView(false);
+        setShowSettingsView(false);
+        setShowUserSettingsView(false);
+        setNewChannelMode(null);
+        setShowNewChatView(true);
+        onNewChat?.();
+    }, [onNewChat]);
+
+    // -- Navigation history (conversation IDs) --
+    const [navHistory, setNavHistory] = useState<{ stack: string[]; index: number }>({ stack: [], index: -1 });
+    const navigatingRef = useRef(false);
+
+    useEffect(() => {
+        const id = activeConversation?.id;
+        if (!id) return;
+        if (navigatingRef.current) {
+            navigatingRef.current = false;
+            return;
+        }
+        setNavHistory((prev) => {
+            const truncated = prev.stack.slice(0, prev.index + 1);
+            if (truncated[truncated.length - 1] === id) return prev;
+            const stack = [...truncated, id];
+            return { stack, index: stack.length - 1 };
+        });
+    }, [activeConversation?.id]);
+
+    const allConversationsById = useMemo(() => {
+        const map = new Map<string, IChatConversation>();
+        groups.forEach((g) => g.conversations.forEach((c) => map.set(c.id, c)));
+        return map;
+    }, [groups]);
+
+    const navigateTo = useCallback((id: string) => {
+        const conv = allConversationsById.get(id);
+        if (!conv) return;
+        navigatingRef.current = true;
+        onConversationClick?.(conv);
+    }, [allConversationsById, onConversationClick]);
+
+    const handleUndo = useCallback(() => {
+        setNavHistory((prev) => {
+            if (prev.index <= 0) return prev;
+            const nextIndex = prev.index - 1;
+            const targetId = prev.stack[nextIndex];
+            navigateTo(targetId);
+            return { ...prev, index: nextIndex };
+        });
+    }, [navigateTo]);
+
+    const handleRedo = useCallback(() => {
+        setNavHistory((prev) => {
+            if (prev.index >= prev.stack.length - 1) return prev;
+            const nextIndex = prev.index + 1;
+            const targetId = prev.stack[nextIndex];
+            navigateTo(targetId);
+            return { ...prev, index: nextIndex };
+        });
+    }, [navigateTo]);
+
+    const canUndo = navHistory.index > 0;
+    const canRedo = navHistory.index < navHistory.stack.length - 1;
+
+    const handleGroupCtxMenuClickWrapped = useCallback((item: IContextMenuItem, groupLabel: string) => {
+        if (item.value === 'create-channel' || item.value === 'create-system-channel') {
+            setShowBookmarksView(false);
+            setShowSettingsView(false);
+            setShowUserSettingsView(false);
+            setShowNewChatView(false);
+            setNewChannelMode({ userCreated: item.value === 'create-channel' });
+            return;
+        }
+        onGroupContextMenuClick?.(item, groupLabel);
+    }, [onGroupContextMenuClick]);
+
+    const headerMenuItems: IContextMenuItem[] = [
+        { label: 'Settings', type: IContextMenuType.CONTENT, icon: 'ri-settings-3-line' },
+        { label: 'Bookmarks', type: IContextMenuType.CONTENT, icon: 'ri-bookmark-line' },
+    ];
+
+    const handleHeaderMenuClick = useCallback((item: IContextMenuItem) => {
+        if (item.label === 'Settings') {
+            setShowBookmarksView(false);
+            setShowSettingsView(true);
+        } else if (item.label === 'Bookmarks') {
+            setShowSettingsView(false);
+            setShowBookmarksView(true);
+        }
+    }, []);
 
     const handleReply = useCallback((message: IChatMessage) => {
         if (onReplyToMessage) {
@@ -130,6 +305,17 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
             setReplyTo(message);
         }
     }, [onReplyToMessage]);
+
+    const handleLinkedMessageClick = useCallback((linkedMessage: IChatMessage) => {
+        if (onLinkedMessageClick) {
+            onLinkedMessageClick(linkedMessage);
+        } else {
+            const el = document.querySelector(`[data-message-id="${linkedMessage.id}"]`);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    }, [onLinkedMessageClick]);
 
     const handleCancelReply = useCallback(() => {
         setReplyTo(null);
@@ -183,6 +369,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                     onEdit={onEditMessage}
                     onAvatarClick={onAvatarClick}
                     onThreadClick={handleReply}
+                    onLinkedMessageClick={handleLinkedMessageClick}
                 >
                     {message.reactions && message.reactions.length > 0 && (
                         <MessageReactions
@@ -238,7 +425,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                     workspaceMedia={workspaceMedia}
                     sidebarState={sidebarState}
                     onStateChange={onSidebarStateChange}
-                    onNewChat={onNewChat}
+                    onNewChat={handleNewChatClick}
                     onWorkspaceClick={onWorkspaceClick}
                 />
             }
@@ -246,7 +433,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                 <ChatSidebarFooter
                     user={currentUser}
                     onStatusChange={onStatusChange}
-                    onSettingsClick={onSettingsClick}
+                    onSettingsClick={handleSidebarSettingsClick}
                     onProfileClick={onProfileClick}
                 />
             }
@@ -265,7 +452,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                     onToggle={onGroupToggle ? () => onGroupToggle(group.label) : undefined}
                     onCreateNew={onGroupCreateNew ? () => onGroupCreateNew(group.label) : undefined}
                     groupContextMenuItems={groupContextMenuItems}
-                    onGroupContextMenuClick={onGroupContextMenuClick ? (item) => onGroupContextMenuClick(item, group.label) : undefined}
+                    onGroupContextMenuClick={(item) => handleGroupCtxMenuClickWrapped(item, group.label)}
                     conversationContextMenuItems={conversationContextMenuItems}
                     onConversationContextMenuClick={onConversationContextMenuClick}
                 />
@@ -275,31 +462,126 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
 
     const renderCenter = () => (
         <div className="blue-orange-chat-layout-center">
-            {activeConversation ? (
+            {activeNavItemId === 'all-unreads' && !newChannelMode && !showNewChatView && !showUserSettingsView && !showSettingsView && !showBookmarksView ? (
+                <AllUnreadsView
+                    unreadMessages={unreadMessages}
+                    messagesByConversation={messagesByConversation}
+                    currentUser={currentUser}
+                    onSendMessage={onSendMessageToConversation}
+                    onReactToMessage={onReactToMessage}
+                    onReplyToMessage={onReplyToMessage}
+                    onEditMessage={onEditMessage}
+                    onAvatarClick={onAvatarClick}
+                    onLinkedMessageClick={handleLinkedMessageClick}
+                />
+            ) : newChannelMode ? (
+                <NewChannelView
+                    headerLabel={newChannelMode.userCreated ? 'New channel' : 'New system channel'}
+                    onCreate={(name, userIds, encrypted, firstMessage) => {
+                        onCreateChannel?.(name, userIds, encrypted, firstMessage, newChannelMode.userCreated);
+                        setNewChannelMode(null);
+                    }}
+                    onClose={() => setNewChannelMode(null)}
+                />
+            ) : showNewChatView ? (
+                <NewChatView
+                    onCreate={(userIds, encrypted, firstMessage) => {
+                        onCreateConversation?.(userIds, encrypted, firstMessage);
+                        setShowNewChatView(false);
+                    }}
+                    onClose={() => setShowNewChatView(false)}
+                />
+            ) : showUserSettingsView ? (
+                <UserSettingsView
+                    user={currentUser}
+                    onSave={(settings) => {
+                        onUpdateUserSettings?.(settings);
+                        setShowUserSettingsView(false);
+                    }}
+                    onClose={() => setShowUserSettingsView(false)}
+                />
+            ) : activeConversation ? (
                 <>
                     <div className="blue-orange-chat-layout-conversation-header">
                         <span className="blue-orange-chat-layout-conversation-name">
                             {activeConversation.name}
                         </span>
-                        <span className="blue-orange-chat-layout-member-count">
+                        <span
+                            className="blue-orange-chat-layout-member-count blue-orange-chat-layout-member-count-clickable"
+                            onClick={() => setShowMembersModal(true)}
+                        >
                             {activeConversation.members.length} {activeConversation.members.length === 1 ? 'member' : 'members'}
                         </span>
+                        <div className="blue-orange-chat-layout-conversation-header-actions">
+                            {activeConversation.encrypted && (
+                                <span className="blue-orange-chat-layout-encryption-icon" title="End-to-end encrypted">
+                                    <i className="ri-lock-line" />
+                                </span>
+                            )}
+                            <ContextMenu
+                                items={headerMenuItems}
+                                onClick={handleHeaderMenuClick}
+                                width={200}
+                            >
+                                <button className="blue-orange-chat-layout-more-btn">
+                                    <i className="ri-more-2-fill" />
+                                </button>
+                            </ContextMenu>
+                        </div>
                     </div>
-                    <ChatWindow
-                        messages={messages}
-                        onLoadMore={handleLoadMore}
-                        loading={loadingMessages}
-                        hasMore={hasMoreMessages}
-                    >
-                        {renderMessages()}
-                    </ChatWindow>
-                    <ChatInput
-                        onSend={handleSend}
-                        replyTo={replyTo}
-                        onCancelReply={handleCancelReply}
-                        typingUsers={typingUsers}
-                        snoozedUsers={snoozedUsers}
-                    />
+                    {activeConversation.bookmarks && activeConversation.bookmarks.length > 0 && (
+                        <div className="blue-orange-chat-layout-bookmarks-bar">
+                            {activeConversation.bookmarks.map((bm) => (
+                                <span
+                                    key={bm.id}
+                                    className="blue-orange-chat-layout-bookmark-chip"
+                                    onClick={() => onBookmarkClick?.(bm)}
+                                >
+                                    <i className={bm.media ? 'ri-file-line' : 'ri-bookmark-fill'} />
+                                    {bm.label}
+                                </span>
+                            ))}
+                        </div>
+                    )}
+                    {showSettingsView ? (
+                        <ChatSettingsView
+                            conversation={activeConversation}
+                            onSave={(settings) => onUpdateConversation?.(activeConversation.id, settings)}
+                            onArchive={() => onArchiveConversation?.(activeConversation.id)}
+                            onDelete={() => {
+                                onDeleteConversation?.(activeConversation.id);
+                                setShowSettingsView(false);
+                            }}
+                            onUpdateMemberRole={(userId, role) => onUpdateMemberRole?.(activeConversation.id, userId, role)}
+                            onAddMembers={(userIds) => onAddMembers?.(activeConversation.id, userIds)}
+                            onClose={() => setShowSettingsView(false)}
+                        />
+                    ) : showBookmarksView ? (
+                        <BookmarksView
+                            bookmarks={activeConversation.bookmarks ?? []}
+                            onAddBookmark={(label, payload) => onAddBookmark?.(activeConversation.id, label, payload)}
+                            onRemoveBookmark={(bmId) => onRemoveBookmark?.(activeConversation.id, bmId)}
+                            onClose={() => setShowBookmarksView(false)}
+                        />
+                    ) : (
+                        <>
+                            <ChatWindow
+                                messages={messages}
+                                onLoadMore={handleLoadMore}
+                                loading={loadingMessages}
+                                hasMore={hasMoreMessages}
+                            >
+                                {renderMessages()}
+                            </ChatWindow>
+                            <ChatInput
+                                onSend={handleSend}
+                                replyTo={replyTo}
+                                onCancelReply={handleCancelReply}
+                                typingUsers={typingUsers}
+                                snoozedUsers={snoozedUsers}
+                            />
+                        </>
+                    )}
                 </>
             ) : (
                 <div className="blue-orange-chat-layout-empty-state">
@@ -339,10 +621,22 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     };
 
     return (
-        <div className="blue-orange-chat-layout-container">
+        <div className="blue-orange-chat-layout-app">
+            <ChatHeaderBar
+                canUndo={canUndo}
+                canRedo={canRedo}
+                onUndo={handleUndo}
+                onRedo={handleRedo}
+                onSearch={onHeaderSearch}
+                suggestionGroups={headerSearchSuggestions}
+                onSuggestionSelect={onHeaderSuggestionSelect}
+                onHelpClick={onHelpClick}
+                onLogoutClick={onLogoutClick}
+            />
+            <div className="blue-orange-chat-layout-container">
             {renderSidebar()}
             {hasRightPanel ? (
-                <VerticalSplitPage splitDirection={SplitDirectionVerticalPage.RIGHT}>
+                <VerticalSplitPage splitDirection={SplitDirectionVerticalPage.RIGHT} defaultWidth={562}>
                     <SplitPageMajor>
                         {renderCenter()}
                     </SplitPageMajor>
@@ -353,6 +647,15 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
             ) : (
                 renderCenter()
             )}
+            {showMembersModal && activeConversation && (
+                <ChatMembersModal
+                    members={activeConversation.members}
+                    onClose={() => setShowMembersModal(false)}
+                    onMemberClick={onAvatarClick}
+                    showRoles={activeConversation.type === ChatConversationType.CHANNEL}
+                />
+            )}
+            </div>
         </div>
     );
 };

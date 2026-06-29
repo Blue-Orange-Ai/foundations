@@ -23,6 +23,7 @@ export * from './components/buttons/file-upload-btn/FileUploadBtn';
 export * from './components/buttons/button/Button';
 export * from './components/buttons/button-icon/ButtonIcon';
 export * from './components/buttons/button-dropdown/ButtonDropdown';
+export * from './components/buttons/button-toggle/ButtonToggle';
 export * from './components/buttons/utils/erroranimation/ErrorAnimation'
 export * from './components/buttons/utils/successanimation/SuccessAnimation'
 
@@ -103,6 +104,7 @@ export * from './components/inputs/tags/fetch/TagInputCallback';
 export * from './components/inputs/tags/users/TagInputUsers';
 export * from './components/inputs/tags/groups/TagInputGroups';
 export * from './components/inputs/textarea/TextArea';
+export * from './components/inputs/time/TimeInput';
 export * from './components/inputs/toggle/Toggle';
 export * from './components/interfaces/AppInterfaces';
 export * from './components/inputs/color-picker/ColorPicker';

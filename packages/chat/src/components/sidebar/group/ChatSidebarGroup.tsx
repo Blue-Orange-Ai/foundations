@@ -62,7 +62,11 @@ export const ChatSidebarGroup: React.FC<Props> = ({
         setIsOpen(!collapsed);
     }, [collapsed]);
 
-    const handleToggle = () => {
+    const handleToggle = (e: React.MouseEvent) => {
+        const target = e.target as HTMLElement | null;
+        if (target && target.closest('.blue-orange-chat-sidebar-group-action-btn')) {
+            return;
+        }
         const next = !isOpen;
         setIsOpen(next);
         if (onToggle) {
@@ -88,6 +92,15 @@ export const ChatSidebarGroup: React.FC<Props> = ({
     const totalUnread = conversations.reduce((sum, c) => sum + c.unreadCount, 0);
     const hasUnread = !isOpen && totalUnread > 0;
 
+    const moreActionBtn = (
+        <span
+            className="blue-orange-chat-sidebar-group-action-btn"
+            onClick={(e) => { if (onMoreActions) onMoreActions(e); }}
+        >
+            <i className="ri-more-fill" />
+        </span>
+    );
+
     const rightContent = (
         <span className="blue-orange-chat-sidebar-group-right">
             {hasUnread && (
@@ -103,12 +116,14 @@ export const ChatSidebarGroup: React.FC<Props> = ({
                     <i className="ri-add-line" />
                 </span>
             )}
-            <span
-                className="blue-orange-chat-sidebar-group-action-btn"
-                onClick={(e) => { e.stopPropagation(); if (onMoreActions) onMoreActions(e); }}
-            >
-                <i className="ri-more-fill" />
-            </span>
+            {groupContextMenuItems && groupContextMenuItems.length > 0 ? (
+                <ContextMenu
+                    items={groupContextMenuItems}
+                    onClick={onGroupContextMenuClick}
+                >
+                    {moreActionBtn}
+                </ContextMenu>
+            ) : moreActionBtn}
         </span>
     );
 
@@ -129,15 +144,7 @@ export const ChatSidebarGroup: React.FC<Props> = ({
 
     return (
         <div className="blue-orange-chat-sidebar-group">
-            {groupContextMenuItems && groupContextMenuItems.length > 0 ? (
-                <ContextMenu
-                    items={groupContextMenuItems}
-                    onClick={onGroupContextMenuClick}
-                    rightClick={true}
-                >
-                    {groupLabel}
-                </ContextMenu>
-            ) : groupLabel}
+            {groupLabel}
             {isOpen && filteredConversations.map(conversation => {
                 const isActive = activeConversationId === conversation.id;
                 const hasUnreadItem = conversation.unreadCount > 0;

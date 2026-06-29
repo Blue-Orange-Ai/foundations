@@ -14,6 +14,7 @@ interface Props {
     users?: Array<{ id: string; name: string }>;
     typingUsers?: IChatUser[];
     snoozedUsers?: IChatUser[];
+    focus?: boolean;
 }
 
 export const ChatInput: React.FC<Props> = ({
@@ -23,7 +24,8 @@ export const ChatInput: React.FC<Props> = ({
     onCancelReply,
     users,
     typingUsers = [],
-    snoozedUsers = []
+    snoozedUsers = [],
+    focus = false
 }) => {
     const [content, setContent] = useState("");
     const [mentions, setMentions] = useState<string[]>([]);
@@ -118,6 +120,7 @@ export const ChatInput: React.FC<Props> = ({
                             allowMentions={true}
                             displayFormatting={true}
                             singleLine={true}
+                            focus={focus}
                             clearState={clearState}
                             onChange={handleChange}
                             onEnter={handleSend}

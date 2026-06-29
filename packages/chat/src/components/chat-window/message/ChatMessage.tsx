@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import moment from 'moment';
-import { Avatar, EmojiWrapper, RichText } from '@blue-orange-ai/foundations-core';
-import { IChatMessage, IChatUser } from '../../../interfaces/ChatInterfaces';
+import { Avatar, EmojiWrapper, RichText, Button, ButtonType, ButtonSize } from '@blue-orange-ai/foundations-core';
+import { IChatMessage, IChatMessageBlock, IChatUser } from '../../../interfaces/ChatInterfaces';
 
 import './ChatMessage.css';
 
@@ -16,6 +16,7 @@ interface Props {
     onEdit?: (message: IChatMessage, newContent: string) => void;
     onAvatarClick?: (user: IChatUser) => void;
     onThreadClick?: (message: IChatMessage) => void;
+    onLinkedMessageClick?: (message: IChatMessage) => void;
     children?: React.ReactNode;
 }
 
@@ -43,6 +44,58 @@ const truncateContent = (content: string, maxLength: number): string => {
     return text.substring(0, maxLength) + '...';
 };
 
+const buildBlockSrcdoc = (block: IChatMessageBlock): string => {
+    return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+${block.css || ''}
+</style>
+</head>
+<body>
+${block.html}
+${block.js ? `<script>${block.js}<\/script>` : ''}
+<script>
+function notifyParentHeight() {
+    var height = document.body.scrollHeight;
+    window.parent.postMessage({ type: 'blue-orange-block-resize', height: height }, '*');
+}
+new MutationObserver(notifyParentHeight).observe(document.body, { childList: true, subtree: true, attributes: true });
+window.addEventListener('load', notifyParentHeight);
+notifyParentHeight();
+<\/script>
+</body>
+</html>`;
+};
+
+const ChatMessageBlockFrame: React.FC<{ block: IChatMessageBlock }> = ({ block }) => {
+    const iframeRef = useRef<HTMLIFrameElement>(null);
+
+    useEffect(() => {
+        const handleMessage = (event: MessageEvent) => {
+            if (event.data?.type === 'blue-orange-block-resize' && iframeRef.current) {
+                if (event.source === iframeRef.current.contentWindow) {
+                    iframeRef.current.style.height = event.data.height + 'px';
+                }
+            }
+        };
+        window.addEventListener('message', handleMessage);
+        return () => window.removeEventListener('message', handleMessage);
+    }, []);
+
+    return (
+        <iframe
+            ref={iframeRef}
+            className="blue-orange-chat-message-block-frame"
+            srcDoc={buildBlockSrcdoc(block)}
+            sandbox="allow-scripts"
+            title="Message block"
+        />
+    );
+};
+
 export const ChatMessage: React.FC<Props> = ({
     message,
     isConsecutive = false,
@@ -52,6 +105,7 @@ export const ChatMessage: React.FC<Props> = ({
     onEdit,
     onAvatarClick,
     onThreadClick,
+    onLinkedMessageClick,
     children
 }) => {
     const [editing, setEditing] = useState(false);
@@ -98,19 +152,44 @@ export const ChatMessage: React.FC<Props> = ({
         setEditing(false);
     }, []);
 
+    const handleLinkedMessageClick = () => {
+        if (message.replyTo && onLinkedMessageClick) {
+            onLinkedMessageClick(message.replyTo);
+        }
+    };
+
     const renderReplyReference = () => {
         if (!message.replyTo) return null;
+        const linked = message.replyTo;
         return (
             <div
-                className="blue-orange-chat-message-reply-ref"
-                data-message-id={message.replyTo.id}
+                className="blue-orange-chat-message-linked"
+                data-message-id={linked.id}
+                onClick={handleLinkedMessageClick}
             >
-                <span className="blue-orange-chat-message-reply-ref-sender">
-                    {message.replyTo.sender.user.name}
-                </span>
-                <span className="blue-orange-chat-message-reply-ref-content">
-                    {truncateContent(message.replyTo.content, 50)}
-                </span>
+                <div className="blue-orange-chat-message-linked-line" />
+                <div className="blue-orange-chat-message-linked-content">
+                    <div className="blue-orange-chat-message-linked-avatar">
+                        <Avatar user={linked.sender.user} height={36} width={36} />
+                    </div>
+                    <div className="blue-orange-chat-message-linked-body">
+                        <div className="blue-orange-chat-message-header">
+                            <span className="blue-orange-chat-message-sender">
+                                {linked.sender.user.name}
+                            </span>
+                            <span className="blue-orange-chat-message-timestamp">
+                                {formatTimestamp(linked.timestamp)}
+                            </span>
+                        </div>
+                        <div
+                            className="blue-orange-chat-message-content"
+                            dangerouslySetInnerHTML={{ __html: stripTrailingEmptyParagraphs(linked.content) }}
+                        />
+                        {linked.edited && (
+                            <span className="blue-orange-chat-message-edited">(edited)</span>
+                        )}
+                    </div>
+                </div>
             </div>
         );
     };
@@ -178,19 +257,30 @@ export const ChatMessage: React.FC<Props> = ({
                     />
                 </div>
                 <div className="blue-orange-chat-message-edit-actions">
-                    <button
-                        className="blue-orange-chat-message-edit-cancel"
+                    <Button
+                        text="Cancel"
+                        buttonType={ButtonType.SECONDARY}
+                        size={ButtonSize.SMALL}
                         onClick={handleCancelEdit}
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        className="blue-orange-chat-message-edit-save"
+                    />
+                    <Button
+                        text="Save"
+                        buttonType={ButtonType.PRIMARY}
+                        size={ButtonSize.SMALL}
                         onClick={handleSaveEdit}
-                    >
-                        Save
-                    </button>
+                    />
                 </div>
+            </div>
+        );
+    };
+
+    const renderBlocks = () => {
+        if (!message.blocks || message.blocks.length === 0) return null;
+        return (
+            <div className="blue-orange-chat-message-blocks">
+                {message.blocks.map((block, index) => (
+                    <ChatMessageBlockFrame key={`${message.id}-block-${index}`} block={block} />
+                ))}
             </div>
         );
     };
@@ -258,6 +348,7 @@ export const ChatMessage: React.FC<Props> = ({
                 <div className="blue-orange-chat-message-body">
                     {renderReplyReference()}
                     {renderContent()}
+                    {renderBlocks()}
                     {children}
                     {renderThreadIndicator()}
                 </div>
@@ -282,6 +373,7 @@ export const ChatMessage: React.FC<Props> = ({
                 </div>
                 {renderReplyReference()}
                 {renderContent()}
+                {renderBlocks()}
                 {children}
                 {renderThreadIndicator()}
             </div>
