@@ -221,6 +221,7 @@ export * from './components/search/search-usage/SearchUsage';
 
 // Tooltips
 export * from './components/tooltips/simple-tooltip/SimpleTooltip';
+export * from './components/tooltips/advanced-tooltip/AdvancedTooltip';
 
 // File System
 export * from './components/file-system/file-system/FileSystem';

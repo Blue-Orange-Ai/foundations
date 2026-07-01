@@ -80,6 +80,7 @@ import {
 import {FileUploadTableDevelopment} from "../components/inputs/file-upload-table/FileUploadTableDevelopment";
 import {BreadcrumbsDevelopment} from "../components/breadcrumbs/BreadcrumbsDevelopment";
 import {SearchPlaygroundDevelopment} from "../components/search/search-playground/SearchPlaygroundDevelopment";
+import {MetricsGroupDevelopment} from "../components/metrics/metrics-group/MetricsGroupDevelopment";
 
 interface Props {
 }
@@ -489,6 +490,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						></SideBarBodyItem>
 					</SideBarBodyGroup>
 					<SideBarBodyItem
+						label={"Metrics Group"}
+						active={component == "metrics-group"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-dashboard-3-line"></i>}
+						onClick={() => navigate("/metrics-group")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
 						label={"Rules Editor"}
 						active={component == "rules"}
 						focused={false}
@@ -797,6 +807,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "charts-combo" && <ComboChartDevelopment></ComboChartDevelopment>}
 			{component == "charts-scatter" && <ScatterChartDevelopment></ScatterChartDevelopment>}
 			{component == "rules" && <RuleEditorDevelopment></RuleEditorDevelopment>}
+			{component == "metrics-group" && <MetricsGroupDevelopment></MetricsGroupDevelopment>}
 			{component == "search-query" && <SearchQueryEditorDevelopment></SearchQueryEditorDevelopment>}
 			{component == "search-query-small" && <SearchQueryEditorSmallDevelopment></SearchQueryEditorSmallDevelopment>}
 			{component == "schema-editor" && <SchemaEditorDevelopment></SchemaEditorDevelopment>}
