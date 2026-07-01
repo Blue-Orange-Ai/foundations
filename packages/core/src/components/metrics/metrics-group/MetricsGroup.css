@@ -1,0 +1,22 @@
+
+
+.blue-orange-metrics-group {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    width: 100%;
+}
+
+/* When there is no gap the cards sit flush against one another, so we
+   collapse the shared borders and radii between adjacent cards, leaving
+   only the last child with its border fully intact. */
+.blue-orange-metrics-group-joined > *:not(:last-child) {
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.blue-orange-metrics-group-joined > *:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
