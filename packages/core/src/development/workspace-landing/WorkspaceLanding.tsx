@@ -79,7 +79,6 @@ import {
 } from "../components/search/search-query-editor-small/SearchQueryEditorSmallDevelopment";
 import {FileUploadTableDevelopment} from "../components/inputs/file-upload-table/FileUploadTableDevelopment";
 import {BreadcrumbsDevelopment} from "../components/breadcrumbs/BreadcrumbsDevelopment";
-import {SearchPlaygroundDevelopment} from "../components/search/search-playground/SearchPlaygroundDevelopment";
 import {MetricsGroupDevelopment} from "../components/metrics/metrics-group/MetricsGroupDevelopment";
 
 interface Props {
@@ -542,15 +541,6 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
                             icon={<i className="ri-braces-fill"></i>}
                             onClick={() => navigate("/schema-editor")}
                         ></SideBarBodyItem>
-                        <SideBarBodyItem
-                            label={"Search Playground"}
-                            active={component == "search-playground"}
-                            focused={false}
-                            defaultStyle={inactiveStyle}
-                            activeStyle={activeStyle}
-                            icon={<i className="ri-git-repository-fill"></i>}
-                            onClick={() => navigate("/search-playground")}
-                        ></SideBarBodyItem>
                     </SideBarBodyGroup>
 					<SideBarBodyGroup opened={sidebarTooltipState} openOnActiveChild={true} onOpenedChange={setSidebarTooltipState}>
 						<SideBarBodyLabel
@@ -811,7 +801,6 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "search-query" && <SearchQueryEditorDevelopment></SearchQueryEditorDevelopment>}
 			{component == "search-query-small" && <SearchQueryEditorSmallDevelopment></SearchQueryEditorSmallDevelopment>}
 			{component == "schema-editor" && <SchemaEditorDevelopment></SchemaEditorDevelopment>}
-            {component == "search-playground" && <SearchPlaygroundDevelopment></SearchPlaygroundDevelopment>}
 			{component == "file-system" && <FileSystemDevelopment></FileSystemDevelopment>}
 			{component == "inputs-color" && <ColorPickerDevelopment></ColorPickerDevelopment>}
 			{component == "inputs-icon" && <IconSelectorDevelopment></IconSelectorDevelopment>}

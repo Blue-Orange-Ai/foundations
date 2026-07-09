@@ -46,7 +46,6 @@ The library covers a wide range of UI needs: core components (buttons, inputs, t
 | **[graph](packages/graph)** | Graph visualization with ELK layout engine | UI |
 | **[map](packages/map)** | Map components built on Leaflet | UI |
 | **[llm-client](packages/llm-client)** | LLM chat and interaction UI | UI |
-| **[search-client](packages/search-client)** | Search interface UI | UI |
 | **[pipelines-client](packages/pipelines-client)** | Pipeline graph editor | UI |
 | **[passport-client](packages/passport-client)** | Authentication and user management UI | UI |
 | **[deployment-manager](packages/deployment-manager)** | Deployment management UI | UI |
@@ -164,8 +163,7 @@ foundations/
     ├── llm-client/         # LLM interaction UI
     ├── map/                # Map components
     ├── passport-client/    # Auth/user management UI
-    ├── pipelines-client/   # Pipeline graph editor
-    └── search-client/      # Search UI
+    └── pipelines-client/   # Pipeline graph editor
 ```
 
 Each package contains:
@@ -205,7 +203,6 @@ packages/<name>/
 - `chat` → `core`, `clients`
 - `llm-client` → `core`
 - `deployment-manager` → `core`
-- `search-client` → `core`, `clients`
 - `passport-client` → `core`, `clients`
 - `pipelines-client` → `core`, `graph`
 
