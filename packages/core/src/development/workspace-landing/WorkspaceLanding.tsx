@@ -74,9 +74,6 @@ import {SearchQueryEditorDevelopment} from "../components/search/search-query-ed
 import {SchemaEditorDevelopment} from "../components/search/schema-editor/SchemaEditorDevelopment";
 import {ArrayInputDevelopment} from "../components/inputs/array-input/ArrayInputDevelopment";
 import {ObjectArrayInputDevelopment} from "../components/inputs/object-array-input/ObjectArrayInputDevelopment";
-import {
-    SearchQueryEditorSmallDevelopment
-} from "../components/search/search-query-editor-small/SearchQueryEditorSmallDevelopment";
 import {FileUploadTableDevelopment} from "../components/inputs/file-upload-table/FileUploadTableDevelopment";
 import {BreadcrumbsDevelopment} from "../components/breadcrumbs/BreadcrumbsDevelopment";
 import {MetricsGroupDevelopment} from "../components/metrics/metrics-group/MetricsGroupDevelopment";
@@ -523,16 +520,6 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 
                         ></SideBarBodyItem>
                         <SideBarBodyItem
-                            label={"Search Query Editor Small"}
-                            active={component == "search-query-small"}
-                            focused={false}
-                            defaultStyle={inactiveStyle}
-                            activeStyle={activeStyle}
-                            icon={<i className="ri-search-line"></i>}
-                            onClick={() => navigate("/search-query-small")}
-
-                        ></SideBarBodyItem>
-                        <SideBarBodyItem
                             label={"Schema Editor"}
                             active={component == "schema-editor"}
                             focused={false}
@@ -799,7 +786,6 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "rules" && <RuleEditorDevelopment></RuleEditorDevelopment>}
 			{component == "metrics-group" && <MetricsGroupDevelopment></MetricsGroupDevelopment>}
 			{component == "search-query" && <SearchQueryEditorDevelopment></SearchQueryEditorDevelopment>}
-			{component == "search-query-small" && <SearchQueryEditorSmallDevelopment></SearchQueryEditorSmallDevelopment>}
 			{component == "schema-editor" && <SchemaEditorDevelopment></SchemaEditorDevelopment>}
 			{component == "file-system" && <FileSystemDevelopment></FileSystemDevelopment>}
 			{component == "inputs-color" && <ColorPickerDevelopment></ColorPickerDevelopment>}
