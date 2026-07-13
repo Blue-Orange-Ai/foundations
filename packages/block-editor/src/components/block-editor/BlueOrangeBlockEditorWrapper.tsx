@@ -14,6 +14,7 @@ import type {
 	BlockSpec,
 	BlueOrangeDocument,
 	BlueOrangeDocumentOptions,
+	BlueOrangeFileUploadHandler,
 	DiffViewer,
 	DiffViewerOptions
 } from "@blue-orange-ai/primitives-block-editor";
@@ -94,6 +95,9 @@ export interface BlueOrangeBlockEditorWrapperProps {
 	options?: Partial<BlueOrangeDocumentOptions>,
 	mediaUri?: string,
 	disableMediaServer?: boolean,
+	// When provided, media/file uploads bypass the media server entirely and
+	// are handed to this callback (e.g. to write to the local file system).
+	fileUploadHandler?: BlueOrangeFileUploadHandler,
 	enableMentions?: boolean,
 	enableComments?: boolean,
 	template?: boolean,
@@ -111,6 +115,7 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 	options: userOptions,
 	mediaUri,
 	disableMediaServer = false,
+	fileUploadHandler,
 	enableMentions = true,
 	enableComments = true,
 	template = false,
@@ -335,6 +340,10 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 				editorOptions.mediaUri = undefined;
 			} else if (mediaUri) {
 				editorOptions.mediaUri = mediaUri;
+			}
+
+			if (fileUploadHandler) {
+				editorOptions.fileUploadHandler = fileUploadHandler;
 			}
 
 			blueOrangeEditorRef.current = new BlockEditor(
