@@ -23,6 +23,8 @@ export type {
 	BlueOrangeDocumentOptionsPlugin,
 	BlueOrangeDocumentPlugin,
 	BlueOrangeDocumentAction,
+	BlueOrangeFileUploadHandler,
+	BlueOrangeFileUploadResult,
 	BlockSpec,
 } from "@blue-orange-ai/primitives-block-editor";
 
