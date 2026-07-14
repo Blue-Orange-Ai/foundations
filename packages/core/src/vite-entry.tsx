@@ -219,6 +219,9 @@ export * from './components/search/schema-editor/SchemaEditor';
 export * from './components/search/search-playground/SearchPlayground';
 export * from './components/search/search-usage/SearchUsage';
 
+// Terminal
+export * from './components/terminal/xterminal/XTerminal';
+
 // Tooltips
 export * from './components/tooltips/simple-tooltip/SimpleTooltip';
 export * from './components/tooltips/advanced-tooltip/AdvancedTooltip';
