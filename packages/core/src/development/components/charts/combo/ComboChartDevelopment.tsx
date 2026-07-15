@@ -99,6 +99,53 @@ export const ComboChartDevelopment: React.FC<Props> = ({}) => {
 				/>
 			</div>
 
+			{/* Stacked Area Chart with Vertical Cursor Line + Custom Tooltip */}
+			<div style={{marginTop: '40px'}}>
+				<h3>Stacked Area Chart with Vertical Cursor Line + Fully Custom Tooltip</h3>
+				<ComboChart
+					height={"50vh"}
+					width={"100%"}
+					dataset={[
+						{ type: 'line', label: 'Network In', parsing: false, data: [
+								{x: 1719705600000, y: 10}, {x: 1719706500000, y: 15}, {x: 1719707400000, y: 12}, {x: 1719708300000, y: 18}, {x: 1719709200000, y: 20}
+							], borderColor: '#2d88ff', backgroundColor: 'rgba(45, 136, 255, 0.3)' },
+						{ type: 'line', label: 'Network Out', parsing: false, data: [
+								{x: 1719705600000, y: 8}, {x: 1719706500000, y: 12}, {x: 1719707400000, y: 10}, {x: 1719708300000, y: 14}, {x: 1719709200000, y: 16}
+							], borderColor: '#ff7a00', backgroundColor: 'rgba(255, 122, 0, 0.3)' },
+					]}
+					xScale="time"
+					xScaleTimeUnit="minute"
+					yScale="linear"
+					stackedAreas={true}
+					legend
+					// Vertical cursor line (default red; customised here to a dashed grey)
+					verticalLine={true}
+					verticalLineColor="#888"
+					verticalLineWidth={1}
+					verticalLineDash={[4, 4]}
+					// Full control over the tooltip: dynamic x header, custom y labels,
+					// plus a static field and a dynamic (computed total) field.
+					tooltip={{
+						xLabel: (ctx) => new Date(ctx.xValue).toLocaleTimeString(),
+						yLabel: (dp) => `${dp.datasetLabel} throughput`,
+						valueFormatter: (dp) => `${dp.formattedValue} MB/s`,
+						fields: [
+							{ label: 'Source', value: 'edge-node-1' },
+							{
+								label: 'Total',
+								value: (ctx) =>
+									`${ctx.dataPoints.reduce((sum, dp) => sum + Number(dp.formattedValue), 0)} MB/s`,
+							},
+						],
+					}}
+				/>
+				<p style={{fontSize: '14px', color: '#666', marginTop: '10px'}}>
+					<em>Move the cursor across the chart: a dashed vertical line follows the pointer so you can read the
+					granular x position even when the semi-transparent stacked fills blend. The tooltip mixes dynamic
+					x/y labels with static and computed fields.</em>
+				</p>
+			</div>
+
 			{/* Stacked Bar Chart with Custom X-Value Format */}
 			<div style={{marginTop: '40px'}}>
 				<h3>Stacked Bar Chart with Custom X-Value Format</h3>

@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./ComboChart.css"; // reuse your styles
 import Chart from "chart.js/auto";
-import { LegendPosition } from "../types/ChartTypes";
+import { LegendPosition, TooltipConfig, VerticalLineOptions } from "../types/ChartTypes";
 import { v4 as uuidv4 } from "uuid";
 import "chartjs-adapter-moment";
+import { buildTooltipContent } from "../utils/ChartTooltip";
+import { createVerticalLinePlugin } from "../utils/VerticalLinePlugin";
 
 type AnyDataset = any;
 
@@ -33,6 +35,13 @@ interface Props {
     // Tooltip configuration
     showXValueInTooltip?: boolean;  // show x-value in tooltip
     xValueFormatter?: (value: any) => string;  // custom formatter for x-value
+    tooltip?: TooltipConfig;  // full control over x/y labels + static/dynamic fields
+
+    // Optional vertical cursor line (useful for stacked areas with blended fills)
+    verticalLine?: boolean;
+    verticalLineColor?: string;   // default "red"
+    verticalLineWidth?: number;   // default 1
+    verticalLineDash?: Array<number>;
 
     // Range selection
     rangeSelect?: boolean;
@@ -78,6 +87,12 @@ export const ComboChart: React.FC<Props> = ({
 
                                                 showXValueInTooltip = false,
                                                 xValueFormatter,
+                                                tooltip,
+
+                                                verticalLine = false,
+                                                verticalLineColor = "red",
+                                                verticalLineWidth = 1,
+                                                verticalLineDash,
 
                                                 rangeSelect = false,
                                                 onRangeSelected,
@@ -99,6 +114,23 @@ export const ComboChart: React.FC<Props> = ({
     const datasetVisibility = useRef<boolean[]>([]);
     const initRef = useRef<boolean>(false);
     const uuid = uuidv4();
+
+    // ---- Vertical cursor line ----
+    const verticalLineOptionsRef = useRef<VerticalLineOptions>({
+        enabled: verticalLine,
+        color: verticalLineColor,
+        width: verticalLineWidth,
+        dash: verticalLineDash,
+    });
+    verticalLineOptionsRef.current = {
+        enabled: verticalLine,
+        color: verticalLineColor,
+        width: verticalLineWidth,
+        dash: verticalLineDash,
+    };
+    const verticalLinePlugin = useRef(
+        createVerticalLinePlugin(() => verticalLineOptionsRef.current)
+    ).current;
 
     // ---- Range selection state ----
     const dragRef = useRef<{ active: boolean; startX: number | null; endX: number | null }>({
@@ -749,69 +781,14 @@ export const ComboChart: React.FC<Props> = ({
             return;
         }
 
-        // Build contents
+        // Build contents (shared, customisable tooltip builder)
         if (tooltipModel.body) {
-            const selected = tooltipModel.dataPoints;
-            const container = document.createElement("div");
-            container.className = "blue-orange-charts-line-dataset-container";
-
-            // Add x-value header if enabled
-            if (showXValueInTooltip && selected.length > 0) {
-                // Get x-value from Chart.js tooltip model
-                let xValue;
-                
-                // Chart.js provides the label in tooltipModel.title
-                if (tooltipModel.title && tooltipModel.title.length > 0) {
-                    xValue = tooltipModel.title[0];
-                } else {
-                    // Fallback: try to get from dataPoint
-                    const dataPoint = selected[0];
-                    xValue = dataPoint.parsed?.x || dataPoint.label;
-                }
-                
-                // Only create header if we have a valid x-value
-                if (xValue !== undefined && xValue !== null && xValue !== '') {
-                    const formattedXValue = xValueFormatter ? xValueFormatter(xValue) : String(xValue);
-                    
-                    const xValueHeader = document.createElement("div");
-                    xValueHeader.className = "blue-orange-chart-line-tooltip-x-value";
-                    xValueHeader.style.fontWeight = "bold";
-                    xValueHeader.style.marginBottom = "6px";
-                    xValueHeader.style.paddingBottom = "3px";
-                    xValueHeader.style.borderBottom = "1px solid rgba(0,0,0,0.1)";
-                    xValueHeader.style.fontSize = "12px";
-                    xValueHeader.style.color = "white";
-                    xValueHeader.textContent = formattedXValue;
-                    container.appendChild(xValueHeader);
-                }
-            }
-
-            for (const dp of selected) {
-                const dataset = dp.dataset;
-                const borderColor = dataset.borderColor;
-                const backgroundColor = dataset.backgroundColor;
-                const formattedValue = dp.formattedValue;
-                const datasetLabel = dataset.label ?? "";
-
-                const row = document.createElement("div");
-                row.className = "blue-orange-charts-line-dataset-row";
-
-                const dot = document.createElement("div");
-                dot.style.height = "10px";
-                dot.style.width = "10px";
-                dot.style.borderRadius = "50%";
-                dot.style.border = "2px solid " + borderColor;
-                dot.style.backgroundColor = backgroundColor;
-                dot.style.marginRight = "15px";
-
-                const val = document.createElement("div");
-                val.className = "blue-orange-chart-line-tooltip-value";
-                val.innerHTML = `<span class='blue-orange-chart-line-tooltip-dataset-label'>${datasetLabel}:</span>${formattedValue}`;
-
-                row.appendChild(dot);
-                row.appendChild(val);
-                container.appendChild(row);
-            }
+            const container = buildTooltipContent(tooltipModel, {
+                classPrefix: "line",
+                showXValueInTooltip,
+                xValueFormatter,
+                tooltip,
+            });
 
             const bodyEl = document.getElementById("blue-orange-chart-line-js-tooltip-body-" + uuid) as HTMLElement;
             bodyEl.innerHTML = "";
@@ -989,7 +966,7 @@ export const ComboChart: React.FC<Props> = ({
                     mode: interactionType,
                 },
             },
-            plugins: [htmlLegendPlugin, selectionOverlayPlugin],
+            plugins: [htmlLegendPlugin, selectionOverlayPlugin, verticalLinePlugin],
         };
 
         chartInstanceRef.current = new Chart((ctx as CanvasRenderingContext2D), config);
