@@ -90,6 +90,7 @@ export const LineChartDevelopment: React.FC<Props> = ({}) => {
 					interactionType={"nearest"}
 					rangeSelect={true}
 					legend={true}
+					verticalLine={true}
 					dataset={[{
 						label: "Subscribers",
 						backgroundColor: "#BB8FCE",
