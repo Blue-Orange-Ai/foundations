@@ -3,7 +3,7 @@ import React, {useEffect, useRef, useState} from "react";
 import './LineChart.css'
 
 import Chart from 'chart.js/auto';
-import {ChartDataset, LegendPosition, TooltipConfig, VerticalLineOptions} from "../types/ChartTypes";
+import {ChartDataset, CursorPosition, LegendPosition, TooltipConfig, VerticalLineOptions} from "../types/ChartTypes";
 import {v4 as uuidv4} from "uuid";
 import 'chartjs-adapter-moment';
 import {buildTooltipContent} from "../utils/ChartTooltip";
@@ -37,6 +37,9 @@ interface Props {
 	verticalLineColor?: string,
 	verticalLineWidth?: number,
 	verticalLineDash?: Array<number>,
+	// Cursor position reporting + programmatic (synchronised) crosshair
+	onCursorMove?: (position: CursorPosition | null) => void,
+	cursorValue?: any,
 }
 
 export const LineChart: React.FC<Props> = ({
@@ -65,28 +68,40 @@ export const LineChart: React.FC<Props> = ({
 											   verticalLineColor = "red",
 											   verticalLineWidth = 1,
 											   verticalLineDash,
+											   onCursorMove,
+											   cursorValue,
 										   }) => {
 
 	const chartRef = useRef<HTMLCanvasElement>(null);
 	const chartInstanceRef = useRef<Chart | null>(null);
 
-	// Live options for the vertical cursor line so styling updates without
-	// recreating the chart instance.
+	// Live options for the vertical cursor line so styling, the external value
+	// and the callback update without recreating the chart instance.
 	const verticalLineOptionsRef = useRef<VerticalLineOptions>({
 		enabled: verticalLine,
 		color: verticalLineColor,
 		width: verticalLineWidth,
 		dash: verticalLineDash,
+		externalValue: cursorValue,
+		onCursorMove,
 	});
 	verticalLineOptionsRef.current = {
 		enabled: verticalLine,
 		color: verticalLineColor,
 		width: verticalLineWidth,
 		dash: verticalLineDash,
+		externalValue: cursorValue,
+		onCursorMove,
 	};
 	const verticalLinePlugin = useRef(
 		createVerticalLinePlugin(() => verticalLineOptionsRef.current)
 	).current;
+
+	// Redraw when the externally-controlled cursor value changes so a
+	// synchronised crosshair appears even without hovering this chart.
+	useEffect(() => {
+		chartInstanceRef.current?.draw();
+	}, [cursorValue]);
 
 	const datasetVisibility = useRef<boolean[]>([]);
 	const initRef = useRef<boolean>(false);

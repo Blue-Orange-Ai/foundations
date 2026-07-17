@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./ComboChart.css"; // reuse your styles
 import Chart from "chart.js/auto";
-import { LegendPosition, TooltipConfig, VerticalLineOptions } from "../types/ChartTypes";
+import { CursorPosition, LegendPosition, TooltipConfig, VerticalLineOptions } from "../types/ChartTypes";
 import { v4 as uuidv4 } from "uuid";
 import "chartjs-adapter-moment";
 import { buildTooltipContent } from "../utils/ChartTooltip";
@@ -42,6 +42,9 @@ interface Props {
     verticalLineColor?: string;   // default "red"
     verticalLineWidth?: number;   // default 1
     verticalLineDash?: Array<number>;
+    // Cursor position reporting + programmatic (synchronised) crosshair
+    onCursorMove?: (position: CursorPosition | null) => void;
+    cursorValue?: any;
 
     // Range selection
     rangeSelect?: boolean;
@@ -93,6 +96,8 @@ export const ComboChart: React.FC<Props> = ({
                                                 verticalLineColor = "red",
                                                 verticalLineWidth = 1,
                                                 verticalLineDash,
+                                                onCursorMove,
+                                                cursorValue,
 
                                                 rangeSelect = false,
                                                 onRangeSelected,
@@ -121,16 +126,26 @@ export const ComboChart: React.FC<Props> = ({
         color: verticalLineColor,
         width: verticalLineWidth,
         dash: verticalLineDash,
+        externalValue: cursorValue,
+        onCursorMove,
     });
     verticalLineOptionsRef.current = {
         enabled: verticalLine,
         color: verticalLineColor,
         width: verticalLineWidth,
         dash: verticalLineDash,
+        externalValue: cursorValue,
+        onCursorMove,
     };
     const verticalLinePlugin = useRef(
         createVerticalLinePlugin(() => verticalLineOptionsRef.current)
     ).current;
+
+    // Redraw when the externally-controlled cursor value changes so a
+    // synchronised crosshair appears even without hovering this chart.
+    useEffect(() => {
+        chartInstanceRef.current?.draw();
+    }, [cursorValue]);
 
     // ---- Range selection state ----
     const dragRef = useRef<{ active: boolean; startX: number | null; endX: number | null }>({

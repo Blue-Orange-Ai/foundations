@@ -138,6 +138,36 @@ describe("ComboChart - vertical cursor line (stacked areas)", () => {
     });
 });
 
+describe("ComboChart - cursor synchronisation", () => {
+    it("reports the cursor position via onCursorMove", () => {
+        const onCursorMove = jest.fn();
+        render(<ComboChart dataset={lineDatasets} stackedAreas onCursorMove={onCursorMove} animationTimeout={0}/>);
+        const plugin = getConfig().plugins.find((p: any) => p.id === "verticalCursorLine");
+        const chart = anyChart.lastInstance;
+        plugin.afterEvent(chart, {event: {type: "mousemove", x: 45, y: 30}, changed: false});
+        expect(onCursorMove).toHaveBeenCalledWith({x: 45, pixelX: 45});
+    });
+
+    it("draws a synchronised crosshair from cursorValue without hovering", () => {
+        render(<ComboChart dataset={lineDatasets} stackedAreas verticalLine cursorValue={60} animationTimeout={0}/>);
+        const plugin = getConfig().plugins.find((p: any) => p.id === "verticalCursorLine");
+        const chart = anyChart.lastInstance;
+        plugin.afterDraw(chart);
+        expect(chart.ctx.moveTo).toHaveBeenCalledWith(60, chart.chartArea.top);
+        expect(chart.ctx.stroke).toHaveBeenCalled();
+    });
+
+    it("redraws when cursorValue changes", () => {
+        const {rerender} = render(
+            <ComboChart dataset={lineDatasets} stackedAreas verticalLine cursorValue={20} animationTimeout={0}/>
+        );
+        const chart = anyChart.lastInstance;
+        chart.draw.mockClear();
+        rerender(<ComboChart dataset={lineDatasets} stackedAreas verticalLine cursorValue={70} animationTimeout={0}/>);
+        expect(chart.draw).toHaveBeenCalled();
+    });
+});
+
 describe("ComboChart - external tooltip", () => {
     it("renders default rows", () => {
         render(<ComboChart dataset={lineDatasets} animationTimeout={0}/>);

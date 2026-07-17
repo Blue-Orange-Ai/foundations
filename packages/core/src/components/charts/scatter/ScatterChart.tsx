@@ -3,7 +3,7 @@ import React, {useEffect, useRef, useState} from "react";
 import './ScatterChart.css'
 
 import Chart from 'chart.js/auto';
-import {ChartDataset, LegendPosition, TooltipConfig, VerticalLineOptions} from "../types/ChartTypes";
+import {ChartDataset, CursorPosition, LegendPosition, TooltipConfig, VerticalLineOptions} from "../types/ChartTypes";
 import {v4 as uuidv4} from "uuid";
 import {buildTooltipContent} from "../utils/ChartTooltip";
 import {createVerticalLinePlugin} from "../utils/VerticalLinePlugin";
@@ -31,6 +31,9 @@ interface Props {
 	verticalLineColor?: string,
 	verticalLineWidth?: number,
 	verticalLineDash?: Array<number>,
+	// Cursor position reporting + programmatic (synchronised) crosshair
+	onCursorMove?: (position: CursorPosition | null) => void,
+	cursorValue?: any,
 }
 
 export const ScatterChart: React.FC<Props> = ({
@@ -54,6 +57,8 @@ export const ScatterChart: React.FC<Props> = ({
 											   verticalLineColor = "red",
 											   verticalLineWidth = 1,
 											   verticalLineDash,
+											   onCursorMove,
+											   cursorValue,
 										   }) => {
 
 	const chartRef = useRef<HTMLCanvasElement>(null);
@@ -70,16 +75,25 @@ export const ScatterChart: React.FC<Props> = ({
 		color: verticalLineColor,
 		width: verticalLineWidth,
 		dash: verticalLineDash,
+		externalValue: cursorValue,
+		onCursorMove,
 	});
 	verticalLineOptionsRef.current = {
 		enabled: verticalLine,
 		color: verticalLineColor,
 		width: verticalLineWidth,
 		dash: verticalLineDash,
+		externalValue: cursorValue,
+		onCursorMove,
 	};
 	const verticalLinePlugin = useRef(
 		createVerticalLinePlugin(() => verticalLineOptionsRef.current)
 	).current;
+
+	// Redraw when the externally-controlled cursor value changes.
+	useEffect(() => {
+		chartInstanceRef.current?.draw();
+	}, [cursorValue]);
 
 	const floatingLegendTopLeft: React.CSSProperties = {
 		top: "20px",

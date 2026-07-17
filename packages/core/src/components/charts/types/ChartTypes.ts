@@ -108,9 +108,22 @@ export interface TooltipConfig {
 }
 
 /**
+ * The cursor position reported by a chart as the pointer moves across it. The
+ * `x` value is the resolved x-axis *data value* (timestamp, category label,
+ * number, ...) so it can be matched across charts that share the same x axis.
+ */
+export interface CursorPosition {
+    /** The x-axis data value under the cursor. */
+    x: any,
+    /** The pixel x position within the chart (canvas coordinate space). */
+    pixelX: number,
+}
+
+/**
  * Options for the optional vertical cursor line that follows the mouse. Useful
  * on stacked area charts where blended, semi-transparent fills make it hard to
- * read the granular x position under the cursor.
+ * read the granular x position under the cursor, and for synchronising a
+ * crosshair across several charts that share the same x axis.
  */
 export interface VerticalLineOptions {
     /** Whether the vertical line is drawn. */
@@ -121,4 +134,17 @@ export interface VerticalLineOptions {
     width?: number,
     /** Optional dash pattern, e.g. [4, 4] for a dashed line. */
     dash?: Array<number>,
+    /**
+     * Externally-controlled x-axis *data value* at which to draw the line, even
+     * when the pointer is not over this chart. Set this from another chart's
+     * onCursorMove callback to show a synchronised crosshair. null/undefined
+     * hides the externally-driven line.
+     */
+    externalValue?: any,
+    /**
+     * Fired as the pointer moves over the chart (with the resolved position) and
+     * once with null when it leaves. Wire this into sibling charts' externalValue
+     * to synchronise the crosshair across charts sharing an x axis.
+     */
+    onCursorMove?: (position: CursorPosition | null) => void,
 }

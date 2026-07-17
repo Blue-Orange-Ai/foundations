@@ -146,6 +146,45 @@ describe("LineChart - vertical cursor line", () => {
     });
 });
 
+describe("LineChart - cursor synchronisation", () => {
+    it("reports the cursor position via onCursorMove", () => {
+        const onCursorMove = jest.fn();
+        render(<LineChart dataset={dataset} onCursorMove={onCursorMove} animationTimeout={0}/>);
+        const plugin = getConfig().plugins.find((p: any) => p.id === "verticalCursorLine");
+        const chart = anyChart.lastInstance;
+        plugin.afterEvent(chart, {event: {type: "mousemove", x: 50, y: 50}, changed: false});
+        expect(onCursorMove).toHaveBeenCalledWith({x: 50, pixelX: 50});
+    });
+
+    it("reports null when the pointer leaves", () => {
+        const onCursorMove = jest.fn();
+        render(<LineChart dataset={dataset} onCursorMove={onCursorMove} animationTimeout={0}/>);
+        const plugin = getConfig().plugins.find((p: any) => p.id === "verticalCursorLine");
+        const chart = anyChart.lastInstance;
+        plugin.afterEvent(chart, {event: {type: "mousemove", x: 50, y: 50}, changed: false});
+        onCursorMove.mockClear();
+        plugin.afterEvent(chart, {event: {type: "mouseout"}, changed: false});
+        expect(onCursorMove).toHaveBeenCalledWith(null);
+    });
+
+    it("draws a programmatic crosshair at the controlled cursorValue", () => {
+        render(<LineChart dataset={dataset} verticalLine cursorValue={40} animationTimeout={0}/>);
+        const plugin = getConfig().plugins.find((p: any) => p.id === "verticalCursorLine");
+        const chart = anyChart.lastInstance;
+        // No hover — the line is driven purely by cursorValue (pixel === value in the mock).
+        plugin.afterDraw(chart);
+        expect(chart.ctx.moveTo).toHaveBeenCalledWith(40, chart.chartArea.top);
+    });
+
+    it("redraws when the controlled cursorValue changes", () => {
+        const {rerender} = render(<LineChart dataset={dataset} verticalLine cursorValue={10} animationTimeout={0}/>);
+        const chart = anyChart.lastInstance;
+        chart.draw.mockClear();
+        rerender(<LineChart dataset={dataset} verticalLine cursorValue={80} animationTimeout={0}/>);
+        expect(chart.draw).toHaveBeenCalled();
+    });
+});
+
 describe("LineChart - external tooltip", () => {
     it("creates a tooltip element with default rows", () => {
         render(<LineChart dataset={dataset} animationTimeout={0}/>);
