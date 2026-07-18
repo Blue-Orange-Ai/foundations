@@ -19,6 +19,8 @@ export const BarChartDevelopment: React.FC<Props> = ({}) => {
 				gridLines={true}
 				xScale={"category"}
 				legend={false}
+				verticalLine={true}
+				verticalLineColor={"#2d88ff"}
 				labels={["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]}
 				dataset={[{
 					label: "Subscribers",

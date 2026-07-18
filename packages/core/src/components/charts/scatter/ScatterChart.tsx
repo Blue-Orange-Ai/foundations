@@ -3,8 +3,10 @@ import React, {useEffect, useRef, useState} from "react";
 import './ScatterChart.css'
 
 import Chart from 'chart.js/auto';
-import {ChartDataset, LegendPosition} from "../types/ChartTypes";
+import {ChartDataset, CursorPosition, LegendPosition, TooltipConfig, VerticalLineOptions} from "../types/ChartTypes";
 import {v4 as uuidv4} from "uuid";
+import {buildTooltipContent} from "../utils/ChartTooltip";
+import {createVerticalLinePlugin} from "../utils/VerticalLinePlugin";
 
 interface Props {
 	dataset: Array<ChartDataset>,
@@ -19,8 +21,19 @@ interface Props {
 	interactionType?: string,  // mode: 'index' or mode: 'nearest'
 	animationTimeout?: number,
 	legend?: boolean,
-	legendPosition?: LegendPosition
-
+	legendPosition?: LegendPosition,
+	// Tooltip customisation (all optional; defaults reproduce original behaviour)
+	tooltip?: TooltipConfig,
+	showXValueInTooltip?: boolean,
+	xValueFormatter?: (value: any) => string,
+	// Optional vertical cursor line
+	verticalLine?: boolean,
+	verticalLineColor?: string,
+	verticalLineWidth?: number,
+	verticalLineDash?: Array<number>,
+	// Cursor position reporting + programmatic (synchronised) crosshair
+	onCursorMove?: (position: CursorPosition | null) => void,
+	cursorValue?: any,
 }
 
 export const ScatterChart: React.FC<Props> = ({
@@ -36,7 +49,17 @@ export const ScatterChart: React.FC<Props> = ({
 											   interactionType = "nearest",
 											   animationTimeout = 2000,
 											   legend=true,
-											   legendPosition=LegendPosition.BOTTOM}) => {
+											   legendPosition=LegendPosition.BOTTOM,
+											   tooltip,
+											   showXValueInTooltip = false,
+											   xValueFormatter,
+											   verticalLine = false,
+											   verticalLineColor = "red",
+											   verticalLineWidth = 1,
+											   verticalLineDash,
+											   onCursorMove,
+											   cursorValue,
+										   }) => {
 
 	const chartRef = useRef<HTMLCanvasElement>(null);
 
@@ -45,6 +68,32 @@ export const ScatterChart: React.FC<Props> = ({
 	const initRef = useRef<boolean>(false);
 
 	const uuid = uuidv4();
+
+	// Live options for the vertical cursor line.
+	const verticalLineOptionsRef = useRef<VerticalLineOptions>({
+		enabled: verticalLine,
+		color: verticalLineColor,
+		width: verticalLineWidth,
+		dash: verticalLineDash,
+		externalValue: cursorValue,
+		onCursorMove,
+	});
+	verticalLineOptionsRef.current = {
+		enabled: verticalLine,
+		color: verticalLineColor,
+		width: verticalLineWidth,
+		dash: verticalLineDash,
+		externalValue: cursorValue,
+		onCursorMove,
+	};
+	const verticalLinePlugin = useRef(
+		createVerticalLinePlugin(() => verticalLineOptionsRef.current)
+	).current;
+
+	// Redraw when the externally-controlled cursor value changes.
+	useEffect(() => {
+		chartInstanceRef.current?.draw();
+	}, [cursorValue]);
 
 	const floatingLegendTopLeft: React.CSSProperties = {
 		top: "20px",
@@ -228,49 +277,12 @@ export const ScatterChart: React.FC<Props> = ({
 									tooltipEl.classList.add('no-transform');
 								}
 
-								function getBody(bodyItem: any) {
-									return bodyItem.lines;
-								}
-
 								if (tooltipModel.body) {
-									const titleLines = tooltipModel.title || [];
-									const bodyLines = tooltipModel.body.map(getBody);
-									const selectedDataPoints = tooltipModel.dataPoints;
-									var toolTipDatasets = document.createElement("div");
-									toolTipDatasets.className = "blue-orange-charts-scatter-dataset-container";
-									for (let dataPoint of selectedDataPoints) {
-										const dataset = dataPoint.dataset;
-										const borderColor = dataset.borderColor;
-										const backgroundColor = dataset.backgroundColor;
-										const formattedValue = dataPoint.formattedValue;
-										const yLabel = dataPoint.label;
-										const datasetLabel = dataset.label;
-										var toolTipDatasetRow = document.createElement("div");
-										toolTipDatasetRow.className = "blue-orange-charts-scatter-dataset-row";
-										var tooltipDatasetColor = document.createElement('div');
-										tooltipDatasetColor.style.height = "10px";
-										tooltipDatasetColor.style.width = "10px";
-										tooltipDatasetColor.style.borderRadius = "50%";
-										tooltipDatasetColor.style.border = "2px solid " + borderColor;
-										tooltipDatasetColor.style.backgroundColor = backgroundColor;
-										tooltipDatasetColor.style.marginRight = "15px";
-										toolTipDatasetRow.appendChild(tooltipDatasetColor);
-										var tooltipFormattedValue = document.createElement('div');
-										tooltipFormattedValue.className = "blue-orange-chart-scatter-tooltip-value";
-										tooltipFormattedValue.innerHTML = "<span class='blue-orange-chart-scatter-tooltip-dataset-label'>" + datasetLabel + ":</span>" + formattedValue;
-										toolTipDatasetRow.appendChild(tooltipFormattedValue);
-										toolTipDatasets.appendChild(toolTipDatasetRow);
-									}
-									const selectedDatasets = tooltipModel.datasets;
-									var header = '';
-									titleLines.forEach(function(title:any) {
-										header += title;
-									});
-									var value = ""
-									bodyLines.forEach(function(body:any, i:any) {
-										var vals = body[0].split(":");
-										var val = vals[1].trim();
-										value += val;
+									const toolTipDatasets = buildTooltipContent(tooltipModel, {
+										classPrefix: "scatter",
+										showXValueInTooltip,
+										xValueFormatter,
+										tooltip,
 									});
 									var chartTooltipBody = document.getElementById('blue-orange-chart-scatter-js-tooltip-body-' + uuid) as HTMLElement;
 									chartTooltipBody.innerHTML = "";
@@ -335,7 +347,7 @@ export const ScatterChart: React.FC<Props> = ({
 						mode: interactionType,
 					}
 				},
-				plugins:[htmlLegendPlugin]
+				plugins:[htmlLegendPlugin, verticalLinePlugin]
 			};
 			chartInstanceRef.current = new Chart((ctx as CanvasRenderingContext2D), config);
 			setTimeout(() => {

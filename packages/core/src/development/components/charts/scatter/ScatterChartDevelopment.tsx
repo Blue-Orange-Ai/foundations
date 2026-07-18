@@ -17,6 +17,8 @@ export const ScatterChartDevelopment: React.FC<Props> = ({}) => {
 				height={"400px"}
 				gridLines={true}
 				xScale={"linear"}
+				verticalLine={true}
+				verticalLineDash={[4, 4]}
 				dataset={[{
 					label: "Subscribers",
 					backgroundColor: "#BB8FCE",

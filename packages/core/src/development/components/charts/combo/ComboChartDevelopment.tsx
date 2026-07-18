@@ -17,6 +17,9 @@ export const ComboChartDevelopment: React.FC<Props> = ({}) => {
 
 	const [initialised, setInitialised] = useState(false);
 
+	// Shared x position for the synchronised-crosshair demo below.
+	const [syncedCursor, setSyncedCursor] = useState<any>(null);
+
 	const initialisedRef = useRef(false);
 
 	const interval = 1000;
@@ -97,6 +100,89 @@ export const ComboChartDevelopment: React.FC<Props> = ({}) => {
 					legend
 					rangeSelect
 				/>
+			</div>
+
+			{/* Stacked Area Chart with Vertical Cursor Line + Custom Tooltip */}
+			<div style={{marginTop: '40px'}}>
+				<h3>Stacked Area Chart with Vertical Cursor Line + Fully Custom Tooltip</h3>
+				<ComboChart
+					height={"50vh"}
+					width={"100%"}
+					dataset={[
+						{ type: 'line', label: 'Network In', parsing: false, data: [
+								{x: 1719705600000, y: 10}, {x: 1719706500000, y: 15}, {x: 1719707400000, y: 12}, {x: 1719708300000, y: 18}, {x: 1719709200000, y: 20}
+							], borderColor: '#2d88ff', backgroundColor: 'rgba(45, 136, 255, 0.3)' },
+						{ type: 'line', label: 'Network Out', parsing: false, data: [
+								{x: 1719705600000, y: 8}, {x: 1719706500000, y: 12}, {x: 1719707400000, y: 10}, {x: 1719708300000, y: 14}, {x: 1719709200000, y: 16}
+							], borderColor: '#ff7a00', backgroundColor: 'rgba(255, 122, 0, 0.3)' },
+					]}
+					xScale="time"
+					xScaleTimeUnit="minute"
+					yScale="linear"
+					stackedAreas={true}
+					legend
+					// Vertical cursor line (default red; customised here to a dashed grey)
+					verticalLine={true}
+					verticalLineColor="#888"
+					verticalLineWidth={1}
+					verticalLineDash={[4, 4]}
+					// Full control over the tooltip: dynamic x header, custom y labels,
+					// plus a static field and a dynamic (computed total) field.
+					tooltip={{
+						xLabel: (ctx) => new Date(ctx.xValue).toLocaleTimeString(),
+						yLabel: (dp) => `${dp.datasetLabel} throughput`,
+						valueFormatter: (dp) => `${dp.formattedValue} MB/s`,
+						fields: [
+							{ label: 'Source', value: 'edge-node-1' },
+							{
+								label: 'Total',
+								value: (ctx) =>
+									`${ctx.dataPoints.reduce((sum, dp) => sum + Number(dp.formattedValue), 0)} MB/s`,
+							},
+						],
+					}}
+				/>
+				<p style={{fontSize: '14px', color: '#666', marginTop: '10px'}}>
+					<em>Move the cursor across the chart: a dashed vertical line follows the pointer so you can read the
+					granular x position even when the semi-transparent stacked fills blend. The tooltip mixes dynamic
+					x/y labels with static and computed fields.</em>
+				</p>
+			</div>
+
+			{/* Synchronised Crosshair Across Two Charts Sharing an X Axis */}
+			<div style={{marginTop: '40px'}}>
+				<h3>Synchronised Crosshair Across Charts (shared X axis)</h3>
+				<p style={{fontSize: '14px', color: '#666'}}>
+					<em>Hover either chart: onCursorMove reports the x value, which is fed into the other chart's
+					cursorValue so a red crosshair appears at the same x position on both.</em>
+				</p>
+				{[
+					{title: 'Requests / sec', color: '#2d88ff', data: [
+							{x: 1719705600000, y: 30}, {x: 1719706500000, y: 42}, {x: 1719707400000, y: 38}, {x: 1719708300000, y: 55}, {x: 1719709200000, y: 48}
+						]},
+					{title: 'Latency (ms)', color: '#e83e8c', data: [
+							{x: 1719705600000, y: 120}, {x: 1719706500000, y: 95}, {x: 1719707400000, y: 140}, {x: 1719708300000, y: 88}, {x: 1719709200000, y: 110}
+						]},
+				].map((chart) => (
+					<div key={chart.title} style={{marginTop: '16px'}}>
+						<ComboChart
+							height={"30vh"}
+							width={"100%"}
+							dataset={[
+								{type: 'line', label: chart.title, parsing: false, data: chart.data, borderColor: chart.color, backgroundColor: 'transparent'},
+							]}
+							xScale="time"
+							xScaleTimeUnit="minute"
+							yScale="linear"
+							legend
+							verticalLine={true}
+							onCursorMove={(pos) => setSyncedCursor(pos ? pos.x : null)}
+							cursorValue={syncedCursor}
+							showXValueInTooltip={true}
+							xValueFormatter={(value) => new Date(value).toLocaleTimeString()}
+						/>
+					</div>
+				))}
 			</div>
 
 			{/* Stacked Bar Chart with Custom X-Value Format */}
