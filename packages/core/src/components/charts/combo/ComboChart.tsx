@@ -1014,6 +1014,10 @@ export const ComboChart: React.FC<Props> = ({
                 window.removeEventListener("keydown", onKeyDown);
                 c.removeEventListener("click", onCanvasClick);
                 chartInstanceRef.current.destroy();
+                // Null the ref so effects that fire after teardown (e.g. the
+                // cursorValue redraw under StrictMode's mount→cleanup→mount)
+                // don't call draw()/update() on a destroyed chart.
+                chartInstanceRef.current = null;
             }
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps

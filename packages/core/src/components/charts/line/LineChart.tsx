@@ -527,6 +527,10 @@ export const LineChart: React.FC<Props> = ({
 					c.removeEventListener('dblclick', onDblClick);
 					window.removeEventListener('keydown', onKeyDown);
 					chartInstanceRef.current.destroy();
+					// Null the ref so effects that fire after teardown (e.g. the
+					// cursorValue redraw under StrictMode's mount→cleanup→mount)
+					// don't call draw()/update() on a destroyed chart.
+					chartInstanceRef.current = null;
 				}
 			};
 		}

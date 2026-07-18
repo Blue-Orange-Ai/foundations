@@ -359,6 +359,10 @@ export const ScatterChart: React.FC<Props> = ({
 		return () => {
 			if (chartInstanceRef.current) {
 				chartInstanceRef.current.destroy();
+				// Null the ref so effects that fire after teardown (e.g. the
+				// cursorValue redraw under StrictMode's mount→cleanup→mount)
+				// don't call draw()/update() on a destroyed chart.
+				chartInstanceRef.current = null;
 			}
 		};
 	}, []);
