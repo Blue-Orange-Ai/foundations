@@ -244,4 +244,21 @@ describe("LineChart - updates & teardown", () => {
         unmount();
         expect(chart.destroy).toHaveBeenCalled();
     });
+
+    it("does not draw on a destroyed instance under StrictMode remount", () => {
+        // StrictMode runs effects mount → cleanup → mount on the same instance.
+        // If the cleanup leaves the ref pointing at the destroyed chart, the
+        // cursorValue redraw effect calls draw() on it and throws. Rendering
+        // must not throw, and the destroyed instance must not be drawn.
+        expect(() =>
+            render(
+                <React.StrictMode>
+                    <LineChart dataset={dataset} verticalLine cursorValue={40} animationTimeout={0}/>
+                </React.StrictMode>
+            )
+        ).not.toThrow();
+        const destroyed = anyChart.instances.find((c: any) => c.destroyed);
+        expect(destroyed).toBeDefined();
+        expect(destroyed.draw).not.toHaveBeenCalled();
+    });
 });

@@ -54,9 +54,20 @@ class MockChart {
             },
         };
 
-        this.update = jest.fn();
-        this.destroy = jest.fn();
-        this.draw = jest.fn();
+        // Mirror real Chart.js: once destroyed the canvas context is torn down,
+        // so draw()/update() blow up (the "Cannot read properties of null" crash
+        // seen in the browser). This lets tests catch draws on a stale instance.
+        this.destroyed = false;
+        this.update = jest.fn(() => {
+            if (this.destroyed) throw new Error("Cannot read properties of null (reading 'ownerDocument')");
+        });
+        this.destroy = jest.fn(() => {
+            this.destroyed = true;
+            this.ctx = null;
+        });
+        this.draw = jest.fn(() => {
+            if (this.destroyed) throw new Error("Cannot read properties of null (reading 'save')");
+        });
         this.setActiveElements = jest.fn();
         this.setDatasetVisibility = jest.fn();
         this.isDatasetVisible = jest.fn(() => true);
