@@ -1,0 +1,16 @@
+.button-development-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Example of a custom class injected via the `classes` prop */
+.button-development-custom-class {
+    background: linear-gradient(135deg, #7f00ff, #e100ff);
+    border: 1px solid transparent;
+    color: white;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}

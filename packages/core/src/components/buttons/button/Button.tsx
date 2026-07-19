@@ -30,6 +30,7 @@ interface Props {
 	text: string;
 	buttonType: ButtonType;
 	size?: ButtonSize;
+	classes?: string;
 	tooltip?: string;
 	icon?: string;
 	iconPos?: ButtonIconPos;
@@ -57,6 +58,7 @@ export const Button: React.FC<Props> = ({
 											text,
 											buttonType,
 											size = ButtonSize.MEDIUM,
+											classes = "",
 											tooltip,
 											icon,
 											iconPos,
@@ -103,6 +105,8 @@ export const Button: React.FC<Props> = ({
 		}
 		return "foundations-default-btn no-select foundations-primary-btn" + sizeClass;
 	}
+
+	const customClasses = classes ? " " + classes : "";
 
 	const defaultStyle = generateDefaultStyle()
 
@@ -171,7 +175,7 @@ export const Button: React.FC<Props> = ({
 	}, []);
 
 	return (
-		<div ref={btnRef} className={btnClassname} onClick={handleClick} style={style}>
+		<div ref={btnRef} className={btnClassname + customClasses} onClick={handleClick} style={style}>
 			{isLoading ? <i className="ri-loader-4-line foundations-btn-rotate-spinner"></i> : null}
 			{successAnimation ? <SuccessAnimation></SuccessAnimation> : null}
 			{errorAnimation ? <ErrorAnimation></ErrorAnimation> : null}

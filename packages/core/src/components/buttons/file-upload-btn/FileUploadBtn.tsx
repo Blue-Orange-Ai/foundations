@@ -1,4 +1,5 @@
 import React, {ReactEventHandler, useRef} from "react";
+import {ButtonSize} from "../button/Button";
 
 import './FileUploadBtn.css';
 
@@ -6,17 +7,25 @@ interface Props {
 	accept: string;
 	label?: string;
 	icon?: boolean;
+	size?: ButtonSize;
 	isLoading?: boolean;
 	onFileSelect?: (value: File) => void;
 	maxFileMgb?: number;
 	style?: React.CSSProperties;
 }
 
+const sizeClassName: Record<ButtonSize, string> = {
+	[ButtonSize.SMALL]: "default-file-upload-btn-sm",
+	[ButtonSize.MEDIUM]: "",
+	[ButtonSize.LARGE]: "default-file-upload-btn-lg",
+};
+
 export const FileUploadBtn: React.FC<Props> = ({
 												   accept,
 												   onFileSelect,
 												   label="Upload File",
 												   icon=false,
+												   size=ButtonSize.MEDIUM,
 												   isLoading=false,
 												   maxFileMgb,
 												   style={}}) => {
@@ -42,6 +51,8 @@ export const FileUploadBtn: React.FC<Props> = ({
 		}
 	};
 
+	const btnClassName = "default-file-upload-btn" + (sizeClassName[size] ? " " + sizeClassName[size] : "");
+
 	const mimeTypes = () => {
 		if (accept.toLowerCase() == "pdf") {
 			return "application/pdf";
@@ -65,12 +76,12 @@ export const FileUploadBtn: React.FC<Props> = ({
 				accept={mimeTypes()}
 			/>
 			{isLoading &&
-				<div className="default-file-upload-btn" style={style}>
+				<div className={btnClassName} style={style}>
 					<i className="ri-loader-4-line rotate-spinner"></i>
 				</div>
 			}
 			{!isLoading &&
-				<button className="default-file-upload-btn"
+				<button className={btnClassName}
 						style={style}
 						onClick={handleButtonClick}>
 					{icon && <i className="ri-upload-2-line file-upload-margin-right"></i>}

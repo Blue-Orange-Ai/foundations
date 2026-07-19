@@ -20,6 +20,17 @@
     color: var(--blue-orange-dark-primary-btn-color);
 }
 
+/* Size variants */
+.default-file-upload-btn-sm {
+    height: 28px;
+    font-size: 0.75rem;
+}
+
+.default-file-upload-btn-lg {
+    height: 44px;
+    font-size: 1rem;
+}
+
 .file-upload-margin-right{
     margin-right: 15px;
 }

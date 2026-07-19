@@ -4,7 +4,7 @@ import './ButtonDropdown.css';
 import {SuccessAnimation} from "../utils/successanimation/SuccessAnimation";
 import {ErrorAnimation} from "../utils/erroranimation/ErrorAnimation";
 import {TippyHTMLElement} from "../../interfaces/AppInterfaces";
-import {ButtonIconPos, ButtonType} from "../button/Button";
+import {ButtonIconPos, ButtonSize, ButtonType} from "../button/Button";
 import {Dropdown} from "../../inputs/dropdown/basic/Dropdown";
 
 
@@ -12,6 +12,7 @@ interface Props {
 	children: React.ReactNode;
 	text: string;
 	buttonType: ButtonType;
+	size?: ButtonSize;
 	tooltip?: string;
 	icon?: string;
 	iconPos?: ButtonIconPos;
@@ -31,10 +32,17 @@ interface Props {
 	style?: React.CSSProperties
 }
 
+const sizeClassName: Record<ButtonSize, string> = {
+	[ButtonSize.SMALL]: "blue-orange-button-dropdown-btn-sm",
+	[ButtonSize.MEDIUM]: "",
+	[ButtonSize.LARGE]: "blue-orange-button-dropdown-btn-lg",
+};
+
 export const ButtonDropdown: React.FC<Props> = ({
 											children,
 											text,
 											buttonType,
+											size = ButtonSize.MEDIUM,
 											tooltip,
 											icon,
 											iconPos,
@@ -65,21 +73,23 @@ export const ButtonDropdown: React.FC<Props> = ({
 		}
 	};
 
+	const sizeClass = sizeClassName[size] ? " " + sizeClassName[size] : "";
+
 	const generateDefaultStyle = () => {
 		if (buttonType == ButtonType.SECONDARY) {
-			return "blue-orange-button-dropdown-default-btn no-select blue-orange-button-dropdown-secondary-btn";
+			return "blue-orange-button-dropdown-default-btn no-select blue-orange-button-dropdown-secondary-btn" + sizeClass;
 		} else if (buttonType == ButtonType.SUCCESS) {
-			return "blue-orange-button-dropdown-default-btn no-select blue-orange-button-dropdown-success-btn";
+			return "blue-orange-button-dropdown-default-btn no-select blue-orange-button-dropdown-success-btn" + sizeClass;
 		} else if (buttonType == ButtonType.DANGER) {
-			return "blue-orange-button-dropdown-default-btn no-select blue-orange-button-dropdown-danger-btn";
+			return "blue-orange-button-dropdown-default-btn no-select blue-orange-button-dropdown-danger-btn" + sizeClass;
 		} else if (buttonType == ButtonType.WARNING) {
-			return "blue-orange-button-dropdown-default-btn no-select blue-orange-button-dropdown-warning-btn";
+			return "blue-orange-button-dropdown-default-btn no-select blue-orange-button-dropdown-warning-btn" + sizeClass;
 		} else if (buttonType == ButtonType.CUSTOM) {
-			return "blue-orange-button-dropdown-default-btn no-select";
+			return "blue-orange-button-dropdown-default-btn no-select" + sizeClass;
 		} else if (buttonType == ButtonType.CLEAR) {
-			return "blue-orange-button-dropdown-default-btn no-select blue-orange-button-dropdown-clear-btn";
+			return "blue-orange-button-dropdown-default-btn no-select blue-orange-button-dropdown-clear-btn" + sizeClass;
 		}
-		return "blue-orange-button-dropdown-default-btn no-select blue-orange-button-dropdown-primary-btn";
+		return "blue-orange-button-dropdown-default-btn no-select blue-orange-button-dropdown-primary-btn" + sizeClass;
 	}
 
 	const defaultStyle = generateDefaultStyle()

@@ -91,6 +91,21 @@
     color: var(--blue-orange-dark-clear-btn-color);
 }
 
+/* Size variants */
+.blue-orange-button-dropdown-btn-sm {
+    height: 28px;
+    font-size: 0.75rem;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.blue-orange-button-dropdown-btn-lg {
+    height: 44px;
+    font-size: 1rem;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
 .blue-orange-button-dropdown-disabled{
     cursor: not-allowed;
 }

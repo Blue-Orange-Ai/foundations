@@ -10,5 +10,19 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    font-size: 0.875rem;
+}
+
+/* Size variants */
+.blue-orange-default-btn-icon-sm {
+    height: 28px;
+    width: 28px;
+    font-size: 0.75rem;
+}
+
+.blue-orange-default-btn-icon-lg {
+    height: 44px;
+    width: 44px;
+    font-size: 1rem;
 }
 

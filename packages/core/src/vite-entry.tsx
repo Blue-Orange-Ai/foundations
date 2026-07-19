@@ -22,6 +22,7 @@ export * from './components/avatar/avatarlist/AvatarList';
 export * from './components/buttons/file-upload-btn/FileUploadBtn';
 export * from './components/buttons/button/Button';
 export * from './components/buttons/button-icon/ButtonIcon';
+export * from './components/buttons/button-icon-dropdown/ButtonIconDropdown';
 export * from './components/buttons/button-dropdown/ButtonDropdown';
 export * from './components/buttons/button-toggle/ButtonToggle';
 export * from './components/buttons/utils/erroranimation/ErrorAnimation'

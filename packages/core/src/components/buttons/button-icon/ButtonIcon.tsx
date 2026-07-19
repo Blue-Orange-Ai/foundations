@@ -1,28 +1,38 @@
 import React, {useEffect, useRef, useState} from "react";
 import tippy from "tippy.js";
 import {TippyHTMLElement} from "../../interfaces/AppInterfaces";
+import {ButtonSize} from "../button/Button";
 
 import './ButtonIcon.css'
 
 interface Props {
 	icon: string;
 	label?: string;
+	size?: ButtonSize;
 	isDisabled?: boolean;
 	onClick?: () => void;
 	style?: React.CSSProperties;
 	className?: string;
 }
 
+const sizeClassName: Record<ButtonSize, string> = {
+	[ButtonSize.SMALL]: "blue-orange-default-btn-icon-sm",
+	[ButtonSize.MEDIUM]: "",
+	[ButtonSize.LARGE]: "blue-orange-default-btn-icon-lg",
+};
+
 export const ButtonIcon: React.FC<Props> = ({
 												icon,
 												label,
+												size = ButtonSize.MEDIUM,
 												onClick,
 												isDisabled,
 												style,
 												className}) => {
 
 	const generateClassname = (name: string | undefined) => {
-		const base = "blue-orange-default-btn-icon no-select"
+		const sizeClass = sizeClassName[size] ? " " + sizeClassName[size] : "";
+		const base = "blue-orange-default-btn-icon no-select" + sizeClass
 		if (name) {
 			return base + " " + name;
 		}
@@ -54,7 +64,7 @@ export const ButtonIcon: React.FC<Props> = ({
 
 	useEffect(() => {
 		setClassname(generateClassname(className))
-	}, [className]);
+	}, [className, size]);
 
 	const handleClick = () => {
 		if (!isDisabled && onClick) {
