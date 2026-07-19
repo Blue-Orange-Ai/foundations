@@ -1,0 +1,34 @@
+.blue-orange-btn-icon-dropdown {
+    height: 36px;
+    width: 36px;
+    border-radius: 8px;
+    border: 1px solid #e0e1e2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.875rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.blue-orange-btn-icon-dropdown .blue-orange-dropdown-cont {
+    height: 100%;
+}
+
+/* Size variants */
+.blue-orange-btn-icon-dropdown-sm {
+    height: 28px;
+    width: 28px;
+    font-size: 0.75rem;
+}
+
+.blue-orange-btn-icon-dropdown-lg {
+    height: 44px;
+    width: 44px;
+    font-size: 1rem;
+}
+
+.blue-orange-btn-icon-dropdown-disabled {
+    cursor: not-allowed;
+}
