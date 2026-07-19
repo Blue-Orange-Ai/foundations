@@ -11,7 +11,7 @@ interface Props {
 
 export const Accordion: React.FC<Props> = ({children, opened}) => {
 
-	const accordionBodyRef = useRef<HTMLDivElement>(null);
+	const accordionContentRef = useRef<HTMLDivElement>(null);
 
 	const [maxHeight, setMaxHeight] = useState('0px');
 
@@ -30,24 +30,42 @@ export const Accordion: React.FC<Props> = ({children, opened}) => {
 	});
 
 	useEffect(() => {
-		if (opened) {
-			setMaxHeight(accordionBodyRef.current?.scrollHeight + 'px');
-		} else {
+		const content = accordionContentRef.current;
+
+		if (!opened) {
 			setMaxHeight('0px');
+			return;
 		}
-	}, [opened]);
+
+		// Sync max-height to the natural content height on open.
+		setMaxHeight((content?.scrollHeight ?? 0) + 'px');
+
+		// Keep max-height in sync while open so dynamically growing/shrinking
+		// children (including nested accordions) are never clipped by overflow:hidden.
+		if (!content || typeof ResizeObserver === 'undefined') {
+			return;
+		}
+
+		const observer = new ResizeObserver(() => {
+			setMaxHeight(content.scrollHeight + 'px');
+		});
+		observer.observe(content);
+
+		return () => observer.disconnect();
+	}, [opened, children]);
 
 	return (
 		<div className="blue-orange-accordion">
 			<div className="blue-orange-accordion-header">{headerItems}</div>
 			<div
-				ref={accordionBodyRef}
 				style={{
 					maxHeight: maxHeight,
 					transition: 'max-height 0.2s ease-out',
 					overflow: 'hidden'
 				}}
-				className="blue-orange-accordion-body">{bodyItems}</div>
+				className="blue-orange-accordion-body">
+				<div ref={accordionContentRef}>{bodyItems}</div>
+			</div>
 		</div>
 	)
 }
