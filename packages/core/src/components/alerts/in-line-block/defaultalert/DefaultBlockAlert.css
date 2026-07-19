@@ -1,83 +1,83 @@
+/* Inline block alerts share the toaster's internal layout (icon + text group + action)
+   and colour palette, but sit in normal document flow: no box-shadow, no floating, full width.
 
+   Colours match the toaster, plus an outline:
+   - default / info : white background with a border equal to the text colour
+   - success/warning/error : the tinted toaster background with a darker outline
+                             equal to the header (title) text colour.
 
-.blue-orange-default-alert{
-    width: calc(100% - 30px);
-    padding: 15px;
-    border: 2px solid var(--blue-orange-light-alert-default-border-color);
+   The border uses `currentColor`, so it always equals the element's text colour —
+   which each type variant overrides below. */
+
+.blue-orange-default-alert {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 24px;
     display: flex;
     flex-direction: row;
-    background-color: var(--blue-orange-light-alert-default-background-color);
+    align-items: flex-start;
+    gap: 12px;
     border-radius: 4px;
-    color: var(--blue-orange-light-default-error-color)
+    position: relative;
+    border: 1px solid currentColor;
+    background-color: var(--blue-orange-light-toaster-background-color);
+    color: var(--blue-orange-light-toaster-color);
 }
 
 .dark .blue-orange-default-alert {
-    border: 2px solid var(--blue-orange-dark-alert-default-border-color);
-    background-color: var(--blue-orange-dark-alert-default-background-color);
-    color: var(--blue-orange-dark-default-error-color)
+    background-color: var(--blue-orange-dark-toaster-background-color);
+    color: var(--blue-orange-dark-toaster-color);
 }
 
-.blue-orange-error-alert{
-    width: calc(100% - 30px);
-    padding: 15px;
-    border: 2px solid var(--blue-orange-light-alert-error-border-color);
+/* ── Type variants: background + text/border colour only (layout inherited) ── */
+
+.blue-orange-error-alert {
+    background-color: var(--blue-orange-light-toaster-error-background-color);
+    color: var(--blue-orange-light-toaster-error-color);
+}
+
+.dark .blue-orange-error-alert {
+    background-color: var(--blue-orange-dark-toaster-error-background-color);
+    color: var(--blue-orange-dark-toaster-error-color);
+}
+
+.blue-orange-success-alert {
+    background-color: var(--blue-orange-light-toaster-success-background-color);
+    color: var(--blue-orange-light-toaster-success-color);
+}
+
+.dark .blue-orange-success-alert {
+    background-color: var(--blue-orange-dark-toaster-success-background-color);
+    color: var(--blue-orange-dark-toaster-success-color);
+}
+
+.blue-orange-warning-alert {
+    background-color: var(--blue-orange-light-toaster-warning-background-color);
+    color: var(--blue-orange-light-toaster-warning-color);
+}
+
+.dark .blue-orange-warning-alert {
+    background-color: var(--blue-orange-dark-toaster-warning-background-color);
+    color: var(--blue-orange-dark-toaster-warning-color);
+}
+
+/* ── Internal layout (mirrors Toaster) ── */
+
+.blue-orange-default-alert-icon {
     display: flex;
-    flex-direction: row;
-    background-color: var(--blue-orange-light-alert-error-background-color);
-    color: var(--blue-orange-light-alert-error-color);
-    border-radius: 4px;
-}
-
-.dark .blue-orange-error-alert{
-    border: 2px solid var(--blue-orange-dark-alert-error-border-color);
-    background-color: var(--blue-orange-dark-alert-error-background-color);
-    color: var(--blue-orange-dark-alert-error-color);
-}
-
-.blue-orange-success-alert{
-    width: calc(100% - 30px);
-    padding: 15px;
-    border: 2px solid var(--blue-orange-light-alert-success-border-color);
-    display: flex;
-    flex-direction: row;
-    background-color: var(--blue-orange-light-alert-success-background-color);
-    color: var(--blue-orange-light-alert-success-color);
-    border-radius: 4px;
-}
-
-.dark .blue-orange-success-alert{
-    border: 2px solid var(--blue-orange-dark-alert-success-border-color);
-    background-color: var(--blue-orange-dark-alert-success-background-color);
-    color: var(--blue-orange-dark-alert-success-color);
-}
-
-.blue-orange-warning-alert{
-    width: calc(100% - 30px);
-    padding: 15px;
-    border: 2px solid var(--blue-orange-light-alert-warning-border-color);
-    display: flex;
-    flex-direction: row;
-    background-color: var(--blue-orange-light-alert-warning-background-color);
-    color: var(--blue-orange-light-alert-warning-color);
-    border-radius: 4px;
-}
-
-.dark .blue-orange-warning-alert{
-    border: 2px solid var(--blue-orange-dark-alert-warning-border-color);
-    background-color: var(--blue-orange-dark-alert-warning-background-color);
-    color: var(--blue-orange-dark-alert-warning-color);
-}
-.blue-orange-default-alert-icon{
+    align-items: flex-start;
     padding-top: 2px;
-    width: 40px;
-    display: flex;
-    justify-content: flex-start;
 }
 
-.blue-orange-default-alert-main-body{
-    width: calc(100% - 40px);
+.blue-orange-default-alert-main-body {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
+    gap: 6px;
+}
+
+.blue-orange-default-alert-main-body-description-only {
+    margin-top: 2px;
 }
 
 .blue-orange-default-alert-main-body-title {
@@ -86,5 +86,11 @@
 }
 
 .blue-orange-default-alert-main-body-description {
-    margin-top: 10px;
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.blue-orange-default-alert-action {
+    display: flex;
+    align-items: flex-start;
 }

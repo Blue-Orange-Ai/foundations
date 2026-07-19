@@ -3,7 +3,9 @@
 .blue-orange-toast-container {
     position: fixed;
     display: flex;
-    z-index: 100;
+    /* Toasts must sit above every other layout (modal is 99999999, drawer 999).
+       2147483647 is the maximum 32-bit signed integer — the highest usable z-index. */
+    z-index: 2147483647 !important;
 }
 
 .blue-orange-toast-container-top-left {

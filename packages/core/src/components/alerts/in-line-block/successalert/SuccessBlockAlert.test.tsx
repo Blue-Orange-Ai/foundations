@@ -36,4 +36,10 @@ describe('SuccessBlockAlert', () => {
         const {container} = render(<SuccessBlockAlert title="Success"/>);
         expect(container.querySelector('.blue-orange-default-alert-main-body-description')).toBeNull();
     });
+
+    it('renders the action when provided', () => {
+        const {container} = render(<SuccessBlockAlert title="Success" action={<button>Undo</button>}/>);
+        expect(screen.getByText('Undo')).toBeInTheDocument();
+        expect(container.querySelector('.blue-orange-default-alert-action')).toBeInTheDocument();
+    });
 });

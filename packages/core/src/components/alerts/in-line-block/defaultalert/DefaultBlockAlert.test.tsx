@@ -113,4 +113,71 @@ describe('DefaultBlockAlert', () => {
         expect(children[0].classList.contains('blue-orange-default-alert-main-body-title')).toBe(true);
         expect(children[1].classList.contains('blue-orange-default-alert-main-body-description')).toBe(true);
     });
+
+    // ── action prop (shared with the Toaster layout) ───────────
+
+    it('renders the action when provided', () => {
+        render(<DefaultBlockAlert title="Title" action={<button>Undo</button>}/>);
+        expect(screen.getByText('Undo')).toBeInTheDocument();
+    });
+
+    it('renders the action inside the correct container', () => {
+        const {container} = render(<DefaultBlockAlert title="Title" action={<button>Undo</button>}/>);
+        const actionContainer = container.querySelector('.blue-orange-default-alert-action');
+        expect(actionContainer).toBeInTheDocument();
+        expect(actionContainer!.querySelector('button')).toBeInTheDocument();
+    });
+
+    it('does not render the action container when action is not provided', () => {
+        const {container} = render(<DefaultBlockAlert title="Title"/>);
+        expect(container.querySelector('.blue-orange-default-alert-action')).toBeNull();
+    });
+
+    it('renders the action after the main body', () => {
+        const {container} = render(<DefaultBlockAlert title="Title" description="Desc" action={<button>Go</button>}/>);
+        const root = container.querySelector('.blue-orange-default-alert')!;
+        const children = root.children;
+        expect(children[0].classList.contains('blue-orange-default-alert-icon')).toBe(true);
+        expect(children[1].classList.contains('blue-orange-default-alert-main-body')).toBe(true);
+        expect(children[2].classList.contains('blue-orange-default-alert-action')).toBe(true);
+    });
+
+    // ── title prop is optional ─────────────────────────────────
+
+    it('does not render the title element when title is undefined', () => {
+        const {container} = render(<DefaultBlockAlert description="Only a description"/>);
+        expect(container.querySelector('.blue-orange-default-alert-main-body-title')).toBeNull();
+    });
+
+    it('still renders the icon and body when title is undefined', () => {
+        const {container} = render(<DefaultBlockAlert description="Only a description"/>);
+        expect(container.querySelector('.blue-orange-default-alert-icon i')).toBeInTheDocument();
+        expect(container.querySelector('.blue-orange-default-alert-main-body')).toBeInTheDocument();
+    });
+
+    // ── description-only option ────────────────────────────────
+
+    it('applies the description-only modifier when there is a description but no title', () => {
+        const {container} = render(<DefaultBlockAlert description="Only a description"/>);
+        const body = container.querySelector('.blue-orange-default-alert-main-body');
+        expect(body).toBeInTheDocument();
+        expect(body!.classList.contains('blue-orange-default-alert-main-body-description-only')).toBe(true);
+    });
+
+    it('renders the description text in description-only mode', () => {
+        render(<DefaultBlockAlert description="Just this line"/>);
+        expect(screen.getByText('Just this line')).toBeInTheDocument();
+    });
+
+    it('does not apply the description-only modifier when a title is present', () => {
+        const {container} = render(<DefaultBlockAlert title="Title" description="Desc"/>);
+        const body = container.querySelector('.blue-orange-default-alert-main-body');
+        expect(body!.classList.contains('blue-orange-default-alert-main-body-description-only')).toBe(false);
+    });
+
+    it('does not apply the description-only modifier when only a title is present', () => {
+        const {container} = render(<DefaultBlockAlert title="Title"/>);
+        const body = container.querySelector('.blue-orange-default-alert-main-body');
+        expect(body!.classList.contains('blue-orange-default-alert-main-body-description-only')).toBe(false);
+    });
 });

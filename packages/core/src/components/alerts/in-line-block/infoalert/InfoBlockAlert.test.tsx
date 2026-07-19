@@ -35,4 +35,10 @@ describe('InfoBlockAlert', () => {
         const {container} = render(<InfoBlockAlert title="Info"/>);
         expect(container.querySelector('.blue-orange-default-alert-main-body-description')).toBeNull();
     });
+
+    it('renders the action when provided', () => {
+        const {container} = render(<InfoBlockAlert title="Info" action={<button>Reload</button>}/>);
+        expect(screen.getByText('Reload')).toBeInTheDocument();
+        expect(container.querySelector('.blue-orange-default-alert-action')).toBeInTheDocument();
+    });
 });

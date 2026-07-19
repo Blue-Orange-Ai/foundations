@@ -1,6 +1,45 @@
+.blue-orange-toaster-development-intro {
+	max-width: 760px;
+	line-height: 1.6;
+	margin: 0 0 12px 0;
+}
+
+.blue-orange-toaster-development-section {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 20px 0;
+	border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.dark .blue-orange-toaster-development-section {
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.blue-orange-toaster-development-note {
+	max-width: 760px;
+	line-height: 1.6;
+	opacity: 0.8;
+	margin: 0;
+}
+
+.blue-orange-toaster-development-intro code,
+.blue-orange-toaster-development-note code {
+	font-family: monospace;
+	font-size: 0.85em;
+	padding: 1px 5px;
+	border-radius: 4px;
+	background: rgba(0, 0, 0, 0.06);
+}
+
+.dark .blue-orange-toaster-development-intro code,
+.dark .blue-orange-toaster-development-note code {
+	background: rgba(255, 255, 255, 0.12);
+}
+
 .blue-orange-toaster-development-grid {
 	display: grid;
-	grid-template-columns: repeat(2, max-content);
+	grid-template-columns: repeat(3, max-content);
 	gap: 12px;
 	align-items: center;
 }
@@ -9,4 +48,11 @@
 	font-weight: 600;
 	cursor: pointer;
 	user-select: none;
+}
+
+.blue-orange-toaster-development-modal {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 24px;
 }

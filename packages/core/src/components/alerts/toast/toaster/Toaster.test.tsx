@@ -100,16 +100,29 @@ describe('Toaster', () => {
         expect(root.className).toContain('animate__fadeInRight');
     });
 
-    it('adds fadeInTop for CENTRE_TOP location', () => {
+    it('adds fadeInDown for CENTRE_TOP location (enters from the top)', () => {
         const {container} = render(<Toaster {...defaultProps} location={ToastLocation.CENTRE_TOP} ttl={3000}/>);
         const root = container.firstChild as HTMLElement;
-        expect(root.className).toContain('animate__fadeInTop');
+        expect(root.className).toContain('animate__animated');
+        expect(root.className).toContain('animate__fadeInDown');
     });
 
-    it('adds fadeInBottom for CENTRE_BOTTOM location', () => {
+    it('adds fadeInUp for CENTRE_BOTTOM location (enters from the bottom)', () => {
         const {container} = render(<Toaster {...defaultProps} location={ToastLocation.CENTRE_BOTTOM} ttl={3000}/>);
         const root = container.firstChild as HTMLElement;
-        expect(root.className).toContain('animate__fadeInBottom');
+        expect(root.className).toContain('animate__animated');
+        expect(root.className).toContain('animate__fadeInUp');
+    });
+
+    // Guard against regressing to the non-existent animate.css classes that were
+    // previously used (fadeInTop / fadeInBottom do not exist in animate.css).
+    it('never uses the invalid fadeInTop / fadeInBottom classes', () => {
+        [ToastLocation.CENTRE_TOP, ToastLocation.CENTRE_BOTTOM].forEach(location => {
+            const {container} = render(<Toaster {...defaultProps} location={location} ttl={3000}/>);
+            const root = container.firstChild as HTMLElement;
+            expect(root.className).not.toContain('animate__fadeInTop');
+            expect(root.className).not.toContain('animate__fadeInBottom');
+        });
     });
 
     // ── heading prop ───────────────────────────────────────────

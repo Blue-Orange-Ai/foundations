@@ -36,4 +36,10 @@ describe('WarningBlockAlert', () => {
         const {container} = render(<WarningBlockAlert title="Warning"/>);
         expect(container.querySelector('.blue-orange-default-alert-main-body-description')).toBeNull();
     });
+
+    it('renders the action when provided', () => {
+        const {container} = render(<WarningBlockAlert title="Warning" action={<button>Save</button>}/>);
+        expect(screen.getByText('Save')).toBeInTheDocument();
+        expect(container.querySelector('.blue-orange-default-alert-action')).toBeInTheDocument();
+    });
 });

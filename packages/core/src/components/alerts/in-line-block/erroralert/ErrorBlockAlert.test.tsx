@@ -36,4 +36,18 @@ describe('ErrorBlockAlert', () => {
         const {container} = render(<ErrorBlockAlert title="Error"/>);
         expect(container.querySelector('.blue-orange-default-alert-main-body-description')).toBeNull();
     });
+
+    it('renders the action when provided', () => {
+        const {container} = render(<ErrorBlockAlert title="Error" action={<button>Retry</button>}/>);
+        expect(screen.getByText('Retry')).toBeInTheDocument();
+        expect(container.querySelector('.blue-orange-default-alert-action')).toBeInTheDocument();
+    });
+
+    it('supports a description-only alert (no title)', () => {
+        const {container} = render(<ErrorBlockAlert description="Something failed"/>);
+        expect(screen.getByText('Something failed')).toBeInTheDocument();
+        expect(container.querySelector('.blue-orange-default-alert-main-body-title')).toBeNull();
+        const body = container.querySelector('.blue-orange-default-alert-main-body');
+        expect(body!.classList.contains('blue-orange-default-alert-main-body-description-only')).toBe(true);
+    });
 });

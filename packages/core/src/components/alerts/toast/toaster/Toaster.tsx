@@ -50,9 +50,9 @@ export const Toaster: React.FC<Props> = ({
 		if (location == ToastLocation.TOP_LEFT || location == ToastLocation.BOTTOM_LEFT) {
 			classname += " animate__animated animate__fadeInLeft"
 		} else if (location == ToastLocation.CENTRE_TOP) {
-			classname += " animate__animated animate__fadeInTop"
+			classname += " animate__animated animate__fadeInDown"
 		} else if (location == ToastLocation.CENTRE_BOTTOM) {
-			classname += " animate__animated animate__fadeInBottom"
+			classname += " animate__animated animate__fadeInUp"
 		} else {
 			classname += " animate__animated animate__fadeInRight"
 		}
