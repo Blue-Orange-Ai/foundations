@@ -3,3 +3,15 @@
     margin: 4px;
 }
 
+.blue-orange-checkbox input.blue-orange-checkbox-error {
+    outline: 1.5px solid var(--blue-orange-light-input-error-border-color);
+    border: 1px solid var(--blue-orange-light-input-error-border-color);
+    accent-color: var(--blue-orange-light-input-error-border-color);
+}
+
+.dark .blue-orange-checkbox input.blue-orange-checkbox-error {
+    outline: 1.5px solid var(--blue-orange-dark-input-error-border-color);
+    border: 1px solid var(--blue-orange-dark-input-error-border-color);
+    accent-color: var(--blue-orange-dark-input-error-border-color);
+}
+

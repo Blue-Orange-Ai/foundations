@@ -185,8 +185,10 @@ describe('Accordion', () => {
         const bodyDiv = container.querySelector('.blue-orange-accordion-body') as HTMLElement;
         expect(bodyDiv.style.maxHeight).toBe('0px');
 
-        // Mock scrollHeight before re-rendering
-        Object.defineProperty(bodyDiv, 'scrollHeight', {value: 200, configurable: true});
+        // The component measures the inner content wrapper (the div holding the ref),
+        // so mock scrollHeight there before re-rendering.
+        const contentDiv = bodyDiv.firstElementChild as HTMLElement;
+        Object.defineProperty(contentDiv, 'scrollHeight', {value: 200, configurable: true});
 
         rerender(
             <Accordion opened={true}>
@@ -244,7 +246,8 @@ describe('Accordion', () => {
     it('works as a controlled component toggling via parent state', () => {
         const {container} = render(<ToggleableAccordion defaultOpened={false}/>);
         const bodyDiv = container.querySelector('.blue-orange-accordion-body') as HTMLElement;
-        Object.defineProperty(bodyDiv, 'scrollHeight', {value: 150, configurable: true});
+        const contentDiv = bodyDiv.firstElementChild as HTMLElement;
+        Object.defineProperty(contentDiv, 'scrollHeight', {value: 150, configurable: true});
 
         expect(bodyDiv.style.maxHeight).toBe('0px');
 
@@ -314,7 +317,8 @@ describe('Accordion', () => {
             </Accordion>
         );
         const bodyDiv = container.querySelector('.blue-orange-accordion-body') as HTMLElement;
-        Object.defineProperty(bodyDiv, 'scrollHeight', {value: 100, configurable: true});
+        const contentDiv = bodyDiv.firstElementChild as HTMLElement;
+        Object.defineProperty(contentDiv, 'scrollHeight', {value: 100, configurable: true});
 
         // Rapidly toggle several times
         rerender(

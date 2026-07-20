@@ -46,6 +46,16 @@
     border: 1.5px solid var(--blue-orange-dark-input-focus-border-color);
 }
 
+.blue-orange-input-tags-cont-error .blue-orange-tags,
+.blue-orange-input-tags-cont-error .blue-orange-tags.tagify--focus {
+    border: 1.5px solid var(--blue-orange-light-input-error-border-color);
+}
+
+.dark .blue-orange-input-tags-cont-error .blue-orange-tags,
+.dark .blue-orange-input-tags-cont-error .blue-orange-tags.tagify--focus {
+    border: 1.5px solid var(--blue-orange-dark-input-error-border-color);
+}
+
 .tagify__dropdown {
     margin-top: 10px;
     background-color: var(--blue-orange-light-input-tag-dropdown-background-color);

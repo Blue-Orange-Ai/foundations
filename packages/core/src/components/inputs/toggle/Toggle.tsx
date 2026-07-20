@@ -1,6 +1,8 @@
 import React, {useEffect, useRef, useState} from "react";
 
 import './Toggle.css';
+import {InputValidateCallback, useInputValidation} from "../validation/InputValidation";
+import {InputValidationMessage} from "../validation/InputValidationMessage";
 
 interface Props {
 	checked?:boolean;
@@ -8,6 +10,8 @@ interface Props {
 	disabled?: boolean;
 	update?: Date;
 	style?: React.CSSProperties;
+	validate?: InputValidateCallback<boolean>;
+	validateOnChange?: boolean;
 }
 
 export const Toggle: React.FC<Props> = ({
@@ -15,7 +19,12 @@ export const Toggle: React.FC<Props> = ({
 											         onChange,
 													 disabled=false,
 													 update,
-													 style={}}) => {
+													 style={},
+													 validate,
+													 validateOnChange=false}) => {
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<boolean>(validate, validateOnChange);
 
 	const isChecked = useRef<boolean>(checked);
 
@@ -28,7 +37,7 @@ export const Toggle: React.FC<Props> = ({
 	}, [checked, update]);
 
 
-	const saveCheckboxState = (state: boolean) => {
+	const saveCheckboxState = (state: boolean, validateState: boolean = false) => {
 		if (!isCheckDisabled.current) {
 			isChecked.current = state;
 			setIsCheckedState(isChecked.current);
@@ -36,6 +45,10 @@ export const Toggle: React.FC<Props> = ({
 			setTimeout(() => {
 				isCheckDisabled.current = false;
 			}, 50);
+			if (validateState) {
+				handleChangeValidation(isChecked.current);
+				handleBlurValidation(isChecked.current);
+			}
 		}
 		if (onChange) {
 			onChange(isChecked.current);
@@ -44,13 +57,13 @@ export const Toggle: React.FC<Props> = ({
 
 	const toggleChecked = () => {
 		if (!isCheckDisabled.current) {
-			saveCheckboxState(!isChecked.current);
+			saveCheckboxState(!isChecked.current, true);
 		}
 	};
 
 	const handleCheckboxChange = () => {
 		const newChecked = !isChecked.current;
-		saveCheckboxState(newChecked)
+		saveCheckboxState(newChecked, true)
 		if (onChange) {
 			onChange(newChecked);
 		}
@@ -66,8 +79,9 @@ export const Toggle: React.FC<Props> = ({
 					onChange={handleCheckboxChange}
 					readOnly={true}
 				/>
-				<span className="blue-orange-toggle-switch-slider"></span>
+				<span className={"blue-orange-toggle-switch-slider" + (isError ? " blue-orange-toggle-switch-slider-error" : "")}></span>
 			</label>
+			<InputValidationMessage result={validationResult}></InputValidationMessage>
 		</>
 	);
 };

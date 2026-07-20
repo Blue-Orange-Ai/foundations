@@ -1,6 +1,8 @@
 import React, {useEffect, useRef, useState} from "react";
 
 import './Checkbox.css';
+import {InputValidateCallback, useInputValidation} from "../validation/InputValidation";
+import {InputValidationMessage} from "../validation/InputValidationMessage";
 
 interface Props {
 	checked?:boolean;
@@ -8,6 +10,8 @@ interface Props {
 	readonly?: boolean;
 	update?: Date;
 	style?: React.CSSProperties;
+	validate?: InputValidateCallback<boolean>;
+	validateOnChange?: boolean;
 }
 
 export const Checkbox: React.FC<Props> = ({
@@ -15,7 +19,12 @@ export const Checkbox: React.FC<Props> = ({
 													 onCheckboxChange,
 													 readonly=false,
 													 update,
-													 style={}}) => {
+													 style={},
+													 validate,
+													 validateOnChange=false}) => {
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<boolean>(validate, validateOnChange);
 
 	const [isChecked, setIsChecked] = useState(checked);
 
@@ -30,6 +39,8 @@ export const Checkbox: React.FC<Props> = ({
 		if (onCheckboxChange) {
 			onCheckboxChange(newChecked);
 		}
+		handleChangeValidation(newChecked);
+		handleBlurValidation(newChecked);
 	};
 
 	return (
@@ -43,11 +54,13 @@ export const Checkbox: React.FC<Props> = ({
 			}
 			{!readonly &&
 				<input type="checkbox"
+					   className={isError ? "blue-orange-checkbox-error" : ""}
 					   checked={isChecked}
 					   onChange={handleCheckboxChange}
 					   style={style}
 				/>
 			}
+			<InputValidationMessage result={validationResult}></InputValidationMessage>
 		</div>
 
 

@@ -3,6 +3,8 @@ import React, {useEffect, useRef, useState} from "react";
 import './Input.css';
 import {HelpIcon} from "../help/HelpIcon";
 import {RequiredIcon} from "../required-icon/RequiredIcon";
+import {InputValidateCallback, useInputValidation} from "../validation/InputValidation";
+import {InputValidationMessage} from "../validation/InputValidationMessage";
 
 interface Props {
 	value?:string | null;
@@ -24,6 +26,8 @@ interface Props {
 	required?: boolean;
 	help?: string;
 	validateKey?: (key: string) => boolean;
+	validate?: InputValidateCallback<string>;
+	validateOnChange?: boolean;
 }
 
 export const Input: React.FC<Props> = ({
@@ -45,13 +49,18 @@ export const Input: React.FC<Props> = ({
 	                                       enterEvent,
 										   required=false,
 									       help,
-	                                       validateKey
+	                                       validateKey,
+	                                       validate,
+	                                       validateOnChange=false
 
 }) => {
 
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<string>(validate, validateOnChange);
+
 	const generateClassname = () => {
 		var className = "blue-orange-input";
-		if (isInvalid) {
+		if (isInvalid || isError) {
 			className += " blue-orange-input-invalid";
 		}
 		return className;
@@ -80,6 +89,7 @@ export const Input: React.FC<Props> = ({
 		if (onChange) {
 			onChange(newValue);
 		}
+		handleChangeValidation(newValue);
 	};
 
 	const generateType = () => {
@@ -100,6 +110,7 @@ export const Input: React.FC<Props> = ({
 	}
 
 	const focusOutEvent = () => {
+		handleBlurValidation(inputValue === undefined || inputValue == null ? "" : inputValue);
 		if (focusOut) {
 			focusOut();
 		}
@@ -113,7 +124,7 @@ export const Input: React.FC<Props> = ({
 
 	useEffect(() => {
 		setInputClassName(generateClassname())
-	}, [isInvalid]);
+	}, [isInvalid, isError]);
 
 	useEffect(() => {
 		setInputValue(value === undefined ? "" : value);
@@ -122,7 +133,9 @@ export const Input: React.FC<Props> = ({
 	return (
 		<div className="blue-orange-default-input-cont">
 			{label &&
-				<div className={"blue-orange-default-input-label-cont"} style={labelStyle}>
+				<div
+					className={"blue-orange-default-input-label-cont" + (isError ? " blue-orange-default-input-label-cont-error" : "")}
+					style={labelStyle}>
 					{label}
 					{help && <HelpIcon label={help}></HelpIcon>}
 					{required && <RequiredIcon></RequiredIcon>}
@@ -141,6 +154,7 @@ export const Input: React.FC<Props> = ({
 				type={generateType()}
 				disabled={disabled}
 			/>
+			<InputValidationMessage result={validationResult}></InputValidationMessage>
 		</div>
 
 	);

@@ -30,3 +30,15 @@
 .dark .blue-orange-input:focus {
     outline: 1.5px solid var(--blue-orange-dark-input-focus-border-color);
 }
+
+.blue-orange-input-invalid,
+.blue-orange-input-invalid:focus {
+    border: 1px solid var(--blue-orange-light-input-error-border-color);
+    outline: 1.5px solid var(--blue-orange-light-input-error-border-color);
+}
+
+.dark .blue-orange-input-invalid,
+.dark .blue-orange-input-invalid:focus {
+    border: 1px solid var(--blue-orange-dark-input-error-border-color);
+    outline: 1.5px solid var(--blue-orange-dark-input-error-border-color);
+}

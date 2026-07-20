@@ -10,6 +10,10 @@ import {TextArea} from "../textarea/TextArea";
 import {AddressInput} from "../address/AddressInput";
 import {PhoneInput} from "../phone/PhoneInput";
 import {Address, Telephone} from "@blue-orange-ai/foundations-clients";
+import {InputValidateCallback, useInputValidation} from "../validation/InputValidation";
+import {InputValidationMessage} from "../validation/InputValidationMessage";
+
+type ArrayInputValue = (string | number)[] | string[][] | Address[] | Telephone[];
 
 interface Props {
 	value?: (string | number)[] | string[][] | Address[] | Telephone[];
@@ -25,6 +29,8 @@ interface Props {
 	variant?: 'list' | 'tag-list' | 'textarea-list' | 'address-list' | 'phone-list';
 	whitelist?: string[];
 	enforceWhitelist?: boolean;
+	validate?: InputValidateCallback<ArrayInputValue>;
+	validateOnChange?: boolean;
 }
 
 export const ArrayInput: React.FC<Props> = ({
@@ -40,8 +46,13 @@ export const ArrayInput: React.FC<Props> = ({
 	help,
 	variant = 'list',
 	whitelist,
-	enforceWhitelist = false
+	enforceWhitelist = false,
+	validate,
+	validateOnChange = false
 }) => {
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<ArrayInputValue>(validate, validateOnChange);
 
 	const [items, setItems] = useState<(string | number)[]>(value as (string | number)[]);
 	const [tagListItems, setTagListItems] = useState<string[][]>(value as string[][] || []);
@@ -55,6 +66,7 @@ export const ArrayInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(updatedItems);
 		}
+		handleChangeValidation(updatedItems);
 	};
 
 	const handleRemoveItem = (index: number) => {
@@ -63,6 +75,7 @@ export const ArrayInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(updatedItems);
 		}
+		handleBlurValidation(updatedItems);
 	};
 
 	const handleAddItem = () => {
@@ -72,6 +85,7 @@ export const ArrayInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(updatedItems);
 		}
+		handleBlurValidation(updatedItems);
 	};
 
 	const handleTagListItemChange = (index: number, tags: string[]) => {
@@ -81,6 +95,7 @@ export const ArrayInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(updatedItems);
 		}
+		handleChangeValidation(updatedItems);
 	};
 
 	const handleRemoveTagListItem = (index: number) => {
@@ -89,6 +104,7 @@ export const ArrayInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(updatedItems);
 		}
+		handleBlurValidation(updatedItems);
 	};
 
 	const handleAddTagListItem = () => {
@@ -97,6 +113,7 @@ export const ArrayInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(updatedItems);
 		}
+		handleBlurValidation(updatedItems);
 	};
 
 	const handleAddressItemChange = (index: number, address: Address) => {
@@ -106,6 +123,7 @@ export const ArrayInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(updatedItems);
 		}
+		handleChangeValidation(updatedItems);
 	};
 
 	const handleRemoveAddressItem = (index: number) => {
@@ -114,6 +132,7 @@ export const ArrayInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(updatedItems);
 		}
+		handleBlurValidation(updatedItems);
 	};
 
 	const handleAddAddressItem = () => {
@@ -129,6 +148,7 @@ export const ArrayInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(updatedItems);
 		}
+		handleBlurValidation(updatedItems);
 	};
 
 	const handlePhoneItemChange = (index: number, phone: Telephone) => {
@@ -138,6 +158,7 @@ export const ArrayInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(updatedItems);
 		}
+		handleChangeValidation(updatedItems);
 	};
 
 	const handleRemovePhoneItem = (index: number) => {
@@ -146,6 +167,7 @@ export const ArrayInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(updatedItems);
 		}
+		handleBlurValidation(updatedItems);
 	};
 
 	const handleAddPhoneItem = () => {
@@ -161,6 +183,7 @@ export const ArrayInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(updatedItems);
 		}
+		handleBlurValidation(updatedItems);
 	};
 
 	useEffect(() => {
@@ -183,13 +206,13 @@ export const ArrayInput: React.FC<Props> = ({
 		return (
 			<div className="blue-orange-default-input-cont" style={style}>
 				{label && (
-					<div className="blue-orange-default-input-label-cont" style={labelStyle}>
+					<div className={"blue-orange-default-input-label-cont" + (isError ? " blue-orange-default-input-label-cont-error" : "")} style={labelStyle}>
 						{label}
 						{help && <HelpIcon label={help}></HelpIcon>}
 						{required && <RequiredIcon></RequiredIcon>}
 					</div>
 				)}
-				<div className="blue-orange-array-input-items-cont">
+				<div className={"blue-orange-array-input-items-cont" + (isError ? " blue-orange-array-input-items-cont-error" : "")}>
 					<div className="blue-orange-array-input-bar"></div>
 					<div className="blue-orange-array-input-items">
 						{addressItems.map((address, index) => (
@@ -219,6 +242,7 @@ export const ArrayInput: React.FC<Props> = ({
 						</div>
 					</div>
 				</div>
+				<InputValidationMessage result={validationResult}></InputValidationMessage>
 			</div>
 		);
 	}
@@ -227,13 +251,13 @@ export const ArrayInput: React.FC<Props> = ({
 		return (
 			<div className="blue-orange-default-input-cont" style={style}>
 				{label && (
-					<div className="blue-orange-default-input-label-cont" style={labelStyle}>
+					<div className={"blue-orange-default-input-label-cont" + (isError ? " blue-orange-default-input-label-cont-error" : "")} style={labelStyle}>
 						{label}
 						{help && <HelpIcon label={help}></HelpIcon>}
 						{required && <RequiredIcon></RequiredIcon>}
 					</div>
 				)}
-				<div className="blue-orange-array-input-items-cont">
+				<div className={"blue-orange-array-input-items-cont" + (isError ? " blue-orange-array-input-items-cont-error" : "")}>
 					<div className="blue-orange-array-input-bar"></div>
 					<div className="blue-orange-array-input-items">
 						{phoneItems.map((phone, index) => (
@@ -263,6 +287,7 @@ export const ArrayInput: React.FC<Props> = ({
 						</div>
 					</div>
 				</div>
+				<InputValidationMessage result={validationResult}></InputValidationMessage>
 			</div>
 		);
 	}
@@ -271,13 +296,13 @@ export const ArrayInput: React.FC<Props> = ({
 		return (
 			<div className="blue-orange-default-input-cont" style={style}>
 				{label && (
-					<div className="blue-orange-default-input-label-cont" style={labelStyle}>
+					<div className={"blue-orange-default-input-label-cont" + (isError ? " blue-orange-default-input-label-cont-error" : "")} style={labelStyle}>
 						{label}
 						{help && <HelpIcon label={help}></HelpIcon>}
 						{required && <RequiredIcon></RequiredIcon>}
 					</div>
 				)}
-				<div className="blue-orange-array-input-items-cont">
+				<div className={"blue-orange-array-input-items-cont" + (isError ? " blue-orange-array-input-items-cont-error" : "")}>
 					<div className="blue-orange-array-input-bar"></div>
 					<div className="blue-orange-array-input-items">
 						{tagListItems.map((tags, index) => (
@@ -310,6 +335,7 @@ export const ArrayInput: React.FC<Props> = ({
 						</div>
 					</div>
 				</div>
+				<InputValidationMessage result={validationResult}></InputValidationMessage>
 			</div>
 		);
 	}
@@ -318,13 +344,13 @@ export const ArrayInput: React.FC<Props> = ({
 		return (
 			<div className="blue-orange-default-input-cont" style={style}>
 				{label && (
-					<div className="blue-orange-default-input-label-cont" style={labelStyle}>
+					<div className={"blue-orange-default-input-label-cont" + (isError ? " blue-orange-default-input-label-cont-error" : "")} style={labelStyle}>
 						{label}
 						{help && <HelpIcon label={help}></HelpIcon>}
 						{required && <RequiredIcon></RequiredIcon>}
 					</div>
 				)}
-				<div className="blue-orange-array-input-items-cont">
+				<div className={"blue-orange-array-input-items-cont" + (isError ? " blue-orange-array-input-items-cont-error" : "")}>
 					<div className="blue-orange-array-input-bar"></div>
 					<div className="blue-orange-array-input-items">
 						{items.map((item, index) => (
@@ -356,6 +382,7 @@ export const ArrayInput: React.FC<Props> = ({
 						</div>
 					</div>
 				</div>
+				<InputValidationMessage result={validationResult}></InputValidationMessage>
 			</div>
 		);
 	}
@@ -401,6 +428,7 @@ export const ArrayInput: React.FC<Props> = ({
 					</div>
 				</div>
 			</div>
+			<InputValidationMessage result={validationResult}></InputValidationMessage>
 		</div>
 	);
 };

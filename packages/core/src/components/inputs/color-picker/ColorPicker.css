@@ -5,6 +5,13 @@
     flex-direction: row;
 }
 
+.blue-orange-color-picker-field {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
 .blue-orange-color-picker-input-cont {
     width: calc(100% - 10px);
     border: 1px solid var(--blue-orange-light-input-border-color);
@@ -60,6 +67,18 @@
 
 .dark .blue-orange-color-picker-input-cont .blue-orange-input:focus {
     outline: none;
+}
+
+.blue-orange-color-picker-invalid,
+.blue-orange-color-picker-invalid.blue-orange-color-picker-focus {
+    border: 1px solid var(--blue-orange-light-input-error-border-color);
+    outline: 1.5px solid var(--blue-orange-light-input-error-border-color);
+}
+
+.dark .blue-orange-color-picker-invalid,
+.dark .blue-orange-color-picker-invalid.blue-orange-color-picker-focus {
+    border: 1px solid var(--blue-orange-dark-input-error-border-color);
+    outline: 1.5px solid var(--blue-orange-dark-input-error-border-color);
 }
 
 .blue-orange-color-picker-hidden-color {

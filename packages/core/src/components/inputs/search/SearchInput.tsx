@@ -1,5 +1,7 @@
 import React, {useCallback, useEffect, useRef, useState, useMemo} from "react";
 import './SearchInput.css'
+import {InputValidateCallback, useInputValidation} from "../validation/InputValidation";
+import {InputValidationMessage} from "../validation/InputValidationMessage";
 
 export interface SearchSuggestion {
 	label: string;
@@ -24,6 +26,8 @@ interface Props {
 	onChange?: (value: string) => void;
 	onSearchEvent?: (value: string) => void;
 	onSuggestionSelect?: (suggestion: SearchSuggestion) => void;
+	validate?: InputValidateCallback<string>;
+	validateOnChange?: boolean;
 }
 
 export const SearchInput: React.FC<Props> = ({
@@ -36,7 +40,12 @@ export const SearchInput: React.FC<Props> = ({
 												 suggestionGroups,
 												 onChange,
 												 onSearchEvent,
-												 onSuggestionSelect}) => {
+												 onSuggestionSelect,
+												 validate,
+												 validateOnChange=false}) => {
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<string>(validate, validateOnChange);
 
 	const [inputValue, setInputValue] = useState(value);
 	const [isFocused, setIsFocused] = useState(false);
@@ -82,6 +91,7 @@ export const SearchInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(newValue);
 		}
+		handleChangeValidation(newValue);
 		if (timeout > 0) {
 			startTimeout(newValue);
 		} else {
@@ -101,6 +111,7 @@ export const SearchInput: React.FC<Props> = ({
 			onChange("");
 		}
 		sendInputChange("");
+		handleChangeValidation("");
 	}
 
 	const handleFocus = () => {
@@ -114,6 +125,7 @@ export const SearchInput: React.FC<Props> = ({
 			return;
 		}
 		setIsFocused(false);
+		handleBlurValidation(inputValue);
 	};
 
 	const handleSuggestionClick = (suggestion: SearchSuggestion) => {
@@ -125,6 +137,7 @@ export const SearchInput: React.FC<Props> = ({
 		if (onSearchEvent) {
 			onSearchEvent(suggestion.value);
 		}
+		handleChangeValidation(suggestion.value);
 	};
 
 	const updateDropdownPosition = () => {
@@ -159,7 +172,7 @@ export const SearchInput: React.FC<Props> = ({
 				</div>
 			}
 			<input
-				className="blue-orange-search-group-input"
+				className={"blue-orange-search-group-input" + (isError ? " blue-orange-search-group-input-error" : "")}
 				style={inputStyle}
 				value={inputValue === undefined ? "" : inputValue}
 				placeholder={label}
@@ -204,6 +217,7 @@ export const SearchInput: React.FC<Props> = ({
 					))}
 				</div>
 			)}
+			<InputValidationMessage result={validationResult}></InputValidationMessage>
 		</div>
 	)
 }

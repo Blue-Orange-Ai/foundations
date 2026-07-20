@@ -12,6 +12,8 @@ import {DropdownItemHeading} from "../items/DropdownItemHeading/DropdownItemHead
 import {DropdownItemIcon} from "../items/DropdownItemIcon/DropdownItemIcon";
 import {DropdownItemImage} from "../items/DropdownItemImage/DropdownItemImage";
 import {DropdownItemText} from "../items/DropdownItemText/DropdownItemText";
+import {InputValidateCallback, useInputValidation} from "../../validation/InputValidation";
+import {InputValidationMessage} from "../../validation/InputValidationMessage";
 
 interface Props {
 	children: React.ReactNode,
@@ -29,7 +31,9 @@ interface Props {
 	required?: boolean,
 	help?: string,
 	style?: React.CSSProperties,
-	labelStyle?: React.CSSProperties
+	labelStyle?: React.CSSProperties,
+	validate?: InputValidateCallback<DropdownItemObj>,
+	validateOnChange?: boolean
 }
 
 export const Dropdown: React.FC<Props> = ({
@@ -48,8 +52,13 @@ export const Dropdown: React.FC<Props> = ({
 												    required=false,
 												    help,
 												    style = {},
-												    labelStyle={}
+												    labelStyle={},
+												    validate,
+												    validateOnChange=false
 											   }) => {
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<DropdownItemObj>(validate, validateOnChange);
 
 	const items:Array<DropdownItemObj> = []
 
@@ -110,8 +119,18 @@ export const Dropdown: React.FC<Props> = ({
 
 	const blockMouseClickRef = useRef(blockMouseClick);
 
+	const dropdownOpenedRef = useRef(false);
+
 	useEffect(() => {
 		visibleRef.current = visible;
+	}, [visible]);
+
+	useEffect(() => {
+		if (visible) {
+			dropdownOpenedRef.current = true;
+		} else if (dropdownOpenedRef.current) {
+			handleBlurValidation(selectedValue);
+		}
 	}, [visible]);
 
 	useEffect(() => {
@@ -436,6 +455,7 @@ export const Dropdown: React.FC<Props> = ({
 			}
 			updateModifiedItems(item, modItems);
 			updateSelectedItems(item, modSelectedItems);
+			handleChangeValidation(item);
 			setLastUpdated(new Date())
 			if (closeOnClick && !allowMultipleSelection) {
 				setVisible(false);
@@ -491,13 +511,13 @@ export const Dropdown: React.FC<Props> = ({
 	return (
 		<div className="blue-orange-dropdown-cont">
 			{label &&
-				<div className={"blue-orange-default-input-label-cont"} style={labelStyle}>
+				<div className={"blue-orange-default-input-label-cont" + (isError ? " blue-orange-default-input-label-cont-error" : "")} style={labelStyle}>
 					{label}
 					{help && <HelpIcon label={help}></HelpIcon>}
 					{required && <RequiredIcon></RequiredIcon>}
 				</div>
 			}
-			<div ref={inputRef} className="blue-orange-dropdown" style={style} onClick={(ev) => toggleVisibleState(ev)}>
+			<div ref={inputRef} className={"blue-orange-dropdown" + (isError ? " blue-orange-dropdown-error" : "")} style={style} onClick={(ev) => toggleVisibleState(ev)}>
 				{!allowMultipleSelection &&
 					<>
 						<div className="blue-orange-dropdown-selection">
@@ -529,6 +549,7 @@ export const Dropdown: React.FC<Props> = ({
 					<Input placeholder={placeholder} disabled={disabled} style={{border: "transparent", height: "40px",pointerEvents: "none"}}></Input>
 				}
 			</div>
+			<InputValidationMessage result={validationResult}></InputValidationMessage>
 			{visible &&
 				<div ref={dropdownRef} className="blue-orange-dropdown-window shadow" style={dropdownWindowStyle}>
 					{filter &&

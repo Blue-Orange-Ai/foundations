@@ -81,6 +81,7 @@ import {FileUploadTableDevelopment} from "../components/inputs/file-upload-table
 import {BreadcrumbsDevelopment} from "../components/breadcrumbs/BreadcrumbsDevelopment";
 import {SearchPlaygroundDevelopment} from "../components/search/search-playground/SearchPlaygroundDevelopment";
 import {MetricsGroupDevelopment} from "../components/metrics/metrics-group/MetricsGroupDevelopment";
+import {ValidationDevelopment} from "../components/inputs/validation/ValidationDevelopment";
 
 interface Props {
 }
@@ -299,6 +300,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							label={"Inputs"}
 							onClick={() => setSidebarInputState(!sidebarInputState)}
 						></SideBarBodyLabel>
+						<SideBarBodyItem
+							label={"Validation (overview)"}
+							active={component == "inputs-validation"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-shield-check-line"></i>}
+							onClick={() => navigate("/inputs-validation")}
+						></SideBarBodyItem>
 						<SideBarBodyItem
 							label={"Address Input"}
 							active={component == "inputs-address"}
@@ -824,6 +834,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "table-data" && <DataTableDevelopment></DataTableDevelopment>}
 			{component == "context-menu" && <ContextMenuDevelopment></ContextMenuDevelopment>}
 			{component == "sockets" && <SocketWorkspace></SocketWorkspace>}
+			{component == "inputs-validation" && <ValidationDevelopment></ValidationDevelopment>}
 			{component == "inputs-address" && <AddressInputDevelopment></AddressInputDevelopment>}
 			{component == "inputs-array" && <ArrayInputDevelopment></ArrayInputDevelopment>}
 			{component == "inputs-object-array" && <ObjectArrayInputDevelopment></ObjectArrayInputDevelopment>}

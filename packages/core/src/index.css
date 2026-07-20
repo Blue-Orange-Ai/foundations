@@ -140,6 +140,12 @@
   --blue-orange-dark-input-background-color: black;
   --blue-orange-light-input-focus-border-color: black;
   --blue-orange-dark-input-focus-border-color: white;
+  --blue-orange-light-input-error-color: #e5484d;
+  --blue-orange-dark-input-error-color: #ff6369;
+  --blue-orange-light-input-error-border-color: #e5484d;
+  --blue-orange-dark-input-error-border-color: #ff6369;
+  --blue-orange-light-input-success-color: #30a46c;
+  --blue-orange-dark-input-success-color: #3dd68c;
   --blue-orange-light-input-select-background: #f7f7f9;
   --blue-orange-dark-input-select-background: #28282a;
   --blue-orange-light-input-search-background: #f7f7f9;
@@ -340,4 +346,14 @@ code {
     font-weight: var(--blue-orange-dark-input-label-font-weight);
     margin-bottom: var(--blue-orange-dark-input-label-margin-bottom);
     opacity: var(--blue-orange-dark-input-label-opacity);
+}
+
+/* Applied to the label container when a validate callback reports an error. */
+.blue-orange-default-input-label-cont-error {
+    color: var(--blue-orange-light-input-error-color);
+    opacity: 1;
+}
+
+.dark .blue-orange-default-input-label-cont-error {
+    color: var(--blue-orange-dark-input-error-color);
 }

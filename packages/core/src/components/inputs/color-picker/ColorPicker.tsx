@@ -5,6 +5,8 @@ import {HelpIcon} from "../help/HelpIcon";
 import {RequiredIcon} from "../required-icon/RequiredIcon";
 import {Input} from "../input/Input";
 import {Address} from "node:cluster";
+import {InputValidateCallback, useInputValidation} from "../validation/InputValidation";
+import {InputValidationMessage} from "../validation/InputValidationMessage";
 
 interface Props {
 	value?:string,
@@ -13,6 +15,8 @@ interface Props {
 	help?: string,
 	labelStyle?: React.CSSProperties,
 	onChange?: (value: string) => void,
+	validate?: InputValidateCallback<string>,
+	validateOnChange?: boolean,
 }
 
 export const ColorPicker: React.FC<Props> = ({
@@ -21,9 +25,14 @@ export const ColorPicker: React.FC<Props> = ({
 										   required=false,
 										   help,
 										   labelStyle={},
-										   onChange
+										   onChange,
+										   validate,
+										   validateOnChange=false
 
 }) => {
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<string>(validate, validateOnChange);
 
 	const colorToHex = (color: string | null | undefined) => {
 		if (color == undefined || color == null) {
@@ -62,6 +71,18 @@ export const ColorPicker: React.FC<Props> = ({
 		setSelectedColor(color)
 		setHiddenInputColor(colorToHex(color) ?? "")
 		dispatchChange(color)
+		handleChangeValidation(color)
+	}
+
+	const pickerContClassName = () => {
+		var className = "blue-orange-color-picker-input-cont";
+		if (inputFocus) {
+			className += " blue-orange-color-picker-focus";
+		}
+		if (isError) {
+			className += " blue-orange-color-picker-invalid";
+		}
+		return className;
 	}
 
 	const dispatchChange = (color: string) => {
@@ -73,24 +94,32 @@ export const ColorPicker: React.FC<Props> = ({
 	return (
 		<div className="blue-orange-default-color-input-cont">
 			{label &&
-				<div className={"blue-orange-default-input-label-cont"} style={labelStyle}>
+				<div
+					className={"blue-orange-default-input-label-cont" + (isError ? " blue-orange-default-input-label-cont-error" : "")}
+					style={labelStyle}>
 					{label}
 					{help && <HelpIcon label={help}></HelpIcon>}
 					{required && <RequiredIcon></RequiredIcon>}
 				</div>
 			}
-			<div className={!inputFocus ? "blue-orange-color-picker-input-cont" : "blue-orange-color-picker-input-cont blue-orange-color-picker-focus"}>
-				<div className="blue-orange-color-picker-color-square-cont">
-					<input type="color" className="blue-orange-color-picker-hidden-color" value={hiddenInputColor} onChange={(value) => updateColor(value.target.value)}/>
-					<div className="blue-orange-color-picker-color-square" style={{"backgroundColor": selectedColor}}></div>
+			<div className="blue-orange-color-picker-field">
+				<div className={pickerContClassName()}>
+					<div className="blue-orange-color-picker-color-square-cont">
+						<input type="color" className="blue-orange-color-picker-hidden-color" value={hiddenInputColor} onChange={(value) => updateColor(value.target.value)}/>
+						<div className="blue-orange-color-picker-color-square" style={{"backgroundColor": selectedColor}}></div>
+					</div>
+					<Input
+						style={inputStyle}
+						placeholder={"#e0e1e2"}
+						value={selectedColor}
+						onChange={updateColor}
+						focusIn={() => setInputFocus(true)}
+						focusOut={() => {
+							setInputFocus(false);
+							handleBlurValidation(selectedColor);
+						}}></Input>
 				</div>
-				<Input
-					style={inputStyle}
-					placeholder={"#e0e1e2"}
-					value={selectedColor}
-					onChange={updateColor}
-					focusIn={() => setInputFocus(true)}
-					focusOut={() => setInputFocus(false)}></Input>
+				<InputValidationMessage result={validationResult}></InputValidationMessage>
 			</div>
 		</div>
 

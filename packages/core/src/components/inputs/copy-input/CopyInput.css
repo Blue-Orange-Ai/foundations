@@ -30,6 +30,18 @@
     color: var(--blue-orange-dark-input-color);
 }
 
+.blue-orange-copy-input-cont-invalid,
+.blue-orange-copy-input-cont-invalid:focus {
+    border: 1px solid var(--blue-orange-light-input-error-border-color);
+    outline: 1.5px solid var(--blue-orange-light-input-error-border-color);
+}
+
+.dark .blue-orange-copy-input-cont-invalid,
+.dark .blue-orange-copy-input-cont-invalid:focus {
+    border: 1px solid var(--blue-orange-dark-input-error-border-color);
+    outline: 1.5px solid var(--blue-orange-dark-input-error-border-color);
+}
+
 .blue-orange-copy-input-cont .blue-orange-default-btn-icon {
     background-color: var(--blue-orange-light-primary-btn-background-color);
     color: var(--blue-orange-light-primary-btn-color);

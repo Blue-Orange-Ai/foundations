@@ -47,6 +47,18 @@
     outline: 1.5px solid var(--blue-orange-dark-input-focus-border-color);
 }
 
+.blue-orange-search-group-input-error,
+.blue-orange-search-group-input-error:focus {
+    border: 1px solid var(--blue-orange-light-input-error-border-color);
+    outline: 1.5px solid var(--blue-orange-light-input-error-border-color);
+}
+
+.dark .blue-orange-search-group-input-error,
+.dark .blue-orange-search-group-input-error:focus {
+    border: 1px solid var(--blue-orange-dark-input-error-border-color);
+    outline: 1.5px solid var(--blue-orange-dark-input-error-border-color);
+}
+
 .blue-orange-search-group {
     position: relative;
 }

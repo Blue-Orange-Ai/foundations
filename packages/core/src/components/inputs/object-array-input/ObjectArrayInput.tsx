@@ -7,6 +7,8 @@ import {Input} from "../input/Input";
 import {ButtonIcon} from "../../buttons/button-icon/ButtonIcon";
 import {TagInput} from "../tags/simple/TagInput";
 import {TextArea} from "../textarea/TextArea";
+import {InputValidateCallback, useInputValidation} from "../validation/InputValidation";
+import {InputValidationMessage} from "../validation/InputValidationMessage";
 
 export type SchemaFieldType = 'input' | 'textarea' | 'number' | 'tag';
 
@@ -29,6 +31,8 @@ interface Props {
 	disabled?: boolean;
 	required?: boolean;
 	help?: string;
+	validate?: InputValidateCallback<Record<string, any>[]>;
+	validateOnChange?: boolean;
 }
 
 export const ObjectArrayInput: React.FC<Props> = ({
@@ -40,8 +44,13 @@ export const ObjectArrayInput: React.FC<Props> = ({
 	onChange,
 	disabled = false,
 	required = false,
-	help
+	help,
+	validate,
+	validateOnChange = false
 }) => {
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<Record<string, any>[]>(validate, validateOnChange);
 
 	const [items, setItems] = useState<Record<string, any>[]>(value);
 
@@ -69,6 +78,7 @@ export const ObjectArrayInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(updatedItems);
 		}
+		handleChangeValidation(updatedItems);
 	};
 
 	const handleRemoveItem = (index: number) => {
@@ -77,6 +87,7 @@ export const ObjectArrayInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(updatedItems);
 		}
+		handleBlurValidation(updatedItems);
 	};
 
 	const handleAddItem = () => {
@@ -85,6 +96,7 @@ export const ObjectArrayInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(updatedItems);
 		}
+		handleBlurValidation(updatedItems);
 	};
 
 	useEffect(() => {
@@ -147,13 +159,13 @@ export const ObjectArrayInput: React.FC<Props> = ({
 	return (
 		<div className="blue-orange-default-input-cont" style={style}>
 			{label && (
-				<div className="blue-orange-default-input-label-cont" style={labelStyle}>
+				<div className={"blue-orange-default-input-label-cont" + (isError ? " blue-orange-default-input-label-cont-error" : "")} style={labelStyle}>
 					{label}
 					{help && <HelpIcon label={help}></HelpIcon>}
 					{required && <RequiredIcon></RequiredIcon>}
 				</div>
 			)}
-			<div className="blue-orange-object-array-input-items-cont">
+			<div className={"blue-orange-object-array-input-items-cont" + (isError ? " blue-orange-object-array-input-items-cont-error" : "")}>
 				<div className="blue-orange-object-array-input-bar"></div>
 				<div className="blue-orange-object-array-input-items">
 					{items.map((item, itemIndex) => (
@@ -185,6 +197,7 @@ export const ObjectArrayInput: React.FC<Props> = ({
 					</div>
 				</div>
 			</div>
+			<InputValidationMessage result={validationResult}></InputValidationMessage>
 		</div>
 	);
 };

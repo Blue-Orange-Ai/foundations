@@ -62,3 +62,11 @@
 .blue-orange-array-input-item-phone .phone-input-group {
 	flex-grow: 1;
 }
+
+.blue-orange-array-input-items-cont-error .blue-orange-array-input-bar {
+	background-color: var(--blue-orange-light-input-error-border-color);
+}
+
+.dark .blue-orange-array-input-items-cont-error .blue-orange-array-input-bar {
+	background-color: var(--blue-orange-dark-input-error-border-color);
+}

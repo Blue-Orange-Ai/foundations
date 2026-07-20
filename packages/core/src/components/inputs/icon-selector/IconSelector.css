@@ -1,0 +1,10 @@
+
+.blue-orange-icon-selector-invalid .blue-orange-dropdown {
+    border: 1px solid var(--blue-orange-light-input-error-border-color);
+    outline: 1.5px solid var(--blue-orange-light-input-error-border-color);
+}
+
+.dark .blue-orange-icon-selector-invalid .blue-orange-dropdown {
+    border: 1px solid var(--blue-orange-dark-input-error-border-color);
+    outline: 1.5px solid var(--blue-orange-dark-input-error-border-color);
+}

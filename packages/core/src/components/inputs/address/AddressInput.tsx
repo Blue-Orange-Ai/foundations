@@ -5,6 +5,8 @@ import {Input} from "../input/Input";
 import {Address} from "@blue-orange-ai/foundations-clients";
 import {HelpIcon} from "../help/HelpIcon";
 import {RequiredIcon} from "../required-icon/RequiredIcon";
+import {InputValidateCallback, useInputValidation} from "../validation/InputValidation";
+import {InputValidationMessage} from "../validation/InputValidationMessage";
 
 interface Props {
 	address?: Address | undefined;
@@ -15,6 +17,8 @@ interface Props {
 	help?: string;
 	style?: React.CSSProperties;
 	labelStyle?: React.CSSProperties;
+	validate?: InputValidateCallback<Address>;
+	validateOnChange?: boolean;
 }
 
 
@@ -33,8 +37,13 @@ export const AddressInput: React.FC<Props> = ({
 												  disabled=false,
 												  help,
 												  style = {},
-												  labelStyle={}
+												  labelStyle={},
+												  validate,
+												  validateOnChange=false
 											  }) => {
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<Address>(validate, validateOnChange);
 
 	const countries: Array<Country> = [
 		{
@@ -1543,6 +1552,7 @@ export const AddressInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(addr);
 		}
+		handleChangeValidation(addr);
 	}
 
 	const handleMainAddress = (text: string) => {
@@ -1551,6 +1561,7 @@ export const AddressInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(addr);
 		}
+		handleChangeValidation(addr);
 	}
 
 	const handleCity = (text: string) => {
@@ -1559,6 +1570,7 @@ export const AddressInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(addr);
 		}
+		handleChangeValidation(addr);
 	}
 
 	const handleState = (text: string) => {
@@ -1567,6 +1579,7 @@ export const AddressInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(addr);
 		}
+		handleChangeValidation(addr);
 	}
 
 	const handlePostcode = (text: string) => {
@@ -1575,19 +1588,26 @@ export const AddressInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(addr);
 		}
+		handleChangeValidation(addr);
+	}
+
+	const handleAddressBlur = () => {
+		handleBlurValidation(addr);
 	}
 
 	return (
 		<div className="address-input-group">
 			{label &&
-				<div className={"blue-orange-default-input-label-cont"} style={labelStyle}>
+				<div
+					className={"blue-orange-default-input-label-cont" + (isError ? " blue-orange-default-input-label-cont-error" : "")}
+					style={labelStyle}>
 					{label}
 					{help && <HelpIcon label={help}></HelpIcon>}
 					{required && <RequiredIcon></RequiredIcon>}
 				</div>
 			}
 			<div className="address-main-input">
-				<Input placeholder="Address" disabled={disabled} value={addr.address} onChange={handleMainAddress} style={style}></Input>
+				<Input placeholder="Address" disabled={disabled} value={addr.address} onChange={handleMainAddress} focusOut={handleAddressBlur} isInvalid={isError} style={style}></Input>
 			</div>
 			<div className="address-sub-input">
 				<div style={{width: "calc(40% - 10px)"}}>
@@ -1613,6 +1633,7 @@ export const AddressInput: React.FC<Props> = ({
 					className="ri-arrow-drop-down-line"></i></span>
 				</div>
 			</div>
+			<InputValidationMessage result={validationResult}></InputValidationMessage>
 		</div>
 	);
 };

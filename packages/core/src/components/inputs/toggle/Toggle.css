@@ -54,3 +54,13 @@
 .blue-orange-toggle-switch-input:checked + .blue-orange-toggle-switch-slider:before {
     transform: translateX(11px);
 }
+
+.blue-orange-toggle-switch-slider-error {
+    outline: 1.5px solid var(--blue-orange-light-input-error-border-color);
+    border: 1px solid var(--blue-orange-light-input-error-border-color);
+}
+
+.dark .blue-orange-toggle-switch-slider-error {
+    outline: 1.5px solid var(--blue-orange-dark-input-error-border-color);
+    border: 1px solid var(--blue-orange-dark-input-error-border-color);
+}

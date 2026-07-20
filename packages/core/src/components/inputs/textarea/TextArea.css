@@ -38,3 +38,15 @@
 .dark .blue-orange-default-text-area:focus {
     outline: 1.5px solid var(--blue-orange-dark-input-focus-border-color);
 }
+
+.blue-orange-default-text-area-invalid,
+.blue-orange-default-text-area-invalid:focus {
+    border: 1px solid var(--blue-orange-light-input-error-border-color);
+    outline: 1.5px solid var(--blue-orange-light-input-error-border-color);
+}
+
+.dark .blue-orange-default-text-area-invalid,
+.dark .blue-orange-default-text-area-invalid:focus {
+    border: 1px solid var(--blue-orange-dark-input-error-border-color);
+    outline: 1.5px solid var(--blue-orange-dark-input-error-border-color);
+}

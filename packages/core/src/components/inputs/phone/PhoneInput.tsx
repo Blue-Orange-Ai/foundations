@@ -4,6 +4,8 @@ import './PhoneInput.css';
 import {Telephone} from "@blue-orange-ai/foundations-clients";
 import {HelpIcon} from "../help/HelpIcon";
 import {RequiredIcon} from "../required-icon/RequiredIcon";
+import {InputValidateCallback, useInputValidation} from "../validation/InputValidation";
+import {InputValidationMessage} from "../validation/InputValidationMessage";
 
 interface Props {
 	telephone?: Telephone;
@@ -14,6 +16,8 @@ interface Props {
 	help?: string;
 	style?: React.CSSProperties
 	labelStyle?: React.CSSProperties
+	validate?: InputValidateCallback<string>;
+	validateOnChange?: boolean;
 }
 
 type PhoneCountry = {
@@ -31,7 +35,16 @@ export const PhoneInput: React.FC<Props> = ({
 												required=false,
 												help,
 												style={},
-												labelStyle={}}) => {
+												labelStyle={},
+												validate,
+												validateOnChange=false}) => {
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<string>(validate, validateOnChange);
+
+	const combinedValue = (t: Telephone): string => {
+		return (t.extension == null ? "" : t.extension) + (t.number == null ? "" : t.number);
+	}
 
 	const countries: Array<PhoneCountry> = [
 		{
@@ -1529,6 +1542,7 @@ export const PhoneInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(tel);
 		}
+		handleChangeValidation(combinedValue(tel));
 	}
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -1539,6 +1553,11 @@ export const PhoneInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(tel);
 		}
+		handleChangeValidation(combinedValue(tel));
+	};
+
+	const handleBlur = () => {
+		handleBlurValidation(combinedValue(tel));
 	};
 
 	const handleKeydownEvent = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -1559,7 +1578,9 @@ export const PhoneInput: React.FC<Props> = ({
 	return (
 		<div className="blue-orange-phone-input-cont">
 			{label &&
-				<div className={"blue-orange-default-input-label-cont"} style={labelStyle}>
+				<div
+					className={"blue-orange-default-input-label-cont" + (isError ? " blue-orange-default-input-label-cont-error" : "")}
+					style={labelStyle}>
 					{label}
 					{help && <HelpIcon label={help}></HelpIcon>}
 					{required && <RequiredIcon></RequiredIcon>}
@@ -1582,14 +1603,16 @@ export const PhoneInput: React.FC<Props> = ({
 					<div className="phone-input-text-extension">{countryCode}</div>
 					<input
 						style={style}
-						className="phone-input-text"
+						className={"phone-input-text" + (isError ? " phone-input-text-invalid" : "")}
 						type="tel"
 						disabled={disabled}
 						onKeyDown={handleKeydownEvent}
 						onChange={handleInputChange}
+						onBlur={handleBlur}
 						value={telNum == null || telNum == undefined ? "" : telNum}/>
 				</div>
 			</div>
+			<InputValidationMessage result={validationResult}></InputValidationMessage>
 		</div>
 
 	);

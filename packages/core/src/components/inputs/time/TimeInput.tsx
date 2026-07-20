@@ -3,6 +3,8 @@ import React, {useEffect, useRef, useState} from "react";
 import './TimeInput.css';
 import {HelpIcon} from "../help/HelpIcon";
 import {RequiredIcon} from "../required-icon/RequiredIcon";
+import {InputValidateCallback, useInputValidation} from "../validation/InputValidation";
+import {InputValidationMessage} from "../validation/InputValidationMessage";
 
 interface Props {
 	value?: string;
@@ -17,6 +19,8 @@ interface Props {
 	focusOut?: () => void;
 	required?: boolean;
 	help?: string;
+	validate?: InputValidateCallback<string>;
+	validateOnChange?: boolean;
 }
 
 export const TimeInput: React.FC<Props> = ({
@@ -32,11 +36,16 @@ export const TimeInput: React.FC<Props> = ({
 											   focusOut,
 											   required = false,
 											   help,
+											   validate,
+											   validateOnChange=false,
 }) => {
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<string>(validate, validateOnChange);
 
 	const generateClassname = () => {
 		var className = "blue-orange-input blue-orange-time-input";
-		if (isInvalid) {
+		if (isInvalid || isError) {
 			className += " blue-orange-input-invalid";
 		}
 		return className;
@@ -54,7 +63,15 @@ export const TimeInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(newValue);
 		}
+		handleChangeValidation(newValue);
 	};
+
+	const focusOutEvent = () => {
+		handleBlurValidation(inputValue === undefined || inputValue == null ? "" : inputValue);
+		if (focusOut) {
+			focusOut();
+		}
+	}
 
 	useEffect(() => {
 		if (focus) {
@@ -64,7 +81,7 @@ export const TimeInput: React.FC<Props> = ({
 
 	useEffect(() => {
 		setInputClassName(generateClassname());
-	}, [isInvalid]);
+	}, [isInvalid, isError]);
 
 	useEffect(() => {
 		setInputValue(value === undefined ? "" : value);
@@ -73,7 +90,9 @@ export const TimeInput: React.FC<Props> = ({
 	return (
 		<div className="blue-orange-default-input-cont">
 			{label &&
-				<div className={"blue-orange-default-input-label-cont"} style={labelStyle}>
+				<div
+					className={"blue-orange-default-input-label-cont" + (isError ? " blue-orange-default-input-label-cont-error" : "")}
+					style={labelStyle}>
 					{label}
 					{help && <HelpIcon label={help}></HelpIcon>}
 					{required && <RequiredIcon></RequiredIcon>}
@@ -86,10 +105,11 @@ export const TimeInput: React.FC<Props> = ({
 				value={inputValue === undefined || inputValue == null ? "" : inputValue}
 				onChange={handleInputChange}
 				onFocus={focusIn}
-				onBlur={focusOut}
+				onBlur={focusOutEvent}
 				type="time"
 				disabled={disabled}
 			/>
+			<InputValidationMessage result={validationResult}></InputValidationMessage>
 		</div>
 	);
 };

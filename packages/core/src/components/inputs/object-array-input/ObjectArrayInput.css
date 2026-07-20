@@ -64,3 +64,11 @@
 	display: flex;
 	justify-content: flex-start;
 }
+
+.blue-orange-object-array-input-items-cont-error .blue-orange-object-array-input-bar {
+	background-color: var(--blue-orange-light-input-error-border-color);
+}
+
+.dark .blue-orange-object-array-input-items-cont-error .blue-orange-object-array-input-bar {
+	background-color: var(--blue-orange-dark-input-error-border-color);
+}

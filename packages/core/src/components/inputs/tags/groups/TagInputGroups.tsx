@@ -4,6 +4,8 @@ import '@yaireo/tagify/dist/tagify.css';
 import '../fetch/TagInputCallback.css';
 import {HelpIcon} from "../../help/HelpIcon";
 import {RequiredIcon} from "../../required-icon/RequiredIcon";
+import {InputValidateCallback, useInputValidation} from "../../validation/InputValidation";
+import {InputValidationMessage} from "../../validation/InputValidationMessage";
 import passport from "../../../config/BlueOrangePassportConfig";
 import {Group, GroupSearchResult} from "@blue-orange-ai/foundations-clients";
 
@@ -41,6 +43,8 @@ interface Props {
     help?: string;
     style?: React.CSSProperties;
     labelStyle?: React.CSSProperties;
+    validate?: InputValidateCallback<string[]>;
+    validateOnChange?: boolean;
 }
 
 export const TagInputGroups: React.FC<Props> = ({
@@ -52,16 +56,32 @@ export const TagInputGroups: React.FC<Props> = ({
     required = false,
     help,
     style = {},
-    labelStyle = {}
+    labelStyle = {},
+    validate,
+    validateOnChange = false
 }) => {
+    const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+        useInputValidation<string[]>(validate, validateOnChange);
+
     const tagifyRef = useRef<HTMLInputElement>(null);
     const tagifyInstanceRef = useRef<Tagify | null>(null);
     const onChangeRef = useRef(onChange);
+    const currentGroupIdsRef = useRef<string[]>(initialGroupIds);
+    const handleChangeValidationRef = useRef(handleChangeValidation);
+    const handleBlurValidationRef = useRef(handleBlurValidation);
     const [initialized, setInitialized] = useState(false);
 
     useEffect(() => {
         onChangeRef.current = onChange;
     }, [onChange]);
+
+    useEffect(() => {
+        handleChangeValidationRef.current = handleChangeValidation;
+    }, [handleChangeValidation]);
+
+    useEffect(() => {
+        handleBlurValidationRef.current = handleBlurValidation;
+    }, [handleBlurValidation]);
 
     useEffect(() => {
         if (!tagifyRef.current) return;
@@ -111,9 +131,15 @@ export const TagInputGroups: React.FC<Props> = ({
 
         tagify.on("add remove", (e: any) => {
             const updatedGroupIds = (tagify.value || []).map((t: any) => t?.groupId || '');
+            currentGroupIdsRef.current = updatedGroupIds;
             if (onChangeRef.current) {
                 onChangeRef.current(updatedGroupIds);
             }
+            handleChangeValidationRef.current(updatedGroupIds);
+        });
+
+        tagify.on("blur", () => {
+            handleBlurValidationRef.current(currentGroupIdsRef.current);
         });
 
         setInitialized(true);
@@ -156,15 +182,16 @@ export const TagInputGroups: React.FC<Props> = ({
     }, [initialized, initialGroupIds]);
 
     return (
-        <div className="blue-orange-input-tags-cont" style={style}>
+        <div className={"blue-orange-input-tags-cont" + (isError ? " blue-orange-input-tags-cont-error" : "")} style={style}>
             {label &&
-                <div className={"blue-orange-default-input-label-cont"} style={labelStyle}>
+                <div className={"blue-orange-default-input-label-cont" + (isError ? " blue-orange-default-input-label-cont-error" : "")} style={labelStyle}>
                     {label}
                     {help && <HelpIcon label={help}></HelpIcon>}
                     {required && <RequiredIcon></RequiredIcon>}
                 </div>
             }
             <input ref={tagifyRef} className={"blue-orange-tags"}/>
+            <InputValidationMessage result={validationResult}></InputValidationMessage>
         </div>
     );
 };

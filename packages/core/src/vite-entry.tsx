@@ -114,6 +114,8 @@ export * from './components/inputs/copy-input/CopyInput';
 export * from './components/inputs/array-input/ArrayInput';
 export * from './components/inputs/object-array-input/ObjectArrayInput';
 export * from './components/inputs/file-upload-table/FileUploadTable';
+export * from './components/inputs/validation/InputValidation';
+export * from './components/inputs/validation/InputValidationMessage';
 
 // Layouts
 export * from './components/layouts/drawer/drawer/Drawer';

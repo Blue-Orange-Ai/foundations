@@ -5,6 +5,10 @@ import './DateInput.css';
 import {Input} from "../../../../input/Input";
 import moment from 'moment';
 import {DateContextWindowSingle, TimePrecision} from "../../items/datecontextwindowsingle/DateContextWindowSingle";
+import {HelpIcon} from "../../../../help/HelpIcon";
+import {RequiredIcon} from "../../../../required-icon/RequiredIcon";
+import {InputValidateCallback, useInputValidation} from "../../../../validation/InputValidation";
+import {InputValidationMessage} from "../../../../validation/InputValidationMessage";
 
 
 interface Props {
@@ -19,7 +23,9 @@ interface Props {
 	style?: React.CSSProperties;
 	labelStyle?: React.CSSProperties;
 	showTime?: boolean,
-	timePrecision?: TimePrecision
+	timePrecision?: TimePrecision,
+	validate?: InputValidateCallback<Date>,
+	validateOnChange?: boolean
 }
 
 export const DateInput: React.FC<Props> = ({
@@ -34,7 +40,12 @@ export const DateInput: React.FC<Props> = ({
 											   style = {},
 											   labelStyle={},
 											   showTime=false,
-											   timePrecision=TimePrecision.MINUTE}) => {
+											   timePrecision=TimePrecision.MINUTE,
+											   validate,
+											   validateOnChange=false}) => {
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<Date>(validate, validateOnChange);
 
 	const getFormattedDate = (date: Date | undefined, invalid: boolean) => {
 		if (invalid) {
@@ -59,6 +70,12 @@ export const DateInput: React.FC<Props> = ({
 		if (onChange) {
 			onChange(date);
 		}
+		handleChangeValidation(date);
+	}
+
+	const handleBlur = () => {
+		const result = chrono.en.GB.parseDate(inputValue);
+		handleBlurValidation((result == null ? dateValue : result) as Date);
 	}
 
 	const validateInputDate = () => {
@@ -202,17 +219,24 @@ export const DateInput: React.FC<Props> = ({
 
 	return (
 		<div ref={inputRef} style={{width: "100%"}}>
+			{label &&
+				<div
+					className={"blue-orange-default-input-label-cont" + (isError ? " blue-orange-default-input-label-cont-error" : "")}
+					style={labelStyle}>
+					{label}
+					{help && <HelpIcon label={help}></HelpIcon>}
+					{required && <RequiredIcon></RequiredIcon>}
+				</div>
+			}
 			<Input
-				label={label}
 				style={style}
 				disabled={disabled}
-				labelStyle={labelStyle}
-				required={required}
-				help={help}
+				isInvalid={isError}
 				placeholder={placeholder}
 				value={inputValue}
 				onChange={storeInputChange}
 				focusIn={focusIn}
+				focusOut={handleBlur}
 				enterEvent={validateInputDate}></Input>
 			{showDateSelection &&
 				<DateContextWindowSingle
@@ -221,6 +245,7 @@ export const DateInput: React.FC<Props> = ({
 					showTime={showTime}
 					timePrecision={timePrecision}
 					onSelection={onDateSelected}></DateContextWindowSingle>}
+			<InputValidationMessage result={validationResult}></InputValidationMessage>
 		</div>
 	);
 };

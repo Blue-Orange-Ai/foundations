@@ -14,6 +14,16 @@
     border: 1px solid var(--blue-orange-dark-input-rich-text-editor-border-color);
 }
 
+.blue-orange-rich-text-editor-error {
+    border: 1px solid var(--blue-orange-light-input-error-border-color);
+    outline: 1.5px solid var(--blue-orange-light-input-error-border-color);
+}
+
+.dark .blue-orange-rich-text-editor-error {
+    border: 1px solid var(--blue-orange-dark-input-error-border-color);
+    outline: 1.5px solid var(--blue-orange-dark-input-error-border-color);
+}
+
 .blue-orange-rich-text-editor-heading {
     display: flex;
     flex-direction: row;

@@ -19,6 +19,8 @@ import {FileInputWrapper} from "../../file-input-wrapper/FileInputWrapper";
 import {RichTextEditorUploadedFile, UploadedFile} from "../uploaded-file/UploadedFile";
 import {Media, MediaPermission, GroupPermission} from "@blue-orange-ai/foundations-clients";
 import CustomMention from "../mention-extension/MentionExtension";
+import {InputValidateCallback, useInputValidation} from "../../validation/InputValidation";
+import {InputValidationMessage} from "../../validation/InputValidationMessage";
 
 export interface MentionItem {
 	label: string,
@@ -44,7 +46,9 @@ interface Props {
 	disabled?: boolean,
 	clearState?: string,
 	onChange?: (content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean) => void,
-	onEnter?: () => void
+	onEnter?: () => void,
+	validate?: InputValidateCallback<string>,
+	validateOnChange?: boolean
 }
 
 const defaultUploadPermission: MediaPermission[] = [{
@@ -67,9 +71,13 @@ export const RichText: React.FC<Props> = ({
 											  disabled = false,
 											  clearState = "",
 											  onChange,
-											  onEnter
+											  onEnter,
+											  validate,
+											  validateOnChange = false
 										  }) => {
 
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<string>(validate, validateOnChange);
 
 	const initialiseFiles = (): RichTextEditorUploadedFile[] => {
 		var formattedFiles: RichTextEditorUploadedFile[] = []
@@ -354,7 +362,16 @@ export const RichText: React.FC<Props> = ({
 				generateStoredFileAttachments(),
 				areFilesUploading())
 		}
+		if (editorRef.current) {
+			handleChangeValidation(editorRef.current.getHTML());
+		}
 
+	}
+
+	const editorBlurred = () => {
+		if (editorRef.current) {
+			handleBlurValidation(editorRef.current.getHTML());
+		}
 	}
 
 	useEffect(() => {
@@ -442,7 +459,7 @@ export const RichText: React.FC<Props> = ({
 	}, [clearState]);
 
 	return (
-		<div className={`blue-orange-rich-text-editor${singleLine ? ' blue-orange-rich-text-editor-single-line' : ''}`}>
+		<div className={`blue-orange-rich-text-editor${singleLine ? ' blue-orange-rich-text-editor-single-line' : ''}${isError ? ' blue-orange-rich-text-editor-error' : ''}`}>
 			{displayHeading &&
 				<div className="blue-orange-rich-text-editor-heading">
 					<ButtonIcon
@@ -501,7 +518,7 @@ export const RichText: React.FC<Props> = ({
 					></ButtonIcon>
 				</div>
 			}
-			<div ref={editorContainerRef}>
+			<div ref={editorContainerRef} onBlur={editorBlurred}>
 				<EditorContent editor={editor}></EditorContent>
 			</div>
 			{storedFiles.length > 0 &&
@@ -558,6 +575,7 @@ export const RichText: React.FC<Props> = ({
 					</div>
 				}
 			</div>
+			<InputValidationMessage result={validationResult}></InputValidationMessage>
 		</div>
 	);
 };

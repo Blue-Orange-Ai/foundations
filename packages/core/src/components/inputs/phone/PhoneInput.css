@@ -82,3 +82,15 @@
 .phone-input-text:focus {
     outline: 1.5px solid black;
 }
+
+.phone-input-text-invalid,
+.phone-input-text-invalid:focus {
+    border: 1px solid var(--blue-orange-light-input-error-border-color);
+    outline: 1.5px solid var(--blue-orange-light-input-error-border-color);
+}
+
+.dark .phone-input-text-invalid,
+.dark .phone-input-text-invalid:focus {
+    border: 1px solid var(--blue-orange-dark-input-error-border-color);
+    outline: 1.5px solid var(--blue-orange-dark-input-error-border-color);
+}
