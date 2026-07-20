@@ -1,0 +1,53 @@
+
+.blue-orange-form-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.blue-orange-form-group-body {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.blue-orange-form-group-row {
+    width: 100%;
+}
+
+.blue-orange-form-group-message {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.blue-orange-form-group-actions {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.blue-orange-form-group-actions-left {
+    justify-content: flex-start;
+}
+
+.blue-orange-form-group-actions-center {
+    justify-content: center;
+}
+
+.blue-orange-form-group-actions-right {
+    justify-content: flex-end;
+}
+
+.blue-orange-form-group-actions-space-between {
+    justify-content: space-between;
+}
+
+.blue-orange-form-group-action {
+    display: flex;
+    align-items: center;
+}

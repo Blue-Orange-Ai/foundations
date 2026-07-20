@@ -1,0 +1,14 @@
+
+.blue-orange-form-row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    box-sizing: border-box;
+}
+
+/* Sizing lives on the item — the row hands each one its share through the
+   columns prop, defaulting to an even split that wraps when space runs out. */
+.blue-orange-form-row-item {
+    min-width: 0;
+    box-sizing: border-box;
+}
