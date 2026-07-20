@@ -13,6 +13,10 @@ interface Props {
 	onChange?: (value: Address) => void;
 	disabled?: boolean;
 	label?:string;
+	/** Registers the input with a surrounding FormGroup under this key. */
+	name?: string;
+	/** Overrides the message shown when a required field is left empty. */
+	requiredMessage?: string;
 	required?: boolean;
 	help?: string;
 	style?: React.CSSProperties;
@@ -33,6 +37,8 @@ export const AddressInput: React.FC<Props> = ({
 												  address,
 												  onChange,
 												  label,
+												  name,
+												  requiredMessage,
 												  required=false,
 												  disabled=false,
 												  help,
@@ -41,9 +47,6 @@ export const AddressInput: React.FC<Props> = ({
 												  validate,
 												  validateOnChange=false
 											  }) => {
-
-	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
-		useInputValidation<Address>(validate, validateOnChange);
 
 	const countries: Array<Country> = [
 		{
@@ -1541,6 +1544,15 @@ export const AddressInput: React.FC<Props> = ({
 	const [country, setCountry] = useState(inputAddress.country == null || inputAddress.country == undefined ? "Australia" : inputAddress.country);
 
 	const [addr, setAddr] = useState(inputAddress);
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<Address>(validate, validateOnChange, {
+			name: name,
+			label: label,
+			required: required,
+			requiredMessage: requiredMessage,
+			value: addr
+		});
 
 	const handleSelection = (event: ChangeEvent<HTMLSelectElement>) => {
 		var code = event.target.value;

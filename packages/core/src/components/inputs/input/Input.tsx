@@ -9,6 +9,10 @@ import {InputValidationMessage} from "../validation/InputValidationMessage";
 interface Props {
 	value?:string | null;
 	label?:string;
+	/** Registers the input with a surrounding FormGroup under this key. */
+	name?: string;
+	/** Overrides the message shown when a required field is left empty. */
+	requiredMessage?: string;
 	placeholder?: string;
 	isEmail?: boolean;
 	isNumber?: boolean;
@@ -33,6 +37,8 @@ interface Props {
 export const Input: React.FC<Props> = ({
 										   value,
 										   label,
+										   name,
+										   requiredMessage,
 										   placeholder="",
 										   onChange,
 										   isPassword,
@@ -55,8 +61,16 @@ export const Input: React.FC<Props> = ({
 
 }) => {
 
+	const [inputValue, setInputValue] = useState(value === undefined ? "" : value);
+
 	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
-		useInputValidation<string>(validate, validateOnChange);
+		useInputValidation<string>(validate, validateOnChange, {
+			name: name,
+			label: label,
+			required: required,
+			requiredMessage: requiredMessage,
+			value: inputValue ?? ""
+		});
 
 	const generateClassname = () => {
 		var className = "blue-orange-input";
@@ -65,8 +79,6 @@ export const Input: React.FC<Props> = ({
 		}
 		return className;
 	}
-
-	const [inputValue, setInputValue] = useState(value === undefined ? "" : value);
 
 	const [inputClassName, setInputClassName] = useState(generateClassname());
 

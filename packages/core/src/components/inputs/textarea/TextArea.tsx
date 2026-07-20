@@ -12,6 +12,10 @@ interface Props {
 	style?: React.CSSProperties;
 	onChange?: (value: string) => void;
 	label?:string;
+	/** Registers the input with a surrounding FormGroup under this key. */
+	name?: string;
+	/** Overrides the message shown when a required field is left empty. */
+	requiredMessage?: string;
 	required?: boolean;
 	disabled?: boolean;
 	help?: string;
@@ -26,6 +30,8 @@ export const TextArea: React.FC<Props> = ({
 											  style = {},
 											  onChange,
 											  label,
+											  name,
+											  requiredMessage,
 											  required=false,
 											  disabled=false,
 											  help,
@@ -33,10 +39,16 @@ export const TextArea: React.FC<Props> = ({
 											  validate,
 											  validateOnChange=false}) => {
 
-	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
-		useInputValidation<string>(validate, validateOnChange);
-
 	const [text, setText] = useState(value);
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<string>(validate, validateOnChange, {
+			name: name,
+			label: label,
+			required: required,
+			requiredMessage: requiredMessage,
+			value: text === undefined || text == null ? "" : text
+		});
 
 	useEffect(() => {
 		setText(value);

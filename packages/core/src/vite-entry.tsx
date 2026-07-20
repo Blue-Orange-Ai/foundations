@@ -85,6 +85,13 @@ export * from './components/inputs/emoji/emoji-selection/EmojiSelection'
 export * from './components/inputs/emoji/emoji-wrapper/EmojiWrapper'
 export * from './components/inputs/file-input-wrapper/FileInputWrapper'
 export * from './components/inputs/form/InputForm'
+export * from './components/inputs/form-group/FormActions'
+export * from './components/inputs/form-group/FormField'
+export * from './components/inputs/form-group/FormGroup'
+export * from './components/inputs/form-group/FormGroupContext'
+export * from './components/inputs/form-group/FormRow'
+export * from './components/inputs/form-group/FormSection'
+export * from './components/inputs/form-group/FormSubmitButton'
 export * from './components/inputs/help/HelpIcon'
 export * from './components/inputs/input/Input';
 export * from './components/inputs/phone/PhoneInput';

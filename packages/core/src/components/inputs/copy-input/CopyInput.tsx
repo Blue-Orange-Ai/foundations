@@ -9,6 +9,11 @@ import {InputValidationMessage} from "../validation/InputValidationMessage";
 interface Props {
 	value?:string | null;
 	label?:string;
+	/** Registers the input with a surrounding FormGroup under this key. */
+	name?: string;
+	/** Overrides the message shown when a required field is left empty. */
+	requiredMessage?: string;
+	required?: boolean;
 	style?: React.CSSProperties;
 	labelStyle?: React.CSSProperties;
 	disabled?: boolean;
@@ -17,10 +22,16 @@ interface Props {
 	validateOnChange?: boolean;
 }
 
-export const CopyInput: React.FC<Props> = ({value, label, style, labelStyle, disabled, help, validate, validateOnChange=false}) => {
+export const CopyInput: React.FC<Props> = ({value, label, name, requiredMessage, required=false, style, labelStyle, disabled, help, validate, validateOnChange=false}) => {
 
 	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
-		useInputValidation<string>(validate, validateOnChange);
+		useInputValidation<string>(validate, validateOnChange, {
+			name: name,
+			label: label,
+			required: required,
+			requiredMessage: requiredMessage,
+			value: value ?? ""
+		});
 
 	const [copied, setCopied] = useState<boolean>(false);
 

@@ -39,6 +39,10 @@ interface Props {
     placeholder?: string;
     onChange?: (groupIds: string[]) => void;
     label?: string;
+    /** Registers the input with a surrounding FormGroup under this key. */
+    name?: string;
+    /** Overrides the message shown when a required field is left empty. */
+    requiredMessage?: string;
     required?: boolean;
     help?: string;
     style?: React.CSSProperties;
@@ -53,6 +57,8 @@ export const TagInputGroups: React.FC<Props> = ({
     placeholder = "Search groups...",
     onChange,
     label,
+    name,
+    requiredMessage,
     required = false,
     help,
     style = {},
@@ -60,13 +66,20 @@ export const TagInputGroups: React.FC<Props> = ({
     validate,
     validateOnChange = false
 }) => {
+    const currentGroupIdsRef = useRef<string[]>(initialGroupIds);
+
     const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
-        useInputValidation<string[]>(validate, validateOnChange);
+        useInputValidation<string[]>(validate, validateOnChange, {
+            name: name,
+            label: label,
+            required: required,
+            requiredMessage: requiredMessage,
+            getValue: () => currentGroupIdsRef.current ?? []
+        });
 
     const tagifyRef = useRef<HTMLInputElement>(null);
     const tagifyInstanceRef = useRef<Tagify | null>(null);
     const onChangeRef = useRef(onChange);
-    const currentGroupIdsRef = useRef<string[]>(initialGroupIds);
     const handleChangeValidationRef = useRef(handleChangeValidation);
     const handleBlurValidationRef = useRef(handleBlurValidation);
     const [initialized, setInitialized] = useState(false);

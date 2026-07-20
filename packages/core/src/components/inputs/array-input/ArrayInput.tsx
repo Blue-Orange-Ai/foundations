@@ -18,6 +18,10 @@ type ArrayInputValue = (string | number)[] | string[][] | Address[] | Telephone[
 interface Props {
 	value?: (string | number)[] | string[][] | Address[] | Telephone[];
 	label?: string;
+	/** Registers the input with a surrounding FormGroup under this key. */
+	name?: string;
+	/** Overrides the message shown when a required field is left empty. */
+	requiredMessage?: string;
 	placeholder?: string;
 	isNumber?: boolean;
 	style?: React.CSSProperties;
@@ -36,6 +40,8 @@ interface Props {
 export const ArrayInput: React.FC<Props> = ({
 	value = [],
 	label,
+	name,
+	requiredMessage,
 	placeholder = "",
 	isNumber = false,
 	style = {},
@@ -51,13 +57,19 @@ export const ArrayInput: React.FC<Props> = ({
 	validateOnChange = false
 }) => {
 
-	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
-		useInputValidation<ArrayInputValue>(validate, validateOnChange);
-
 	const [items, setItems] = useState<(string | number)[]>(value as (string | number)[]);
 	const [tagListItems, setTagListItems] = useState<string[][]>(value as string[][] || []);
 	const [addressItems, setAddressItems] = useState<Address[]>(value as Address[] || []);
 	const [phoneItems, setPhoneItems] = useState<Telephone[]>(value as Telephone[] || []);
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<ArrayInputValue>(validate, validateOnChange, {
+			name: name,
+			label: label,
+			required: required,
+			requiredMessage: requiredMessage,
+			value: (variant === 'tag-list' ? tagListItems : variant === 'address-list' ? addressItems : variant === 'phone-list' ? phoneItems : items) ?? []
+		});
 
 	const handleItemChange = (index: number, newValue: string) => {
 		const updatedItems = [...items];

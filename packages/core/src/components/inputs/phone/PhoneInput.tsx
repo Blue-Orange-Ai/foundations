@@ -12,6 +12,10 @@ interface Props {
 	onChange?: (value: Telephone) => void;
 	label?:string;
 	disabled?:boolean;
+	/** Registers the input with a surrounding FormGroup under this key. */
+	name?: string;
+	/** Overrides the message shown when a required field is left empty. */
+	requiredMessage?: string;
 	required?: boolean;
 	help?: string;
 	style?: React.CSSProperties
@@ -32,15 +36,14 @@ export const PhoneInput: React.FC<Props> = ({
 												onChange,
 												label,
 												disabled=false,
+												name,
+												requiredMessage,
 												required=false,
 												help,
 												style={},
 												labelStyle={},
 												validate,
 												validateOnChange=false}) => {
-
-	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
-		useInputValidation<string>(validate, validateOnChange);
 
 	const combinedValue = (t: Telephone): string => {
 		return (t.extension == null ? "" : t.extension) + (t.number == null ? "" : t.number);
@@ -1529,6 +1532,15 @@ export const PhoneInput: React.FC<Props> = ({
 	const [tel, setTel] = useState(inputTelephone);
 
 	const [telNum, setTelNum] = useState(inputTelephone.number);
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<string>(validate, validateOnChange, {
+			name: name,
+			label: label,
+			required: required,
+			requiredMessage: requiredMessage,
+			value: combinedValue(tel)
+		});
 
 	const handleSelection = (event: ChangeEvent<HTMLSelectElement>) => {
 		var code = event.target.value;

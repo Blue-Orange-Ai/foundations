@@ -24,6 +24,10 @@ export interface SchemaField {
 interface Props {
 	value?: Record<string, any>[];
 	label?: string;
+	/** Registers the input with a surrounding FormGroup under this key. */
+	name?: string;
+	/** Overrides the message shown when a required field is left empty. */
+	requiredMessage?: string;
 	schema: SchemaField[];
 	style?: React.CSSProperties;
 	labelStyle?: React.CSSProperties;
@@ -38,6 +42,8 @@ interface Props {
 export const ObjectArrayInput: React.FC<Props> = ({
 	value = [],
 	label,
+	name,
+	requiredMessage,
 	schema,
 	style = {},
 	labelStyle = {},
@@ -49,10 +55,16 @@ export const ObjectArrayInput: React.FC<Props> = ({
 	validateOnChange = false
 }) => {
 
-	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
-		useInputValidation<Record<string, any>[]>(validate, validateOnChange);
-
 	const [items, setItems] = useState<Record<string, any>[]>(value);
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<Record<string, any>[]>(validate, validateOnChange, {
+			name: name,
+			label: label,
+			required: required,
+			requiredMessage: requiredMessage,
+			value: items ?? []
+		});
 
 	const createEmptyObject = (): Record<string, any> => {
 		const obj: Record<string, any> = {};

@@ -10,6 +10,11 @@ interface Props {
 	disabled?: boolean;
 	update?: Date;
 	style?: React.CSSProperties;
+	/** Registers the input with a surrounding FormGroup under this key. */
+	name?: string;
+	/** Overrides the message shown when a required field is left empty. */
+	requiredMessage?: string;
+	required?: boolean;
 	validate?: InputValidateCallback<boolean>;
 	validateOnChange?: boolean;
 }
@@ -20,13 +25,21 @@ export const Toggle: React.FC<Props> = ({
 													 disabled=false,
 													 update,
 													 style={},
+													 name,
+													 requiredMessage,
+													 required=false,
 													 validate,
 													 validateOnChange=false}) => {
 
-	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
-		useInputValidation<boolean>(validate, validateOnChange);
-
 	const isChecked = useRef<boolean>(checked);
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<boolean>(validate, validateOnChange, {
+			name: name,
+			required: required,
+			requiredMessage: requiredMessage,
+			getValue: () => isChecked.current
+		});
 
 	const [isCheckedState, setIsCheckedState] = useState(checked);
 

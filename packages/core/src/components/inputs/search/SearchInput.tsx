@@ -18,6 +18,11 @@ export interface SearchSuggestionGroup {
 interface Props {
 	value?: string;
 	label?: string;
+	/** Registers the input with a surrounding FormGroup under this key. */
+	name?: string;
+	/** Overrides the message shown when a required field is left empty. */
+	requiredMessage?: string;
+	required?: boolean;
 	icon?: string;
 	deletable?: boolean;
 	timeout?: number;
@@ -33,6 +38,9 @@ interface Props {
 export const SearchInput: React.FC<Props> = ({
 												 value="",
 												 label="Filter by keyword",
+												 name,
+												 requiredMessage,
+												 required=false,
 												 icon,
 												 deletable=false,
 												 timeout=500,
@@ -44,10 +52,17 @@ export const SearchInput: React.FC<Props> = ({
 												 validate,
 												 validateOnChange=false}) => {
 
-	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
-		useInputValidation<string>(validate, validateOnChange);
-
 	const [inputValue, setInputValue] = useState(value);
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<string>(validate, validateOnChange, {
+			name: name,
+			label: label,
+			required: required,
+			requiredMessage: requiredMessage,
+			value: inputValue ?? ""
+		});
+
 	const [isFocused, setIsFocused] = useState(false);
 	const [showAbove, setShowAbove] = useState(false);
 	const containerRef = useRef<HTMLDivElement>(null);

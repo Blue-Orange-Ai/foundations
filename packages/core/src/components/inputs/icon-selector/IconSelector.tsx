@@ -19,6 +19,10 @@ import {InputValidationMessage} from "../validation/InputValidationMessage";
 interface Props {
 	value?:string | null,
 	label?:string,
+	/** Registers the input with a surrounding FormGroup under this key. */
+	name?: string,
+	/** Overrides the message shown when a required field is left empty. */
+	requiredMessage?: string,
 	required?: boolean,
 	help?: string,
 	labelStyle?: React.CSSProperties,
@@ -30,6 +34,8 @@ interface Props {
 export const IconSelector: React.FC<Props> = ({
 										   value,
 										   label,
+										   name,
+										   requiredMessage,
 										   required=false,
 										   help,
 										   labelStyle={},
@@ -39,10 +45,16 @@ export const IconSelector: React.FC<Props> = ({
 
 }) => {
 
-	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
-		useInputValidation<string>(validate, validateOnChange);
-
 	const [selectedIcon, setSelectedIcon] = useState(value === undefined || value === null ? "" : value);
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<string>(validate, validateOnChange, {
+			name: name,
+			label: label,
+			required: required,
+			requiredMessage: requiredMessage,
+			value: selectedIcon
+		});
 
 	const dispatchChange = (selectedIcon: string) => {
 		setSelectedIcon(selectedIcon);

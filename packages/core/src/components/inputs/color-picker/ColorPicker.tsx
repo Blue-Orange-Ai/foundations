@@ -11,6 +11,10 @@ import {InputValidationMessage} from "../validation/InputValidationMessage";
 interface Props {
 	value?:string,
 	label?:string,
+	/** Registers the input with a surrounding FormGroup under this key. */
+	name?: string,
+	/** Overrides the message shown when a required field is left empty. */
+	requiredMessage?: string,
 	required?: boolean,
 	help?: string,
 	labelStyle?: React.CSSProperties,
@@ -22,6 +26,8 @@ interface Props {
 export const ColorPicker: React.FC<Props> = ({
 										   value,
 										   label,
+										   name,
+										   requiredMessage,
 										   required=false,
 										   help,
 										   labelStyle={},
@@ -31,8 +37,16 @@ export const ColorPicker: React.FC<Props> = ({
 
 }) => {
 
+	const [selectedColor, setSelectedColor] = useState<string>(value ?? "");
+
 	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
-		useInputValidation<string>(validate, validateOnChange);
+		useInputValidation<string>(validate, validateOnChange, {
+			name: name,
+			label: label,
+			required: required,
+			requiredMessage: requiredMessage,
+			value: selectedColor
+		});
 
 	const colorToHex = (color: string | null | undefined) => {
 		if (color == undefined || color == null) {
@@ -52,8 +66,6 @@ export const ColorPicker: React.FC<Props> = ({
 		let b = parseInt(match[2]).toString(16).padStart(2, "0");
 		return `#${r}${g}${b}`.toUpperCase();
 	}
-
-	const [selectedColor, setSelectedColor] = useState<string>(value ?? "");
 
 	const [hiddenInputColor, setHiddenInputColor] = useState<string>(colorToHex(value) ?? "");
 

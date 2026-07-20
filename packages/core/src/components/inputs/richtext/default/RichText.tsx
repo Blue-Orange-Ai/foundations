@@ -45,6 +45,11 @@ interface Props {
 	uploadPermissions?: Array<MediaPermission>,
 	disabled?: boolean,
 	clearState?: string,
+	/** Registers the input with a surrounding FormGroup under this key. */
+	name?: string,
+	/** Overrides the message shown when a required field is left empty. */
+	requiredMessage?: string,
+	required?: boolean,
 	onChange?: (content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean) => void,
 	onEnter?: () => void,
 	validate?: InputValidateCallback<string>,
@@ -72,12 +77,22 @@ export const RichText: React.FC<Props> = ({
 											  clearState = "",
 											  onChange,
 											  onEnter,
+											  name,
+											  requiredMessage,
+											  required = false,
 											  validate,
 											  validateOnChange = false
 										  }) => {
 
+	const editorRef = useRef<any>(null);
+
 	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
-		useInputValidation<string>(validate, validateOnChange);
+		useInputValidation<string>(validate, validateOnChange, {
+			name: name,
+			required: required,
+			requiredMessage: requiredMessage,
+			getValue: () => editorRef.current ? editorRef.current.getHTML() : ""
+		});
 
 	const initialiseFiles = (): RichTextEditorUploadedFile[] => {
 		var formattedFiles: RichTextEditorUploadedFile[] = []
@@ -120,8 +135,6 @@ export const RichText: React.FC<Props> = ({
 	const [mentions, setMentions] = useState<Array<string>>(generateMentions(content));
 
 	const editorContainerRef = useRef<HTMLDivElement>(null);
-
-	const editorRef = useRef<any>(null);
 
 	const initRef = useRef(false);
 

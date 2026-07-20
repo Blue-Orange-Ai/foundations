@@ -82,6 +82,7 @@ import {BreadcrumbsDevelopment} from "../components/breadcrumbs/BreadcrumbsDevel
 import {SearchPlaygroundDevelopment} from "../components/search/search-playground/SearchPlaygroundDevelopment";
 import {MetricsGroupDevelopment} from "../components/metrics/metrics-group/MetricsGroupDevelopment";
 import {ValidationDevelopment} from "../components/inputs/validation/ValidationDevelopment";
+import {FormGroupDevelopment} from "../components/inputs/form-group/FormGroupDevelopment";
 
 interface Props {
 }
@@ -308,6 +309,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							activeStyle={activeStyle}
 							icon={<i className="ri-shield-check-line"></i>}
 							onClick={() => navigate("/inputs-validation")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Form Group"}
+							active={component == "inputs-form-group"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-survey-line"></i>}
+							onClick={() => navigate("/inputs-form-group")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
 							label={"Address Input"}
@@ -835,6 +845,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "context-menu" && <ContextMenuDevelopment></ContextMenuDevelopment>}
 			{component == "sockets" && <SocketWorkspace></SocketWorkspace>}
 			{component == "inputs-validation" && <ValidationDevelopment></ValidationDevelopment>}
+			{component == "inputs-form-group" && <FormGroupDevelopment></FormGroupDevelopment>}
 			{component == "inputs-address" && <AddressInputDevelopment></AddressInputDevelopment>}
 			{component == "inputs-array" && <ArrayInputDevelopment></ArrayInputDevelopment>}
 			{component == "inputs-object-array" && <ObjectArrayInputDevelopment></ObjectArrayInputDevelopment>}

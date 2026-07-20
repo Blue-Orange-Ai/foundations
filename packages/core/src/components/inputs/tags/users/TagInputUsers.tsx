@@ -48,6 +48,10 @@ interface Props {
     placeholder?: string;
     onChange?: (userIds: string[]) => void;
     label?: string;
+    /** Registers the input with a surrounding FormGroup under this key. */
+    name?: string;
+    /** Overrides the message shown when a required field is left empty. */
+    requiredMessage?: string;
     required?: boolean;
     help?: string;
     style?: React.CSSProperties;
@@ -62,6 +66,8 @@ export const TagInputUsers: React.FC<Props> = ({
     placeholder = "Search users...",
     onChange,
     label,
+    name,
+    requiredMessage,
     required = false,
     help,
     style = {},
@@ -69,13 +75,20 @@ export const TagInputUsers: React.FC<Props> = ({
     validate,
     validateOnChange = false
 }) => {
+    const currentUserIdsRef = useRef<string[]>(initialUserIds);
+
     const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
-        useInputValidation<string[]>(validate, validateOnChange);
+        useInputValidation<string[]>(validate, validateOnChange, {
+            name: name,
+            label: label,
+            required: required,
+            requiredMessage: requiredMessage,
+            getValue: () => currentUserIdsRef.current ?? []
+        });
 
     const tagifyRef = useRef<HTMLInputElement>(null);
     const tagifyInstanceRef = useRef<Tagify | null>(null);
     const onChangeRef = useRef(onChange);
-    const currentUserIdsRef = useRef<string[]>(initialUserIds);
     const handleChangeValidationRef = useRef(handleChangeValidation);
     const handleBlurValidationRef = useRef(handleBlurValidation);
     const [initialized, setInitialized] = useState(false);

@@ -28,6 +28,10 @@ interface Props {
 	onUpdate?: (items: Array<DropdownItemObj>) => void,
 	filter?: boolean,
 	label?:string,
+	/** Registers the input with a surrounding FormGroup under this key. */
+	name?: string,
+	/** Overrides the message shown when a required field is left empty. */
+	requiredMessage?: string,
 	required?: boolean,
 	help?: string,
 	style?: React.CSSProperties,
@@ -49,6 +53,8 @@ export const Dropdown: React.FC<Props> = ({
 													onUpdate,
 													filter=false,
 												    label,
+												    name,
+												    requiredMessage,
 												    required=false,
 												    help,
 												    style = {},
@@ -56,9 +62,6 @@ export const Dropdown: React.FC<Props> = ({
 												    validate,
 												    validateOnChange=false
 											   }) => {
-
-	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
-		useInputValidation<DropdownItemObj>(validate, validateOnChange);
 
 	const items:Array<DropdownItemObj> = []
 
@@ -166,6 +169,17 @@ export const Dropdown: React.FC<Props> = ({
 	}
 
 	const [selectedValue, setSelectedValue] = useState<DropdownItemObj>(getInitialSelectedValue())
+
+	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
+		useInputValidation<DropdownItemObj>(validate, validateOnChange, {
+			name: name,
+			label: label,
+			required: required,
+			requiredMessage: requiredMessage,
+			// The placeholder is a real item, so it has to be normalised away for
+			// the required check to see an untouched dropdown as empty.
+			getValue: () => selectedValue?.reference === "-1" ? undefined as any : selectedValue
+		});
 
 	const [selectedItems, setSelectedItems] = useState<Array<DropdownItemObj>>(items.filter(item => item.selected))
 

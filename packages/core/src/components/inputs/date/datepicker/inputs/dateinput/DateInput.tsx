@@ -17,6 +17,10 @@ interface Props {
 	placeholder?: string,
 	onChange?: (date: Date) => void;
 	label?:string;
+	/** Registers the input with a surrounding FormGroup under this key. */
+	name?: string;
+	/** Overrides the message shown when a required field is left empty. */
+	requiredMessage?: string;
 	required?: boolean;
 	disabled?: boolean;
 	help?: string;
@@ -34,6 +38,8 @@ export const DateInput: React.FC<Props> = ({
 											   placeholder,
 											   onChange,
 											   label,
+											   name,
+											   requiredMessage,
 											   required=false,
 											   disabled=false,
 											   help,
@@ -44,8 +50,16 @@ export const DateInput: React.FC<Props> = ({
 											   validate,
 											   validateOnChange=false}) => {
 
+	const [dateValue, setDateValue] = useState(value);
+
 	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
-		useInputValidation<Date>(validate, validateOnChange);
+		useInputValidation<Date>(validate, validateOnChange, {
+			name: name,
+			label: label,
+			required: required,
+			requiredMessage: requiredMessage,
+			value: dateValue
+		});
 
 	const getFormattedDate = (date: Date | undefined, invalid: boolean) => {
 		if (invalid) {
@@ -58,8 +72,6 @@ export const DateInput: React.FC<Props> = ({
 	}
 
 	const [inputValue, setInputValue] = useState(getFormattedDate(value, false));
-
-	const [dateValue, setDateValue] = useState(value);
 
 	const [showDateSelection, setShowDateSelection] = useState(false);
 
