@@ -1,0 +1,57 @@
+.validation-demo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 16px;
+}
+
+.validation-demo-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.validation-demo-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.6;
+}
+
+.validation-demo-inline {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+}
+
+.validation-log-entry {
+    border-left: 3px solid transparent;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    background-color: rgba(127, 127, 127, 0.08);
+}
+
+.validation-log-entry-success {
+    border-left-color: var(--blue-orange-light-input-success-color);
+}
+
+.dark .validation-log-entry-success {
+    border-left-color: var(--blue-orange-dark-input-success-color);
+}
+
+.validation-log-entry-error {
+    border-left-color: var(--blue-orange-light-input-error-color);
+}
+
+.dark .validation-log-entry-error {
+    border-left-color: var(--blue-orange-dark-input-error-color);
+}
+
+.validation-log-field {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}

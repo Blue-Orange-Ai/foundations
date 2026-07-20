@@ -1,0 +1,23 @@
+
+.blue-orange-input-validation-message {
+    width: 100%;
+    font-size: 0.75rem;
+    margin-top: 4px;
+    line-height: 1.3;
+}
+
+.blue-orange-input-validation-message-error {
+    color: var(--blue-orange-light-input-error-color);
+}
+
+.dark .blue-orange-input-validation-message-error {
+    color: var(--blue-orange-dark-input-error-color);
+}
+
+.blue-orange-input-validation-message-success {
+    color: var(--blue-orange-light-input-success-color);
+}
+
+.dark .blue-orange-input-validation-message-success {
+    color: var(--blue-orange-dark-input-success-color);
+}
