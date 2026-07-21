@@ -219,6 +219,8 @@ export * from './components/text-decorations/general-heading/GeneralHeading';
 export * from './components/text-decorations/json-object-text/JsonObjectText';
 export * from './components/text-decorations/number-text/NumberText';
 export * from './components/text-decorations/number-units/NumberUnits';
+export * from './components/text-decorations/properties-display/PropertiesDisplay';
+export * from './components/text-decorations/copyable-text/CopyableText';
 
 // Rules
 export * from './components/rules/rule-editor/RuleEditor';

@@ -56,6 +56,8 @@ import {NumberUnitsDevelopment} from "../components/text-decorations/number-unit
 import {PageHeadingDevelopment} from "../components/text-decorations/page-heading/PageHeadingDevelopment";
 import {ParagraphDevelopment} from "../components/text-decorations/paragraph/ParagraphDevelopment";
 import {PercentageDevelopment} from "../components/text-decorations/percentage/PercentageDevelopment";
+import {CopyableTextDevelopment} from "../components/text-decorations/copyable-text/CopyableTextDevelopment";
+import {PropertiesDisplayDevelopment} from "../components/text-decorations/properties-display/PropertiesDisplayDevelopment";
 import {RenderHtmlDevelopment} from "../components/text-decorations/render-html/RenderHtmlDevelopment";
 import {TagDevelopment} from "../components/text-decorations/tag/TagDevelopment";
 import {TelephoneTextDevelopment} from "../components/text-decorations/telephone-text/TelephoneTextDevelopment";
@@ -656,6 +658,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/text-decoration-code-block")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
+							label={"Copyable Text"}
+							active={component == "text-decoration-copyable-text"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-file-copy-line"></i>}
+							onClick={() => navigate("/text-decoration-copyable-text")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
 							label={"Currency"}
 							active={component == "text-decoration-currency"}
 							focused={false}
@@ -773,6 +784,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/text-decoration-percentage")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
+							label={"Properties Display"}
+							active={component == "text-decoration-properties-display"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-list-check-2"></i>}
+							onClick={() => navigate("/text-decoration-properties-display")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
 							label={"Render HTML"}
 							active={component == "text-decoration-render-html"}
 							focused={false}
@@ -875,6 +895,8 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "text-decoration-page-heading" && <PageHeadingDevelopment></PageHeadingDevelopment>}
 			{component == "text-decoration-paragraph" && <ParagraphDevelopment></ParagraphDevelopment>}
 			{component == "text-decoration-percentage" && <PercentageDevelopment></PercentageDevelopment>}
+			{component == "text-decoration-copyable-text" && <CopyableTextDevelopment></CopyableTextDevelopment>}
+			{component == "text-decoration-properties-display" && <PropertiesDisplayDevelopment></PropertiesDisplayDevelopment>}
 			{component == "text-decoration-render-html" && <RenderHtmlDevelopment></RenderHtmlDevelopment>}
 			{component == "text-decoration-tag" && <TagDevelopment></TagDevelopment>}
 			{component == "text-decoration-telephone" && <TelephoneTextDevelopment></TelephoneTextDevelopment>}

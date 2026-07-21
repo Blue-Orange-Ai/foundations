@@ -1,0 +1,12 @@
+.copyable-text-development-callback {
+    font-size: 0.875rem;
+    padding: 10px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--blue-orange-light-border-color);
+    color: var(--blue-orange-light-default-text-color);
+}
+
+.dark .copyable-text-development-callback {
+    border: 1px solid var(--blue-orange-dark-border-color);
+    color: var(--blue-orange-dark-default-text-color);
+}
