@@ -1,0 +1,235 @@
+.blue-orange-calendar-time-grid {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: var(--blue-orange-light-calendar-background-color);
+    border-top: 1px solid var(--blue-orange-light-calendar-border-color);
+    overflow: hidden;
+}
+
+.dark .blue-orange-calendar-time-grid {
+    background-color: var(--blue-orange-dark-calendar-background-color);
+    border-top-color: var(--blue-orange-dark-calendar-border-color);
+}
+
+/* Shared gutter width so header, all-day row and body align. */
+.blue-orange-calendar-time-gutter-corner,
+.blue-orange-calendar-time-gutter-label,
+.blue-orange-calendar-time-gutter {
+    flex: 0 0 60px;
+    width: 60px;
+    box-sizing: border-box;
+}
+
+/* Header row */
+.blue-orange-calendar-time-header {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid var(--blue-orange-light-calendar-border-color);
+}
+
+.dark .blue-orange-calendar-time-header {
+    border-bottom-color: var(--blue-orange-dark-calendar-border-color);
+}
+
+.blue-orange-calendar-time-header-days {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+.blue-orange-calendar-time-header-day {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 6px 0;
+    cursor: pointer;
+    border-left: 1px solid var(--blue-orange-light-calendar-border-color);
+}
+
+.dark .blue-orange-calendar-time-header-day {
+    border-left-color: var(--blue-orange-dark-calendar-border-color);
+}
+
+.blue-orange-calendar-time-header-weekday {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--blue-orange-light-calendar-header-color);
+}
+
+.dark .blue-orange-calendar-time-header-weekday {
+    color: var(--blue-orange-dark-calendar-header-color);
+}
+
+.blue-orange-calendar-time-header-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px;
+    height: 26px;
+    border-radius: 13px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--blue-orange-light-calendar-text-color);
+}
+
+.dark .blue-orange-calendar-time-header-number {
+    color: var(--blue-orange-dark-calendar-text-color);
+}
+
+.blue-orange-calendar-time-header-number-weekend {
+    color: var(--blue-orange-light-calendar-weekend-color);
+}
+
+.dark .blue-orange-calendar-time-header-number-weekend {
+    color: var(--blue-orange-dark-calendar-weekend-color);
+}
+
+.blue-orange-calendar-time-header-number-today,
+.dark .blue-orange-calendar-time-header-number-today {
+    background-color: var(--blue-orange-light-calendar-today-badge-background-color);
+    color: var(--blue-orange-light-calendar-today-color);
+}
+
+/* All-day row */
+.blue-orange-calendar-time-allday {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid var(--blue-orange-light-calendar-border-color);
+    max-height: 96px;
+    overflow-y: auto;
+}
+
+.dark .blue-orange-calendar-time-allday {
+    border-bottom-color: var(--blue-orange-dark-calendar-border-color);
+}
+
+.blue-orange-calendar-time-gutter-label {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 4px 6px 0 0;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--blue-orange-light-calendar-time-label-color);
+}
+
+.dark .blue-orange-calendar-time-gutter-label {
+    color: var(--blue-orange-dark-calendar-time-label-color);
+}
+
+.blue-orange-calendar-time-allday-days {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+.blue-orange-calendar-time-allday-cell {
+    flex: 1 1 0;
+    padding: 4px 3px;
+    box-sizing: border-box;
+    border-left: 1px solid var(--blue-orange-light-calendar-border-color);
+}
+
+.dark .blue-orange-calendar-time-allday-cell {
+    border-left-color: var(--blue-orange-dark-calendar-border-color);
+}
+
+/* Body */
+.blue-orange-calendar-time-body {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    overflow-y: auto;
+    position: relative;
+}
+
+.blue-orange-calendar-time-gutter {
+    display: flex;
+    flex-direction: column;
+}
+
+.blue-orange-calendar-time-gutter-hour {
+    position: relative;
+}
+
+.blue-orange-calendar-time-gutter-hour-label {
+    position: absolute;
+    top: -7px;
+    right: 6px;
+    font-size: 10px;
+    white-space: nowrap;
+    color: var(--blue-orange-light-calendar-time-label-color);
+}
+
+.dark .blue-orange-calendar-time-gutter-hour-label {
+    color: var(--blue-orange-dark-calendar-time-label-color);
+}
+
+.blue-orange-calendar-time-columns {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+.blue-orange-calendar-time-column {
+    position: relative;
+    flex: 1 1 0;
+    border-left: 1px solid var(--blue-orange-light-calendar-border-color);
+}
+
+.dark .blue-orange-calendar-time-column {
+    border-left-color: var(--blue-orange-dark-calendar-border-color);
+}
+
+.blue-orange-calendar-time-column-today {
+    background-color: var(--blue-orange-light-calendar-today-background-color);
+}
+
+.dark .blue-orange-calendar-time-column-today {
+    background-color: var(--blue-orange-dark-calendar-today-background-color);
+}
+
+.blue-orange-calendar-time-slot {
+    border-bottom: 1px solid var(--blue-orange-light-calendar-border-color);
+    box-sizing: border-box;
+}
+
+.dark .blue-orange-calendar-time-slot {
+    border-bottom-color: var(--blue-orange-dark-calendar-border-color);
+}
+
+/* Now indicator */
+.blue-orange-calendar-time-now {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 0;
+    border-top: 2px solid var(--blue-orange-light-calendar-now-line-color);
+    z-index: 6;
+    pointer-events: none;
+}
+
+.dark .blue-orange-calendar-time-now {
+    border-top-color: var(--blue-orange-dark-calendar-now-line-color);
+}
+
+.blue-orange-calendar-time-now-dot {
+    position: absolute;
+    left: -4px;
+    top: -4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--blue-orange-light-calendar-now-line-color);
+}
+
+.dark .blue-orange-calendar-time-now-dot {
+    background-color: var(--blue-orange-dark-calendar-now-line-color);
+}

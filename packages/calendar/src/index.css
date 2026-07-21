@@ -1,0 +1,63 @@
+:root {
+    /* Surface / grid */
+    --blue-orange-light-calendar-background-color: white;
+    --blue-orange-dark-calendar-background-color: #1c1c1e;
+    --blue-orange-light-calendar-border-color: #e0e1e2;
+    --blue-orange-dark-calendar-border-color: #28282a;
+    --blue-orange-light-calendar-text-color: #18181b;
+    --blue-orange-dark-calendar-text-color: #f4f4f5;
+    --blue-orange-light-calendar-muted-text-color: #71717a;
+    --blue-orange-dark-calendar-muted-text-color: #a1a1aa;
+
+    /* Header cells (weekday labels) */
+    --blue-orange-light-calendar-header-color: #71717a;
+    --blue-orange-dark-calendar-header-color: #a1a1aa;
+
+    /* Day cells */
+    --blue-orange-light-calendar-cell-hover-color: #f7f7f9;
+    --blue-orange-dark-calendar-cell-hover-color: #28282a;
+    --blue-orange-light-calendar-cell-other-month-color: #a1a1aa;
+    --blue-orange-dark-calendar-cell-other-month-color: #52525b;
+    --blue-orange-light-calendar-cell-other-month-background: #fafafa;
+    --blue-orange-dark-calendar-cell-other-month-background: #202022;
+
+    /* Today */
+    --blue-orange-light-calendar-today-background-color: #ebf0fb;
+    --blue-orange-dark-calendar-today-background-color: #23324a;
+    --blue-orange-light-calendar-today-color: white;
+    --blue-orange-dark-calendar-today-color: white;
+    --blue-orange-light-calendar-today-badge-background-color: dodgerblue;
+    --blue-orange-dark-calendar-today-badge-background-color: dodgerblue;
+
+    /* Weekend */
+    --blue-orange-light-calendar-weekend-color: #e11d48;
+    --blue-orange-dark-calendar-weekend-color: #fb7185;
+
+    /* Time grid */
+    --blue-orange-light-calendar-time-label-color: #a1a1aa;
+    --blue-orange-dark-calendar-time-label-color: #71717a;
+    --blue-orange-light-calendar-now-line-color: #e11d48;
+    --blue-orange-dark-calendar-now-line-color: #fb7185;
+
+    /* Events (default) */
+    --blue-orange-light-calendar-event-background-color: #ebf0fb;
+    --blue-orange-dark-calendar-event-background-color: #23324a;
+    --blue-orange-light-calendar-event-color: #1e40af;
+    --blue-orange-dark-calendar-event-color: #bfdbfe;
+    --blue-orange-light-calendar-event-accent-color: dodgerblue;
+    --blue-orange-dark-calendar-event-accent-color: dodgerblue;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}

@@ -1,0 +1,27 @@
+.blue-orange-calendar-allday-event {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 1px 6px;
+    margin-bottom: 2px;
+    border-radius: 4px;
+    border-left: 3px solid var(--blue-orange-light-calendar-event-accent-color);
+    background-color: var(--blue-orange-light-calendar-event-background-color);
+    color: var(--blue-orange-light-calendar-event-color);
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.dark .blue-orange-calendar-allday-event {
+    border-left-color: var(--blue-orange-dark-calendar-event-accent-color);
+    background-color: var(--blue-orange-dark-calendar-event-background-color);
+    color: var(--blue-orange-dark-calendar-event-color);
+}
+
+.blue-orange-calendar-allday-event:hover {
+    filter: brightness(0.96);
+}

@@ -1,0 +1,38 @@
+.calendar-workspace {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    box-sizing: border-box;
+    background-color: #f7f7f9;
+}
+
+.calendar-workspace.dark {
+    background-color: #141416;
+}
+
+.calendar-workspace-topbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    flex-shrink: 0;
+}
+
+.calendar-workspace-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #18181b;
+}
+
+.calendar-workspace.dark .calendar-workspace-title {
+    color: #f4f4f5;
+}
+
+.calendar-workspace-stage {
+    flex-grow: 1;
+    min-height: 0;
+    padding: 0 20px 20px 20px;
+    box-sizing: border-box;
+}

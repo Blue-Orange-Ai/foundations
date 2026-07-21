@@ -1,0 +1,41 @@
+.blue-orange-calendar-event-modal-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    padding: 4px 0;
+    color: var(--blue-orange-light-calendar-text-color);
+}
+
+.dark .blue-orange-calendar-event-modal-row {
+    color: var(--blue-orange-dark-calendar-text-color);
+}
+
+.blue-orange-calendar-event-modal-icon {
+    font-size: 16px;
+    color: var(--blue-orange-light-calendar-muted-text-color);
+}
+
+.dark .blue-orange-calendar-event-modal-icon {
+    color: var(--blue-orange-dark-calendar-muted-text-color);
+}
+
+.blue-orange-calendar-event-modal-source-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    background-color: var(--blue-orange-light-calendar-event-accent-color);
+}
+
+.blue-orange-calendar-event-modal-body-text {
+    margin-top: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    color: var(--blue-orange-light-calendar-muted-text-color);
+}
+
+.dark .blue-orange-calendar-event-modal-body-text {
+    color: var(--blue-orange-dark-calendar-muted-text-color);
+}
