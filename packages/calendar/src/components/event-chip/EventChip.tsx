@@ -1,12 +1,21 @@
 import React from 'react';
-import moment from 'moment';
 import { ICalendarEvent, ICalendarSource } from '../../interfaces/CalendarInterfaces';
-import { isAllDayEvent, resolveEventColors } from '../../utils/calendarUtils';
+import {
+    eventResponseClass,
+    eventResponseState,
+    isAllDayEvent,
+    resolveEventColors,
+    zoned,
+} from '../../utils/calendarUtils';
 import './EventChip.css';
 
 interface Props {
     event: ICalendarEvent;
     sources?: ICalendarSource[];
+    /** IANA timezone the start time is shown in. Defaults to the browser's zone. */
+    timezone?: string;
+    /** Viewer's email, used to fade events not yet accepted. */
+    currentUser?: string;
     onClick?: (event: ICalendarEvent) => void;
 }
 
@@ -15,9 +24,16 @@ interface Props {
  * cells. All-day events render as a solid coloured bar; timed events render with
  * a leading dot and their start time, matching Toast UI Calendar's month grid.
  */
-export const EventChip: React.FC<Props> = ({ event, sources = [], onClick }) => {
-    const allDay = isAllDayEvent(event);
+export const EventChip: React.FC<Props> = ({
+    event,
+    sources = [],
+    timezone,
+    currentUser,
+    onClick,
+}) => {
+    const allDay = isAllDayEvent(event, timezone);
     const colors = resolveEventColors(event, sources);
+    const responseState = eventResponseState(event, currentUser);
 
     const handleClick = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -28,7 +44,7 @@ export const EventChip: React.FC<Props> = ({ event, sources = [], onClick }) => 
 
     const className = `blue-orange-calendar-event-chip no-select${
         allDay ? ' blue-orange-calendar-event-chip-allday' : ''
-    }`;
+    }${eventResponseClass('blue-orange-calendar-event-chip', responseState)}`;
 
     const style: React.CSSProperties = allDay
         ? { backgroundColor: colors.backgroundColor, color: colors.color }
@@ -44,7 +60,7 @@ export const EventChip: React.FC<Props> = ({ event, sources = [], onClick }) => 
             )}
             {!allDay && (
                 <span className="blue-orange-calendar-event-chip-time">
-                    {moment(event.start).format('h:mm A')}
+                    {zoned(event.start, timezone).format('h:mm A')}
                 </span>
             )}
             <span className="blue-orange-calendar-event-chip-title">{event.title}</span>

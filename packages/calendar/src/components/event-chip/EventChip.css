@@ -69,3 +69,16 @@
 .blue-orange-calendar-event-chip-allday .blue-orange-calendar-event-chip-title {
     font-weight: 600;
 }
+
+/* Not-yet-accepted invitations read faded in the month grid too. */
+.blue-orange-calendar-event-chip-pending {
+    opacity: 0.55;
+}
+
+.blue-orange-calendar-event-chip-declined {
+    opacity: 0.45;
+}
+
+.blue-orange-calendar-event-chip-declined .blue-orange-calendar-event-chip-title {
+    text-decoration: line-through;
+}

@@ -30,6 +30,31 @@
     color: #f4f4f5;
 }
 
+.calendar-workspace-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+}
+
+.calendar-workspace-control {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.calendar-workspace-control-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #52525b;
+}
+
+.calendar-workspace.dark .calendar-workspace-control-label {
+    color: #a1a1aa;
+}
+
 .calendar-workspace-stage {
     flex-grow: 1;
     min-height: 0;

@@ -10,10 +10,17 @@
     font-size: 11px;
     line-height: 16px;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.blue-orange-calendar-allday-event-text {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    cursor: pointer;
 }
 
 .dark .blue-orange-calendar-allday-event {
@@ -24,4 +31,17 @@
 
 .blue-orange-calendar-allday-event:hover {
     filter: brightness(0.96);
+}
+
+.blue-orange-calendar-allday-event-pending {
+    opacity: 0.55;
+    border-left-style: dashed;
+}
+
+.blue-orange-calendar-allday-event-declined {
+    opacity: 0.45;
+}
+
+.blue-orange-calendar-allday-event-declined .blue-orange-calendar-allday-event-text {
+    text-decoration: line-through;
 }

@@ -1,7 +1,10 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { TimeGridEvent } from './TimeGridEvent';
-import { ICalendarEvent } from '../../interfaces/CalendarInterfaces';
+import {
+    CalendarEventAvailability,
+    ICalendarEvent,
+} from '../../interfaces/CalendarInterfaces';
 import { ITimedEventLayout } from '../../utils/calendarUtils';
 
 const event: ICalendarEvent = {
@@ -47,5 +50,38 @@ describe('TimeGridEvent', () => {
         render(<TimeGridEvent layout={layout} onClick={onClick} />);
         fireEvent.click(screen.getByText('Design Review'));
         expect(onClick).toHaveBeenCalledWith(event);
+    });
+
+    it('shows a filled availability mark for a busy event', () => {
+        const { container } = render(
+            <TimeGridEvent
+                layout={{
+                    ...layout,
+                    event: { ...event, availability: CalendarEventAvailability.BUSY },
+                }}
+            />
+        );
+        const mark = container.querySelector(
+            '.blue-orange-calendar-availability-mark'
+        ) as HTMLElement;
+        expect(mark).toBeInTheDocument();
+        expect(mark.title).toBe('Busy');
+        expect(mark.style.backgroundColor).not.toBe('transparent');
+    });
+
+    it('shows an outlined availability mark for a free event', () => {
+        const { container } = render(
+            <TimeGridEvent
+                layout={{
+                    ...layout,
+                    event: { ...event, availability: CalendarEventAvailability.FREE },
+                }}
+            />
+        );
+        const mark = container.querySelector(
+            '.blue-orange-calendar-availability-mark'
+        ) as HTMLElement;
+        expect(mark.title).toBe('Free');
+        expect(mark.style.backgroundColor).toBe('transparent');
     });
 });

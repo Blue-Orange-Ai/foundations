@@ -1,7 +1,14 @@
 import React from 'react';
-import moment from 'moment';
 import { ICalendarEvent, ICalendarSource } from '../../interfaces/CalendarInterfaces';
-import { getEventsForDay, isSameMonth, isToday, isWeekend } from '../../utils/calendarUtils';
+import {
+    DEFAULT_NON_WORKING_DAYS,
+    getEventsForDay,
+    isNonWorkingDay,
+    isSameMonth,
+    isToday,
+    isWeekend,
+    zoned,
+} from '../../utils/calendarUtils';
 import { EventChip } from '../event-chip/EventChip';
 import './MonthDayCell.css';
 
@@ -13,6 +20,12 @@ interface Props {
     sources?: ICalendarSource[];
     /** Maximum number of event chips to show before collapsing to "+N more". */
     maxVisibleEvents?: number;
+    /** IANA timezone the cell is rendered in. Defaults to the browser's zone. */
+    timezone?: string;
+    /** Viewer's email, used to fade events not yet accepted. */
+    currentUser?: string;
+    /** Days of the week (0-6) given the non-working background. */
+    nonWorkingDays?: number[];
     onEventClick?: (event: ICalendarEvent) => void;
     onDayClick?: (date: Date) => void;
     onMoreClick?: (date: Date, events: ICalendarEvent[]) => void;
@@ -28,21 +41,28 @@ export const MonthDayCell: React.FC<Props> = ({
     events,
     sources = [],
     maxVisibleEvents = 3,
+    timezone,
+    currentUser,
+    nonWorkingDays = DEFAULT_NON_WORKING_DAYS,
     onEventClick,
     onDayClick,
     onMoreClick,
 }) => {
-    const dayEvents = getEventsForDay(events, date);
+    const dayEvents = getEventsForDay(events, date, timezone);
     const visible = dayEvents.slice(0, maxVisibleEvents);
     const overflow = dayEvents.length - visible.length;
 
-    const inMonth = isSameMonth(date, monthDate);
-    const today = isToday(date);
-    const weekend = isWeekend(date);
+    const inMonth = isSameMonth(date, monthDate, timezone);
+    const today = isToday(date, timezone);
+    const weekend = isWeekend(date, timezone);
+    const nonWorking = isNonWorkingDay(date, nonWorkingDays, timezone);
 
     const classNames = [
         'blue-orange-calendar-month-cell',
         !inMonth ? 'blue-orange-calendar-month-cell-other' : '',
+        // Non-working days get their own wash, but only inside the current month
+        // so the "other month" cells keep their muted look.
+        nonWorking && inMonth ? 'blue-orange-calendar-month-cell-nonworking' : '',
         today ? 'blue-orange-calendar-month-cell-today' : '',
     ]
         .filter(Boolean)
@@ -72,7 +92,7 @@ export const MonthDayCell: React.FC<Props> = ({
     return (
         <div className={classNames} onClick={handleDayClick}>
             <div className="blue-orange-calendar-month-cell-header">
-                <span className={numberClassNames}>{moment(date).date()}</span>
+                <span className={numberClassNames}>{zoned(date, timezone).date()}</span>
             </div>
             <div className="blue-orange-calendar-month-cell-events">
                 {visible.map((event) => (
@@ -80,6 +100,8 @@ export const MonthDayCell: React.FC<Props> = ({
                         key={event.id}
                         event={event}
                         sources={sources}
+                        timezone={timezone}
+                        currentUser={currentUser}
                         onClick={onEventClick}
                     />
                 ))}

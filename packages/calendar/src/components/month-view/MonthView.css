@@ -47,6 +47,14 @@
     color: var(--blue-orange-dark-calendar-weekend-color);
 }
 
+.blue-orange-calendar-month-weekday-nonworking {
+    background-color: var(--blue-orange-light-calendar-nonworking-background-color);
+}
+
+.dark .blue-orange-calendar-month-weekday-nonworking {
+    background-color: var(--blue-orange-dark-calendar-nonworking-background-color);
+}
+
 .blue-orange-calendar-month-grid {
     display: flex;
     flex-direction: column;

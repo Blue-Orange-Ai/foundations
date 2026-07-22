@@ -376,6 +376,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/inputs-copy")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
+							label={"Date Picker"}
+							active={component == "inputs-date"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-calendar-2-line"></i>}
+							onClick={() => navigate("/inputs-date")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
 							label={"Icon Selector"}
 							active={component == "inputs-icon"}
 							focused={false}

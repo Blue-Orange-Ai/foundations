@@ -1,9 +1,14 @@
 import moment from 'moment';
 import {
+    CalendarEventAvailability,
     CalendarEventCategory,
+    CalendarEventResponse,
     ICalendarEvent,
     ICalendarSource,
 } from '../../interfaces/CalendarInterfaces';
+
+/** The signed-in user in the dev harness; events they organise are "theirs". */
+export const CURRENT_USER = 'me@blueorange.ai';
 
 export const mockSources: ICalendarSource[] = [
     {
@@ -46,6 +51,11 @@ export const mockEvents: ICalendarEvent[] = [
         end: atWeek(1, 9, 30),
         category: CalendarEventCategory.TIME,
         location: 'Zoom',
+        // Organised by the viewer: always "accepted", editable and draggable.
+        organizer: CURRENT_USER,
+        reminderMinutes: 10,
+        requiredGuests: ['alex@blueorange.ai', 'sam@blueorange.ai'],
+        optionalGuests: ['jo@blueorange.ai'],
     },
     {
         id: '2',
@@ -54,8 +64,12 @@ export const mockEvents: ICalendarEvent[] = [
         start: atWeek(1, 13, 0),
         end: atWeek(1, 14, 30),
         category: CalendarEventCategory.TIME,
-        body: 'Walk through the new calendar package UI.',
+        body: '<p>Walk through the new calendar package UI.</p>',
         location: 'Room 4',
+        // An invitation the viewer has not answered yet: renders faded.
+        organizer: 'alex@blueorange.ai',
+        response: CalendarEventResponse.NEEDS_ACTION,
+        requiredGuests: [CURRENT_USER, 'alex@blueorange.ai'],
     },
     {
         id: '3',
@@ -72,6 +86,9 @@ export const mockEvents: ICalendarEvent[] = [
         start: atWeek(2, 11, 0),
         end: atWeek(2, 11, 45),
         category: CalendarEventCategory.TIME,
+        // Tentatively accepted: also renders faded until confirmed.
+        organizer: 'alex@blueorange.ai',
+        response: CalendarEventResponse.TENTATIVE,
     },
     {
         id: '5',
@@ -81,6 +98,9 @@ export const mockEvents: ICalendarEvent[] = [
         end: atWeek(3, 13, 0),
         category: CalendarEventCategory.TIME,
         location: 'The Deli',
+        // The viewer's own event, marked free rather than busy.
+        organizer: CURRENT_USER,
+        availability: CalendarEventAvailability.FREE,
     },
     {
         id: '6',
@@ -89,6 +109,9 @@ export const mockEvents: ICalendarEvent[] = [
         start: atWeek(3, 14, 0),
         end: atWeek(3, 15, 30),
         category: CalendarEventCategory.TIME,
+        // Declined: shown faded and struck through.
+        organizer: 'jo@blueorange.ai',
+        response: CalendarEventResponse.DECLINED,
     },
     {
         id: '7',

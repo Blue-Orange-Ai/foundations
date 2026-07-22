@@ -1,0 +1,56 @@
+.date-demo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 16px;
+}
+
+.date-demo-calendars {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 32px;
+    margin-top: 16px;
+}
+
+.date-demo-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.date-demo-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.6;
+}
+
+.date-demo-calendar {
+    width: fit-content;
+    padding: 8px;
+    border: 1px solid var(--blue-orange-light-date-picker-border-color);
+    border-radius: 4px;
+}
+
+.dark .date-demo-calendar {
+    border-color: var(--blue-orange-dark-date-picker-border-color);
+}
+
+.date-log-entry {
+    border-left: 3px solid var(--blue-orange-light-input-success-color);
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    background-color: rgba(127, 127, 127, 0.08);
+}
+
+.dark .date-log-entry {
+    border-left-color: var(--blue-orange-dark-input-success-color);
+}
+
+.date-log-field {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}

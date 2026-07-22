@@ -45,4 +45,21 @@ describe('CalendarToolbar', () => {
         rerender(<CalendarToolbar {...baseProps} onCreate={jest.fn()} />);
         expect(screen.getByText('New event')).toBeInTheDocument();
     });
+
+    it('marks the active view button and follows a view change', () => {
+        const { container, rerender } = render(
+            <CalendarToolbar {...baseProps} view={CalendarView.WEEK} />
+        );
+        const primary = () =>
+            Array.from(
+                container.querySelectorAll(
+                    '.blue-orange-calendar-toolbar-views .foundations-primary-btn'
+                )
+            ).map((node) => node.textContent);
+
+        expect(primary()).toEqual(['Week']);
+
+        rerender(<CalendarToolbar {...baseProps} view={CalendarView.DAY} />);
+        expect(primary()).toEqual(['Day']);
+    });
 });

@@ -29,8 +29,8 @@
 }
 
 .blue-orange-calendar-toolbar-title {
-    font-size: 18px;
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: 600;
     white-space: nowrap;
     color: var(--blue-orange-light-calendar-text-color);
 }
