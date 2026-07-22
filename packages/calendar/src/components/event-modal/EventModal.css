@@ -1,0 +1,255 @@
+.blue-orange-calendar-event-detail {
+    display: flex;
+    flex-direction: column;
+    /* Matches the create / edit form's field spacing so viewing and editing an
+       event share the same rhythm. */
+    gap: 14px;
+}
+
+/* Header: colour swatch + title, matching the create form. Busy is filled,
+   free shows only its border, same radius as the inline calendar day square. */
+.blue-orange-calendar-event-detail-header-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.blue-orange-calendar-event-detail-header-left .blue-orange-modal-header-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.blue-orange-calendar-event-detail-swatch {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 2px solid;
+    box-sizing: border-box;
+}
+
+/* Tags row: the calendar name and, for invitations, the viewer's status. */
+.blue-orange-calendar-event-detail-tags {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.blue-orange-calendar-event-detail-tag {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 10px;
+    border: 1px solid;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.blue-orange-calendar-event-detail-tag-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 3px;
+}
+
+.blue-orange-calendar-event-detail-response {
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: var(--blue-orange-light-calendar-cell-hover-color);
+    color: var(--blue-orange-light-calendar-muted-text-color);
+}
+
+.dark .blue-orange-calendar-event-detail-response {
+    background-color: var(--blue-orange-dark-calendar-cell-hover-color);
+    color: var(--blue-orange-dark-calendar-muted-text-color);
+}
+
+.blue-orange-calendar-event-detail-response-accepted {
+    background-color: rgba(46, 160, 67, 0.16);
+    color: #2ea043;
+}
+
+.blue-orange-calendar-event-detail-response-declined {
+    background-color: rgba(218, 54, 51, 0.16);
+    color: #da3633;
+}
+
+/* Detail rows: an icon in a fixed gutter, then the value. The icon is centred
+   against its control so single-line values and interactive components line up. */
+.blue-orange-calendar-event-detail-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--blue-orange-light-calendar-text-color);
+}
+
+.dark .blue-orange-calendar-event-detail-row {
+    color: var(--blue-orange-dark-calendar-text-color);
+}
+
+/* Rows whose value wraps over several lines (the time + duration, the guest
+   lists) keep the icon aligned to the first line instead. */
+.blue-orange-calendar-event-detail-row-top {
+    align-items: flex-start;
+}
+
+.blue-orange-calendar-event-detail-row-top .blue-orange-calendar-event-detail-icon {
+    margin-top: 2px;
+}
+
+.blue-orange-calendar-event-detail-icon {
+    flex-shrink: 0;
+    font-size: 16px;
+    color: var(--blue-orange-light-calendar-muted-text-color);
+}
+
+.dark .blue-orange-calendar-event-detail-icon {
+    color: var(--blue-orange-dark-calendar-muted-text-color);
+}
+
+.blue-orange-calendar-event-detail-when {
+    font-weight: 600;
+}
+
+.blue-orange-calendar-event-detail-duration {
+    font-size: 12px;
+    color: var(--blue-orange-light-calendar-muted-text-color);
+}
+
+.dark .blue-orange-calendar-event-detail-duration {
+    color: var(--blue-orange-dark-calendar-muted-text-color);
+}
+
+.blue-orange-calendar-event-detail-guests {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+}
+
+.blue-orange-calendar-event-detail-guests-label {
+    display: inline-block;
+    min-width: 66px;
+    font-weight: 600;
+    color: var(--blue-orange-light-calendar-muted-text-color);
+}
+
+.dark .blue-orange-calendar-event-detail-guests-label {
+    color: var(--blue-orange-dark-calendar-muted-text-color);
+}
+
+.blue-orange-calendar-event-detail-body {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--blue-orange-light-calendar-text-color);
+}
+
+.dark .blue-orange-calendar-event-detail-body {
+    color: var(--blue-orange-dark-calendar-text-color);
+}
+
+.blue-orange-calendar-event-detail-body p {
+    margin: 0 0 6px;
+}
+
+.blue-orange-calendar-event-detail-reminder {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.blue-orange-calendar-event-detail-colour {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.blue-orange-calendar-event-detail-custom-reminder {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.blue-orange-calendar-event-detail-custom-suffix {
+    font-size: 13px;
+    color: var(--blue-orange-light-calendar-muted-text-color);
+}
+
+/* A row of footer buttons with a consistent gap. ModalFooter itself provides
+   the left / right split via ModalFooterLeft / ModalFooterRight. */
+.blue-orange-calendar-event-detail-btn-row {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
+
+/* Confirmation / decline screens. */
+.blue-orange-calendar-event-detail-confirm {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.blue-orange-calendar-event-detail-confirm-text {
+    margin: 0;
+    font-size: 14px;
+    color: var(--blue-orange-light-calendar-text-color);
+}
+
+.dark .blue-orange-calendar-event-detail-confirm-text {
+    color: var(--blue-orange-dark-calendar-text-color);
+}
+
+.blue-orange-calendar-event-detail-confirm-choice {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--blue-orange-light-calendar-text-color);
+}
+
+.dark .blue-orange-calendar-event-detail-confirm-choice {
+    color: var(--blue-orange-dark-calendar-text-color);
+}
+
+.blue-orange-calendar-event-detail-confirm-note {
+    margin: 0;
+    font-size: 12px;
+    color: var(--blue-orange-light-calendar-muted-text-color);
+}
+
+.dark .blue-orange-calendar-event-detail-confirm-note {
+    color: var(--blue-orange-dark-calendar-muted-text-color);
+}
+
+.blue-orange-calendar-event-detail-propose {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.blue-orange-calendar-event-detail-propose > div {
+    flex: 1 1 180px;
+    min-width: 0;
+}
+
+.blue-orange-calendar-event-detail-propose-sep {
+    flex: 0 0 auto;
+    color: var(--blue-orange-light-calendar-muted-text-color);
+}

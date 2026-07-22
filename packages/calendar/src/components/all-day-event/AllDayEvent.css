@@ -1,0 +1,53 @@
+.blue-orange-calendar-allday-event {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 1px 6px;
+    margin-bottom: 2px;
+    border-radius: 4px;
+    border-left: 3px solid var(--blue-orange-light-calendar-event-accent-color);
+    background-color: var(--blue-orange-light-calendar-event-background-color);
+    color: var(--blue-orange-light-calendar-event-color);
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.blue-orange-calendar-allday-event-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.blue-orange-calendar-allday-event-repeat {
+    flex-shrink: 0;
+    font-size: 11px;
+    opacity: 0.75;
+}
+
+.dark .blue-orange-calendar-allday-event {
+    border-left-color: var(--blue-orange-dark-calendar-event-accent-color);
+    background-color: var(--blue-orange-dark-calendar-event-background-color);
+    color: var(--blue-orange-dark-calendar-event-color);
+}
+
+.blue-orange-calendar-allday-event:hover {
+    filter: brightness(0.96);
+}
+
+.blue-orange-calendar-allday-event-pending {
+    opacity: 0.55;
+    border-left-style: dashed;
+}
+
+.blue-orange-calendar-allday-event-declined {
+    opacity: 0.45;
+}
+
+.blue-orange-calendar-allday-event-declined .blue-orange-calendar-allday-event-text {
+    text-decoration: line-through;
+}

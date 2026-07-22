@@ -1,0 +1,316 @@
+.blue-orange-calendar-time-grid {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: var(--blue-orange-light-calendar-background-color);
+    border-top: 1px solid var(--blue-orange-light-calendar-border-color);
+    overflow: hidden;
+}
+
+.dark .blue-orange-calendar-time-grid {
+    background-color: var(--blue-orange-dark-calendar-background-color);
+    border-top-color: var(--blue-orange-dark-calendar-border-color);
+}
+
+/* Shared gutter width so header, all-day row and body align. */
+.blue-orange-calendar-time-gutter-corner,
+.blue-orange-calendar-time-gutter-spacer,
+.blue-orange-calendar-time-gutter {
+    flex: 0 0 60px;
+    width: 60px;
+    box-sizing: border-box;
+}
+
+/* The timezone label sits in the corner above the hour gutter, lined up with
+   the hour labels below it. */
+.blue-orange-calendar-time-gutter-corner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+}
+
+.blue-orange-calendar-time-timezone {
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--blue-orange-light-calendar-header-color);
+}
+
+.dark .blue-orange-calendar-time-timezone {
+    color: var(--blue-orange-dark-calendar-header-color);
+}
+
+/* Clickable variant, shown when a timezone picker is wired up. */
+.blue-orange-calendar-time-timezone-button {
+    padding: 2px 4px;
+    border: none;
+    border-radius: 4px;
+    background: none;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.blue-orange-calendar-time-timezone-button:hover {
+    background-color: var(--blue-orange-light-calendar-cell-hover-color);
+}
+
+.dark .blue-orange-calendar-time-timezone-button:hover {
+    background-color: var(--blue-orange-dark-calendar-cell-hover-color);
+}
+
+/* Header row */
+.blue-orange-calendar-time-header {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid var(--blue-orange-light-calendar-border-color);
+}
+
+.dark .blue-orange-calendar-time-header {
+    border-bottom-color: var(--blue-orange-dark-calendar-border-color);
+}
+
+.blue-orange-calendar-time-header-days {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+.blue-orange-calendar-time-header-day {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 6px 0;
+    cursor: pointer;
+    border-left: 1px solid var(--blue-orange-light-calendar-border-color);
+}
+
+.dark .blue-orange-calendar-time-header-day {
+    border-left-color: var(--blue-orange-dark-calendar-border-color);
+}
+
+.blue-orange-calendar-time-header-weekday {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--blue-orange-light-calendar-header-color);
+}
+
+.dark .blue-orange-calendar-time-header-weekday {
+    color: var(--blue-orange-dark-calendar-header-color);
+}
+
+.blue-orange-calendar-time-header-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px;
+    height: 26px;
+    border-radius: 13px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--blue-orange-light-calendar-text-color);
+}
+
+.dark .blue-orange-calendar-time-header-number {
+    color: var(--blue-orange-dark-calendar-text-color);
+}
+
+.blue-orange-calendar-time-header-number-weekend {
+    color: var(--blue-orange-light-calendar-weekend-color);
+}
+
+.dark .blue-orange-calendar-time-header-number-weekend {
+    color: var(--blue-orange-dark-calendar-weekend-color);
+}
+
+/* A filled square, matching the inline calendar's selected-day style rather
+   than a circular badge. */
+.blue-orange-calendar-time-header-number-today {
+    background-color: var(--blue-orange-light-calendar-today-badge-background-color);
+    color: var(--blue-orange-light-calendar-today-color);
+    border-radius: 4px;
+}
+
+.dark .blue-orange-calendar-time-header-number-today {
+    background-color: var(--blue-orange-dark-calendar-today-badge-background-color);
+    color: var(--blue-orange-dark-calendar-today-color);
+}
+
+/* All-day events. The row itself takes up no vertical space — its contents are
+   absolutely positioned so they float over the top of the time body. */
+.blue-orange-calendar-time-allday {
+    position: relative;
+    height: 0;
+    z-index: 7;
+}
+
+.blue-orange-calendar-time-allday-floating {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: row;
+    padding-top: 4px;
+    /* Let clicks fall through to the grid everywhere except on the events. */
+    pointer-events: none;
+}
+
+.blue-orange-calendar-time-allday-days {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+.blue-orange-calendar-time-allday-cell {
+    flex: 1 1 0;
+    /* Matching right gutter to the timed events below, so the same vertical
+       strip of column stays clear the whole way down. */
+    padding: 0 14px 0 3px;
+    box-sizing: border-box;
+}
+
+/* Re-enable interaction on the floating events themselves. */
+.blue-orange-calendar-time-allday-cell > * {
+    pointer-events: auto;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+}
+
+/* Body */
+.blue-orange-calendar-time-body {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    overflow-y: auto;
+    position: relative;
+    /* Size the gutter and columns to the full 24h of content rather than
+       stretching them to the visible height, so the column dividers run the
+       whole length of the grid instead of stopping at the fold. */
+    align-items: flex-start;
+}
+
+/* Block layout, matching the day columns, so each hour keeps its exact
+   HOUR_HEIGHT and the labels stay lined up with the slot boundaries. */
+.blue-orange-calendar-time-gutter {
+    display: block;
+    min-height: 100%;
+}
+
+.blue-orange-calendar-time-gutter-hour {
+    position: relative;
+    box-sizing: border-box;
+}
+
+.blue-orange-calendar-time-gutter-hour-label {
+    position: absolute;
+    top: -7px;
+    right: 6px;
+    font-size: 10px;
+    white-space: nowrap;
+    color: var(--blue-orange-light-calendar-time-label-color);
+}
+
+.dark .blue-orange-calendar-time-gutter-hour-label {
+    color: var(--blue-orange-dark-calendar-time-label-color);
+}
+
+/* Half-hour labels sit between the hours, so play them down. */
+.blue-orange-calendar-time-gutter-half-label {
+    font-size: 9px;
+    opacity: 0.65;
+}
+
+.blue-orange-calendar-time-columns {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    /* Keep filling the body when the viewport is taller than 24 hours. */
+    min-height: 100%;
+}
+
+.blue-orange-calendar-time-column {
+    position: relative;
+    flex: 1 1 0;
+    border-left: 1px solid var(--blue-orange-light-calendar-border-color);
+}
+
+.dark .blue-orange-calendar-time-column {
+    border-left-color: var(--blue-orange-dark-calendar-border-color);
+}
+
+/* Today's column is left untinted so it reads the same as every other day.
+   The class is still applied as a styling hook for consumers. */
+
+/* Non-working days (e.g. the weekend) get a light grey wash down the column,
+   its header, and the all-day cell above it. */
+.blue-orange-calendar-time-column-nonworking {
+    background-color: var(--blue-orange-light-calendar-nonworking-background-color);
+}
+
+.dark .blue-orange-calendar-time-column-nonworking {
+    background-color: var(--blue-orange-dark-calendar-nonworking-background-color);
+}
+
+.blue-orange-calendar-time-header-day-nonworking,
+.blue-orange-calendar-time-allday-cell-nonworking {
+    background-color: var(--blue-orange-light-calendar-nonworking-background-color);
+}
+
+.dark .blue-orange-calendar-time-header-day-nonworking,
+.dark .blue-orange-calendar-time-allday-cell-nonworking {
+    background-color: var(--blue-orange-dark-calendar-nonworking-background-color);
+}
+
+.blue-orange-calendar-time-slot {
+    border-bottom: 1px solid var(--blue-orange-light-calendar-border-color);
+    box-sizing: border-box;
+}
+
+.dark .blue-orange-calendar-time-slot {
+    border-bottom-color: var(--blue-orange-dark-calendar-border-color);
+}
+
+/* Half-hour divider, drawn lighter than the solid hour line. */
+.blue-orange-calendar-time-slot-half {
+    border-bottom: 1px dashed var(--blue-orange-light-calendar-border-color);
+    box-sizing: border-box;
+    opacity: 0.6;
+}
+
+.dark .blue-orange-calendar-time-slot-half {
+    border-bottom-color: var(--blue-orange-dark-calendar-border-color);
+}
+
+/* Now indicator */
+.blue-orange-calendar-time-now {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 0;
+    border-top: 2px solid var(--blue-orange-light-calendar-now-line-color);
+    z-index: 6;
+    pointer-events: none;
+}
+
+.dark .blue-orange-calendar-time-now {
+    border-top-color: var(--blue-orange-dark-calendar-now-line-color);
+}
+
+.blue-orange-calendar-time-now-dot {
+    position: absolute;
+    left: -4px;
+    top: -4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--blue-orange-light-calendar-now-line-color);
+}
+
+.dark .blue-orange-calendar-time-now-dot {
+    background-color: var(--blue-orange-dark-calendar-now-line-color);
+}

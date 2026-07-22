@@ -1,0 +1,131 @@
+.blue-orange-calendar-month-cell {
+    display: flex;
+    flex-direction: column;
+    min-height: 96px;
+    box-sizing: border-box;
+    padding: 4px;
+    border-right: 1px solid var(--blue-orange-light-calendar-border-color);
+    border-bottom: 1px solid var(--blue-orange-light-calendar-border-color);
+    background-color: var(--blue-orange-light-calendar-background-color);
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.dark .blue-orange-calendar-month-cell {
+    border-right-color: var(--blue-orange-dark-calendar-border-color);
+    border-bottom-color: var(--blue-orange-dark-calendar-border-color);
+    background-color: var(--blue-orange-dark-calendar-background-color);
+}
+
+.blue-orange-calendar-month-cell:hover {
+    background-color: var(--blue-orange-light-calendar-cell-hover-color);
+}
+
+.dark .blue-orange-calendar-month-cell:hover {
+    background-color: var(--blue-orange-dark-calendar-cell-hover-color);
+}
+
+.blue-orange-calendar-month-cell-other {
+    background-color: var(--blue-orange-light-calendar-cell-other-month-background);
+}
+
+.dark .blue-orange-calendar-month-cell-other {
+    background-color: var(--blue-orange-dark-calendar-cell-other-month-background);
+}
+
+/* Non-working days (e.g. the weekend). Placed before the today rule so that
+   today still wins its own background when it falls on a non-working day. */
+.blue-orange-calendar-month-cell-nonworking {
+    background-color: var(--blue-orange-light-calendar-nonworking-background-color);
+}
+
+.dark .blue-orange-calendar-month-cell-nonworking {
+    background-color: var(--blue-orange-dark-calendar-nonworking-background-color);
+}
+
+.blue-orange-calendar-month-cell-today {
+    background-color: var(--blue-orange-light-calendar-today-background-color);
+}
+
+.dark .blue-orange-calendar-month-cell-today {
+    background-color: var(--blue-orange-dark-calendar-today-background-color);
+}
+
+.blue-orange-calendar-month-cell-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-bottom: 2px;
+}
+
+.blue-orange-calendar-month-cell-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 4px;
+    box-sizing: border-box;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 10px;
+    color: var(--blue-orange-light-calendar-text-color);
+}
+
+.dark .blue-orange-calendar-month-cell-number {
+    color: var(--blue-orange-dark-calendar-text-color);
+}
+
+.blue-orange-calendar-month-cell-other .blue-orange-calendar-month-cell-number {
+    color: var(--blue-orange-light-calendar-cell-other-month-color);
+}
+
+.dark .blue-orange-calendar-month-cell-other .blue-orange-calendar-month-cell-number {
+    color: var(--blue-orange-dark-calendar-cell-other-month-color);
+}
+
+.blue-orange-calendar-month-cell-number-weekend {
+    color: var(--blue-orange-light-calendar-weekend-color);
+}
+
+.dark .blue-orange-calendar-month-cell-number-weekend {
+    color: var(--blue-orange-dark-calendar-weekend-color);
+}
+
+/* A filled square, consistent with the inline calendar's selected-day style. */
+.blue-orange-calendar-month-cell-number-today {
+    background-color: var(--blue-orange-light-calendar-today-badge-background-color);
+    color: var(--blue-orange-light-calendar-today-color);
+    border-radius: 4px;
+}
+
+.dark .blue-orange-calendar-month-cell-number-today {
+    background-color: var(--blue-orange-dark-calendar-today-badge-background-color);
+    color: var(--blue-orange-dark-calendar-today-color);
+}
+
+.blue-orange-calendar-month-cell-events {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex-grow: 1;
+    /* Keep a strip of bare cell on the right so the day itself is always
+       clickable, no matter how many events are stacked in it. */
+    padding-right: 14px;
+}
+
+.blue-orange-calendar-month-cell-more {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 0 4px;
+    color: var(--blue-orange-light-calendar-muted-text-color);
+    cursor: pointer;
+}
+
+.dark .blue-orange-calendar-month-cell-more {
+    color: var(--blue-orange-dark-calendar-muted-text-color);
+}
+
+.blue-orange-calendar-month-cell-more:hover {
+    text-decoration: underline;
+}

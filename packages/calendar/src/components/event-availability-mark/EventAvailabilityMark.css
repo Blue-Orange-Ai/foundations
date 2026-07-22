@@ -1,0 +1,9 @@
+.blue-orange-calendar-availability-mark {
+    flex-shrink: 0;
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+    border: 1.5px solid;
+    box-sizing: border-box;
+}

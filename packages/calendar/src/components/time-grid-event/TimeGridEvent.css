@@ -1,0 +1,104 @@
+.blue-orange-calendar-time-event {
+    position: absolute;
+    box-sizing: border-box;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border-left: 3px solid var(--blue-orange-light-calendar-event-accent-color);
+    background-color: var(--blue-orange-light-calendar-event-background-color);
+    color: var(--blue-orange-light-calendar-event-color);
+    overflow: hidden;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 15px;
+    min-height: 15px;
+    transition: filter 0.1s ease-in-out;
+}
+
+.dark .blue-orange-calendar-time-event {
+    border-left-color: var(--blue-orange-dark-calendar-event-accent-color);
+    background-color: var(--blue-orange-dark-calendar-event-background-color);
+    color: var(--blue-orange-dark-calendar-event-color);
+}
+
+.blue-orange-calendar-time-event:hover {
+    filter: brightness(0.96);
+    z-index: 5;
+}
+
+.blue-orange-calendar-time-event-title {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    overflow: hidden;
+}
+
+.blue-orange-calendar-time-event-title-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Repeating-event marker, shown after the title. */
+.blue-orange-calendar-time-event-repeat {
+    flex-shrink: 0;
+    font-size: 11px;
+    opacity: 0.75;
+}
+
+.blue-orange-calendar-time-event-time {
+    font-size: 11px;
+    opacity: 0.8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.blue-orange-calendar-time-event-compact {
+    padding: 0 6px;
+    display: flex;
+    align-items: center;
+}
+
+/* The provisional block drawn while a new event is being dragged out. Dashed
+   and translucent so it reads as a template rather than a saved event. */
+.blue-orange-calendar-time-event-draft {
+    border: 1px dashed var(--blue-orange-light-calendar-event-accent-color);
+    border-left-width: 3px;
+    border-left-style: solid;
+    opacity: 0.85;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.dark .blue-orange-calendar-time-event-draft {
+    border-color: var(--blue-orange-dark-calendar-event-accent-color);
+}
+
+/* The solid ghost that follows the pointer while an event is being moved. */
+.blue-orange-calendar-time-event-moving {
+    border-style: solid;
+    opacity: 0.92;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    z-index: 8;
+}
+
+.blue-orange-calendar-time-event-compact .blue-orange-calendar-time-event-title {
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Not-yet-accepted invitations read faded so they are clearly distinct from
+   events the viewer is committed to. */
+.blue-orange-calendar-time-event-pending {
+    opacity: 0.55;
+    border-left-style: dashed;
+}
+
+.blue-orange-calendar-time-event-declined {
+    opacity: 0.45;
+}
+
+.blue-orange-calendar-time-event-declined .blue-orange-calendar-time-event-title-text {
+    text-decoration: line-through;
+}

@@ -1,0 +1,90 @@
+.blue-orange-calendar-event-chip {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-size: 11px;
+    line-height: 16px;
+    cursor: pointer;
+    overflow: hidden;
+    color: var(--blue-orange-light-calendar-text-color);
+}
+
+.dark .blue-orange-calendar-event-chip {
+    color: var(--blue-orange-dark-calendar-text-color);
+}
+
+.blue-orange-calendar-event-chip:hover {
+    background-color: var(--blue-orange-light-calendar-cell-hover-color);
+}
+
+.dark .blue-orange-calendar-event-chip:hover {
+    background-color: var(--blue-orange-dark-calendar-cell-hover-color);
+}
+
+.blue-orange-calendar-event-chip-allday {
+    background-color: var(--blue-orange-light-calendar-event-background-color);
+    color: var(--blue-orange-light-calendar-event-color);
+}
+
+.dark .blue-orange-calendar-event-chip-allday {
+    background-color: var(--blue-orange-dark-calendar-event-background-color);
+    color: var(--blue-orange-dark-calendar-event-color);
+}
+
+.blue-orange-calendar-event-chip-allday:hover {
+    filter: brightness(0.97);
+}
+
+.blue-orange-calendar-event-chip-dot {
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--blue-orange-light-calendar-event-accent-color);
+}
+
+.dark .blue-orange-calendar-event-chip-dot {
+    background-color: var(--blue-orange-dark-calendar-event-accent-color);
+}
+
+.blue-orange-calendar-event-chip-time {
+    flex-shrink: 0;
+    font-weight: 600;
+    opacity: 0.75;
+}
+
+.blue-orange-calendar-event-chip-title {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
+.blue-orange-calendar-event-chip-allday .blue-orange-calendar-event-chip-title {
+    font-weight: 600;
+}
+
+.blue-orange-calendar-event-chip-repeat {
+    flex-shrink: 0;
+    font-size: 10px;
+    opacity: 0.7;
+}
+
+/* Not-yet-accepted invitations read faded in the month grid too. */
+.blue-orange-calendar-event-chip-pending {
+    opacity: 0.55;
+}
+
+.blue-orange-calendar-event-chip-declined {
+    opacity: 0.45;
+}
+
+.blue-orange-calendar-event-chip-declined .blue-orange-calendar-event-chip-title {
+    text-decoration: line-through;
+}

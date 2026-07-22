@@ -1,5 +1,6 @@
 node_modules/
 /packages/core/dist/
+/packages/calendar/dist/
 /packages/clients/lib/
 /packages/block-editor/dist/
 /packages/map/dist/

@@ -1,0 +1,22 @@
+.blue-orange-calendar-event-create-modal-when {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 14px;
+    color: var(--blue-orange-light-calendar-text-color);
+}
+
+.dark .blue-orange-calendar-event-create-modal-when {
+    color: var(--blue-orange-dark-calendar-text-color);
+}
+
+.blue-orange-calendar-event-create-modal-icon {
+    font-size: 16px;
+    color: var(--blue-orange-light-calendar-muted-text-color);
+}
+
+.dark .blue-orange-calendar-event-create-modal-icon {
+    color: var(--blue-orange-dark-calendar-muted-text-color);
+}

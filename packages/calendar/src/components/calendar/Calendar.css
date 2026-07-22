@@ -1,0 +1,95 @@
+.blue-orange-calendar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--blue-orange-light-calendar-border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--blue-orange-light-calendar-background-color);
+    color: var(--blue-orange-light-calendar-text-color);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+.dark .blue-orange-calendar {
+    border-color: var(--blue-orange-dark-calendar-border-color);
+    background-color: var(--blue-orange-dark-calendar-background-color);
+    color: var(--blue-orange-dark-calendar-text-color);
+}
+
+/* Row so the side panel sits beside the view; the view takes the rest. */
+.blue-orange-calendar-body {
+    flex-grow: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+}
+
+.blue-orange-calendar-body > *:not(.blue-orange-calendar-side-panel) {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+/* Side-by-side calendars: one self-contained grid per calendar. */
+.blue-orange-calendar-panes {
+    display: flex;
+    flex-direction: row;
+    min-height: 0;
+    overflow-x: auto;
+}
+
+.blue-orange-calendar-pane {
+    flex: 1 1 0;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border-right: 1px solid var(--blue-orange-light-calendar-border-color);
+}
+
+.dark .blue-orange-calendar-pane {
+    border-right-color: var(--blue-orange-dark-calendar-border-color);
+}
+
+.blue-orange-calendar-pane:last-child {
+    border-right: none;
+}
+
+.blue-orange-calendar-pane-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--blue-orange-light-calendar-text-color);
+}
+
+.dark .blue-orange-calendar-pane-header {
+    color: var(--blue-orange-dark-calendar-text-color);
+}
+
+.blue-orange-calendar-pane-dot {
+    flex-shrink: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    background-color: var(--blue-orange-light-calendar-event-accent-color);
+}
+
+.blue-orange-calendar-pane-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* The grid inside a pane fills whatever height is left under its header. */
+.blue-orange-calendar-pane > .blue-orange-calendar-month-view,
+.blue-orange-calendar-pane > .blue-orange-calendar-time-grid {
+    flex-grow: 1;
+    min-height: 0;
+}

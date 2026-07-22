@@ -1,0 +1,47 @@
+.blue-orange-calendar-toolbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    flex-wrap: wrap;
+    background-color: var(--blue-orange-light-calendar-background-color);
+}
+
+.dark .blue-orange-calendar-toolbar {
+    background-color: var(--blue-orange-dark-calendar-background-color);
+}
+
+.blue-orange-calendar-toolbar-left,
+.blue-orange-calendar-toolbar-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.blue-orange-calendar-toolbar-nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+}
+
+.blue-orange-calendar-toolbar-title {
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--blue-orange-light-calendar-text-color);
+}
+
+.dark .blue-orange-calendar-toolbar-title {
+    color: var(--blue-orange-dark-calendar-text-color);
+}
+
+.blue-orange-calendar-toolbar-views {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+}

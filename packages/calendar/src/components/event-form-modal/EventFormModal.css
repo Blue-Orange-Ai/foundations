@@ -1,0 +1,215 @@
+.blue-orange-calendar-event-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-height: 62vh;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.blue-orange-calendar-event-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.blue-orange-calendar-event-form-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+/* Colour fills the line; availability keeps its natural width. */
+.blue-orange-calendar-event-form-colour {
+    flex: 1 1 auto;
+}
+
+.blue-orange-calendar-event-form-availability {
+    flex: 0 0 auto;
+}
+
+/* Match the availability toggle to the input height so they sit level. */
+.blue-orange-calendar-event-form-availability .foundations-btn-toggle {
+    height: 34px;
+}
+
+/* Header swatch: same radius as the inline calendar's selected-day square. A
+   busy event is filled, a free one shows only its border. */
+.blue-orange-calendar-event-form-header-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.blue-orange-calendar-event-form-header-left .blue-orange-modal-header-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.blue-orange-calendar-event-form-swatch {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 2px solid;
+    box-sizing: border-box;
+}
+
+/* Footer actions: a row with a gap rather than stacked buttons. */
+.blue-orange-calendar-event-form-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.blue-orange-calendar-event-form-label {
+    font-size: var(--blue-orange-light-input-label-font-size, 0.85rem);
+    font-weight: 600;
+    color: var(--blue-orange-light-calendar-text-color);
+}
+
+.dark .blue-orange-calendar-event-form-label {
+    color: var(--blue-orange-dark-calendar-text-color);
+}
+
+.blue-orange-calendar-event-form-when {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Each date picker takes an equal share of the line, wrapping when too narrow. */
+.blue-orange-calendar-event-form-when > div {
+    flex: 1 1 200px;
+    min-width: 0;
+}
+
+.blue-orange-calendar-event-form-when-sep {
+    flex: 0 0 auto;
+    color: var(--blue-orange-light-calendar-muted-text-color);
+}
+
+/* Video conferencing provider toggles. */
+.blue-orange-calendar-event-form-conferencing {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.blue-orange-calendar-event-form-conf-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    border: 1px solid var(--blue-orange-light-calendar-border-color);
+    background: none;
+    cursor: pointer;
+    color: var(--blue-orange-light-calendar-text-color);
+}
+
+.dark .blue-orange-calendar-event-form-conf-btn {
+    border-color: var(--blue-orange-dark-calendar-border-color);
+    color: var(--blue-orange-dark-calendar-text-color);
+}
+
+.blue-orange-calendar-event-form-conf-btn:hover {
+    background-color: var(--blue-orange-light-calendar-cell-hover-color);
+}
+
+.dark .blue-orange-calendar-event-form-conf-btn:hover {
+    background-color: var(--blue-orange-dark-calendar-cell-hover-color);
+}
+
+.blue-orange-calendar-event-form-conf-btn-active {
+    border-color: var(--blue-orange-light-calendar-event-accent-color);
+    color: var(--blue-orange-light-calendar-event-accent-color);
+    font-weight: 600;
+}
+
+.dark .blue-orange-calendar-event-form-conf-btn-active {
+    border-color: var(--blue-orange-dark-calendar-event-accent-color);
+    color: var(--blue-orange-dark-calendar-event-accent-color);
+}
+
+.blue-orange-calendar-event-form-custom-reminder {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.blue-orange-calendar-event-form-custom-suffix {
+    font-size: 13px;
+    color: var(--blue-orange-light-calendar-muted-text-color);
+}
+
+.blue-orange-calendar-event-form-notify-text {
+    margin: 0;
+    font-size: 14px;
+    color: var(--blue-orange-light-calendar-text-color);
+}
+
+.dark .blue-orange-calendar-event-form-notify-text {
+    color: var(--blue-orange-dark-calendar-text-color);
+}
+
+/* Custom recurrence editor: interval + unit, then optional weekday toggles. */
+.blue-orange-calendar-event-form-custom-recurrence {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.blue-orange-calendar-event-form-custom-recurrence-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.blue-orange-calendar-event-form-weekdays {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.blue-orange-calendar-event-form-weekday {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--blue-orange-light-calendar-border-color);
+    background: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--blue-orange-light-calendar-text-color);
+}
+
+.dark .blue-orange-calendar-event-form-weekday {
+    border-color: var(--blue-orange-dark-calendar-border-color);
+    color: var(--blue-orange-dark-calendar-text-color);
+}
+
+.blue-orange-calendar-event-form-weekday-active {
+    background-color: var(--blue-orange-light-calendar-event-accent-color);
+    border-color: var(--blue-orange-light-calendar-event-accent-color);
+    color: white;
+}
+
+.dark .blue-orange-calendar-event-form-weekday-active {
+    background-color: var(--blue-orange-dark-calendar-event-accent-color);
+    border-color: var(--blue-orange-dark-calendar-event-accent-color);
+}
