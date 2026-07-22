@@ -107,6 +107,33 @@ describe('EventModal', () => {
         expect(proposed).toEqual({ start: invite.start, end: invite.end });
     });
 
+    it('lets the viewer colour an invitation they received', () => {
+        const onColorChange = jest.fn();
+        const invite: ICalendarEvent = { ...event, organizer: 'boss@corp.com' };
+        render(
+            <EventModal
+                event={invite}
+                currentUser="me@corp.com"
+                onClose={jest.fn()}
+                onColorChange={onColorChange}
+            />
+        );
+        const colorInput = screen.getByPlaceholderText('#e0e1e2') as HTMLInputElement;
+        fireEvent.change(colorInput, { target: { value: '#ff0000' } });
+        expect(onColorChange).toHaveBeenCalledWith(invite, '#ff0000');
+    });
+
+    it('does not offer a colour control for read-only events', () => {
+        render(
+            <EventModal
+                event={{ ...event, isReadOnly: true }}
+                onClose={jest.fn()}
+                onColorChange={jest.fn()}
+            />
+        );
+        expect(screen.queryByPlaceholderText('#e0e1e2')).not.toBeInTheDocument();
+    });
+
     it('hides owner controls for read-only events', () => {
         render(
             <EventModal

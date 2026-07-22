@@ -1,0 +1,15 @@
+/* Email chips read as pill-shaped addresses. Chrome is inherited from
+   TagInput.css; only the accents specific to email recipients live here. */
+.blue-orange-email-recipients + .tagify,
+.tagify.blue-orange-email-recipients {
+    --tags-border-color: var(--blue-orange-light-default-border-color);
+}
+
+.blue-orange-email-recipients .tagify__tag {
+    border-radius: 999px;
+}
+
+/* Tagify flags a rejected email with this class; make the rejection legible. */
+.blue-orange-email-recipients .tagify__input[data-dropdown] {
+    color: inherit;
+}

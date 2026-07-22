@@ -1,0 +1,80 @@
+.blue-orange-calendar-side-panel {
+    flex: 0 0 264px;
+    width: 264px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 12px;
+    overflow-y: auto;
+    border-right: 1px solid var(--blue-orange-light-calendar-border-color);
+    background-color: var(--blue-orange-light-calendar-background-color);
+}
+
+.dark .blue-orange-calendar-side-panel {
+    border-right-color: var(--blue-orange-dark-calendar-border-color);
+    background-color: var(--blue-orange-dark-calendar-background-color);
+}
+
+/* The core month picker is built for a popover, so drop the chrome it brings
+   with it and let it sit flush in the panel. Core is not modified. */
+.blue-orange-calendar-side-panel-month .blue-orange-date-picker-context-window-single,
+.blue-orange-calendar-side-panel-month .blue-orange-date-picker-cont {
+    position: static;
+    border: none;
+    outline: none;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+}
+
+.blue-orange-calendar-side-panel-month .blue-orange-date-picker-month {
+    width: 100%;
+}
+
+.blue-orange-calendar-side-panel-sources {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.blue-orange-calendar-side-panel-heading {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--blue-orange-light-calendar-header-color);
+}
+
+.dark .blue-orange-calendar-side-panel-heading {
+    color: var(--blue-orange-dark-calendar-header-color);
+}
+
+.blue-orange-calendar-side-panel-source {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 2px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--blue-orange-light-calendar-text-color);
+}
+
+.dark .blue-orange-calendar-side-panel-source {
+    color: var(--blue-orange-dark-calendar-text-color);
+}
+
+.blue-orange-calendar-side-panel-source-dot {
+    flex-shrink: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    background-color: var(--blue-orange-light-calendar-event-accent-color);
+}
+
+.blue-orange-calendar-side-panel-source-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
