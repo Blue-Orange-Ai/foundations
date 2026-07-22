@@ -51,6 +51,8 @@ All packages live under `packages/`. There is no root-level source code.
 - **pipelines-client** — Pipeline graph editor (depends on core + graph)
 - **passport-client** — Auth/user management UI (depends on core + clients)
 - **deployment-manager** — Deployment management UI (depends on core, uses Monaco)
+- **calendar** — Month / week / day calendar with events and recurrence (depends on core, uses moment)
+- **gantt** — Interactive hierarchical Gantt chart: data grid, zoomable timeline, drag/resize/progress, dependency links, milestones, summary roll-ups (depends on core, uses moment)
 
 **Non-UI package** (built with plain tsc, output CommonJS):
 - **clients** — Shared API client utilities (STOMP/WebSocket, cookies, phone parsing, LRU cache)
@@ -62,6 +64,8 @@ All packages live under `packages/`. There is no root-level source code.
 - `llm-client` → `core`
 - `llm-graph` → `core`, `graph`
 - `deployment-manager` → `core`
+- `calendar` → `core`
+- `gantt` → `core`
 - `pipelines-client` → `core`, `graph`
 - `search-client` → `core`, `clients`
 - `passport-client` → `core`, `clients`

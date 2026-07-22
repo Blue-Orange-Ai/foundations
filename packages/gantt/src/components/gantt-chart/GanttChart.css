@@ -1,0 +1,82 @@
+.blue-orange-gantt-chart-scroll {
+    position: relative;
+    flex-grow: 1;
+    min-width: 0;
+    overflow: auto;
+    background-color: var(--blue-orange-light-gantt-background-color);
+}
+
+.dark .blue-orange-gantt-chart-scroll {
+    background-color: var(--blue-orange-dark-gantt-background-color);
+}
+
+/* The header sticks to the top while the body scrolls vertically, and moves
+   with the body horizontally. */
+.blue-orange-gantt-chart-header-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+.blue-orange-gantt-chart-canvas {
+    position: relative;
+}
+
+.blue-orange-gantt-weekend {
+    position: absolute;
+    top: 0;
+    background-color: var(--blue-orange-light-gantt-weekend-background-color);
+    z-index: 0;
+}
+
+.dark .blue-orange-gantt-weekend {
+    background-color: var(--blue-orange-dark-gantt-weekend-background-color);
+}
+
+.blue-orange-gantt-grid-vline {
+    position: absolute;
+    top: 0;
+    width: 1px;
+    background-color: var(--blue-orange-light-gantt-grid-line-color);
+    z-index: 0;
+}
+
+.dark .blue-orange-gantt-grid-vline {
+    background-color: var(--blue-orange-dark-gantt-grid-line-color);
+}
+
+.blue-orange-gantt-grid-row {
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--blue-orange-light-gantt-grid-line-color);
+    z-index: 0;
+}
+
+.dark .blue-orange-gantt-grid-row {
+    border-bottom-color: var(--blue-orange-dark-gantt-grid-line-color);
+}
+
+.blue-orange-gantt-grid-row-selected {
+    background-color: var(--blue-orange-light-gantt-row-selected-background-color);
+}
+
+.dark .blue-orange-gantt-grid-row-selected {
+    background-color: var(--blue-orange-dark-gantt-row-selected-background-color);
+}
+
+.blue-orange-gantt-today-line {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    margin-left: -1px;
+    background-color: var(--blue-orange-light-gantt-today-line-color);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.dark .blue-orange-gantt-today-line {
+    background-color: var(--blue-orange-dark-gantt-today-line-color);
+}

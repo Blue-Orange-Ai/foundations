@@ -1,0 +1,47 @@
+.blue-orange-gantt-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--blue-orange-light-gantt-border-color);
+    background-color: var(--blue-orange-light-gantt-background-color);
+    flex-shrink: 0;
+}
+
+.dark .blue-orange-gantt-toolbar {
+    border-bottom-color: var(--blue-orange-dark-gantt-border-color);
+    background-color: var(--blue-orange-dark-gantt-background-color);
+}
+
+.blue-orange-gantt-toolbar-left,
+.blue-orange-gantt-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.blue-orange-gantt-toolbar-zoom {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-left: 6px;
+    border-left: 1px solid var(--blue-orange-light-gantt-border-color);
+}
+
+.dark .blue-orange-gantt-toolbar-zoom {
+    border-left-color: var(--blue-orange-dark-gantt-border-color);
+}
+
+.blue-orange-gantt-toolbar-zoom-label {
+    min-width: 58px;
+    text-align: center;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--blue-orange-light-gantt-text-color);
+}
+
+.dark .blue-orange-gantt-toolbar-zoom-label {
+    color: var(--blue-orange-dark-gantt-text-color);
+}

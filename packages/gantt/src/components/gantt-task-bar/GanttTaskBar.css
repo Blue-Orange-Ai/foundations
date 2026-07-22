@@ -1,0 +1,251 @@
+/* ---- Standard task bar ---- */
+.blue-orange-gantt-bar {
+    position: absolute;
+    box-sizing: border-box;
+    border-radius: 5px;
+    background-color: var(--gantt-bar-color, var(--blue-orange-light-gantt-bar-background-color));
+    border: 1px solid var(--blue-orange-light-gantt-bar-border-color);
+    overflow: hidden;
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    user-select: none;
+    touch-action: none;
+    z-index: 3;
+    transition: box-shadow 0.12s ease;
+}
+
+.dark .blue-orange-gantt-bar {
+    background-color: var(--gantt-bar-color, var(--blue-orange-dark-gantt-bar-background-color));
+    border-color: var(--blue-orange-dark-gantt-bar-border-color);
+}
+
+.blue-orange-gantt-bar:active {
+    cursor: grabbing;
+}
+
+.blue-orange-gantt-bar-progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background-color: var(--blue-orange-light-gantt-bar-progress-color);
+    opacity: 0.9;
+    pointer-events: none;
+}
+
+.dark .blue-orange-gantt-bar-progress {
+    background-color: var(--blue-orange-dark-gantt-bar-progress-color);
+}
+
+.blue-orange-gantt-bar-label {
+    position: relative;
+    z-index: 1;
+    padding: 0 8px;
+    font-size: 0.78rem;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--blue-orange-light-gantt-bar-text-color);
+    pointer-events: none;
+}
+
+.dark .blue-orange-gantt-bar-label {
+    color: var(--blue-orange-dark-gantt-bar-text-color);
+}
+
+.blue-orange-gantt-bar-selected {
+    box-shadow: 0 0 0 2px var(--blue-orange-light-gantt-bar-progress-color);
+}
+
+.dark .blue-orange-gantt-bar-selected {
+    box-shadow: 0 0 0 2px var(--blue-orange-dark-gantt-bar-progress-color);
+}
+
+.blue-orange-gantt-bar-link-target {
+    box-shadow: 0 0 0 2px var(--blue-orange-light-gantt-link-hover-color);
+}
+
+/* ---- Resize handles ---- */
+.blue-orange-gantt-bar-handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 7px;
+    cursor: ew-resize;
+    z-index: 2;
+    opacity: 0;
+    background-color: rgba(255, 255, 255, 0.35);
+}
+
+.blue-orange-gantt-bar-handle-start {
+    left: 0;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.blue-orange-gantt-bar-handle-end {
+    right: 0;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.blue-orange-gantt-bar:hover .blue-orange-gantt-bar-handle {
+    opacity: 1;
+}
+
+/* ---- Progress drag handle ---- */
+.blue-orange-gantt-bar-progress-handle {
+    position: absolute;
+    bottom: -4px;
+    width: 10px;
+    height: 10px;
+    margin-left: -5px;
+    transform: rotate(45deg);
+    background-color: var(--blue-orange-light-gantt-bar-progress-color);
+    border: 1px solid white;
+    cursor: ew-resize;
+    z-index: 3;
+    opacity: 0;
+}
+
+.dark .blue-orange-gantt-bar-progress-handle {
+    background-color: var(--blue-orange-dark-gantt-bar-progress-color);
+    border-color: #1c1c1e;
+}
+
+.blue-orange-gantt-bar:hover .blue-orange-gantt-bar-progress-handle {
+    opacity: 1;
+}
+
+/* ---- Link connectors ---- */
+.blue-orange-gantt-bar-connector {
+    position: absolute;
+    top: 50%;
+    width: 11px;
+    height: 11px;
+    margin-top: -5.5px;
+    border-radius: 50%;
+    background-color: white;
+    border: 2px solid var(--blue-orange-light-gantt-bar-progress-color);
+    cursor: crosshair;
+    z-index: 4;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+}
+
+.dark .blue-orange-gantt-bar-connector {
+    background-color: #1c1c1e;
+    border-color: var(--blue-orange-dark-gantt-bar-progress-color);
+}
+
+.blue-orange-gantt-bar-connector-start {
+    left: -14px;
+}
+
+.blue-orange-gantt-bar-connector-end {
+    right: -14px;
+}
+
+.blue-orange-gantt-bar:hover .blue-orange-gantt-bar-connector,
+.blue-orange-gantt-summary-bar:hover .blue-orange-gantt-bar-connector {
+    opacity: 1;
+}
+
+/* ---- Summary (roll-up) bar ---- */
+.blue-orange-gantt-summary-bar {
+    position: absolute;
+    box-sizing: border-box;
+    height: 12px !important;
+    margin-top: 6px;
+    background-color: var(--blue-orange-light-gantt-summary-color);
+    border-radius: 3px;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    z-index: 3;
+}
+
+.dark .blue-orange-gantt-summary-bar {
+    background-color: var(--blue-orange-dark-gantt-summary-color);
+}
+
+/* Down-turned ends give the classic "bracket" summary look. */
+.blue-orange-gantt-summary-bar::before,
+.blue-orange-gantt-summary-bar::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+}
+
+.blue-orange-gantt-summary-bar::before {
+    left: 0;
+    border-width: 6px 0 0 6px;
+    border-color: transparent transparent transparent var(--blue-orange-light-gantt-summary-color);
+}
+
+.blue-orange-gantt-summary-bar::after {
+    right: 0;
+    border-width: 6px 6px 0 0;
+    border-color: var(--blue-orange-light-gantt-summary-color) transparent transparent transparent;
+}
+
+.dark .blue-orange-gantt-summary-bar::before {
+    border-color: transparent transparent transparent var(--blue-orange-dark-gantt-summary-color);
+}
+
+.dark .blue-orange-gantt-summary-bar::after {
+    border-color: var(--blue-orange-dark-gantt-summary-color) transparent transparent transparent;
+}
+
+.blue-orange-gantt-summary-bar .blue-orange-gantt-bar-progress {
+    background-color: rgba(255, 255, 255, 0.35);
+    border-radius: 3px;
+}
+
+/* ---- Milestone (diamond) ---- */
+.blue-orange-gantt-milestone {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    z-index: 3;
+}
+
+.blue-orange-gantt-milestone-diamond {
+    width: 70%;
+    height: 70%;
+    margin: 0 15%;
+    transform: rotate(45deg);
+    background-color: var(--gantt-bar-color, var(--blue-orange-light-gantt-milestone-color));
+    border: 1px solid var(--blue-orange-light-gantt-bar-border-color);
+    flex-shrink: 0;
+}
+
+.dark .blue-orange-gantt-milestone-diamond {
+    background-color: var(--gantt-bar-color, var(--blue-orange-dark-gantt-milestone-color));
+}
+
+.blue-orange-gantt-milestone-label {
+    position: absolute;
+    left: 100%;
+    margin-left: 4px;
+    font-size: 0.78rem;
+    white-space: nowrap;
+    color: var(--blue-orange-light-gantt-text-color);
+    pointer-events: none;
+}
+
+.dark .blue-orange-gantt-milestone-label {
+    color: var(--blue-orange-dark-gantt-text-color);
+}
+
+.blue-orange-gantt-milestone.blue-orange-gantt-bar-selected .blue-orange-gantt-milestone-diamond {
+    box-shadow: 0 0 0 2px var(--blue-orange-light-gantt-bar-progress-color);
+}

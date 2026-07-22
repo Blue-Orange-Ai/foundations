@@ -1,0 +1,64 @@
+.blue-orange-gantt-links {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 2;
+    overflow: visible;
+}
+
+.blue-orange-gantt-link-line {
+    fill: none;
+    stroke: var(--blue-orange-light-gantt-link-color);
+    stroke-width: 1.5;
+}
+
+.dark .blue-orange-gantt-link-line {
+    stroke: var(--blue-orange-dark-gantt-link-color);
+}
+
+.blue-orange-gantt-link-arrow {
+    fill: var(--blue-orange-light-gantt-link-color);
+}
+
+.dark .blue-orange-gantt-link-arrow {
+    fill: var(--blue-orange-dark-gantt-link-color);
+}
+
+.blue-orange-gantt-link-hit {
+    fill: none;
+    stroke: transparent;
+    stroke-width: 10;
+}
+
+.blue-orange-gantt-link-clickable {
+    pointer-events: stroke;
+    cursor: pointer;
+}
+
+.blue-orange-gantt-link-clickable:hover .blue-orange-gantt-link-line {
+    stroke: var(--blue-orange-light-gantt-link-hover-color);
+    stroke-width: 2;
+}
+
+.blue-orange-gantt-link-clickable:hover .blue-orange-gantt-link-arrow {
+    fill: var(--blue-orange-light-gantt-link-hover-color);
+}
+
+.dark .blue-orange-gantt-link-clickable:hover .blue-orange-gantt-link-line {
+    stroke: var(--blue-orange-dark-gantt-link-hover-color);
+}
+
+.dark .blue-orange-gantt-link-clickable:hover .blue-orange-gantt-link-arrow {
+    fill: var(--blue-orange-dark-gantt-link-hover-color);
+}
+
+.blue-orange-gantt-link-draft {
+    stroke: var(--blue-orange-light-gantt-link-hover-color);
+    stroke-width: 2;
+    stroke-dasharray: 4 3;
+}
+
+.dark .blue-orange-gantt-link-draft {
+    stroke: var(--blue-orange-dark-gantt-link-hover-color);
+}

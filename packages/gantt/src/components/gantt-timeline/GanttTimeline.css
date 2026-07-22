@@ -1,0 +1,49 @@
+.blue-orange-gantt-timeline {
+    position: relative;
+    background-color: var(--blue-orange-light-gantt-header-background-color);
+}
+
+.dark .blue-orange-gantt-timeline {
+    background-color: var(--blue-orange-dark-gantt-header-background-color);
+}
+
+.blue-orange-gantt-timeline-row {
+    position: relative;
+    border-bottom: 1px solid var(--blue-orange-light-gantt-border-color);
+}
+
+.dark .blue-orange-gantt-timeline-row {
+    border-bottom-color: var(--blue-orange-dark-gantt-border-color);
+}
+
+.blue-orange-gantt-timeline-cell {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border-right: 1px solid var(--blue-orange-light-gantt-grid-line-color);
+    font-size: 0.72rem;
+    color: var(--blue-orange-light-gantt-header-color);
+    overflow: hidden;
+}
+
+.dark .blue-orange-gantt-timeline-cell {
+    border-right-color: var(--blue-orange-dark-gantt-grid-line-color);
+    color: var(--blue-orange-dark-gantt-header-color);
+}
+
+.blue-orange-gantt-timeline-cell-label {
+    padding: 0 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* The outer (coarsest) rows read as headings. */
+.blue-orange-gantt-timeline-row:first-child .blue-orange-gantt-timeline-cell {
+    font-weight: 600;
+    justify-content: flex-start;
+}

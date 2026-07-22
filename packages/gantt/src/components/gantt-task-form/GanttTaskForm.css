@@ -1,0 +1,27 @@
+.blue-orange-gantt-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.blue-orange-gantt-form-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.blue-orange-gantt-form-label {
+    font-size: var(--blue-orange-light-input-label-font-size, 0.8rem);
+    font-weight: var(--blue-orange-light-input-label-font-weight, 700);
+    margin-bottom: var(--blue-orange-light-input-label-margin-bottom, 10px);
+    opacity: var(--blue-orange-light-input-label-opacity, 0.8);
+}
+
+.blue-orange-gantt-form-row {
+    display: flex;
+    gap: 12px;
+}
+
+.blue-orange-gantt-form-col {
+    flex: 1 1 0;
+    min-width: 0;
+}

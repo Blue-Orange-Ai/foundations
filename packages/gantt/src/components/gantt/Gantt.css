@@ -1,0 +1,28 @@
+.blue-orange-gantt {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--blue-orange-light-gantt-border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--blue-orange-light-gantt-background-color);
+    color: var(--blue-orange-light-gantt-text-color);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+.dark .blue-orange-gantt {
+    border-color: var(--blue-orange-dark-gantt-border-color);
+    background-color: var(--blue-orange-dark-gantt-background-color);
+    color: var(--blue-orange-dark-gantt-text-color);
+}
+
+.blue-orange-gantt-body {
+    flex-grow: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+}
