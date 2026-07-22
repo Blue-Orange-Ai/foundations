@@ -1,0 +1,70 @@
+.blue-orange-llm-markdown {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--llm-text);
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.blue-orange-llm-markdown > *:first-child {
+    margin-top: 0;
+}
+
+.blue-orange-llm-markdown > *:last-child {
+    margin-bottom: 0;
+}
+
+.blue-orange-llm-markdown p {
+    margin: 0.6em 0;
+}
+
+.blue-orange-llm-markdown pre {
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.blue-orange-llm-markdown code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.85em;
+}
+
+.blue-orange-llm-markdown :not(pre) > code {
+    background: var(--llm-accent-soft);
+    border: 1px solid var(--llm-border);
+    border-radius: 4px;
+    padding: 0.1em 0.35em;
+}
+
+.blue-orange-llm-markdown table {
+    border-collapse: collapse;
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.blue-orange-llm-markdown th,
+.blue-orange-llm-markdown td {
+    border: 1px solid var(--llm-border);
+    padding: 6px 10px;
+}
+
+.blue-orange-llm-markdown a {
+    color: var(--llm-primary);
+    text-decoration: none;
+}
+
+.blue-orange-llm-markdown a:hover {
+    text-decoration: underline;
+}
+
+.blue-orange-llm-markdown img {
+    max-width: 100%;
+    border-radius: 6px;
+}
+
+.blue-orange-llm-markdown blockquote {
+    border-left: 3px solid var(--llm-border);
+    margin: 0.6em 0;
+    padding-left: 1em;
+    color: var(--llm-muted);
+}

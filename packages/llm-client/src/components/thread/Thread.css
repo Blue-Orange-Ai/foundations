@@ -1,0 +1,106 @@
+.blue-orange-llm-thread {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    background: var(--llm-page-bg);
+}
+
+/* -- Header ------------------------------------------------------------ */
+
+.blue-orange-llm-thread-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--llm-border);
+    min-height: 56px;
+}
+
+.blue-orange-llm-thread-header-left,
+.blue-orange-llm-thread-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.blue-orange-llm-thread-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--llm-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 320px;
+}
+
+.blue-orange-llm-header-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    width: 36px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    color: var(--llm-muted);
+    cursor: pointer;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.blue-orange-llm-header-btn:hover {
+    background: var(--llm-hover);
+    color: var(--llm-text);
+}
+
+.blue-orange-llm-header-btn-active {
+    color: var(--llm-primary);
+    background: var(--llm-hover);
+}
+
+/* -- Docked composer (conversation view) ------------------------------ */
+
+.blue-orange-llm-thread-composer {
+    padding: 8px 20px 14px;
+    background: var(--llm-page-bg);
+}
+
+.blue-orange-llm-thread-disclaimer {
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--llm-muted);
+    margin-top: 8px;
+}
+
+/* -- Welcome (empty) layout ------------------------------------------- */
+
+.blue-orange-llm-thread-welcome-layout {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 24px 20px;
+}
+
+.blue-orange-llm-thread-welcome-inner {
+    width: 100%;
+    max-width: 780px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.blue-orange-llm-thread-welcome-composer {
+    width: 100%;
+    margin-top: 28px;
+}
+
+.blue-orange-llm-thread-welcome-suggestions {
+    width: 100%;
+    margin-top: 20px;
+}
