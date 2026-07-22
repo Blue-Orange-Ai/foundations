@@ -1,0 +1,283 @@
+/* ==========================================================================
+   Foundations PDF Viewer
+   Layout + chrome for the headless EmbedPDF wrapper. All interactive chrome
+   (buttons, dropdowns, inputs, toggles, tabs) is provided by
+   @blue-orange-ai/foundations-core; the styles here only handle the viewer
+   surface, panels and page canvas.
+   ========================================================================== */
+
+.blue-orange-pdf-viewer {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	min-height: 0;
+	position: relative;
+	background: var(--bo-pdf-bg, #f3f4f6);
+	color: #1f2937;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+.blue-orange-pdf-viewer *,
+.blue-orange-pdf-viewer *::before,
+.blue-orange-pdf-viewer *::after {
+	box-sizing: border-box;
+}
+
+/* ---- Toolbar -------------------------------------------------------------- */
+.blue-orange-pdf-toolbar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	padding: 6px 10px;
+	background: #ffffff;
+	border-bottom: 1px solid #e5e7eb;
+	z-index: 5;
+	flex: 0 0 auto;
+}
+
+.blue-orange-pdf-toolbar-group {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.blue-orange-pdf-toolbar-spacer {
+	flex: 1 1 auto;
+}
+
+.blue-orange-pdf-toolbar-divider {
+	width: 1px;
+	align-self: stretch;
+	margin: 4px 2px;
+	background: #e5e7eb;
+}
+
+.blue-orange-pdf-page-indicator {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	white-space: nowrap;
+}
+
+.blue-orange-pdf-page-indicator input {
+	width: 48px;
+	text-align: center;
+}
+
+.blue-orange-pdf-zoom-indicator {
+	min-width: 52px;
+	text-align: center;
+	font-size: 13px;
+	font-variant-numeric: tabular-nums;
+}
+
+/* ---- Body: optional side panel + document -------------------------------- */
+.blue-orange-pdf-body {
+	display: flex;
+	flex: 1 1 auto;
+	min-height: 0;
+	position: relative;
+}
+
+.blue-orange-pdf-side-panel {
+	flex: 0 0 auto;
+	width: 240px;
+	background: #ffffff;
+	border-right: 1px solid #e5e7eb;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+	overflow: hidden;
+}
+
+.blue-orange-pdf-side-panel-body {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow-y: auto;
+}
+
+.blue-orange-pdf-document-area {
+	flex: 1 1 auto;
+	min-width: 0;
+	min-height: 0;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+}
+
+/* ---- Viewport / pages ----------------------------------------------------- */
+.blue-orange-pdf-viewport {
+	flex: 1 1 auto;
+	min-height: 0;
+	width: 100%;
+	overflow: auto;
+	background: var(--bo-pdf-bg, #f3f4f6);
+}
+
+.blue-orange-pdf-page {
+	position: relative;
+	background: #ffffff;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+	margin: 0 auto;
+}
+
+.blue-orange-pdf-page-loading {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #9ca3af;
+	font-size: 13px;
+}
+
+/* ---- Thumbnails ----------------------------------------------------------- */
+.blue-orange-pdf-thumbnails {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 12px;
+}
+
+.blue-orange-pdf-thumb {
+	position: relative;
+	border: 2px solid transparent;
+	border-radius: 6px;
+	cursor: pointer;
+	background: #ffffff;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+	transition: border-color 0.12s ease, box-shadow 0.12s ease, transform 0.12s ease;
+	overflow: hidden;
+}
+
+.blue-orange-pdf-thumb:hover {
+	border-color: #c7d2fe;
+}
+
+.blue-orange-pdf-thumb.is-active {
+	border-color: #6366f1;
+	box-shadow: 0 0 0 1px #6366f1;
+}
+
+.blue-orange-pdf-thumb.is-dragging {
+	opacity: 0.5;
+}
+
+.blue-orange-pdf-thumb.is-drop-target::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: -6px;
+	height: 3px;
+	background: #6366f1;
+	border-radius: 3px;
+}
+
+.blue-orange-pdf-thumb.is-drop-target-below::before {
+	top: auto;
+	bottom: -6px;
+}
+
+.blue-orange-pdf-thumb-label {
+	position: absolute;
+	bottom: 4px;
+	right: 4px;
+	background: rgba(17, 24, 39, 0.75);
+	color: #ffffff;
+	font-size: 11px;
+	padding: 1px 6px;
+	border-radius: 10px;
+	pointer-events: none;
+}
+
+.blue-orange-pdf-thumb[draggable="true"] {
+	cursor: grab;
+}
+
+/* ---- Bookmarks / outline -------------------------------------------------- */
+.blue-orange-pdf-outline {
+	padding: 8px 6px;
+	font-size: 13px;
+}
+
+.blue-orange-pdf-outline-item {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 4px 6px;
+	border-radius: 4px;
+	cursor: pointer;
+	color: #374151;
+}
+
+.blue-orange-pdf-outline-item:hover {
+	background: #f3f4f6;
+}
+
+/* ---- Search panel --------------------------------------------------------- */
+.blue-orange-pdf-search-panel {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 10px;
+}
+
+.blue-orange-pdf-search-results {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	overflow-y: auto;
+}
+
+.blue-orange-pdf-search-result {
+	padding: 6px 8px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 12px;
+	line-height: 1.4;
+	color: #4b5563;
+}
+
+.blue-orange-pdf-search-result:hover {
+	background: #f3f4f6;
+}
+
+.blue-orange-pdf-search-result.is-active {
+	background: #eef2ff;
+	color: #1f2937;
+}
+
+.blue-orange-pdf-search-result mark {
+	background: #fde68a;
+	color: inherit;
+	padding: 0 1px;
+	border-radius: 2px;
+}
+
+/* ---- Loading / error states ---------------------------------------------- */
+.blue-orange-pdf-status {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	color: #6b7280;
+	font-size: 14px;
+	padding: 24px;
+	text-align: center;
+}
+
+.blue-orange-pdf-status-error {
+	color: #b91c1c;
+}
+
+/* ---- Utility -------------------------------------------------------------- */
+.blue-orange-pdf-hidden-file-input {
+	display: none;
+}
