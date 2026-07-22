@@ -39,6 +39,13 @@
     text-overflow: ellipsis;
 }
 
+/* Repeating-event marker, shown after the title. */
+.blue-orange-calendar-time-event-repeat {
+    flex-shrink: 0;
+    font-size: 11px;
+    opacity: 0.75;
+}
+
 .blue-orange-calendar-time-event-time {
     font-size: 11px;
     opacity: 0.8;

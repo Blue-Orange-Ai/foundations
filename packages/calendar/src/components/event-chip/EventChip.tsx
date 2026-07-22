@@ -4,6 +4,7 @@ import {
     eventResponseClass,
     eventResponseState,
     isAllDayEvent,
+    isRecurring,
     resolveEventColors,
     zoned,
 } from '../../utils/calendarUtils';
@@ -64,6 +65,9 @@ export const EventChip: React.FC<Props> = ({
                 </span>
             )}
             <span className="blue-orange-calendar-event-chip-title">{event.title}</span>
+            {isRecurring(event) && (
+                <i className="ri-repeat-line blue-orange-calendar-event-chip-repeat" title="Repeating event" />
+            )}
         </div>
     );
 };

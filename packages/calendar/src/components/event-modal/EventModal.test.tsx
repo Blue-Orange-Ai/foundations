@@ -46,9 +46,9 @@ describe('EventModal', () => {
         expect(onDelete).not.toHaveBeenCalled();
         expect(screen.getByText(/Are you sure/)).toBeInTheDocument();
 
-        // Confirming deletes. With no guests the scope is "self".
+        // Confirming deletes. With no guests the scope is "self"; not recurring.
         fireEvent.click(screen.getByText('Delete'));
-        expect(onDelete).toHaveBeenCalledWith(event, CalendarDeleteScope.SELF);
+        expect(onDelete).toHaveBeenCalledWith(event, CalendarDeleteScope.SELF, undefined);
     });
 
     it('offers a "delete for everyone" choice when the event has guests', () => {
@@ -60,7 +60,7 @@ describe('EventModal', () => {
         expect(screen.getByText('Delete for everyone')).toBeInTheDocument();
         // Defaults to everyone when guests are present.
         fireEvent.click(screen.getByText('Delete'));
-        expect(onDelete).toHaveBeenCalledWith(withGuests, CalendarDeleteScope.EVERYONE);
+        expect(onDelete).toHaveBeenCalledWith(withGuests, CalendarDeleteScope.EVERYONE, undefined);
     });
 
     it('shows accept / decline / tentative for an invitation the viewer does not own', () => {

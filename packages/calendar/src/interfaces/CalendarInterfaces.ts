@@ -81,6 +81,64 @@ export enum CalendarDeleteScope {
 }
 
 /**
+ * How often an event repeats.
+ *
+ * - `DAILY`   -> every day.
+ * - `WEEKLY`  -> every week on the event's weekday (or `byWeekday`).
+ * - `MONTHLY` -> every month on the event's day of the month.
+ * - `YEARLY`  -> every year on the event's date.
+ * - `WEEKDAY` -> every weekday, Monday to Friday.
+ * - `CUSTOM`  -> a custom interval / unit, with optional weekdays.
+ */
+export enum CalendarRecurrenceFrequency {
+    DAILY = 'daily',
+    WEEKLY = 'weekly',
+    MONTHLY = 'monthly',
+    YEARLY = 'yearly',
+    WEEKDAY = 'weekday',
+    CUSTOM = 'custom',
+}
+
+/** The unit a custom recurrence repeats by. */
+export enum CalendarRecurrenceUnit {
+    DAY = 'day',
+    WEEK = 'week',
+    MONTH = 'month',
+    YEAR = 'year',
+}
+
+/**
+ * Whether an edit or delete applies to a single occurrence of a repeating event
+ * or to the whole series.
+ */
+export enum CalendarSeriesScope {
+    /** Just this one occurrence. */
+    SINGLE = 'single',
+    /** Every occurrence in the series. */
+    SERIES = 'series',
+}
+
+/**
+ * A repetition rule for an event. Modelled on a simplified subset of the iCal
+ * RRULE so consumers can map it to a backend.
+ */
+export interface ICalendarRecurrence {
+    frequency: CalendarRecurrenceFrequency;
+    /** Repeat every `interval` units (custom recurrences). Defaults to 1. */
+    interval?: number;
+    /** Weekdays (0 = Sunday … 6 = Saturday) a weekly / custom rule repeats on. */
+    byWeekday?: number[];
+    /** The unit a `CUSTOM` recurrence repeats by. */
+    customUnit?: CalendarRecurrenceUnit;
+    /** Stop after this many occurrences. */
+    count?: number;
+    /** Stop repeating after this date. */
+    until?: Date;
+    /** Occurrence start times to skip (e.g. an occurrence deleted on its own). */
+    exDates?: Date[];
+}
+
+/**
  * A named calendar (a "source") that events can belong to. Provides the default
  * colours used when an individual event does not override them.
  */
@@ -145,6 +203,13 @@ export interface ICalendarEvent {
      * owns (those are always treated as accepted).
      */
     response?: CalendarEventResponse;
+    /** When set, the event repeats according to this rule. */
+    recurrence?: ICalendarRecurrence;
+    /**
+     * Set on the occurrences generated from a recurring event: the id of the
+     * master event they belong to. Absent on non-repeating events.
+     */
+    recurringEventId?: string;
     /** Arbitrary consumer supplied payload. */
     raw?: unknown;
 }

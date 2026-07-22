@@ -5,6 +5,7 @@ import {
     eventResponseClass,
     eventResponseState,
     formatEventTimeRange,
+    isRecurring,
     ITimedEventLayout,
     resolveEventColors,
 } from '../../utils/calendarUtils';
@@ -89,6 +90,12 @@ export const TimeGridEvent: React.FC<Props> = ({
                     color={colors.borderColor}
                 />
                 <span className="blue-orange-calendar-time-event-title-text">{event.title}</span>
+                {isRecurring(event) && (
+                    <i
+                        className="ri-repeat-line blue-orange-calendar-time-event-repeat"
+                        title="Repeating event"
+                    />
+                )}
             </div>
             {!compact && (
                 <div className="blue-orange-calendar-time-event-time">

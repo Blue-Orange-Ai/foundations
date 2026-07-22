@@ -23,6 +23,12 @@
     text-overflow: ellipsis;
 }
 
+.blue-orange-calendar-allday-event-repeat {
+    flex-shrink: 0;
+    font-size: 11px;
+    opacity: 0.75;
+}
+
 .dark .blue-orange-calendar-allday-event {
     border-left-color: var(--blue-orange-dark-calendar-event-accent-color);
     background-color: var(--blue-orange-dark-calendar-event-background-color);

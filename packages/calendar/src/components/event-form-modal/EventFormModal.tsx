@@ -20,7 +20,11 @@ import {
 import {
     CalendarEventAvailability,
     CalendarNotifyScope,
+    CalendarRecurrenceFrequency,
+    CalendarRecurrenceUnit,
+    CalendarSeriesScope,
     ICalendarEvent,
+    ICalendarRecurrence,
     ICalendarSource,
 } from '../../interfaces/CalendarInterfaces';
 import {
@@ -28,10 +32,12 @@ import {
     DEFAULT_CONFERENCING_PROVIDERS,
     DEFAULT_REMINDER_MINUTES,
     IConferencingProvider,
+    isRecurring,
     NEW_EVENT_TITLE,
     REMINDER_OPTIONS,
     stripConferencingBlock,
 } from '../../utils/calendarUtils';
+import moment from 'moment';
 import './EventFormModal.css';
 
 /** Sentinel used by the reminder dropdown for the custom option. */
@@ -66,10 +72,41 @@ interface Props {
     onCancel: () => void;
     /**
      * Called with the finished event. When editing an email-backed event whose
-     * guest list changed, `meta.notify` records which guests to inform.
+     * guest list changed, `meta.notify` records which guests to inform. When
+     * editing a recurring event, `meta.scope` records whether the change applies
+     * to this occurrence or the whole series, and `meta.occurrenceStart` is the
+     * original start of the occurrence being edited.
      */
-    onCreate: (event: ICalendarEvent, meta?: { notify?: CalendarNotifyScope }) => void;
+    onCreate: (
+        event: ICalendarEvent,
+        meta?: {
+            notify?: CalendarNotifyScope;
+            scope?: CalendarSeriesScope;
+            occurrenceStart?: Date;
+        }
+    ) => void;
 }
+
+/** Sentinel for "does not repeat" in the recurrence dropdown. */
+const NO_RECURRENCE = 'none';
+
+const RECURRENCE_UNITS = [
+    { value: CalendarRecurrenceUnit.DAY, label: 'days' },
+    { value: CalendarRecurrenceUnit.WEEK, label: 'weeks' },
+    { value: CalendarRecurrenceUnit.MONTH, label: 'months' },
+    { value: CalendarRecurrenceUnit.YEAR, label: 'years' },
+];
+
+/** The single-letter weekday toggles used by the custom recurrence editor. */
+const WEEKDAY_TOGGLES = [
+    { value: 0, label: 'S' },
+    { value: 1, label: 'M' },
+    { value: 2, label: 'T' },
+    { value: 3, label: 'W' },
+    { value: 4, label: 'T' },
+    { value: 5, label: 'F' },
+    { value: 6, label: 'S' },
+];
 
 const REMINDER_UNITS = [
     { value: '1', label: 'minutes' },
@@ -155,8 +192,69 @@ export const EventFormModal: React.FC<Props> = ({
     const [requiredGuests, setRequiredGuests] = useState<string[]>(initialRequired);
     const [optionalGuests, setOptionalGuests] = useState<string[]>(initialOptional);
 
-    // While a notify choice is being made, the built event waits here.
-    const [pendingNotify, setPendingNotify] = useState<ICalendarEvent | null>(null);
+    // --- Recurrence.
+    const initialRecurrence = editing ? initialEvent!.recurrence : undefined;
+    const recurrenceToChoice = (rec?: ICalendarRecurrence): string => {
+        if (!rec) {
+            return NO_RECURRENCE;
+        }
+        return rec.frequency;
+    };
+    const [recurrenceChoice, setRecurrenceChoice] = useState<string>(
+        recurrenceToChoice(initialRecurrence)
+    );
+    const [customInterval, setCustomInterval] = useState(
+        String(initialRecurrence?.interval ?? 1)
+    );
+    const [customUnit, setCustomUnit] = useState<CalendarRecurrenceUnit>(
+        initialRecurrence?.customUnit ?? CalendarRecurrenceUnit.WEEK
+    );
+    const [customWeekdays, setCustomWeekdays] = useState<number[]>(
+        initialRecurrence?.byWeekday ?? [moment(editing ? initialEvent!.start : start).day()]
+    );
+
+    const toggleCustomWeekday = (day: number) => {
+        setCustomWeekdays((prev) =>
+            prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day].sort((a, b) => a - b)
+        );
+    };
+
+    const buildRecurrence = (): ICalendarRecurrence | undefined => {
+        switch (recurrenceChoice) {
+            case CalendarRecurrenceFrequency.DAILY:
+                return { frequency: CalendarRecurrenceFrequency.DAILY };
+            case CalendarRecurrenceFrequency.WEEKLY:
+                return {
+                    frequency: CalendarRecurrenceFrequency.WEEKLY,
+                    byWeekday: [moment(startDate).day()],
+                };
+            case CalendarRecurrenceFrequency.MONTHLY:
+                return { frequency: CalendarRecurrenceFrequency.MONTHLY };
+            case CalendarRecurrenceFrequency.YEARLY:
+                return { frequency: CalendarRecurrenceFrequency.YEARLY };
+            case CalendarRecurrenceFrequency.WEEKDAY:
+                return { frequency: CalendarRecurrenceFrequency.WEEKDAY };
+            case CalendarRecurrenceFrequency.CUSTOM: {
+                const interval = Math.max(1, parseInt(customInterval, 10) || 1);
+                return {
+                    frequency: CalendarRecurrenceFrequency.CUSTOM,
+                    interval,
+                    customUnit,
+                    byWeekday:
+                        customUnit === CalendarRecurrenceUnit.WEEK && customWeekdays.length
+                            ? customWeekdays
+                            : undefined,
+                };
+            }
+            default:
+                return undefined;
+        }
+    };
+
+    // The staged flow after Save: pick the series scope, then who to notify.
+    const [pendingEvent, setPendingEvent] = useState<ICalendarEvent | null>(null);
+    const [stage, setStage] = useState<'scope' | 'notify' | null>(null);
+    const [chosenScope, setChosenScope] = useState<CalendarSeriesScope | undefined>(undefined);
 
     const handleStartChange = (date: Date) => {
         setStartDate(date);
@@ -203,6 +301,7 @@ export const EventFormModal: React.FC<Props> = ({
         conferencingProvider: conferencing === '' ? undefined : conferencing,
         requiredGuests: emailCompatibility && requiredGuests.length ? requiredGuests : undefined,
         optionalGuests: emailCompatibility && optionalGuests.length ? optionalGuests : undefined,
+        recurrence: buildRecurrence(),
         calendarId: editing
             ? initialEvent!.calendarId
             : sources.length > 0
@@ -217,15 +316,46 @@ export const EventFormModal: React.FC<Props> = ({
         return !same(initialRequired, requiredGuests) || !same(initialOptional, optionalGuests);
     };
 
+    const originalOccurrenceStart = editing ? initialEvent!.start : undefined;
+    const needsNotify = () => editing && emailCompatibility && guestsChanged();
+    const editingRecurring = editing && isRecurring(initialEvent!);
+
+    const finalize = (event: ICalendarEvent, scope?: CalendarSeriesScope, notify?: CalendarNotifyScope) => {
+        onCreate(event, {
+            notify,
+            scope,
+            occurrenceStart: editingRecurring ? originalOccurrenceStart : undefined,
+        });
+    };
+
     const submit = () => {
         const event = buildEvent();
-        // Only editing an email-backed event with a changed guest list needs the
-        // "notify who?" step; every other save goes straight through.
-        if (editing && emailCompatibility && guestsChanged()) {
-            setPendingNotify(event);
+        // Editing a recurring event: ask which occurrences the change applies to.
+        if (editingRecurring) {
+            setPendingEvent(event);
+            setStage('scope');
             return;
         }
-        onCreate(event);
+        // Editing an email-backed event with a changed guest list: ask who to notify.
+        if (needsNotify()) {
+            setPendingEvent(event);
+            setStage('notify');
+            return;
+        }
+        finalize(event);
+    };
+
+    const chooseScope = (scope: CalendarSeriesScope) => {
+        if (needsNotify()) {
+            setChosenScope(scope);
+            setStage('notify');
+            return;
+        }
+        finalize(pendingEvent as ICalendarEvent, scope);
+    };
+
+    const chooseNotify = (notify: CalendarNotifyScope) => {
+        finalize(pendingEvent as ICalendarEvent, chosenScope, notify);
     };
 
     const busy = availability === CalendarEventAvailability.BUSY;
@@ -237,12 +367,51 @@ export const EventFormModal: React.FC<Props> = ({
         requiredGuests.filter((email) => !initialRequired.includes(email)).length +
         optionalGuests.filter((email) => !initialOptional.includes(email)).length;
 
+    // Step shown when editing a recurring event: apply to this occurrence or all.
+    if (stage === 'scope') {
+        return (
+            <Modal width={440} onClose={onCancel}>
+                <div className="blue-orange-modal-header">
+                    <div className="blue-orange-modal-header-label">Edit repeating event</div>
+                    <div className="blue-orange-modal-header-close-btn">
+                        <ButtonIcon
+                            icon="ri-close-line"
+                            style={{ backgroundColor: 'transparent' }}
+                            onClick={onCancel}
+                        />
+                    </div>
+                </div>
+                <ModalBody>
+                    <p className="blue-orange-calendar-event-form-notify-text">
+                        This is a repeating event. Apply your changes to just this event or
+                        the whole series?
+                    </p>
+                </ModalBody>
+                <ModalFooter>
+                    <ModalFooterRight>
+                        <div className="blue-orange-calendar-event-form-actions">
+                            <Button
+                                text="This event"
+                                buttonType={ButtonType.SECONDARY}
+                                size={ButtonSize.SMALL}
+                                onClick={() => chooseScope(CalendarSeriesScope.SINGLE)}
+                            />
+                            <Button
+                                text="All events"
+                                buttonType={ButtonType.PRIMARY}
+                                size={ButtonSize.SMALL}
+                                onClick={() => chooseScope(CalendarSeriesScope.SERIES)}
+                            />
+                        </div>
+                    </ModalFooterRight>
+                </ModalFooter>
+            </Modal>
+        );
+    }
+
     // Step shown after saving an edited event whose guest list changed: choose
     // who to notify before the change is committed.
-    if (pendingNotify) {
-        const finish = (notify: CalendarNotifyScope) => {
-            onCreate(pendingNotify, { notify });
-        };
+    if (stage === 'notify') {
         return (
             <Modal width={460} onClose={onCancel}>
                 <div className="blue-orange-modal-header">
@@ -267,21 +436,21 @@ export const EventFormModal: React.FC<Props> = ({
                                 text="Don't notify"
                                 buttonType={ButtonType.SECONDARY}
                                 size={ButtonSize.SMALL}
-                                onClick={() => finish(CalendarNotifyScope.NONE)}
+                                onClick={() => chooseNotify(CalendarNotifyScope.NONE)}
                             />
                             {newGuestCount > 0 && (
                                 <Button
                                     text="New guests only"
                                     buttonType={ButtonType.SECONDARY}
                                     size={ButtonSize.SMALL}
-                                    onClick={() => finish(CalendarNotifyScope.NEW)}
+                                    onClick={() => chooseNotify(CalendarNotifyScope.NEW)}
                                 />
                             )}
                             <Button
                                 text="Notify all guests"
                                 buttonType={ButtonType.PRIMARY}
                                 size={ButtonSize.SMALL}
-                                onClick={() => finish(CalendarNotifyScope.ALL)}
+                                onClick={() => chooseNotify(CalendarNotifyScope.ALL)}
                             />
                         </div>
                     </ModalFooterRight>
@@ -362,6 +531,94 @@ export const EventFormModal: React.FC<Props> = ({
                             </div>
                         </>
                     )}
+
+                    <div className="blue-orange-calendar-event-form-field">
+                        <div className="blue-orange-calendar-event-form-label">Repeat</div>
+                        <Dropdown onSelection={(item) => setRecurrenceChoice(item.reference)}>
+                            <DropdownItemText
+                                label="Does not repeat"
+                                value={NO_RECURRENCE}
+                                selected={recurrenceChoice === NO_RECURRENCE}
+                            />
+                            <DropdownItemText
+                                label="Daily"
+                                value={CalendarRecurrenceFrequency.DAILY}
+                                selected={recurrenceChoice === CalendarRecurrenceFrequency.DAILY}
+                            />
+                            <DropdownItemText
+                                label={`Weekly on ${moment(startDate).format('dddd')}`}
+                                value={CalendarRecurrenceFrequency.WEEKLY}
+                                selected={recurrenceChoice === CalendarRecurrenceFrequency.WEEKLY}
+                            />
+                            <DropdownItemText
+                                label="Monthly"
+                                value={CalendarRecurrenceFrequency.MONTHLY}
+                                selected={recurrenceChoice === CalendarRecurrenceFrequency.MONTHLY}
+                            />
+                            <DropdownItemText
+                                label="Annually"
+                                value={CalendarRecurrenceFrequency.YEARLY}
+                                selected={recurrenceChoice === CalendarRecurrenceFrequency.YEARLY}
+                            />
+                            <DropdownItemText
+                                label="Every weekday (Mon–Fri)"
+                                value={CalendarRecurrenceFrequency.WEEKDAY}
+                                selected={recurrenceChoice === CalendarRecurrenceFrequency.WEEKDAY}
+                            />
+                            <DropdownItemText
+                                label="Custom…"
+                                value={CalendarRecurrenceFrequency.CUSTOM}
+                                selected={recurrenceChoice === CalendarRecurrenceFrequency.CUSTOM}
+                            />
+                        </Dropdown>
+                        {recurrenceChoice === CalendarRecurrenceFrequency.CUSTOM && (
+                            <div className="blue-orange-calendar-event-form-custom-recurrence">
+                                <div className="blue-orange-calendar-event-form-custom-recurrence-row">
+                                    <span className="blue-orange-calendar-event-form-custom-suffix">
+                                        Every
+                                    </span>
+                                    <Input
+                                        isNumber={true}
+                                        value={customInterval}
+                                        onChange={setCustomInterval}
+                                        style={{ width: '70px' }}
+                                    />
+                                    <Dropdown
+                                        onSelection={(item) =>
+                                            setCustomUnit(item.reference as CalendarRecurrenceUnit)
+                                        }
+                                    >
+                                        {RECURRENCE_UNITS.map((unit) => (
+                                            <DropdownItemText
+                                                key={unit.value}
+                                                label={unit.label}
+                                                value={unit.value}
+                                                selected={unit.value === customUnit}
+                                            />
+                                        ))}
+                                    </Dropdown>
+                                </div>
+                                {customUnit === CalendarRecurrenceUnit.WEEK && (
+                                    <div className="blue-orange-calendar-event-form-weekdays">
+                                        {WEEKDAY_TOGGLES.map((day, index) => (
+                                            <button
+                                                type="button"
+                                                key={index}
+                                                className={`blue-orange-calendar-event-form-weekday no-select${
+                                                    customWeekdays.includes(day.value)
+                                                        ? ' blue-orange-calendar-event-form-weekday-active'
+                                                        : ''
+                                                }`}
+                                                onClick={() => toggleCustomWeekday(day.value)}
+                                            >
+                                                {day.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
 
                     <Input label="Location" value={location} onChange={setLocation} />
 

@@ -2,8 +2,11 @@ import moment from 'moment-timezone';
 import momentTz from 'moment-timezone';
 import {
     CalendarEventResponse,
+    CalendarRecurrenceFrequency,
+    CalendarRecurrenceUnit,
     CalendarView,
     ICalendarEvent,
+    ICalendarRecurrence,
     ICalendarSource,
 } from '../interfaces/CalendarInterfaces';
 
@@ -528,6 +531,268 @@ export function fromInputValues(dateStr: string, timeStr: string, timezone?: str
         ? momentTz.tz(base, 'YYYY-MM-DD HH:mm', timezone)
         : moment(base, 'YYYY-MM-DD HH:mm');
     return m.toDate();
+}
+
+/**
+ * The inclusive date range a view covers, used to expand recurring events only
+ * as far as the visible grid. Month spans the full 6-week matrix.
+ */
+export function getViewRange(
+    date: Date,
+    view: CalendarView,
+    timezone?: string,
+    weekStartsOn: WeekStartDay = 0
+): { start: Date; end: Date } {
+    if (view === CalendarView.MONTH) {
+        const matrix = getMonthMatrix(date, timezone, weekStartsOn);
+        return {
+            start: zoned(matrix[0][0], timezone).startOf('day').toDate(),
+            end: zoned(matrix[5][6], timezone).endOf('day').toDate(),
+        };
+    }
+    if (view === CalendarView.DAY) {
+        return {
+            start: zoned(date, timezone).startOf('day').toDate(),
+            end: zoned(date, timezone).endOf('day').toDate(),
+        };
+    }
+    const days = getWeekDays(date, timezone, weekStartsOn);
+    return {
+        start: zoned(days[0], timezone).startOf('day').toDate(),
+        end: zoned(days[6], timezone).endOf('day').toDate(),
+    };
+}
+
+/** Safety cap on how many occurrences a single rule is scanned / produced. */
+const RECURRENCE_SCAN_CAP = 4000;
+
+/**
+ * Expands every recurring event in `events` into its individual occurrences that
+ * fall within `[rangeStart, rangeEnd]`. Non-repeating events pass through
+ * unchanged. Each generated occurrence carries `recurringEventId` (the master's
+ * id) and a unique `id`, and keeps the master's duration.
+ */
+export function expandRecurringEvents(
+    events: ICalendarEvent[],
+    rangeStart: Date,
+    rangeEnd: Date,
+    timezone?: string
+): ICalendarEvent[] {
+    const result: ICalendarEvent[] = [];
+    for (const event of events) {
+        if (!event.recurrence) {
+            result.push(event);
+            continue;
+        }
+        for (const occurrence of expandOne(event, rangeStart, rangeEnd, timezone)) {
+            result.push(occurrence);
+        }
+    }
+    return result;
+}
+
+function expandOne(
+    event: ICalendarEvent,
+    rangeStartDate: Date,
+    rangeEndDate: Date,
+    timezone?: string
+): ICalendarEvent[] {
+    const rec = event.recurrence as ICalendarRecurrence;
+    const base = zoned(event.start, timezone);
+    const durationMs = event.end.getTime() - event.start.getTime();
+    const rangeStart = zoned(rangeStartDate, timezone);
+    const rangeEnd = zoned(rangeEndDate, timezone);
+    const until = rec.until ? zoned(rec.until, timezone) : null;
+    const count = rec.count ?? Infinity;
+    const interval = Math.max(1, rec.interval ?? 1);
+    const exDates = (rec.exDates ?? []).map((d) => zoned(d, timezone));
+    const isExcluded = (m: moment.Moment) => exDates.some((x) => x.isSame(m, 'minute'));
+
+    const instances: ICalendarEvent[] = [];
+    let produced = 0;
+
+    // Emits one occurrence; returns false once the series is exhausted.
+    const emit = (startM: moment.Moment): boolean => {
+        if (startM.isAfter(rangeEnd)) {
+            return false;
+        }
+        if (until && startM.isAfter(until)) {
+            return false;
+        }
+        if (produced >= count) {
+            return false;
+        }
+        produced += 1;
+        if (!isExcluded(startM)) {
+            const startDate = startM.toDate();
+            const endMs = startDate.getTime() + durationMs;
+            // Keep occurrences that overlap the range at all.
+            if (startM.isSameOrBefore(rangeEnd) && endMs >= rangeStart.valueOf()) {
+                instances.push({
+                    ...event,
+                    id: `${event.id}::${startM.valueOf()}`,
+                    start: startDate,
+                    end: new Date(endMs),
+                    recurringEventId: event.id,
+                });
+            }
+        }
+        return instances.length < RECURRENCE_SCAN_CAP;
+    };
+
+    // Resolve the stepping strategy.
+    let unit: 'day' | 'week' | 'month' | 'year' = 'day';
+    let weekdays: number[] | null = null;
+    let weekdayOnly = false;
+    let step = interval;
+
+    switch (rec.frequency) {
+        case CalendarRecurrenceFrequency.DAILY:
+            unit = 'day';
+            break;
+        case CalendarRecurrenceFrequency.WEEKDAY:
+            unit = 'day';
+            step = 1;
+            weekdayOnly = true;
+            break;
+        case CalendarRecurrenceFrequency.WEEKLY:
+            unit = 'week';
+            weekdays = rec.byWeekday?.length ? rec.byWeekday : [base.day()];
+            break;
+        case CalendarRecurrenceFrequency.MONTHLY:
+            unit = 'month';
+            break;
+        case CalendarRecurrenceFrequency.YEARLY:
+            unit = 'year';
+            break;
+        case CalendarRecurrenceFrequency.CUSTOM:
+            unit = (rec.customUnit as 'day' | 'week' | 'month' | 'year') ?? 'week';
+            if (unit === 'week') {
+                weekdays = rec.byWeekday?.length ? rec.byWeekday : [base.day()];
+            }
+            break;
+    }
+
+    const noCount = count === Infinity;
+
+    if (unit === 'week' && weekdays) {
+        const sorted = [...weekdays].sort((a, b) => a - b);
+        // Sunday 00:00 of the base week, so `+wd days` lands on the weekday.
+        let blockStart = base.clone().subtract(base.day(), 'days').startOf('day');
+        if (noCount && blockStart.clone().add(6, 'days').isBefore(rangeStart)) {
+            const weeks = Math.floor(rangeStart.diff(blockStart, 'weeks') / step);
+            if (weeks > 0) {
+                blockStart.add(weeks * step, 'weeks');
+            }
+        }
+        for (let scanned = 0; scanned < RECURRENCE_SCAN_CAP; scanned += 1) {
+            if (blockStart.isAfter(rangeEnd)) {
+                break;
+            }
+            let stop = false;
+            for (const wd of sorted) {
+                const occ = blockStart
+                    .clone()
+                    .add(wd, 'days')
+                    .hour(base.hour())
+                    .minute(base.minute())
+                    .second(base.second())
+                    .millisecond(base.millisecond());
+                if (occ.isBefore(base)) {
+                    continue;
+                }
+                if (!emit(occ)) {
+                    stop = true;
+                    break;
+                }
+            }
+            if (stop) {
+                break;
+            }
+            blockStart.add(step, 'weeks');
+        }
+        return instances;
+    }
+
+    // Simple stepping strategies (day / weekday / month / year).
+    const momentUnit = unit === 'day' ? 'days' : unit === 'month' ? 'months' : 'years';
+    let cursor = base.clone();
+    if (noCount && cursor.isBefore(rangeStart)) {
+        if (unit === 'day' && !weekdayOnly) {
+            const days = Math.floor(
+                rangeStart.clone().startOf('day').diff(cursor.clone().startOf('day'), 'days') / step
+            );
+            if (days > 0) {
+                cursor.add(days * step, 'days');
+            }
+        } else if (unit === 'month' || unit === 'year') {
+            const diff = Math.floor(rangeStart.diff(cursor, momentUnit) / step);
+            if (diff > 0) {
+                cursor.add(diff * step, momentUnit);
+            }
+        }
+    }
+    for (let scanned = 0; scanned < RECURRENCE_SCAN_CAP; scanned += 1) {
+        if (cursor.isAfter(rangeEnd)) {
+            break;
+        }
+        if (weekdayOnly && (cursor.day() === 0 || cursor.day() === 6)) {
+            cursor.add(1, 'days');
+            continue;
+        }
+        if (!cursor.isBefore(base) && !emit(cursor.clone())) {
+            break;
+        }
+        cursor.add(step, momentUnit);
+    }
+    return instances;
+}
+
+/** True when `event` repeats or is one occurrence of a repeating series. */
+export function isRecurring(event: ICalendarEvent): boolean {
+    return !!event.recurrence || !!event.recurringEventId;
+}
+
+/** A short, human readable summary of a recurrence rule, e.g. `Weekly on Monday`. */
+export function describeRecurrence(
+    recurrence: ICalendarRecurrence,
+    baseDate?: Date,
+    timezone?: string
+): string {
+    const dayName = (d: number) => moment().day(d).format('dddd');
+    const listDays = (days: number[]) =>
+        [...days].sort((a, b) => a - b).map(dayName).join(', ');
+
+    switch (recurrence.frequency) {
+        case CalendarRecurrenceFrequency.DAILY:
+            return 'Daily';
+        case CalendarRecurrenceFrequency.WEEKDAY:
+            return 'Every weekday (Mon–Fri)';
+        case CalendarRecurrenceFrequency.WEEKLY: {
+            const days = recurrence.byWeekday?.length
+                ? recurrence.byWeekday
+                : baseDate
+                  ? [zoned(baseDate, timezone).day()]
+                  : [];
+            return days.length ? `Weekly on ${listDays(days)}` : 'Weekly';
+        }
+        case CalendarRecurrenceFrequency.MONTHLY:
+            return 'Monthly';
+        case CalendarRecurrenceFrequency.YEARLY:
+            return 'Annually';
+        case CalendarRecurrenceFrequency.CUSTOM: {
+            const n = Math.max(1, recurrence.interval ?? 1);
+            const unit = recurrence.customUnit ?? CalendarRecurrenceUnit.WEEK;
+            const unitLabel = n === 1 ? unit : `${unit}s`;
+            let summary = `Every ${n} ${unitLabel}`;
+            if (unit === CalendarRecurrenceUnit.WEEK && recurrence.byWeekday?.length) {
+                summary += ` on ${listDays(recurrence.byWeekday)}`;
+            }
+            return summary;
+        }
+        default:
+            return 'Repeats';
+    }
 }
 
 /** True when `value` looks like a plausible email address. */

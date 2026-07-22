@@ -1,7 +1,9 @@
 .blue-orange-calendar-event-detail {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    /* Matches the create / edit form's field spacing so viewing and editing an
+       event share the same rhythm. */
+    gap: 14px;
 }
 
 /* Header: colour swatch + title, matching the create form. Busy is filled,
@@ -80,11 +82,12 @@
     color: #da3633;
 }
 
-/* Detail rows: an icon in a fixed gutter, then the value. */
+/* Detail rows: an icon in a fixed gutter, then the value. The icon is centred
+   against its control so single-line values and interactive components line up. */
 .blue-orange-calendar-event-detail-row {
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
+    align-items: center;
     gap: 10px;
     font-size: 14px;
     color: var(--blue-orange-light-calendar-text-color);
@@ -94,9 +97,18 @@
     color: var(--blue-orange-dark-calendar-text-color);
 }
 
+/* Rows whose value wraps over several lines (the time + duration, the guest
+   lists) keep the icon aligned to the first line instead. */
+.blue-orange-calendar-event-detail-row-top {
+    align-items: flex-start;
+}
+
+.blue-orange-calendar-event-detail-row-top .blue-orange-calendar-event-detail-icon {
+    margin-top: 2px;
+}
+
 .blue-orange-calendar-event-detail-icon {
     flex-shrink: 0;
-    margin-top: 2px;
     font-size: 16px;
     color: var(--blue-orange-light-calendar-muted-text-color);
 }

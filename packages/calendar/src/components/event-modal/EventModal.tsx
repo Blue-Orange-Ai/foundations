@@ -20,14 +20,17 @@ import {
     CalendarDeleteScope,
     CalendarEventAvailability,
     CalendarEventResponse,
+    CalendarSeriesScope,
     ICalendarEvent,
     ICalendarSource,
 } from '../../interfaces/CalendarInterfaces';
 import {
+    describeRecurrence,
     effectiveResponse,
     formatDuration,
     formatEventWhen,
     isOwnEvent,
+    isRecurring,
     REMINDER_OPTIONS,
     resolveEventColors,
 } from '../../utils/calendarUtils';
@@ -55,8 +58,16 @@ interface Props {
     emailCompatibility?: boolean;
     onClose: () => void;
     onEdit?: (event: ICalendarEvent) => void;
-    /** Called with the event and whether it should be removed for everyone. */
-    onDelete?: (event: ICalendarEvent, scope: CalendarDeleteScope) => void;
+    /**
+     * Called with the event, whether it should be removed for everyone, and —
+     * for repeating events — whether to remove just this occurrence or the
+     * whole series.
+     */
+    onDelete?: (
+        event: ICalendarEvent,
+        scope: CalendarDeleteScope,
+        seriesScope?: CalendarSeriesScope
+    ) => void;
     /**
      * Called when the viewer responds to an invitation. A proposed time is only
      * passed when the viewer declines and proposes an alternative.
@@ -159,15 +170,24 @@ export const EventModal: React.FC<Props> = ({
         }
     };
 
+    const recurring = isRecurring(event);
+
     // --- Delete flow.
     const [deleteForEveryone, setDeleteForEveryone] = useState(hasGuests);
+    // Repeating events default to deleting just the one occurrence.
+    const [deleteSeries, setDeleteSeries] = useState(false);
     const confirmDelete = () => {
         if (onDelete) {
             onDelete(
                 event,
                 hasGuests && deleteForEveryone
                     ? CalendarDeleteScope.EVERYONE
-                    : CalendarDeleteScope.SELF
+                    : CalendarDeleteScope.SELF,
+                recurring
+                    ? deleteSeries
+                        ? CalendarSeriesScope.SERIES
+                        : CalendarSeriesScope.SINGLE
+                    : undefined
             );
         }
     };
@@ -244,6 +264,15 @@ export const EventModal: React.FC<Props> = ({
                         <p className="blue-orange-calendar-event-detail-confirm-text">
                             Are you sure you want to delete <strong>{event.title}</strong>?
                         </p>
+                        {recurring && (
+                            <label className="blue-orange-calendar-event-detail-confirm-choice">
+                                <Checkbox
+                                    checked={deleteSeries}
+                                    onCheckboxChange={setDeleteSeries}
+                                />
+                                <span>Delete the entire series</span>
+                            </label>
+                        )}
                         {hasGuests && (
                             <label className="blue-orange-calendar-event-detail-confirm-choice">
                                 <Checkbox
@@ -343,6 +372,31 @@ export const EventModal: React.FC<Props> = ({
             {header}
             <ModalBody>
                 <div className="blue-orange-calendar-event-detail">
+                    {/* On an email-backed event the guest lists come first. */}
+                    {own && emailCompatibility && hasGuests && (
+                        <div className="blue-orange-calendar-event-detail-row blue-orange-calendar-event-detail-row-top">
+                            <i className="ri-group-line blue-orange-calendar-event-detail-icon" />
+                            <div className="blue-orange-calendar-event-detail-guests">
+                                {requiredGuests.length > 0 && (
+                                    <div>
+                                        <span className="blue-orange-calendar-event-detail-guests-label">
+                                            Required
+                                        </span>
+                                        {requiredGuests.join(', ')}
+                                    </div>
+                                )}
+                                {optionalGuests.length > 0 && (
+                                    <div>
+                                        <span className="blue-orange-calendar-event-detail-guests-label">
+                                            Optional
+                                        </span>
+                                        {optionalGuests.join(', ')}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
                     {/* The calendar (source) tag. */}
                     <div className="blue-orange-calendar-event-detail-tags">
                         {source && (
@@ -375,7 +429,7 @@ export const EventModal: React.FC<Props> = ({
                     )}
 
                     {/* Time, then an easy-to-read duration. */}
-                    <div className="blue-orange-calendar-event-detail-row">
+                    <div className="blue-orange-calendar-event-detail-row blue-orange-calendar-event-detail-row-top">
                         <i className="ri-time-line blue-orange-calendar-event-detail-icon" />
                         <div>
                             <div className="blue-orange-calendar-event-detail-when">
@@ -395,28 +449,11 @@ export const EventModal: React.FC<Props> = ({
                         </div>
                     )}
 
-                    {/* Guest lists, for the viewer's own email-backed events. */}
-                    {own && emailCompatibility && hasGuests && (
+                    {/* Recurrence summary for repeating events. */}
+                    {event.recurrence && (
                         <div className="blue-orange-calendar-event-detail-row">
-                            <i className="ri-group-line blue-orange-calendar-event-detail-icon" />
-                            <div className="blue-orange-calendar-event-detail-guests">
-                                {requiredGuests.length > 0 && (
-                                    <div>
-                                        <span className="blue-orange-calendar-event-detail-guests-label">
-                                            Required
-                                        </span>
-                                        {requiredGuests.join(', ')}
-                                    </div>
-                                )}
-                                {optionalGuests.length > 0 && (
-                                    <div>
-                                        <span className="blue-orange-calendar-event-detail-guests-label">
-                                            Optional
-                                        </span>
-                                        {optionalGuests.join(', ')}
-                                    </div>
-                                )}
-                            </div>
+                            <i className="ri-repeat-line blue-orange-calendar-event-detail-icon" />
+                            <span>{describeRecurrence(event.recurrence, event.start, timezone)}</span>
                         </div>
                     )}
 

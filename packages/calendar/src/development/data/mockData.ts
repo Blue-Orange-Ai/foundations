@@ -3,6 +3,7 @@ import {
     CalendarEventAvailability,
     CalendarEventCategory,
     CalendarEventResponse,
+    CalendarRecurrenceFrequency,
     ICalendarEvent,
     ICalendarSource,
 } from '../../interfaces/CalendarInterfaces';
@@ -56,6 +57,8 @@ export const mockEvents: ICalendarEvent[] = [
         reminderMinutes: 10,
         requiredGuests: ['alex@blueorange.ai', 'sam@blueorange.ai'],
         optionalGuests: ['jo@blueorange.ai'],
+        // Repeats every weekday, Monday to Friday.
+        recurrence: { frequency: CalendarRecurrenceFrequency.WEEKDAY },
     },
     {
         id: '2',
@@ -120,6 +123,9 @@ export const mockEvents: ICalendarEvent[] = [
         start: atWeek(4, 18, 0),
         end: atWeek(4, 19, 0),
         category: CalendarEventCategory.TIME,
+        organizer: CURRENT_USER,
+        // Repeats weekly on this weekday.
+        recurrence: { frequency: CalendarRecurrenceFrequency.WEEKLY },
     },
     {
         id: '8',

@@ -3,6 +3,7 @@ import {
     CalendarDeleteScope,
     CalendarEventResponse,
     CalendarNotifyScope,
+    CalendarSeriesScope,
     CalendarSourceLayout,
     CalendarView,
     ICalendarEvent,
@@ -11,7 +12,9 @@ import {
 import {
     DEFAULT_NON_WORKING_DAYS,
     DEFAULT_REMINDER_MINUTES,
+    expandRecurringEvents,
     getTimezoneName,
+    getViewRange,
     IConferencingProvider,
     navigateDate,
     nextHour,
@@ -149,15 +152,30 @@ interface Props {
     onTimezoneChange?: (timezone: string) => void;
     /** Called with the ids still visible whenever a shared calendar is toggled. */
     onVisibleSourcesChange?: (sourceIds: string[]) => void;
-    /** Called when an event is deleted, with whether to remove it for everyone. */
-    onEventDelete?: (event: ICalendarEvent, scope: CalendarDeleteScope) => void;
+    /**
+     * Called when an event is deleted, with whether to remove it for everyone
+     * and — for repeating events — whether to delete one occurrence or the series.
+     */
+    onEventDelete?: (
+        event: ICalendarEvent,
+        scope: CalendarDeleteScope,
+        seriesScope?: CalendarSeriesScope
+    ) => void;
     /** Called when the Edit button is pressed, alongside the built-in edit form. */
     onEventEdit?: (event: ICalendarEvent) => void;
     /**
-     * Called with the edited event when the edit form is saved. `notify` is set
-     * for email-backed events whose guest list changed.
+     * Called with the edited event when the edit form is saved. `meta.notify` is
+     * set for email-backed events whose guest list changed; `meta.scope` and
+     * `meta.occurrenceStart` are set when editing a repeating event.
      */
-    onEventUpdate?: (event: ICalendarEvent, notify?: CalendarNotifyScope) => void;
+    onEventUpdate?: (
+        event: ICalendarEvent,
+        meta?: {
+            notify?: CalendarNotifyScope;
+            scope?: CalendarSeriesScope;
+            occurrenceStart?: Date;
+        }
+    ) => void;
     /** Called when the viewer responds to an invitation they do not own. */
     onEventRespond?: (
         event: ICalendarEvent,
@@ -251,8 +269,16 @@ export const Calendar: React.FC<Props> = ({
     const activeTimezone = timezone ?? internalTimezone;
     const activeVisibleSources = visibleSourceIds ?? internalVisibleSources;
 
-    // Events with no source always show; the rest follow their checkbox.
-    const visibleEvents = events.filter(
+    // Expand repeating events into their occurrences across the visible range,
+    // then apply the source-visibility filter. Events with no source always show.
+    const viewRange = getViewRange(activeDate, activeView, activeTimezone, weekStartsOn);
+    const expandedEvents = expandRecurringEvents(
+        events,
+        viewRange.start,
+        viewRange.end,
+        activeTimezone
+    );
+    const visibleEvents = expandedEvents.filter(
         (event) => !event.calendarId || activeVisibleSources.includes(event.calendarId)
     );
 
@@ -346,10 +372,17 @@ export const Calendar: React.FC<Props> = ({
 
     // The edit form's save routes here. In edit mode it updates; a drag-to-move
     // that the user chose to save also lands here as an update.
-    const handleSaveEdit = (event: ICalendarEvent, meta?: { notify?: CalendarNotifyScope }) => {
+    const handleSaveEdit = (
+        event: ICalendarEvent,
+        meta?: {
+            notify?: CalendarNotifyScope;
+            scope?: CalendarSeriesScope;
+            occurrenceStart?: Date;
+        }
+    ) => {
         setEditingEvent(null);
         if (onEventUpdate) {
-            onEventUpdate(event, meta?.notify);
+            onEventUpdate(event, meta);
         }
     };
 
@@ -371,10 +404,14 @@ export const Calendar: React.FC<Props> = ({
         setEditingEvent({ ...event, start, end });
     };
 
-    const handleDeleteEvent = (event: ICalendarEvent, scope: CalendarDeleteScope) => {
+    const handleDeleteEvent = (
+        event: ICalendarEvent,
+        scope: CalendarDeleteScope,
+        seriesScope?: CalendarSeriesScope
+    ) => {
         setSelectedEvent(null);
         if (onEventDelete) {
-            onEventDelete(event, scope);
+            onEventDelete(event, scope, seriesScope);
         }
     };
 

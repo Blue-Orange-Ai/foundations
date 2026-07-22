@@ -1,6 +1,11 @@
 import React from 'react';
 import { ICalendarEvent, ICalendarSource } from '../../interfaces/CalendarInterfaces';
-import { eventResponseClass, eventResponseState, resolveEventColors } from '../../utils/calendarUtils';
+import {
+    eventResponseClass,
+    eventResponseState,
+    isRecurring,
+    resolveEventColors,
+} from '../../utils/calendarUtils';
 import { EventAvailabilityMark } from '../event-availability-mark/EventAvailabilityMark';
 import './AllDayEvent.css';
 
@@ -43,6 +48,9 @@ export const AllDayEvent: React.FC<Props> = ({ event, sources = [], currentUser,
         >
             <EventAvailabilityMark availability={event.availability} color={colors.borderColor} />
             <span className="blue-orange-calendar-allday-event-text">{event.title}</span>
+            {isRecurring(event) && (
+                <i className="ri-repeat-line blue-orange-calendar-allday-event-repeat" title="Repeating event" />
+            )}
         </div>
     );
 };

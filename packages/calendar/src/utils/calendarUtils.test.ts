@@ -1,6 +1,8 @@
 import {
+    describeRecurrence,
     effectiveResponse,
     eventResponseState,
+    expandRecurringEvents,
     formatDuration,
     getWeekDays,
     isNonWorkingDay,
@@ -10,6 +12,7 @@ import {
 } from './calendarUtils';
 import {
     CalendarEventResponse,
+    CalendarRecurrenceFrequency,
     ICalendarEvent,
     ICalendarSource,
 } from '../interfaces/CalendarInterfaces';
@@ -153,6 +156,94 @@ describe('resolveEventColors', () => {
         const colors = resolveEventColors({ ...base, calendarId: 'work' }, [source]);
         expect(colors.backgroundColor).toBe('#ebf0fb');
         expect(colors.borderColor).toBe('dodgerblue');
+    });
+});
+
+describe('expandRecurringEvents', () => {
+    // A 30-min daily event starting Wed 2026-07-22 09:00.
+    const daily: ICalendarEvent = {
+        id: 'd1',
+        title: 'Daily',
+        start: new Date(2026, 6, 22, 9, 0),
+        end: new Date(2026, 6, 22, 9, 30),
+        recurrence: { frequency: CalendarRecurrenceFrequency.DAILY },
+    };
+
+    it('generates one occurrence per day within the range', () => {
+        const out = expandRecurringEvents(
+            [daily],
+            new Date(2026, 6, 22, 0, 0),
+            new Date(2026, 6, 24, 23, 59)
+        );
+        expect(out).toHaveLength(3);
+        expect(out.every((e) => e.recurringEventId === 'd1')).toBe(true);
+        expect(out.map((e) => e.start.getDate())).toEqual([22, 23, 24]);
+    });
+
+    it('leaves non-recurring events untouched', () => {
+        const plain: ICalendarEvent = {
+            id: 'p1',
+            title: 'Plain',
+            start: new Date(2026, 6, 22, 9, 0),
+            end: new Date(2026, 6, 22, 10, 0),
+        };
+        const out = expandRecurringEvents(
+            [plain],
+            new Date(2026, 6, 1),
+            new Date(2026, 6, 31)
+        );
+        expect(out).toEqual([plain]);
+    });
+
+    it('skips weekends for a weekday rule', () => {
+        const weekday: ICalendarEvent = {
+            ...daily,
+            recurrence: { frequency: CalendarRecurrenceFrequency.WEEKDAY },
+        };
+        // Fri 24th … Mon 27th: expect Fri + Mon only (Sat/Sun skipped).
+        const out = expandRecurringEvents(
+            [weekday],
+            new Date(2026, 6, 24, 0, 0),
+            new Date(2026, 6, 27, 23, 59)
+        );
+        const days = out.map((e) => e.start.getDate());
+        expect(days).toEqual([24, 27]);
+    });
+
+    it('honours an exception date', () => {
+        const out = expandRecurringEvents(
+            [{ ...daily, recurrence: { frequency: CalendarRecurrenceFrequency.DAILY, exDates: [new Date(2026, 6, 23, 9, 0)] } }],
+            new Date(2026, 6, 22, 0, 0),
+            new Date(2026, 6, 24, 23, 59)
+        );
+        expect(out.map((e) => e.start.getDate())).toEqual([22, 24]);
+    });
+
+    it('stops at the count limit', () => {
+        const out = expandRecurringEvents(
+            [{ ...daily, recurrence: { frequency: CalendarRecurrenceFrequency.DAILY, count: 2 } }],
+            new Date(2026, 6, 22, 0, 0),
+            new Date(2026, 6, 30, 23, 59)
+        );
+        expect(out).toHaveLength(2);
+    });
+});
+
+describe('describeRecurrence', () => {
+    it('summarises the presets', () => {
+        expect(describeRecurrence({ frequency: CalendarRecurrenceFrequency.DAILY })).toBe('Daily');
+        expect(describeRecurrence({ frequency: CalendarRecurrenceFrequency.WEEKDAY })).toBe(
+            'Every weekday (Mon–Fri)'
+        );
+        expect(describeRecurrence({ frequency: CalendarRecurrenceFrequency.YEARLY })).toBe(
+            'Annually'
+        );
+        expect(
+            describeRecurrence({
+                frequency: CalendarRecurrenceFrequency.WEEKLY,
+                byWeekday: [1],
+            })
+        ).toBe('Weekly on Monday');
     });
 });
 
