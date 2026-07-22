@@ -1,0 +1,101 @@
+.blue-orange-timeline {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--blue-orange-light-timeline-border-color);
+    background-color: var(--blue-orange-light-timeline-background-color);
+    color: var(--blue-orange-light-timeline-label-color);
+    overflow: hidden;
+    font-size: 12px;
+}
+
+.blue-orange-timeline.blue-orange-timeline-dark {
+    border-color: var(--blue-orange-dark-timeline-border-color);
+    background-color: var(--blue-orange-dark-timeline-background-color);
+    color: var(--blue-orange-dark-timeline-label-color);
+}
+
+/* Left labels column (optional). Vertically scrolls in lockstep with the canvas
+   via a transform applied on scroll; horizontally it stays pinned. */
+.blue-orange-timeline-labels {
+    position: relative;
+    flex: 0 0 auto;
+    overflow: hidden;
+    border-right: 1px solid var(--blue-orange-light-timeline-border-color);
+    background-color: var(--blue-orange-light-timeline-header-background-color);
+    box-sizing: border-box;
+}
+
+.blue-orange-timeline-dark .blue-orange-timeline-labels {
+    border-right-color: var(--blue-orange-dark-timeline-border-color);
+    background-color: var(--blue-orange-dark-timeline-header-background-color);
+}
+
+.blue-orange-timeline-labels-header {
+    position: relative;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--blue-orange-light-timeline-border-color);
+    background-color: var(--blue-orange-light-timeline-header-background-color);
+}
+
+.blue-orange-timeline-dark .blue-orange-timeline-labels-header {
+    border-bottom-color: var(--blue-orange-dark-timeline-border-color);
+    background-color: var(--blue-orange-dark-timeline-header-background-color);
+}
+
+.blue-orange-timeline-labels-viewport {
+    position: relative;
+    overflow: hidden;
+}
+
+.blue-orange-timeline-labels-list {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    will-change: transform;
+}
+
+.blue-orange-timeline-label {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--blue-orange-light-timeline-label-color);
+}
+
+.blue-orange-timeline-dark .blue-orange-timeline-label {
+    color: var(--blue-orange-dark-timeline-label-color);
+}
+
+.blue-orange-timeline-label-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.blue-orange-timeline-scroll {
+    position: relative;
+    flex: 1 1 auto;
+    overflow: auto;
+    outline: none;
+}
+
+.blue-orange-timeline-spacer {
+    position: relative;
+    pointer-events: none;
+}
+
+.blue-orange-timeline-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    will-change: transform;
+}

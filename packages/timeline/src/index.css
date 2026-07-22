@@ -1,0 +1,159 @@
+/* Theme variables from @blue-orange-ai/foundations-core. The core library
+   ships the component rules but not their variable definitions, so every
+   app that renders core components (buttons, inputs, dropdowns) has to supply
+   them — the same copy lives in calendar, llm-client, block-editor and
+   search-client. */
+:root {
+  --blue-orange-light-primary-btn-border-color: black;
+  --blue-orange-dark-primary-btn-border-color: black;
+  --blue-orange-light-primary-btn-background-color: black;
+  --blue-orange-dark-primary-btn-background-color: black;
+  --blue-orange-light-primary-btn-color: white;
+  --blue-orange-dark-primary-btn-color: white;
+
+  --blue-orange-light-secondary-btn-border-color: #e0e1e2;
+  --blue-orange-dark-secondary-btn-border-color: #e0e1e2;
+  --blue-orange-light-secondary-btn-background-color: white;
+  --blue-orange-dark-secondary-btn-background-color: white;
+  --blue-orange-light-secondary-btn-color: black;
+  --blue-orange-dark-secondary-btn-color: black;
+
+  --blue-orange-light-danger-btn-border-color: #e11d48;
+  --blue-orange-dark-danger-btn-border-color: #e11d48;
+  --blue-orange-light-danger-btn-background-color: #e11d48;
+  --blue-orange-dark-danger-btn-background-color: #e11d48;
+  --blue-orange-light-danger-btn-color: white;
+  --blue-orange-dark-danger-btn-color: white;
+
+  --blue-orange-light-success-btn-border-color: #16a34b;
+  --blue-orange-dark-success-btn-border-color: #16a34b;
+  --blue-orange-light-success-btn-background-color: #16a34b;
+  --blue-orange-dark-success-btn-background-color: #16a34b;
+  --blue-orange-light-success-btn-color: white;
+  --blue-orange-dark-success-btn-color: white;
+
+  --blue-orange-light-warning-btn-border-color: #f97317;
+  --blue-orange-dark-warning-btn-border-color: #f97317;
+  --blue-orange-light-warning-btn-background-color: #f97317;
+  --blue-orange-dark-warning-btn-background-color: #f97317;
+  --blue-orange-light-warning-btn-color: white;
+  --blue-orange-dark-warning-btn-color: white;
+
+  --blue-orange-light-clear-btn-color: black;
+  --blue-orange-dark-clear-btn-color: white;
+
+  --blue-orange-light-btn-icon-border-color: #e0e1e2;
+  --blue-orange-dark-btn-icon-border-color: #28282a;
+
+  --blue-orange-light-btn-toggle-border-color: #e0e1e2;
+  --blue-orange-dark-btn-toggle-border-color: #28282a;
+  --blue-orange-light-btn-toggle-background-color: white;
+  --blue-orange-dark-btn-toggle-background-color: #393939;
+  --blue-orange-light-btn-toggle-color: black;
+  --blue-orange-dark-btn-toggle-color: white;
+  --blue-orange-light-btn-toggle-hover-background-color: #f0f0f0;
+  --blue-orange-dark-btn-toggle-hover-background-color: #47474a;
+  --blue-orange-light-btn-toggle-active-background-color: black;
+  --blue-orange-dark-btn-toggle-active-background-color: white;
+  --blue-orange-light-btn-toggle-active-color: white;
+  --blue-orange-dark-btn-toggle-active-color: black;
+
+  --blue-orange-light-context-menu-background: white;
+  --blue-orange-dark-context-menu-background: #28282a;
+  --blue-orange-light-context-menu-row-hover-background: #e0e1e2;
+  --blue-orange-dark-context-menu-row-hover-background: #47474a;
+
+  --blue-orange-light-input-color: black;
+  --blue-orange-dark-input-color: white;
+  --blue-orange-light-input-border-color: #e0e1e2;
+  --blue-orange-dark-input-border-color: #28282a;
+  --blue-orange-light-input-background-color: white;
+  --blue-orange-dark-input-background-color: black;
+  --blue-orange-light-input-focus-border-color: black;
+  --blue-orange-dark-input-focus-border-color: white;
+
+  --blue-orange-light-input-toggle-background-color: #ccc;
+  --blue-orange-dark-input-toggle-background-color: #2196F3;
+  --blue-orange-light-input-toggle-background-color-before: white;
+  --blue-orange-dark-input-toggle-background-color-before: black;
+  --blue-orange-light-input-toggle-checked-color: #2196F3;
+  --blue-orange-dark-input-toggle-checked-color: #2196F3;
+
+  --blue-orange-light-input-dropdown-background-color: #f9f9f9;
+  --blue-orange-dark-input-dropdown-background-color: #28282a;
+  --blue-orange-light-input-dropdown-item-color: black;
+  --blue-orange-dark-input-dropdown-item-color: white;
+  --blue-orange-light-input-dropdown-item-hover-color: #f7f8f9;
+  --blue-orange-dark-input-dropdown-item-hover-color: black;
+  --blue-orange-light-input-dropdown-item-focus-color: #f7f8f9;
+  --blue-orange-dark-input-dropdown-item-focus-color: #28282a;
+  --blue-orange-light-input-dropdown-item-focus-background-color: #f7f8f9;
+  --blue-orange-dark-input-dropdown-item-focus-background-color: #28282a;
+
+  --blue-orange-light-default-border-color: #e0e1e2;
+  --blue-orange-dark-default-border-color: #28282a;
+
+  --blue-orange-light-input-label-font-size: 0.8rem;
+  --blue-orange-dark-input-label-font-size: 0.8rem;
+  --blue-orange-light-input-label-font-weight: 700;
+  --blue-orange-dark-input-label-font-weight: 700;
+  --blue-orange-light-input-label-margin-bottom: 10px;
+  --blue-orange-dark-input-label-margin-bottom: 10px;
+  --blue-orange-light-input-label-opacity: 0.8;
+  --blue-orange-dark-input-label-opacity: 0.8;
+}
+
+/* Timeline specific theme variables. The Timeline renders to a <canvas>, so it
+   reads these values through getComputedStyle() at draw time (see resolveTheme
+   in timelineUtils). Overriding them — or supplying `colors` on the component —
+   re-themes the control without touching the drawing code. */
+:root {
+    --blue-orange-light-timeline-background-color: #ffffff;
+    --blue-orange-dark-timeline-background-color: #1c1c1e;
+
+    --blue-orange-light-timeline-header-background-color: #fafafa;
+    --blue-orange-dark-timeline-header-background-color: #242426;
+
+    --blue-orange-light-timeline-border-color: #e0e1e2;
+    --blue-orange-dark-timeline-border-color: #34343a;
+
+    --blue-orange-light-timeline-tick-color: #c4c4c8;
+    --blue-orange-dark-timeline-tick-color: #4a4a50;
+
+    --blue-orange-light-timeline-label-color: #71717a;
+    --blue-orange-dark-timeline-label-color: #a1a1aa;
+
+    --blue-orange-light-timeline-row-background-color: #ffffff;
+    --blue-orange-dark-timeline-row-background-color: #1c1c1e;
+    --blue-orange-light-timeline-row-alt-background-color: #f7f7f9;
+    --blue-orange-dark-timeline-row-alt-background-color: #232326;
+    --blue-orange-light-timeline-row-hover-background-color: #eef2fb;
+    --blue-orange-dark-timeline-row-hover-background-color: #26303f;
+
+    --blue-orange-light-timeline-keyframe-color: #2563eb;
+    --blue-orange-dark-timeline-keyframe-color: #60a5fa;
+    --blue-orange-light-timeline-keyframe-selected-color: #e11d48;
+    --blue-orange-dark-timeline-keyframe-selected-color: #fb7185;
+    --blue-orange-light-timeline-keyframe-stroke-color: #ffffff;
+    --blue-orange-dark-timeline-keyframe-stroke-color: #1c1c1e;
+
+    --blue-orange-light-timeline-group-color: #93b4f7;
+    --blue-orange-dark-timeline-group-color: #3b527d;
+
+    --blue-orange-light-timeline-cursor-color: #e11d48;
+    --blue-orange-dark-timeline-cursor-color: #fb7185;
+
+    --blue-orange-light-timeline-selection-color: rgba(37, 99, 235, 0.18);
+    --blue-orange-dark-timeline-selection-color: rgba(96, 165, 250, 0.22);
+    --blue-orange-light-timeline-selection-border-color: #2563eb;
+    --blue-orange-dark-timeline-selection-border-color: #60a5fa;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}

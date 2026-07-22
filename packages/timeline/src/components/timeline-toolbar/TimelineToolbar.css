@@ -1,0 +1,70 @@
+.blue-orange-timeline-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    box-sizing: border-box;
+    border: 1px solid var(--blue-orange-light-timeline-border-color);
+    border-bottom: none;
+    background-color: var(--blue-orange-light-timeline-header-background-color);
+    color: var(--blue-orange-light-timeline-label-color);
+    font-size: 12px;
+}
+
+.blue-orange-timeline-toolbar.blue-orange-timeline-toolbar-dark {
+    border-color: var(--blue-orange-dark-timeline-border-color);
+    background-color: var(--blue-orange-dark-timeline-header-background-color);
+    color: var(--blue-orange-dark-timeline-label-color);
+}
+
+.blue-orange-timeline-toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.blue-orange-timeline-toolbar-separator {
+    width: 1px;
+    align-self: stretch;
+    margin: 2px 4px;
+    background-color: var(--blue-orange-light-timeline-border-color);
+}
+
+.blue-orange-timeline-toolbar-dark .blue-orange-timeline-toolbar-separator {
+    background-color: var(--blue-orange-dark-timeline-border-color);
+}
+
+/* Highlight the active interaction-mode button. Applied on top of the core
+   ButtonIcon, which we reuse for every control here. */
+.blue-orange-timeline-toolbar .blue-orange-timeline-mode-active {
+    background-color: var(--blue-orange-light-timeline-selection-border-color);
+    border-color: var(--blue-orange-light-timeline-selection-border-color);
+    color: #ffffff;
+}
+
+.blue-orange-timeline-toolbar-dark .blue-orange-timeline-mode-active {
+    background-color: var(--blue-orange-dark-timeline-selection-border-color);
+    border-color: var(--blue-orange-dark-timeline-selection-border-color);
+    color: #1c1c1e;
+}
+
+.blue-orange-timeline-toolbar-spacer {
+    flex: 1 1 auto;
+}
+
+.blue-orange-timeline-toolbar-time {
+    font-variant-numeric: tabular-nums;
+    padding: 0 6px;
+    min-width: 64px;
+    text-align: right;
+}
+
+.blue-orange-timeline-toolbar-snap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.blue-orange-timeline-toolbar-snap-label {
+    white-space: nowrap;
+}
