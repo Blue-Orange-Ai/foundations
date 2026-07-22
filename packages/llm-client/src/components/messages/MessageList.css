@@ -1,0 +1,40 @@
+.blue-orange-llm-message-list {
+    position: relative;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: auto;
+}
+
+.blue-orange-llm-message-list-inner {
+    padding: 20px 20px 32px;
+    min-height: 100%;
+}
+
+.blue-orange-llm-message-list-anchor {
+    height: 1px;
+    width: 100%;
+}
+
+.blue-orange-llm-scroll-bottom {
+    position: sticky;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    width: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--llm-border);
+    background: var(--llm-card-bg);
+    color: var(--llm-text);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+    font-size: 1.1rem;
+}
+
+.blue-orange-llm-scroll-bottom:hover {
+    background: var(--llm-hover);
+}

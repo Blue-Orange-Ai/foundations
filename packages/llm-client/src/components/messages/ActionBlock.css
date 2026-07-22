@@ -1,0 +1,90 @@
+.blue-orange-llm-action {
+    margin: 6px 0;
+    border: 1px solid var(--llm-border);
+    border-radius: 8px;
+    background: var(--llm-card-bg);
+    overflow: hidden;
+}
+
+.blue-orange-llm-action-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    text-align: left;
+    color: var(--llm-text);
+    font-size: 0.85rem;
+}
+
+.blue-orange-llm-action-icon {
+    color: var(--llm-muted);
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.blue-orange-llm-action-title {
+    flex: 1;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.blue-orange-llm-action-done {
+    color: #21a366;
+}
+
+.blue-orange-llm-action-error {
+    color: var(--llm-danger);
+}
+
+.blue-orange-llm-action-chevron {
+    color: var(--llm-muted);
+    transition: transform 0.2s ease;
+}
+
+.blue-orange-llm-action-chevron-open {
+    transform: rotate(180deg);
+}
+
+.blue-orange-llm-action-spin {
+    display: inline-block;
+    color: var(--llm-primary);
+    animation: blue-orange-llm-spin 0.9s linear infinite;
+}
+
+.blue-orange-llm-action-detail {
+    border-top: 1px solid var(--llm-border);
+    padding: 10px 12px;
+    background: var(--llm-accent-soft);
+}
+
+.blue-orange-llm-action-section + .blue-orange-llm-action-section {
+    margin-top: 10px;
+}
+
+.blue-orange-llm-action-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--llm-muted);
+    margin-bottom: 4px;
+}
+
+.blue-orange-llm-action-pre {
+    margin: 0;
+    padding: 8px 10px;
+    background: var(--llm-page-bg);
+    border: 1px solid var(--llm-border);
+    border-radius: 6px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: var(--llm-text);
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+}

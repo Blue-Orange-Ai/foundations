@@ -1,0 +1,9 @@
+/* Root layout: sidebar + thread side by side, filling the host container. */
+.blue-orange-llm {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background: var(--llm-page-bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}

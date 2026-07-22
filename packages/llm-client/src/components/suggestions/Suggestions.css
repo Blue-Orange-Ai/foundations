@@ -1,0 +1,57 @@
+.blue-orange-llm-suggestions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.blue-orange-llm-suggestions-grid {
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.blue-orange-llm-suggestions-row {
+    flex-wrap: wrap;
+    max-width: 780px;
+    margin: 0 auto 10px;
+}
+
+.blue-orange-llm-suggestion {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1px solid var(--llm-border);
+    border-radius: 12px;
+    background: var(--llm-card-bg);
+    color: var(--llm-text);
+    cursor: pointer;
+    font-size: 0.85rem;
+    text-align: left;
+    transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+
+.blue-orange-llm-suggestions-grid .blue-orange-llm-suggestion {
+    flex: 1 1 240px;
+    max-width: 300px;
+}
+
+.blue-orange-llm-suggestion:hover {
+    border-color: var(--llm-primary);
+    background: var(--llm-hover);
+}
+
+.blue-orange-llm-suggestion:active {
+    transform: translateY(1px);
+}
+
+.blue-orange-llm-suggestion-icon {
+    color: var(--llm-primary);
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.blue-orange-llm-suggestion-label {
+    line-height: 1.4;
+}

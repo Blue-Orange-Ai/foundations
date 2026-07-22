@@ -1,0 +1,56 @@
+/* ---------------------------------------------------------------------------
+ * Local design tokens for the LLM client.
+ *
+ * Rather than scatter `--blue-orange-light-*` / `--blue-orange-dark-*` pairs
+ * across every component, we map the core theme variables onto one flat set of
+ * `--llm-*` tokens here. Dark mode follows the core convention: a `.dark`
+ * ancestor class flips the values (no media queries). Wrap the whole UI in
+ * `.blue-orange-llm` and every component inherits the right palette.
+ * ------------------------------------------------------------------------- */
+
+.blue-orange-llm {
+    --llm-text: var(--blue-orange-light-default-text-color, #1f2933);
+    --llm-muted: #6b7280;
+    --llm-border: var(--blue-orange-light-default-border-color, #e2e5e9);
+    --llm-card-bg: var(--blue-orange-light-default-card-background, #ffffff);
+    --llm-page-bg: #ffffff;
+    --llm-input-bg: var(--blue-orange-light-input-background-color, #ffffff);
+    --llm-input-border: var(--blue-orange-light-input-border-color, #cbd2d9);
+    --llm-hover: var(--blue-orange-light-context-menu-row-hover-background, #f2f4f6);
+    --llm-primary: var(--blue-orange-light-primary-btn-background-color, #2f6df6);
+    --llm-primary-contrast: #ffffff;
+    --llm-user-bubble: #eef2ff;
+    --llm-user-bubble-text: var(--blue-orange-light-default-text-color, #1f2933);
+    --llm-accent-soft: #f5f7fa;
+    --llm-danger: #d64545;
+
+    color: var(--llm-text);
+    display: flex;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.blue-orange-llm *,
+.blue-orange-llm *::before,
+.blue-orange-llm *::after {
+    box-sizing: border-box;
+}
+
+.dark .blue-orange-llm,
+.blue-orange-llm.dark {
+    --llm-text: var(--blue-orange-dark-default-text-color, #e6e8eb);
+    --llm-muted: #9aa4b2;
+    --llm-border: var(--blue-orange-dark-default-border-color, #333a44);
+    --llm-card-bg: var(--blue-orange-dark-default-card-background, #21262d);
+    --llm-page-bg: #16191d;
+    --llm-input-bg: var(--blue-orange-dark-input-background-color, #21262d);
+    --llm-input-border: var(--blue-orange-dark-input-border-color, #3a4048);
+    --llm-hover: var(--blue-orange-dark-context-menu-row-hover-background, #2a2f37);
+    --llm-primary: var(--blue-orange-dark-primary-btn-background-color, #3b82f6);
+    --llm-primary-contrast: #ffffff;
+    --llm-user-bubble: #2a3350;
+    --llm-user-bubble-text: #e6e8eb;
+    --llm-accent-soft: #21262d;
+    --llm-danger: #f26d6d;
+}

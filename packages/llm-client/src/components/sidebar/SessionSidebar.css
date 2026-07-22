@@ -1,0 +1,147 @@
+.blue-orange-llm-sidebar {
+    height: 100%;
+    flex-shrink: 0;
+}
+
+.blue-orange-llm-sidebar-header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px 8px;
+}
+
+.blue-orange-llm-sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 6px;
+    font-weight: 600;
+    color: var(--llm-text);
+}
+
+.blue-orange-llm-sidebar-brand-logo,
+.blue-orange-llm-sidebar-brand-logo svg {
+    height: 22px;
+    width: 22px;
+    display: block;
+}
+
+.blue-orange-llm-sidebar-brand-logo-img {
+    height: 22px;
+    width: 22px;
+    object-fit: contain;
+    border-radius: 5px;
+}
+
+.blue-orange-llm-sidebar-brand-name {
+    font-size: 0.95rem;
+}
+
+.blue-orange-llm-sidebar-header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.blue-orange-llm-sidebar-newchat {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 38px;
+    border: 1px solid var(--llm-border);
+    border-radius: 10px;
+    background: var(--llm-card-bg);
+    color: var(--llm-text);
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: 500;
+}
+
+.blue-orange-llm-sidebar-newchat:hover {
+    background: var(--llm-hover);
+    border-color: var(--llm-primary);
+}
+
+.blue-orange-llm-sidebar-collapse {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    width: 38px;
+    border: 1px solid var(--llm-border);
+    border-radius: 10px;
+    background: var(--llm-card-bg);
+    color: var(--llm-muted);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.blue-orange-llm-sidebar-collapse:hover {
+    background: var(--llm-hover);
+    color: var(--llm-text);
+}
+
+.blue-orange-llm-sidebar-empty {
+    padding: 20px 14px;
+    color: var(--llm-muted);
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+/* -- Per-session row actions ------------------------------------------ */
+
+.blue-orange-llm-session-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.blue-orange-llm-session-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 26px;
+    width: 26px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    color: var(--llm-muted);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.blue-orange-llm-session-action:hover {
+    background: var(--llm-hover);
+    color: var(--llm-text);
+}
+
+.blue-orange-llm-session-action-danger:hover {
+    color: var(--llm-danger);
+}
+
+.blue-orange-llm-session-edit-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    margin: 2px 0;
+}
+
+.blue-orange-llm-session-edit-icon {
+    color: var(--llm-muted);
+    flex-shrink: 0;
+}
+
+.blue-orange-llm-session-edit {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid var(--llm-primary);
+    border-radius: 6px;
+    background: var(--llm-input-bg);
+    color: var(--llm-text);
+    font-size: 0.85rem;
+    padding: 5px 8px;
+    outline: none;
+}

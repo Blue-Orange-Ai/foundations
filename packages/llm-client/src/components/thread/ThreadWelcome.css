@@ -1,0 +1,54 @@
+.blue-orange-llm-welcome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 20px;
+    width: 100%;
+}
+
+.blue-orange-llm-welcome-logo {
+    height: 64px;
+    width: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    background: var(--llm-primary);
+    color: var(--llm-primary-contrast);
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.blue-orange-llm-welcome-logo-svg,
+.blue-orange-llm-welcome-logo-svg svg {
+    height: 40px;
+    width: 40px;
+    display: block;
+}
+
+.blue-orange-llm-welcome-logo-img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    border-radius: 16px;
+}
+
+.blue-orange-llm-welcome-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: var(--llm-text);
+}
+
+.blue-orange-llm-welcome-subtitle {
+    font-size: 0.95rem;
+    color: var(--llm-muted);
+    margin: 0 0 8px;
+    max-width: 520px;
+}
+
+.blue-orange-llm-welcome-suggestions {
+    margin-top: 28px;
+    width: 100%;
+}
