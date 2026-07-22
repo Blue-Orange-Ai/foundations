@@ -1,13 +1,11 @@
 import React from 'react';
 import { SimpleTooltip } from '@blue-orange-ai/foundations-core';
 
-import { ConfigAgentDto } from '../../interfaces/AgentProtocol';
 import { Attachment, ChatSession, Suggestion, WelcomeBranding } from '../../interfaces/ChatInterfaces';
 import { MessageList } from '../messages/MessageList';
 import { Composer } from '../composer/Composer';
 import { ThreadWelcome } from './ThreadWelcome';
 import { Suggestions } from '../suggestions/Suggestions';
-import { ModelPicker } from '../model-picker/ModelPicker';
 import './Thread.css';
 
 interface Props {
@@ -16,15 +14,6 @@ interface Props {
     onSend: (text: string, attachments: Attachment[]) => void;
     onStop: () => void;
     onRegenerate: (messageId: string) => void;
-    onNewChat: () => void;
-
-    models: ConfigAgentDto[];
-    selectedModel?: string;
-    onModelChange: (model: string) => void;
-
-    thinkingSupported?: boolean;
-    thinking: boolean;
-    onToggleThinking: (value: boolean) => void;
 
     branding?: WelcomeBranding;
     suggestions?: Suggestion[];
@@ -43,13 +32,6 @@ export const Thread: React.FC<Props> = ({
     onSend,
     onStop,
     onRegenerate,
-    onNewChat,
-    models,
-    selectedModel,
-    onModelChange,
-    thinkingSupported,
-    thinking,
-    onToggleThinking,
     branding,
     suggestions,
     followUps,
@@ -60,51 +42,24 @@ export const Thread: React.FC<Props> = ({
 }) => {
     const isEmpty = session.messages.length === 0;
 
-    const header = (
-        <div className="blue-orange-llm-thread-header">
-            <div className="blue-orange-llm-thread-header-left">
-                {!sidebarOpen && (
-                    <SimpleTooltip label="Open sidebar">
-                        <button type="button" className="blue-orange-llm-header-btn" onClick={onToggleSidebar}>
-                            <i className="ri-side-bar-line" />
-                        </button>
-                    </SimpleTooltip>
-                )}
-                <span className="blue-orange-llm-thread-title">{session.title || 'New chat'}</span>
-            </div>
-            <div className="blue-orange-llm-thread-header-right">
-                {thinkingSupported && (
-                    <SimpleTooltip label={thinking ? 'Extended thinking on' : 'Extended thinking off'}>
-                        <button
-                            type="button"
-                            className={`blue-orange-llm-header-btn${
-                                thinking ? ' blue-orange-llm-header-btn-active' : ''
-                            }`}
-                            onClick={() => onToggleThinking(!thinking)}
-                        >
-                            <i className="ri-brain-line" />
-                        </button>
-                    </SimpleTooltip>
-                )}
-                <ModelPicker
-                    models={models}
-                    value={selectedModel}
-                    onChange={onModelChange}
-                    disabled={isRunning}
-                />
-                <SimpleTooltip label="New chat">
-                    <button type="button" className="blue-orange-llm-header-btn" onClick={onNewChat}>
-                        <i className="ri-add-line" />
-                    </button>
-                </SimpleTooltip>
-            </div>
-        </div>
+    // The chat window has no header. When the sidebar is collapsed a single
+    // floating button in the top-left corner reopens it.
+    const floatingOpen = !sidebarOpen && (
+        <SimpleTooltip label="Open sidebar">
+            <button
+                type="button"
+                className="blue-orange-llm-floating-open"
+                onClick={onToggleSidebar}
+            >
+                <i className="ri-side-bar-line" />
+            </button>
+        </SimpleTooltip>
     );
 
     if (isEmpty) {
         return (
             <div className="blue-orange-llm-thread">
-                {header}
+                {floatingOpen}
                 <div className="blue-orange-llm-thread-welcome-layout">
                     <div className="blue-orange-llm-thread-welcome-inner">
                         <ThreadWelcome
@@ -136,7 +91,7 @@ export const Thread: React.FC<Props> = ({
 
     return (
         <div className="blue-orange-llm-thread">
-            {header}
+            {floatingOpen}
             <MessageList
                 messages={session.messages}
                 isRunning={isRunning}

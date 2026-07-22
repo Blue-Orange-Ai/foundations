@@ -13,10 +13,18 @@
 .blue-orange-llm-sidebar-brand {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 10px;
     padding: 4px 6px;
     font-weight: 600;
     color: var(--llm-text);
+}
+
+.blue-orange-llm-sidebar-brand-identity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
 }
 
 .blue-orange-llm-sidebar-brand-logo,
@@ -43,8 +51,13 @@
     gap: 6px;
 }
 
-.blue-orange-llm-sidebar-newchat {
+.blue-orange-llm-sidebar-header-buttons > .blue-orange-simple-tooltip {
     flex: 1;
+    min-width: 0;
+}
+
+.blue-orange-llm-sidebar-newchat {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -68,14 +81,15 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 38px;
-    width: 38px;
-    border: 1px solid var(--llm-border);
-    border-radius: 10px;
-    background: var(--llm-card-bg);
+    height: 30px;
+    width: 30px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
     color: var(--llm-muted);
     cursor: pointer;
     flex-shrink: 0;
+    font-size: 1.05rem;
 }
 
 .blue-orange-llm-sidebar-collapse:hover {
@@ -83,11 +97,86 @@
     color: var(--llm-text);
 }
 
+/* Make chat rows span the full sidebar width with a constant height
+   (hover action buttons must not grow the row). */
+.blue-orange-llm-sidebar .blue-orange-sidebar-body-item {
+    width: 100%;
+    margin-left: 0;
+    box-sizing: border-box;
+    height: 40px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.blue-orange-llm-sidebar .blue-orange-sidebar-body-item-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Truncate chat titles to a single line with an ellipsis. */
+.blue-orange-llm-sidebar .blue-orange-sidebar-body-item-left {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.blue-orange-llm-sidebar .blue-orange-sidebar-body-item-label {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .blue-orange-llm-sidebar-empty {
     padding: 20px 14px;
     color: var(--llm-muted);
     font-size: 0.85rem;
     text-align: center;
+}
+
+/* -- Footer controls (model picker, thinking, theme) ------------------ */
+
+.blue-orange-llm-sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 8px;
+    border-top: 1px solid var(--llm-border);
+}
+
+.blue-orange-llm-sidebar-footer-toggles {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.blue-orange-llm-sidebar-footer-toggles > .blue-orange-simple-tooltip {
+    flex: 1;
+    min-width: 0;
+}
+
+.blue-orange-llm-sidebar-footer-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 34px;
+    border: 1px solid var(--llm-border);
+    border-radius: 8px;
+    background: var(--llm-card-bg);
+    color: var(--llm-muted);
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.blue-orange-llm-sidebar-footer-btn:hover {
+    background: var(--llm-hover);
+    color: var(--llm-text);
+}
+
+.blue-orange-llm-sidebar-footer-btn-active {
+    color: var(--llm-primary);
+    border-color: var(--llm-primary);
 }
 
 /* -- Per-session row actions ------------------------------------------ */

@@ -56,6 +56,7 @@ export const Assistant: React.FC<AssistantProps> = ({
     const [thinking, setThinking] = useState<boolean>(Boolean(config.thinking));
     const [feedback, setFeedback] = useState<Record<string, 'up' | 'down'>>({});
     const [open, setOpen] = useState(sidebarOpen);
+    const [isDark, setIsDark] = useState(Boolean(dark));
 
     const resolvedBranding = branding || config.welcome;
     const resolvedSuggestions = suggestions || config.suggestions;
@@ -186,7 +187,7 @@ export const Assistant: React.FC<AssistantProps> = ({
     }, []);
 
     return (
-        <div className={`blue-orange-llm${dark ? ' dark' : ''}${className ? ` ${className}` : ''}`}>
+        <div className={`blue-orange-llm${isDark ? ' dark' : ''}${className ? ` ${className}` : ''}`}>
             {open && (
                 <SessionSidebar
                     sessions={sessions}
@@ -200,6 +201,15 @@ export const Assistant: React.FC<AssistantProps> = ({
                     brandingTitle={resolvedBranding?.appName}
                     brandingLogo={resolvedBranding?.logo}
                     brandingLogoIsSvg={resolvedBranding?.logoIsSvg}
+                    models={showModelControls ? models : []}
+                    selectedModel={currentSession.model || defaultModel}
+                    onModelChange={handleModelChange}
+                    modelPickerDisabled={isRunning}
+                    thinkingSupported={showModelControls}
+                    thinking={thinking}
+                    onToggleThinking={setThinking}
+                    isDark={isDark}
+                    onToggleTheme={() => setIsDark((d) => !d)}
                 />
             )}
             <Thread
@@ -208,13 +218,6 @@ export const Assistant: React.FC<AssistantProps> = ({
                 onSend={handleSend}
                 onStop={stop}
                 onRegenerate={regenerate}
-                onNewChat={handleNewChat}
-                models={showModelControls ? models : []}
-                selectedModel={currentSession.model || defaultModel}
-                onModelChange={handleModelChange}
-                thinkingSupported={showModelControls}
-                thinking={thinking}
-                onToggleThinking={setThinking}
                 branding={resolvedBranding}
                 suggestions={resolvedSuggestions}
                 followUps={followUps}
