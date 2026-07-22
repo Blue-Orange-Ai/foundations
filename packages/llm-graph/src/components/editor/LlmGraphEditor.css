@@ -1,0 +1,71 @@
+.bo-llm-graph-editor {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    background-color: var(--bo-llm-graph-canvas-bg, #fbfbfd);
+    color: var(--bo-llm-graph-text, #1c1d22);
+    position: relative;
+}
+
+.bo-llm-graph-canvas {
+    position: relative;
+    flex-grow: 1;
+    min-height: 0;
+}
+
+.bo-llm-graph-canvas .blue-orange-graph-parent {
+    height: 100%;
+    width: 100%;
+}
+
+.bo-llm-graph-issues {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    width: 360px;
+    max-width: calc(100% - 32px);
+    max-height: 45%;
+    overflow-y: auto;
+    background-color: var(--bo-llm-graph-panel, #ffffff);
+    border: 1px solid var(--bo-llm-graph-border, #e0e1e2);
+    border-radius: 10px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.16);
+    z-index: 30;
+}
+
+.bo-llm-graph-issues-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--bo-llm-graph-border, #e0e1e2);
+}
+
+.bo-llm-graph-issues-header i {
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.bo-llm-graph-issues-header i:hover {
+    opacity: 1;
+}
+
+.bo-llm-graph-issue {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    border-bottom: 1px solid var(--bo-llm-graph-subtle, #f2f3f6);
+}
+
+.bo-llm-graph-issue:last-child {
+    border-bottom: none;
+}
+
+.bo-llm-graph-issue-error { color: #e5484d; }
+.bo-llm-graph-issue-warning { color: #b7791f; }
+.bo-llm-graph-issue-ok { color: #22a06b; }

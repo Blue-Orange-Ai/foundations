@@ -1,0 +1,100 @@
+.bo-llm-graph-palette-backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(20, 22, 28, 0.35);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 12vh;
+    z-index: 40;
+}
+
+.bo-llm-graph-palette {
+    width: 460px;
+    max-width: calc(100% - 32px);
+    max-height: 62vh;
+    background-color: var(--bo-llm-graph-panel, #ffffff);
+    color: var(--bo-llm-graph-text, #1c1d22);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.bo-llm-graph-palette-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--bo-llm-graph-border, #e0e1e2);
+}
+
+.bo-llm-graph-palette-header > i {
+    opacity: 0.5;
+}
+
+.bo-llm-graph-palette-search {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    font-size: 0.95rem;
+    background: transparent;
+    color: inherit;
+}
+
+.bo-llm-graph-palette-close {
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.bo-llm-graph-palette-close:hover {
+    opacity: 1;
+}
+
+.bo-llm-graph-palette-body {
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.bo-llm-graph-palette-group-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.5;
+    padding: 10px 10px 6px;
+}
+
+.bo-llm-graph-palette-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.bo-llm-graph-palette-item:hover {
+    background-color: var(--bo-llm-graph-subtle, #f2f3f6);
+}
+
+.bo-llm-graph-palette-item-icon {
+    height: 34px;
+    width: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.bo-llm-graph-palette-item-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.bo-llm-graph-palette-item-desc {
+    font-size: 0.78rem;
+    opacity: 0.6;
+}
