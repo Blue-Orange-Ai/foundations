@@ -46,6 +46,7 @@ All packages live under `packages/`. There is no root-level source code.
 - **map** — Map components (depends on primitives-map)
 - **code-editors** — Monaco-based code editors
 - **llm-client** — LLM chat/interaction UI (depends on core)
+- **llm-graph** — Node-based LLM agent workflow (DAG) editor for the `llm-agent` (depends on core + graph)
 - **search-client** — Search UI (depends on core + clients)
 - **pipelines-client** — Pipeline graph editor (depends on core + graph)
 - **passport-client** — Auth/user management UI (depends on core + clients)
@@ -59,6 +60,7 @@ All packages live under `packages/`. There is no root-level source code.
 `core` is the base UI package. `clients` is the base utility package. Higher-level packages depend on one or both:
 - `block-editor` → `core`
 - `llm-client` → `core`
+- `llm-graph` → `core`, `graph`
 - `deployment-manager` → `core`
 - `pipelines-client` → `core`, `graph`
 - `search-client` → `core`, `clients`

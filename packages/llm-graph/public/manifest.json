@@ -1,0 +1,9 @@
+{
+  "short_name": "LLM Graph",
+  "name": "Blue Orange AI — LLM Graph",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

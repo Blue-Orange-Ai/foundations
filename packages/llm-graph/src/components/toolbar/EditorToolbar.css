@@ -1,0 +1,71 @@
+.bo-llm-graph-toolbar {
+    height: 56px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    gap: 16px;
+    background-color: var(--bo-llm-graph-panel, #ffffff);
+    border-bottom: 1px solid var(--bo-llm-graph-border, #e0e1e2);
+}
+
+.bo-llm-graph-toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.bo-llm-graph-toolbar-logo {
+    color: var(--bo-llm-graph-accent, #4f6bed);
+    font-size: 1.3rem;
+}
+
+.bo-llm-graph-toolbar-name {
+    border: 1px solid transparent;
+    background: transparent;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 6px 8px;
+    border-radius: 6px;
+    outline: none;
+    color: inherit;
+    min-width: 160px;
+}
+
+.bo-llm-graph-toolbar-name:hover,
+.bo-llm-graph-toolbar-name:focus {
+    border-color: var(--bo-llm-graph-border, #e0e1e2);
+}
+
+.bo-llm-graph-toolbar-stats {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bo-llm-graph-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.82rem;
+    opacity: 0.7;
+}
+
+.bo-llm-graph-stat-error {
+    color: #e5484d;
+    opacity: 1;
+}
+
+.bo-llm-graph-stat-warning {
+    color: #e0a012;
+    opacity: 1;
+}
+
+.bo-llm-graph-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
