@@ -28,13 +28,6 @@ export const Workspace: React.FC = () => {
 
     return (
         <div className="workspace-main-window">
-            <button
-                type="button"
-                className="workspace-theme-toggle"
-                onClick={() => setDark((d) => !d)}
-            >
-                <i className={dark ? 'ri-sun-line' : 'ri-moon-line'} />
-            </button>
             <LlmAgentProvider
                 uri="http://localhost:6012"
                 token={DEV_TOKEN}
