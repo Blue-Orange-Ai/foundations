@@ -1,0 +1,49 @@
+.foundations-3d-connection {
+	display: inline-flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 12px;
+	border-radius: 999px;
+	font-size: 0.8rem;
+	font-weight: 600;
+	background-color: rgba(0, 0, 0, 0.72);
+	color: white;
+}
+
+.foundations-3d-connection-dot {
+	width: 9px;
+	height: 9px;
+	border-radius: 50%;
+}
+
+.foundations-3d-connection-live .foundations-3d-connection-dot {
+	background-color: #16a34b;
+	animation: foundations-3d-connection-blink 1.6s ease-in-out infinite;
+}
+
+.foundations-3d-connection-stale .foundations-3d-connection-dot {
+	background-color: #f97317;
+}
+
+.foundations-3d-connection-offline .foundations-3d-connection-dot {
+	background-color: #e11d48;
+}
+
+.foundations-3d-connection-stale {
+	background-color: #b7590b;
+}
+
+.foundations-3d-connection-offline {
+	background-color: #7f1d2b;
+}
+
+@keyframes foundations-3d-connection-blink {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.35;
+	}
+}

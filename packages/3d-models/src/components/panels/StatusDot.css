@@ -1,0 +1,27 @@
+.foundations-3d-status-dot {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	min-width: 10px;
+	border-radius: 50%;
+	box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
+.foundations-3d-status-dot-pulse {
+	animation: foundations-3d-dot-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes foundations-3d-dot-pulse {
+	0% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 0.4;
+		transform: scale(0.8);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+}

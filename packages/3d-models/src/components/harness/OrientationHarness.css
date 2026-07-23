@@ -1,0 +1,35 @@
+.foundations-3d-harness {
+	background-color: var(--blue-orange-light-default-card-background, white);
+	border: 1px solid var(--blue-orange-light-default-border-color, #e0e1e2);
+	border-radius: 6px;
+	padding: 14px 16px;
+	width: 240px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.foundations-3d-harness-axis {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.foundations-3d-harness-axis-header {
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
+	justify-content: space-between;
+	font-size: 0.8rem;
+	font-weight: 600;
+}
+
+.foundations-3d-harness-value {
+	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+	opacity: 0.7;
+}
+
+.foundations-3d-harness-axis input[type='range'] {
+	width: 100%;
+}

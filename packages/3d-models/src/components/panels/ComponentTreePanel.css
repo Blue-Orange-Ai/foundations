@@ -1,0 +1,72 @@
+.foundations-3d-tree-panel {
+	background-color: var(--blue-orange-light-default-card-background, white);
+	border: 1px solid var(--blue-orange-light-default-border-color, #e0e1e2);
+	border-radius: 6px;
+	padding: 14px 16px;
+	width: 260px;
+	box-sizing: border-box;
+}
+
+.foundations-3d-tree-body {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	max-height: 60vh;
+	overflow-y: auto;
+}
+
+.foundations-3d-tree-layer {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.foundations-3d-tree-layer-header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	padding-bottom: 4px;
+	border-bottom: 1px solid var(--blue-orange-light-default-border-color, #e0e1e2);
+	margin-bottom: 4px;
+}
+
+.foundations-3d-tree-layer-name {
+	font-size: 0.72rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	opacity: 0.65;
+}
+
+.foundations-3d-tree-item {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+	padding: 5px 6px;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.foundations-3d-tree-item:hover {
+	background-color: var(--blue-orange-light-sidebar-body-item-hover-color, #e0e1e2);
+}
+
+.foundations-3d-tree-item-selected {
+	background-color: var(--blue-orange-light-input-dropdown-item-focus-background-color, #ebf0fb);
+	outline: 1px solid var(--blue-orange-light-active-border-color, dodgerblue);
+}
+
+.foundations-3d-tree-item-label {
+	flex: 1;
+	font-size: 0.85rem;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.foundations-3d-tree-item-hidden {
+	opacity: 0.4;
+	text-decoration: line-through;
+}

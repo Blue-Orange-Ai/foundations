@@ -1,0 +1,32 @@
+.foundations-3d-readout {
+	background-color: rgba(0, 0, 0, 0.72);
+	color: white;
+	border-radius: 6px;
+	padding: 10px 14px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	font-variant-numeric: tabular-nums;
+	min-width: 140px;
+}
+
+.foundations-3d-readout-row {
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.foundations-3d-readout-label {
+	font-size: 0.72rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	opacity: 0.7;
+}
+
+.foundations-3d-readout-value {
+	font-size: 0.95rem;
+	font-weight: 600;
+	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}

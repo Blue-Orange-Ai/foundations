@@ -1,0 +1,49 @@
+.foundations-3d-detail {
+	background-color: var(--blue-orange-light-default-card-background, white);
+	border: 1px solid var(--blue-orange-light-default-border-color, #e0e1e2);
+	border-radius: 6px;
+	padding: 14px 16px;
+	width: 260px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.foundations-3d-detail-header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.foundations-3d-detail-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.foundations-3d-detail-status {
+	display: inline-flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.82rem;
+	font-weight: 600;
+}
+
+.foundations-3d-detail-description {
+	margin: 0;
+	font-size: 0.85rem;
+	line-height: 1.4;
+	opacity: 0.8;
+}
+
+.foundations-3d-detail-actions {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+}
