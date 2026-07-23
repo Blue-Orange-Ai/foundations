@@ -168,11 +168,49 @@ context.
 ```bash
 cd packages/3d-models
 npm install
-npm start   # dev harness at localhost:3000
-npm test    # orientation conversion unit tests
+npm run fetch-demo-model   # downloads a sample model → public/model.glb
+npm start                  # dev harness at localhost:3000
+npm test                   # orientation conversion unit tests
 npm run build
 ```
 
-Drop a node-named `model.glb` into `public/` to see a real model; without one
-the canvas shows its error fallback while every panel and the slider harness
-still work.
+## Example models to drop in
+
+The viewer renders any glTF `.glb`. On load the model is auto-centred and scaled
+(`autoFrame`), so it frames correctly whatever units it was authored in, and the
+orientation demo (rotation against the fixed grid) works for **any** model.
+
+Component highlighting, per-component visibility and click-selection additionally
+require the model's **node names to match a manifest**. The Khronos glTF sample
+assets are a convenient source:
+
+| Model | Parts | Good for | Raw `.glb` |
+|---|---|---|---|
+| **ToyCar** | `ToyCar`, `Fabric`, `Glass` | Full demo — highlight, visibility, selection | [download](https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/ToyCar/glTF-Binary/ToyCar.glb) |
+| **DamagedHelmet** | single part | Orientation / rotation only | [download](https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/DamagedHelmet/glTF-Binary/DamagedHelmet.glb) |
+| **AntiqueCamera** | `camera`, `tripod` | Two-component demo | [download](https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/AntiqueCamera/glTF-Binary/AntiqueCamera.glb) |
+
+The dev harness ships a manifest for **ToyCar** (`toycar-manifest.ts`), so:
+
+```bash
+npm run fetch-demo-model            # ToyCar (default) — full-featured demo
+MODEL=DamagedHelmet npm run fetch-demo-model   # orientation-only demo
+```
+
+then `npm start`. Use the **Inject faults** button to see the body/fabric/glass
+highlight (error / warn / offline), the component tree to toggle visibility
+(x-ray in the demo), and click a part to select it.
+
+Demo `.glb` files are **not** committed (`.gitignore`d) — fetch them locally. To
+wire a different model, add a manifest whose ids match its node names (verify
+them by logging the scene graph, per Phase 0) and pass it to `ModelViewer`.
+
+Without a model in `public/`, the canvas shows its error fallback while every
+panel and the slider harness still work.
+
+### Full-asset workflow
+
+For your own CAD-derived asset, follow the asset-preparation steps above: bake
+node names that match your manifest, normalise orientation/scale, compress, and
+drop the resulting `.glb` in `public/` (or serve it from anywhere and pass its
+URL as `modelUrl`).

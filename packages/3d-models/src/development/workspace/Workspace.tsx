@@ -6,14 +6,18 @@ import { ModelViewer } from '../../components/model-viewer/ModelViewer';
 import { useModelController } from '../../core/useModelController';
 import { useOrientationSource } from '../../core/useOrientationSource';
 import { toRadians, toDegrees, NED } from '../../core/orientation';
-import { DRONE_MANIFEST } from './drone-manifest';
+import { TOYCAR_MANIFEST } from './toycar-manifest';
 
 import './Workspace.css';
 
-// Point this at a real, node-named .glb dropped into `public/`. See the
-// asset-preparation section of the README. Absent, the canvas shows the error
-// fallback while every panel and the slider harness still work.
+// The demo model. Fetch it with `npm run fetch-demo-model` (downloads the
+// Khronos ToyCar sample → public/model.glb, matching TOYCAR_MANIFEST). Absent,
+// the canvas shows its error fallback while every panel and the slider harness
+// still work. See the README for other droppable models.
 const MODEL_URL = process.env.PUBLIC_URL + '/model.glb';
+
+// The component ids to cycle faults across — must exist in the active manifest.
+const FAULT_TARGETS = ['ToyCar', 'Fabric', 'Glass'] as const;
 
 /**
  * Local development harness for the 3D model viewer. Demonstrates driving the
@@ -21,7 +25,7 @@ const MODEL_URL = process.env.PUBLIC_URL + '/model.glb';
  * injecting component faults — all reusing foundations-core UI.
  */
 export const Workspace: React.FC = () => {
-	const controller = useModelController(DRONE_MANIFEST);
+	const controller = useModelController(TOYCAR_MANIFEST);
 	const source = useOrientationSource();
 
 	// Gentle idle motion so the demo is alive even without the real feed.
@@ -42,10 +46,10 @@ export const Workspace: React.FC = () => {
 	}, [source]);
 
 	const injectFault = () => {
-		controller.setStatuses({ motor_fr: 'error', esc_rl: 'warn', gps: 'offline' });
+		controller.setStatuses({ [FAULT_TARGETS[0]]: 'error', [FAULT_TARGETS[1]]: 'warn', [FAULT_TARGETS[2]]: 'offline' });
 	};
 	const clearFaults = () => {
-		controller.setStatuses({ motor_fr: 'ok', esc_rl: 'ok', gps: 'ok' });
+		controller.setStatuses({ [FAULT_TARGETS[0]]: 'ok', [FAULT_TARGETS[1]]: 'ok', [FAULT_TARGETS[2]]: 'ok' });
 	};
 
 	return (
@@ -57,7 +61,7 @@ export const Workspace: React.FC = () => {
 			<div className="workspace-display-window">
 				<ModelViewer
 					modelUrl={MODEL_URL}
-					manifest={DRONE_MANIFEST}
+					manifest={TOYCAR_MANIFEST}
 					controller={controller}
 					orientationSource={source}
 					convention={NED}

@@ -44,7 +44,8 @@
     "start": "react-scripts start",
     "build": "vite build && tsc",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "fetch-demo-model": "node scripts/fetch-demo-model.mjs"
   },
   "eslintConfig": {
     "extends": [

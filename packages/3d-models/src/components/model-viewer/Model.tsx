@@ -36,6 +36,14 @@ export interface ModelProps {
 	onHover?: (id: ComponentId | null) => void;
 	/** The currently selected component (for selection highlight). */
 	selected?: ComponentId | null;
+	/**
+	 * Recentre and uniformly scale the loaded model on load so it frames nicely
+	 * regardless of its authored units (a CAD asset may be modelled in mm, a
+	 * game asset in metres). On by default so any dropped `.glb` "just works".
+	 */
+	autoFrame?: boolean;
+	/** Target bounding-sphere radius (world units) when `autoFrame` is on. */
+	frameRadius?: number;
 }
 
 const EMPTY_STATUS: ComponentStatusMap = new Map();
@@ -56,9 +64,12 @@ export const Model: React.FC<ModelProps> = ({
 	onSelect,
 	onHover,
 	selected = null,
+	autoFrame = true,
+	frameRadius = 2,
 }) => {
 	const { scene } = useGLTF(url);
 	const groupRef = useRef<THREE.Group>(null);
+	const fitRef = useRef<THREE.Group>(null);
 	const [hovered, setHovered] = useState<ComponentId | null>(null);
 
 	const knownIds = useMemo(() => new Set(Object.keys(manifest)), [manifest]);
@@ -70,6 +81,27 @@ export const Model: React.FC<ModelProps> = ({
 	useEffect(() => {
 		return () => disposeIndex(index);
 	}, [index]);
+
+	// Recentre + scale the model to a consistent size. Measured with the fit
+	// group reset to identity so re-runs don't feed back on themselves. Uses the
+	// bounding sphere so framing is stable while the outer group rotates.
+	useEffect(() => {
+		const g = fitRef.current;
+		if (!autoFrame || !g) {
+			return;
+		}
+		g.position.set(0, 0, 0);
+		g.scale.setScalar(1);
+		g.updateMatrixWorld(true);
+		const box = new THREE.Box3().setFromObject(scene);
+		if (box.isEmpty()) {
+			return;
+		}
+		const sphere = box.getBoundingSphere(new THREE.Sphere());
+		const scale = sphere.radius > 0 ? frameRadius / sphere.radius : 1;
+		g.scale.setScalar(scale);
+		g.position.copy(sphere.center).multiplyScalar(-scale);
+	}, [scene, index, autoFrame, frameRadius]);
 
 	// Meshes whose current status pulses — recomputed only when status changes.
 	const pulsing = useMemo(() => {
@@ -205,7 +237,9 @@ export const Model: React.FC<ModelProps> = ({
 			onPointerOver={handlePointerOver}
 			onPointerOut={handlePointerOut}
 		>
-			<primitive object={scene} />
+			<group ref={fitRef}>
+				<primitive object={scene} />
+			</group>
 		</group>
 	);
 };

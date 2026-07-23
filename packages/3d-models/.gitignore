@@ -11,6 +11,9 @@
 # production
 /build
 
+# demo model assets fetched via `npm run fetch-demo-model` (not committed)
+/public/*.glb
+
 # misc
 .DS_Store
 .env.local
