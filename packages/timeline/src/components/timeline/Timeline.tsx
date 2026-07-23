@@ -22,17 +22,22 @@ import {
     TimelineElementType,
     TimelineInteractionMode,
     TimelineKeyframeShape,
+    TimelineTimeMode,
 } from '../../interfaces/TimelineInterfaces';
 import {
     allKeyframes,
     clamp,
     DEFAULT_TIMELINE_OPTIONS,
+    defaultDateFormatter,
     defaultUnitFormatter,
+    eventsBounds,
     generateTicks,
     groupBounds,
     majorStep,
+    majorTimeStep,
     modelMaxVal,
     modeAllowsSelection,
+    modeIsAbsolute,
     modePansOnEmptyDrag,
     pxToVal,
     resolveKeyframeStyle,
@@ -56,7 +61,14 @@ export interface TimelineHandle {
     /** Zoom by a factor around the centre of the viewport. */
     zoomBy: (factor: number) => void;
     zoomToFit: () => void;
+    /**
+     * Frame the events that have occurred (val ≤ now) — the primary way back to
+     * your data in the infinitely-panning {@link TimelineTimeMode.ABSOLUTE} mode.
+     * Falls back to all events when none have occurred yet. Works in either mode.
+     */
+    focusEvents: () => void;
     setInteractionMode: (mode: TimelineInteractionMode) => void;
+    setTimeMode: (mode: TimelineTimeMode) => void;
     selectAll: () => void;
     deselectAll: () => void;
     getSelected: () => ITimelineKeyframe[];
@@ -72,6 +84,8 @@ export interface TimelineProps {
     time?: number;
     /** Convenience override for `options.interactionMode`. */
     interactionMode?: TimelineInteractionMode;
+    /** Convenience override for `options.timeMode`. */
+    timeMode?: TimelineTimeMode;
     /** Render with the dark palette. */
     dark?: boolean;
     /** Force the left labels column on/off. Auto-on when any row has a title. */
@@ -145,6 +159,7 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
         options: optionsProp,
         time: timeProp,
         interactionMode: interactionModeProp,
+        timeMode: timeModeProp,
         dark = false,
         showLabels: showLabelsProp,
         className,
@@ -164,6 +179,7 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
     );
 
     const resolvedMode = interactionModeProp ?? options.interactionMode ?? TimelineInteractionMode.SELECTION;
+    const resolvedTimeMode = timeModeProp ?? options.timeMode ?? TimelineTimeMode.RELATIVE;
 
     // Everything the imperative render/interaction code needs lives on this ref
     // so handlers never close over stale React state.
@@ -171,9 +187,14 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
         model: cloneModel(model),
         options,
         mode: resolvedMode,
+        timeMode: resolvedTimeMode,
         dark,
         zoom: options.zoom ?? 1,
         time: timeProp ?? 0,
+        // Horizontal content offset (px). In RELATIVE mode this mirrors the
+        // scroll container's scrollLeft; in ABSOLUTE mode it is a free-floating,
+        // unbounded pan offset the component drives itself (the container does
+        // not scroll horizontally), which is what makes the axis infinite.
         scrollLeft: 0,
         scrollTop: 0,
         drag: null as DragState | null,
@@ -189,6 +210,7 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
     ctx.current.props = props;
     ctx.current.options = options;
     ctx.current.mode = resolvedMode;
+    ctx.current.timeMode = resolvedTimeMode;
     ctx.current.dark = dark;
 
     // Re-clone the working model whenever the caller swaps the model reference.
@@ -216,6 +238,7 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
 
     // ---- geometry helpers (read live values off ctx) ------------------------
 
+    const isAbsolute = () => modeIsAbsolute(ctx.current.timeMode);
     const getMin = () => ctx.current.options.min ?? 0;
     const getMaxVal = () => {
         const opt = ctx.current.options.max;
@@ -229,10 +252,16 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
         ctx.current.options.headerHeight ?? DEFAULT_TIMELINE_OPTIONS.headerHeight;
 
     const virtualWidth = () => {
+        const viewport = scrollRef.current?.clientWidth ?? 0;
+        // ABSOLUTE mode pans infinitely, so the scrollable content is exactly the
+        // viewport (no native horizontal scroll); the component moves the view
+        // itself via ctx.scrollLeft. RELATIVE mode sizes the spacer to the axis.
+        if (isAbsolute()) {
+            return viewport;
+        }
         const zoom = ctx.current.zoom;
         const lm = getLeftMargin();
         const w = valToPx(getMaxVal(), zoom, lm, getMin()) + lm;
-        const viewport = scrollRef.current?.clientWidth ?? 0;
         return Math.max(w, viewport);
     };
     const virtualHeight = () => {
@@ -270,7 +299,12 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
             canvas.style.width = `${viewportW}px`;
             canvas.style.height = `${viewportH}px`;
         }
-        canvas.style.transform = `translate(${c.scrollLeft}px, ${c.scrollTop}px)`;
+        const absolute = modeIsAbsolute(c.timeMode);
+        // In ABSOLUTE mode the container never scrolls horizontally, so the
+        // canvas stays pinned to the left and only compensates for vertical
+        // scroll; horizontal position comes entirely from ctx.scrollLeft below.
+        const canvasTx = absolute ? 0 : c.scrollLeft;
+        canvas.style.transform = `translate(${canvasTx}px, ${c.scrollTop}px)`;
 
         const g = canvas.getContext('2d');
         if (!g) {
@@ -317,7 +351,8 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
         }
 
         // --- vertical grid lines (align to ruler ticks) ---------------------
-        const step = majorStep(zoom, c.options.stepPx ?? DEFAULT_TIMELINE_OPTIONS.stepPx);
+        const stepPx = c.options.stepPx ?? DEFAULT_TIMELINE_OPTIONS.stepPx;
+        const step = absolute ? majorTimeStep(zoom, stepPx) : majorStep(zoom, stepPx);
         const startVal = pxToVal(scrollLeft, zoom, lm, min);
         const endVal = pxToVal(scrollLeft + viewportW, zoom, lm, min);
         const ticks = generateTicks(startVal, endVal, step);
@@ -394,7 +429,9 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
         g.lineTo(viewportW, headerH + 0.5);
         g.stroke();
 
-        const formatter = c.options.unitFormatter ?? defaultUnitFormatter;
+        const formatter = absolute
+            ? c.options.dateFormatter ?? defaultDateFormatter
+            : c.options.unitFormatter ?? defaultUnitFormatter;
         g.fillStyle = theme.label;
         g.strokeStyle = theme.tick;
         g.font = '10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
@@ -415,6 +452,27 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
                 g.moveTo(subX, headerH - 3);
                 g.lineTo(subX, headerH);
                 g.stroke();
+            }
+        }
+
+        // --- "now" marker (absolute mode) -----------------------------------
+        if (absolute) {
+            const nowVal = c.options.now ?? Date.now();
+            const nowX = valToPx(nowVal, zoom, lm, min) - scrollLeft;
+            if (nowX >= -1 && nowX <= viewportW + 1) {
+                g.strokeStyle = theme.now;
+                g.fillStyle = theme.now;
+                g.lineWidth = 1;
+                g.setLineDash([3, 3]);
+                g.beginPath();
+                g.moveTo(Math.round(nowX) + 0.5, headerH);
+                g.lineTo(Math.round(nowX) + 0.5, viewportH);
+                g.stroke();
+                g.setLineDash([]);
+                // A small dot at the top so the line reads as "now" at a glance.
+                g.beginPath();
+                g.arc(Math.round(nowX) + 0.5, headerH + 3, 3, 0, Math.PI * 2);
+                g.fill();
             }
         }
 
@@ -616,7 +674,9 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
         const content = screenToContent(clientX, 0);
         let val = pxToVal(content.x, c.zoom, getLeftMargin(), getMin());
         val = snapValue(val, c.options.snapStep ?? 0, !!c.options.snapEnabled);
-        val = clamp(val, getMin(), getMaxVal());
+        if (!isAbsolute()) {
+            val = clamp(val, getMin(), getMaxVal());
+        }
         c.time = val;
         if (c.props.onTimeChanged) {
             c.props.onTimeChanged({ val, source: 'user' });
@@ -755,7 +815,9 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
         ctx.current.pan = {
             startX: e.clientX,
             startY: e.clientY,
-            startScrollLeft: scroll.scrollLeft,
+            // In ABSOLUTE mode the horizontal position lives on ctx (unbounded),
+            // not on the container, so anchor the pan to that instead.
+            startScrollLeft: isAbsolute() ? ctx.current.scrollLeft : scroll.scrollLeft,
             startScrollTop: scroll.scrollTop,
         };
         attachWindowListeners();
@@ -787,8 +849,55 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
         const screenX = anchorClientX - rect.left;
         const desiredContentX = valToPx(anchorVal, clamped, getLeftMargin(), getMin());
         const scroll = scrollRef.current!;
-        scroll.scrollLeft = clamp(desiredContentX - screenX, 0, Math.max(0, virtualWidth() - scroll.clientWidth));
-        // scrollLeft change fires onScroll which updates ctx + redraws.
+        if (isAbsolute()) {
+            // Unbounded: place the anchor exactly, no clamp to a spacer width.
+            c.scrollLeft = desiredContentX - screenX;
+            schedule();
+        } else {
+            scroll.scrollLeft = clamp(desiredContentX - screenX, 0, Math.max(0, virtualWidth() - scroll.clientWidth));
+            // scrollLeft change fires onScroll which updates ctx + redraws.
+            schedule();
+        }
+    };
+
+    /**
+     * Frame the view on the events that have occurred (val ≤ now), falling back
+     * to all events. Fits the zoom to their span with a little padding and
+     * centres them. Shared by the imperative `focusEvents` and the initial
+     * auto-focus in absolute mode (so the infinite canvas never opens blank).
+     */
+    const focusEventsInternal = () => {
+        const scroll = scrollRef.current;
+        const canvas = canvasRef.current;
+        if (!scroll || !canvas) {
+            return;
+        }
+        const c = ctx.current;
+        const now = c.options.now ?? Date.now();
+        const bounds = eventsBounds(c.model, now) ?? eventsBounds(c.model);
+        if (!bounds) {
+            return;
+        }
+        const lm = getLeftMargin();
+        const min = getMin();
+        const range = bounds.max - bounds.min;
+        if (range > 0) {
+            const usable = Math.max(1, scroll.clientWidth - 2 * lm);
+            const newZoom = clamp(
+                (range * 1.2) / usable, // ~10% breathing room each side
+                c.options.zoomMin ?? DEFAULT_TIMELINE_OPTIONS.zoomMin,
+                c.options.zoomMax ?? DEFAULT_TIMELINE_OPTIONS.zoomMax
+            );
+            c.zoom = newZoom;
+        }
+        applyLayout();
+        const centerVal = (bounds.min + bounds.max) / 2;
+        const targetLeft = valToPx(centerVal, c.zoom, lm, min) - scroll.clientWidth / 2;
+        if (isAbsolute()) {
+            c.scrollLeft = targetLeft;
+        } else {
+            scroll.scrollLeft = clamp(targetLeft, 0, Math.max(0, virtualWidth() - scroll.clientWidth));
+        }
         schedule();
     };
 
@@ -810,8 +919,16 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
 
         if (c.pan) {
             const scroll = scrollRef.current!;
-            scroll.scrollLeft = c.pan.startScrollLeft - (e.clientX - c.pan.startX);
-            scroll.scrollTop = c.pan.startScrollTop - (e.clientY - c.pan.startY);
+            if (isAbsolute()) {
+                // Horizontal is unbounded and driven manually; vertical still
+                // rides the native scroll container.
+                c.scrollLeft = c.pan.startScrollLeft - (e.clientX - c.pan.startX);
+                scroll.scrollTop = c.pan.startScrollTop - (e.clientY - c.pan.startY);
+                schedule();
+            } else {
+                scroll.scrollLeft = c.pan.startScrollLeft - (e.clientX - c.pan.startX);
+                scroll.scrollTop = c.pan.startScrollTop - (e.clientY - c.pan.startY);
+            }
             return;
         }
 
@@ -836,11 +953,14 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
             if (delta !== c.drag.lastDelta) {
                 c.drag.moved = true;
                 c.drag.lastDelta = delta;
+                const absolute = isAbsolute();
                 for (let i = 0; i < c.drag.moving.length; i++) {
                     const m = c.drag.moving[i];
                     let v = m.startVal + delta;
-                    const kfMin = m.keyframe.min ?? getMin();
-                    const kfMax = m.keyframe.max ?? getMaxVal();
+                    // ABSOLUTE mode has no axis bounds; only explicit per-keyframe
+                    // min/max constrain the drag.
+                    const kfMin = m.keyframe.min ?? (absolute ? -Infinity : getMin());
+                    const kfMax = m.keyframe.max ?? (absolute ? Infinity : getMaxVal());
                     v = clamp(v, kfMin, kfMax);
                     m.keyframe.val = v;
                 }
@@ -982,6 +1102,19 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
             }
             const factor = 1 + direction * speed;
             applyZoom(c.zoom * factor, anchorVal, e.clientX);
+            return;
+        }
+        // ABSOLUTE mode has no native horizontal scroll, so translate horizontal
+        // wheel intent (deltaX, or shift+deltaY) into a manual pan. Vertical
+        // wheel is left to the container so tall models still scroll natively.
+        if (modeIsAbsolute(c.timeMode)) {
+            const dx = e.shiftKey ? e.deltaY : e.deltaX;
+            const horizontalIntent = e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY);
+            if (dx !== 0 && horizontalIntent) {
+                e.preventDefault();
+                c.scrollLeft += dx;
+                schedule();
+            }
         }
         // Otherwise let the scroll container handle wheel scrolling natively.
     };
@@ -1008,13 +1141,18 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
         if (!scroll) {
             return;
         }
-        ctx.current.scrollLeft = scroll.scrollLeft;
+        // In ABSOLUTE mode the container only scrolls vertically; the horizontal
+        // offset is owned by ctx, so leave it untouched (a vertical scroll would
+        // otherwise reset scrollLeft to the container's 0 and snap the view back).
+        if (!isAbsolute()) {
+            ctx.current.scrollLeft = scroll.scrollLeft;
+        }
         ctx.current.scrollTop = scroll.scrollTop;
         syncLabels();
         schedule();
         if (ctx.current.props.onScroll) {
             ctx.current.props.onScroll({
-                scrollLeft: scroll.scrollLeft,
+                scrollLeft: ctx.current.scrollLeft,
                 scrollTop: scroll.scrollTop,
                 zoom: ctx.current.zoom,
             });
@@ -1029,6 +1167,18 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
         draw();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     });
+
+    // On entering ABSOLUTE mode (including first mount), frame the events so the
+    // infinitely-panning canvas doesn't open on empty space far from the data —
+    // values there are absolute timestamps, not offsets from a visible origin.
+    const lastFocusedTimeMode = useRef<TimelineTimeMode | null>(null);
+    useLayoutEffect(() => {
+        if (isAbsolute() && lastFocusedTimeMode.current !== resolvedTimeMode) {
+            focusEventsInternal();
+        }
+        lastFocusedTimeMode.current = resolvedTimeMode;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [resolvedTimeMode]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -1073,7 +1223,7 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
         ref,
         (): TimelineHandle => ({
             setTime: (val: number) => {
-                ctx.current.time = clamp(val, getMin(), getMaxVal());
+                ctx.current.time = isAbsolute() ? val : clamp(val, getMin(), getMaxVal());
                 if (ctx.current.props.onTimeChanged) {
                     ctx.current.props.onTimeChanged({ val: ctx.current.time, source: 'setTime' });
                 }
@@ -1103,8 +1253,18 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
                 applyZoom(range / usable, getMin(), canvasRef.current!.getBoundingClientRect().left);
                 scroll.scrollLeft = 0;
             },
+            focusEvents: () => focusEventsInternal(),
             setInteractionMode: (mode: TimelineInteractionMode) => {
                 ctx.current.mode = mode;
+            },
+            setTimeMode: (mode: TimelineTimeMode) => {
+                ctx.current.timeMode = mode;
+                applyLayout();
+                if (modeIsAbsolute(mode)) {
+                    focusEventsInternal();
+                } else {
+                    schedule();
+                }
             },
             selectAll: () => {
                 const changed: ITimelineKeyframe[] = [];
@@ -1127,11 +1287,17 @@ export const Timeline = forwardRef<TimelineHandle, TimelineProps>((props, ref) =
             scrollToVal: (val: number) => {
                 const scroll = scrollRef.current!;
                 const x = valToPx(val, ctx.current.zoom, getLeftMargin(), getMin());
-                scroll.scrollLeft = clamp(
-                    x - scroll.clientWidth / 2,
-                    0,
-                    Math.max(0, virtualWidth() - scroll.clientWidth)
-                );
+                const targetLeft = x - scroll.clientWidth / 2;
+                if (isAbsolute()) {
+                    ctx.current.scrollLeft = targetLeft;
+                    schedule();
+                } else {
+                    scroll.scrollLeft = clamp(
+                        targetLeft,
+                        0,
+                        Math.max(0, virtualWidth() - scroll.clientWidth)
+                    );
+                }
             },
             redraw: () => schedule(),
         })

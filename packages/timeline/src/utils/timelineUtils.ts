@@ -12,6 +12,7 @@ import {
     ITimelineRow,
     TimelineInteractionMode,
     TimelineKeyframeShape,
+    TimelineTimeMode,
 } from '../interfaces/TimelineInterfaces';
 
 /** Clamp `value` into the inclusive `[min, max]` range. */
@@ -24,13 +25,16 @@ export const clamp = (value: number, min: number, max: number): number => {
 
 /** The default options merged under every consumer-supplied option object. */
 export const DEFAULT_TIMELINE_OPTIONS: Required<
-    Omit<ITimelineOptions, 'max' | 'colors' | 'unitFormatter'>
+    Omit<ITimelineOptions, 'max' | 'colors' | 'unitFormatter' | 'now' | 'dateFormatter'>
 > = {
     zoom: 1,
     zoomMin: 0.01,
-    zoomMax: 1000,
+    // Wide enough to zoom from milliseconds out to a multi-year date span, so
+    // ABSOLUTE mode works without a bespoke bound. Harmless for RELATIVE mode.
+    zoomMax: 1_000_000_000,
     zoomSpeed: 0.15,
     min: 0,
+    timeMode: TimelineTimeMode.RELATIVE,
     headerHeight: 30,
     leftMargin: 18,
     labelsWidth: 0,
@@ -188,6 +192,120 @@ export const defaultUnitFormatter = (val: number, stepUnits: number): string => 
     return `${seconds.toFixed(0)}s`;
 };
 
+// ---- absolute (date) axis --------------------------------------------------
+
+/**
+ * Candidate "nice" step durations (milliseconds) for the ABSOLUTE-mode ruler,
+ * chosen so ticks land on human-friendly boundaries — seconds, minutes, hours,
+ * days, weeks — rather than the arbitrary 1/2/5 decades used for a plain number
+ * axis. Ascending; {@link niceTimeStep} picks the first that clears the raw step.
+ */
+const NICE_TIME_STEPS_MS = [
+    1, 2, 5, 10, 20, 50, 100, 200, 500, // sub-second
+    1000, 2000, 5000, 10000, 15000, 30000, // seconds
+    60000, 120000, 300000, 600000, 900000, 1800000, // minutes
+    3600000, 7200000, 10800000, 21600000, 43200000, // hours
+    86400000, 172800000, 604800000, // days / week
+    2592000000, 7776000000, // ~month / ~quarter (30 / 90 days)
+    31536000000, // ~year (365 days)
+];
+
+const MS_PER_YEAR = 31536000000;
+
+/**
+ * Pick a human-friendly duration (ms) at least as large as `rawStepMs`, used to
+ * keep ABSOLUTE-mode ruler ticks on clean time boundaries. Beyond a year it
+ * falls back to whole-year multiples via {@link niceStep}.
+ */
+export const niceTimeStep = (rawStepMs: number): number => {
+    if (!isFinite(rawStepMs) || rawStepMs <= 0) {
+        return 1;
+    }
+    for (let i = 0; i < NICE_TIME_STEPS_MS.length; i++) {
+        if (NICE_TIME_STEPS_MS[i] >= rawStepMs) {
+            return NICE_TIME_STEPS_MS[i];
+        }
+    }
+    return niceStep(rawStepMs / MS_PER_YEAR) * MS_PER_YEAR;
+};
+
+/** The ABSOLUTE-mode analogue of {@link majorStep}: a nice duration near stepPx. */
+export const majorTimeStep = (zoom: number, stepPx: number): number => {
+    return niceTimeStep(stepPx * zoom);
+};
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const pad2 = (n: number): string => (n < 10 ? '0' + n : '' + n);
+const pad3 = (n: number): string => (n < 10 ? '00' + n : n < 100 ? '0' + n : '' + n);
+
+/**
+ * Default ABSOLUTE-mode tick formatter. Treats values as epoch milliseconds and
+ * renders a date / clock-time label whose granularity follows the tick spacing:
+ * sub-second → `HH:MM:SS.mmm`, seconds → `HH:MM:SS`, minutes/hours → `HH:MM`,
+ * days → `Mon D`, months → `Mon YYYY`, years → `YYYY`. Override via
+ * {@link ITimelineOptions.dateFormatter}.
+ */
+export const defaultDateFormatter = (val: number, stepUnits: number): string => {
+    const d = new Date(val);
+    if (stepUnits < 1000) {
+        return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}.${pad3(
+            d.getMilliseconds()
+        )}`;
+    }
+    if (stepUnits < 60000) {
+        return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
+    }
+    if (stepUnits < 86400000) {
+        return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+    }
+    if (stepUnits < 2592000000) {
+        return `${MONTHS[d.getMonth()]} ${d.getDate()}`;
+    }
+    if (stepUnits < MS_PER_YEAR) {
+        return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+    }
+    return `${d.getFullYear()}`;
+};
+
+/**
+ * The bounding range of the events (keyframes) in the model. When `upTo` is
+ * given, only events at or before it are considered — used to frame the events
+ * that "have occurred" relative to now. Returns `null` when nothing qualifies.
+ */
+export const eventsBounds = (
+    model: ITimelineModel,
+    upTo?: number
+): { min: number; max: number } | null => {
+    let min = Infinity;
+    let max = -Infinity;
+    let found = false;
+    for (let r = 0; r < model.rows.length; r++) {
+        const kfs = model.rows[r].keyframes;
+        if (!kfs) {
+            continue;
+        }
+        for (let k = 0; k < kfs.length; k++) {
+            const val = kfs[k].val;
+            if (upTo !== undefined && val > upTo) {
+                continue;
+            }
+            if (val < min) {
+                min = val;
+            }
+            if (val > max) {
+                max = val;
+            }
+            found = true;
+        }
+    }
+    return found ? { min, max } : null;
+};
+
+/** True when the given time mode treats the axis as unbounded (infinite pan). */
+export const modeIsAbsolute = (mode: TimelineTimeMode | undefined): boolean => {
+    return mode === TimelineTimeMode.ABSOLUTE;
+};
+
 /** Resolve the effective keyframe shape/size/colour, walking the cascade. */
 export interface ResolvedKeyframeStyle {
     shape: TimelineKeyframeShape;
@@ -337,6 +455,7 @@ export interface ResolvedTheme {
     keyframeStroke: string;
     group: string;
     cursor: string;
+    now: string;
     selection: string;
     selectionBorder: string;
 }
@@ -371,6 +490,7 @@ export const resolveTheme = (
         keyframeStroke: c.keyframeStroke ?? v('keyframe-stroke-color', dark ? '#1c1c1e' : '#ffffff'),
         group: c.group ?? v('group-color', dark ? '#3b527d' : '#93b4f7'),
         cursor: c.cursor ?? v('cursor-color', dark ? '#fb7185' : '#e11d48'),
+        now: c.now ?? v('now-color', dark ? '#34d399' : '#059669'),
         selection: c.selection ?? v('selection-color', dark ? 'rgba(96, 165, 250, 0.22)' : 'rgba(37, 99, 235, 0.18)'),
         selectionBorder:
             c.selectionBorder ?? v('selection-border-color', dark ? '#60a5fa' : '#2563eb'),

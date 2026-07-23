@@ -1,14 +1,19 @@
 import {
     allKeyframes,
     clamp,
+    defaultDateFormatter,
     defaultUnitFormatter,
+    eventsBounds,
     generateTicks,
     groupBounds,
     majorStep,
+    majorTimeStep,
     modeAllowsSelection,
+    modeIsAbsolute,
     modelMaxVal,
     modePansOnEmptyDrag,
     niceStep,
+    niceTimeStep,
     pxToVal,
     resolveKeyframeStyle,
     rowLayout,
@@ -20,6 +25,7 @@ import {
     ITimelineRow,
     TimelineInteractionMode,
     TimelineKeyframeShape,
+    TimelineTimeMode,
 } from '../interfaces/TimelineInterfaces';
 
 describe('clamp', () => {
@@ -178,6 +184,72 @@ describe('defaultUnitFormatter', () => {
     });
     it('switches to m:ss for large values', () => {
         expect(defaultUnitFormatter(65000, 5000)).toBe('1:05');
+    });
+});
+
+describe('niceTimeStep', () => {
+    it('snaps up to clean time boundaries', () => {
+        expect(niceTimeStep(900)).toBe(1000); // ~1s
+        expect(niceTimeStep(45000)).toBe(60000); // 1 min
+        expect(niceTimeStep(50 * 60000)).toBe(3600000); // 1 hour
+        expect(niceTimeStep(20 * 3600000)).toBe(86400000); // 1 day
+    });
+    it('falls back to whole-year multiples beyond a year', () => {
+        expect(niceTimeStep(1.5 * 31536000000)).toBe(2 * 31536000000);
+    });
+    it('guards against non-positive input', () => {
+        expect(niceTimeStep(0)).toBe(1);
+        expect(niceTimeStep(-10)).toBe(1);
+    });
+});
+
+describe('majorTimeStep', () => {
+    it('produces a nice duration near stepPx * zoom', () => {
+        expect(majorTimeStep(1000, 60)).toBe(niceTimeStep(60000));
+    });
+});
+
+describe('defaultDateFormatter', () => {
+    // Constructed in local time and formatted in local time, so the assertions
+    // hold in any timezone.
+    const t = new Date(2021, 2, 4, 9, 5, 30, 120).getTime();
+    it('shows milliseconds for sub-second steps', () => {
+        expect(defaultDateFormatter(t, 100)).toBe('09:05:30.120');
+    });
+    it('shows clock time for second / minute steps', () => {
+        expect(defaultDateFormatter(t, 1000)).toBe('09:05:30');
+        expect(defaultDateFormatter(t, 60000)).toBe('09:05');
+    });
+    it('shows the date for day-scale steps', () => {
+        expect(defaultDateFormatter(t, 86400000)).toBe('Mar 4');
+    });
+    it('shows month/year then year for coarse steps', () => {
+        expect(defaultDateFormatter(t, 2592000000)).toBe('Mar 2021');
+        expect(defaultDateFormatter(t, 31536000000)).toBe('2021');
+    });
+});
+
+describe('eventsBounds', () => {
+    const model: ITimelineModel = {
+        rows: [{ keyframes: [{ val: 100 }, { val: 900 }] }, { keyframes: [{ val: 500 }] }, {}],
+    };
+    it('spans every event', () => {
+        expect(eventsBounds(model)).toEqual({ min: 100, max: 900 });
+    });
+    it('limits to events at or before a cutoff', () => {
+        expect(eventsBounds(model, 500)).toEqual({ min: 100, max: 500 });
+    });
+    it('returns null when nothing qualifies', () => {
+        expect(eventsBounds(model, 50)).toBeNull();
+        expect(eventsBounds({ rows: [{}] })).toBeNull();
+    });
+});
+
+describe('modeIsAbsolute', () => {
+    it('is true only for the ABSOLUTE mode', () => {
+        expect(modeIsAbsolute(TimelineTimeMode.ABSOLUTE)).toBe(true);
+        expect(modeIsAbsolute(TimelineTimeMode.RELATIVE)).toBe(false);
+        expect(modeIsAbsolute(undefined)).toBe(false);
     });
 });
 

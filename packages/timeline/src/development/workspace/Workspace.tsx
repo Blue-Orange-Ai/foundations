@@ -7,8 +7,10 @@ import {
     ITimelineModel,
     ITimelineSelectedEvent,
     TimelineInteractionMode,
+    TimelineTimeMode,
 } from '../../interfaces/TimelineInterfaces';
-import { mockModel } from '../data/mockData';
+import { defaultDateFormatter } from '../../utils/timelineUtils';
+import { mockDateModel, mockModel } from '../data/mockData';
 import './Workspace.css';
 
 /**
@@ -21,10 +23,19 @@ export const Workspace: React.FC = () => {
     const [dark, setDark] = useState(false);
     const [snap, setSnap] = useState(false);
     const [mode, setMode] = useState<TimelineInteractionMode>(TimelineInteractionMode.SELECTION);
+    const [timeMode, setTimeMode] = useState<TimelineTimeMode>(TimelineTimeMode.RELATIVE);
     const [time, setTime] = useState(0);
     const [playing, setPlaying] = useState(false);
-    const [model] = useState<ITimelineModel>(mockModel);
     const [log, setLog] = useState<string[]>([]);
+
+    // A fixed "now" and matching date model, established once so the demo is
+    // stable across re-renders.
+    const now = useRef<number>(Date.now()).current;
+    const [relativeModel] = useState<ITimelineModel>(mockModel);
+    const [dateModel] = useState<ITimelineModel>(() => mockDateModel(now));
+
+    const absolute = timeMode === TimelineTimeMode.ABSOLUTE;
+    const model = absolute ? dateModel : relativeModel;
 
     const timelineRef = useRef<TimelineHandle | null>(null);
     const rafRef = useRef<number>(0);
@@ -34,9 +45,10 @@ export const Workspace: React.FC = () => {
         setLog((prev) => [message, ...prev].slice(0, 40));
     }, []);
 
-    // Simple playback loop advancing the cursor while "playing".
+    // Simple playback loop advancing the cursor while "playing" (relative mode
+    // only — in absolute mode the cursor tracks a wall-clock timestamp instead).
     useEffect(() => {
-        if (!playing) {
+        if (!playing || absolute) {
             return;
         }
         lastTsRef.current = 0;
@@ -57,7 +69,18 @@ export const Workspace: React.FC = () => {
         };
         rafRef.current = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(rafRef.current);
-    }, [playing]);
+    }, [playing, absolute]);
+
+    // Switch the cursor between an elapsed-time origin and a wall-clock timestamp
+    // when the display mode changes.
+    const handleTimeModeChange = useCallback(
+        (next: TimelineTimeMode) => {
+            setPlaying(false);
+            setTimeMode(next);
+            setTime(next === TimelineTimeMode.ABSOLUTE ? now : 0);
+        },
+        [now]
+    );
 
     const handleSelected = (e: ITimelineSelectedEvent) => {
         pushLog(`selected: ${e.selected.length} keyframe(s)`);
@@ -93,18 +116,26 @@ export const Workspace: React.FC = () => {
                         setMode(m);
                         timelineRef.current?.setInteractionMode(m);
                     }}
+                    timeMode={timeMode}
+                    onTimeModeChange={handleTimeModeChange}
+                    onFocusEvents={() => timelineRef.current?.focusEvents()}
                     onZoomIn={() => timelineRef.current?.zoomBy(0.8)}
                     onZoomOut={() => timelineRef.current?.zoomBy(1.25)}
                     onZoomFit={() => timelineRef.current?.zoomToFit()}
                     playing={playing}
-                    onPlayPause={() => setPlaying((p) => !p)}
-                    onStop={() => {
-                        setPlaying(false);
-                        setTime(0);
-                    }}
+                    onPlayPause={absolute ? undefined : () => setPlaying((p) => !p)}
+                    onStop={
+                        absolute
+                            ? undefined
+                            : () => {
+                                  setPlaying(false);
+                                  setTime(0);
+                              }
+                    }
                     snapEnabled={snap}
                     onSnapChange={setSnap}
                     time={time}
+                    timeFormatter={absolute ? (v) => defaultDateFormatter(v, 1000) : undefined}
                     dark={dark}
                 />
                 <Timeline
@@ -114,17 +145,31 @@ export const Workspace: React.FC = () => {
                     dark={dark}
                     time={time}
                     interactionMode={mode}
-                    options={{
-                        max: 10000,
-                        snapEnabled: snap,
-                        snapStep: 250,
-                    }}
+                    timeMode={timeMode}
+                    options={
+                        absolute
+                            ? {
+                                  timeMode: TimelineTimeMode.ABSOLUTE,
+                                  now,
+                                  labelsWidth: 140,
+                                  snapEnabled: snap,
+                                  snapStep: 3600000, // snap to the hour
+                              }
+                            : {
+                                  max: 10000,
+                                  snapEnabled: snap,
+                                  snapStep: 250,
+                              }
+                    }
                     onTimeChanged={(e) => setTime(e.val)}
                     onSelected={handleSelected}
                     onDragFinished={handleDragFinished}
                     onContextMenu={(e) => {
                         e.originalEvent.preventDefault();
-                        pushLog(`context menu on ${e.target} @ ${Math.round(e.val)}ms`);
+                        const at = absolute
+                            ? defaultDateFormatter(e.val, 1000)
+                            : `${Math.round(e.val)}ms`;
+                        pushLog(`context menu on ${e.target} @ ${at}`);
                     }}
                 />
                 <div className="timeline-workspace-log">

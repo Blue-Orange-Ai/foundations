@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { Timeline } from './Timeline';
-import { ITimelineModel } from '../../interfaces/TimelineInterfaces';
+import { Timeline, TimelineHandle } from './Timeline';
+import { ITimelineModel, TimelineTimeMode } from '../../interfaces/TimelineInterfaces';
 
 /**
  * jsdom has no canvas backend, so stub a no-op 2D context. This lets the
@@ -24,6 +24,7 @@ const stub2dContext = () => {
         fill: noop,
         stroke: noop,
         fillText: noop,
+        setLineDash: noop,
         save: noop,
         restore: noop,
         translate: noop,
@@ -72,5 +73,28 @@ describe('Timeline', () => {
     it('applies the dark class', () => {
         const { container } = render(<Timeline model={model} dark />);
         expect(container.querySelector('.blue-orange-timeline-dark')).toBeInTheDocument();
+    });
+
+    it('renders in absolute (date) time mode without throwing', () => {
+        const now = new Date(2022, 5, 1, 12, 0, 0).getTime();
+        const dates: ITimelineModel = {
+            rows: [{ title: 'Events', keyframes: [{ val: now - 86400000 }, { val: now }] }],
+        };
+        const { container } = render(
+            <Timeline model={dates} timeMode={TimelineTimeMode.ABSOLUTE} options={{ now }} />
+        );
+        expect(container.querySelector('canvas')).toBeInTheDocument();
+    });
+
+    it('exposes focusEvents / setTimeMode on the imperative handle', () => {
+        const ref = React.createRef<TimelineHandle>();
+        render(<Timeline ref={ref} model={model} />);
+        expect(typeof ref.current?.focusEvents).toBe('function');
+        expect(typeof ref.current?.setTimeMode).toBe('function');
+        // Switching mode and focusing should not throw against the stub canvas.
+        expect(() => {
+            ref.current?.setTimeMode(TimelineTimeMode.ABSOLUTE);
+            ref.current?.focusEvents();
+        }).not.toThrow();
     });
 });

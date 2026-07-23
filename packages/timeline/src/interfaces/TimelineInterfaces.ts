@@ -29,6 +29,23 @@ export enum TimelineInteractionMode {
 }
 
 /**
+ * How the time axis is interpreted and labelled.
+ *
+ * - `RELATIVE` -> values are treated as a duration from the axis origin and the
+ *   ruler reads as elapsed time (e.g. `1.5s`, `1:05`). The axis is bounded by
+ *   `min` / `max` and pans within that range. This is the default.
+ * - `ABSOLUTE` -> values are treated as absolute timestamps (epoch milliseconds
+ *   by default) and the ruler reads as dates / clock times. The axis is
+ *   unbounded, so the view pans infinitely left and right, a "now" marker is
+ *   drawn, and {@link TimelineHandle.focusEvents} can frame the events that have
+ *   occurred.
+ */
+export enum TimelineTimeMode {
+    RELATIVE = 'relative',
+    ABSOLUTE = 'absolute',
+}
+
+/**
  * The shape a keyframe (or group) is drawn with.
  */
 export enum TimelineKeyframeShape {
@@ -146,6 +163,8 @@ export interface ITimelineColors {
     keyframeStroke?: string;
     group?: string;
     cursor?: string;
+    /** Colour of the "now" marker drawn in {@link TimelineTimeMode.ABSOLUTE}. */
+    now?: string;
     selection?: string;
     selectionBorder?: string;
 }
@@ -162,7 +181,28 @@ export interface ITimelineOptions {
     /** Multiplier applied per wheel notch when zooming. */
     zoomSpeed?: number;
 
-    /** Lower / upper bound of the time axis, in units. `min` defaults to 0. */
+    /**
+     * How the time axis is interpreted and labelled. Defaults to
+     * {@link TimelineTimeMode.RELATIVE}. Switch to {@link TimelineTimeMode.ABSOLUTE}
+     * to treat values as timestamps, label the ruler with dates, and pan
+     * infinitely.
+     */
+    timeMode?: TimelineTimeMode;
+
+    /**
+     * The "now" reference value (in units) used in {@link TimelineTimeMode.ABSOLUTE}
+     * to draw the current-time marker and to decide which events "have
+     * occurred". Defaults to `Date.now()` (epoch milliseconds), re-read as the
+     * canvas draws so the marker stays live.
+     */
+    now?: number;
+
+    /**
+     * Lower / upper bound of the time axis, in units. `min` defaults to 0 and
+     * doubles as the axis origin for coordinate maths. In
+     * {@link TimelineTimeMode.ABSOLUTE} the axis is unbounded, so `max` is
+     * ignored for panning; `min` is still used as the (stable) origin.
+     */
     min?: number;
     max?: number;
 
@@ -194,8 +234,17 @@ export interface ITimelineOptions {
 
     colors?: ITimelineColors;
 
-    /** Formats a tick's value into its label. Defaults to a seconds formatter. */
+    /**
+     * Formats a tick's value into its label in {@link TimelineTimeMode.RELATIVE}.
+     * Defaults to a seconds formatter.
+     */
     unitFormatter?: (val: number, stepUnits: number) => string;
+
+    /**
+     * Formats a tick's value into its label in {@link TimelineTimeMode.ABSOLUTE}.
+     * Defaults to a date / clock-time formatter that adapts to the tick spacing.
+     */
+    dateFormatter?: (val: number, stepUnits: number) => string;
 }
 
 /** Common payload shared by the drag lifecycle events. */

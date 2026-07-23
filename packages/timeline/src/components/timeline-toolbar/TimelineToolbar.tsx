@@ -1,13 +1,26 @@
 import React from 'react';
 import { ButtonIcon, Toggle } from '@blue-orange-ai/foundations-core';
 import './TimelineToolbar.css';
-import { TimelineInteractionMode } from '../../interfaces/TimelineInterfaces';
-import { defaultUnitFormatter } from '../../utils/timelineUtils';
+import { TimelineInteractionMode, TimelineTimeMode } from '../../interfaces/TimelineInterfaces';
+import { defaultDateFormatter, defaultUnitFormatter } from '../../utils/timelineUtils';
 
 export interface TimelineToolbarProps {
     /** Current interaction mode (highlighted in the mode switch). */
     mode: TimelineInteractionMode;
     onModeChange: (mode: TimelineInteractionMode) => void;
+
+    /**
+     * Current time-display mode. When supplied together with `onTimeModeChange`,
+     * a Relative / Date switch is rendered.
+     */
+    timeMode?: TimelineTimeMode;
+    onTimeModeChange?: (mode: TimelineTimeMode) => void;
+    /**
+     * Frame the events that have occurred. Rendered as a "Focus events" button
+     * when supplied — most useful alongside {@link TimelineTimeMode.ABSOLUTE},
+     * whose axis pans infinitely.
+     */
+    onFocusEvents?: () => void;
 
     onZoomIn?: () => void;
     onZoomOut?: () => void;
@@ -38,6 +51,11 @@ const MODES: { mode: TimelineInteractionMode; icon: string; label: string }[] = 
     { mode: TimelineInteractionMode.ZOOM, icon: 'ri-search-line', label: 'Zoom' },
 ];
 
+const TIME_MODES: { mode: TimelineTimeMode; icon: string; label: string }[] = [
+    { mode: TimelineTimeMode.RELATIVE, icon: 'ri-time-line', label: 'Relative time' },
+    { mode: TimelineTimeMode.ABSOLUTE, icon: 'ri-calendar-line', label: 'Date / time' },
+];
+
 /**
  * A ready-made toolbar for the {@link Timeline}, assembled entirely from core
  * Foundations controls (`ButtonIcon`, `Toggle`). Wire its callbacks to a
@@ -48,6 +66,9 @@ const MODES: { mode: TimelineInteractionMode; icon: string; label: string }[] = 
 export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({
     mode,
     onModeChange,
+    timeMode,
+    onTimeModeChange,
+    onFocusEvents,
     onZoomIn,
     onZoomOut,
     onZoomFit,
@@ -66,8 +87,13 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({
         dark ? ' blue-orange-timeline-toolbar-dark' : ''
     }${className ? ' ' + className : ''}`;
 
-    const formatTime = (val: number): string =>
-        timeFormatter ? timeFormatter(val) : defaultUnitFormatter(val, 1000);
+    const absolute = timeMode === TimelineTimeMode.ABSOLUTE;
+    const formatTime = (val: number): string => {
+        if (timeFormatter) {
+            return timeFormatter(val);
+        }
+        return absolute ? defaultDateFormatter(val, 1000) : defaultUnitFormatter(val, 1000);
+    };
 
     return (
         <div className={rootClass} style={style}>
@@ -100,6 +126,40 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({
                     />
                 ))}
             </div>
+
+            {onTimeModeChange && timeMode !== undefined && (
+                <>
+                    <div className="blue-orange-timeline-toolbar-separator" />
+                    <div className="blue-orange-timeline-toolbar-group">
+                        {TIME_MODES.map((m) => (
+                            <ButtonIcon
+                                key={m.mode}
+                                icon={m.icon}
+                                label={m.label}
+                                className={
+                                    timeMode === m.mode
+                                        ? 'blue-orange-timeline-mode-active'
+                                        : undefined
+                                }
+                                onClick={() => onTimeModeChange(m.mode)}
+                            />
+                        ))}
+                    </div>
+                </>
+            )}
+
+            {onFocusEvents && absolute && (
+                <>
+                    <div className="blue-orange-timeline-toolbar-separator" />
+                    <div className="blue-orange-timeline-toolbar-group">
+                        <ButtonIcon
+                            icon="ri-focus-3-line"
+                            label="Focus events"
+                            onClick={onFocusEvents}
+                        />
+                    </div>
+                </>
+            )}
 
             {(onZoomOut || onZoomIn || onZoomFit) && (
                 <>

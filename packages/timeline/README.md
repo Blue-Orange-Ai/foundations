@@ -34,6 +34,7 @@ import {
   TimelineToolbar,
   TimelineHandle,
   TimelineInteractionMode,
+  TimelineTimeMode,
   ITimelineModel,
 } from '@blue-orange-ai/foundations-timeline';
 
@@ -106,6 +107,30 @@ interface ITimelineKeyframe {
 }
 ```
 
+## Time modes
+
+The timeline offers two ways to read the axis, chosen through `timeMode` (or the
+toolbar's Relative / Date switch):
+
+| Mode | Behaviour |
+| --- | --- |
+| `relative` (default) | `val` is an elapsed duration from the axis origin. The ruler reads as elapsed time (`1.5s`, `1:05`), and the axis is bounded by `min` / `max`. This is the classic keyframe-editor view. |
+| `absolute` | `val` is an absolute timestamp (epoch milliseconds by default). The ruler reads as dates / clock times, the axis is **unbounded so the view pans infinitely left and right**, a live "now" marker is drawn, and `focusEvents()` frames the events that have occurred. |
+
+```tsx
+<Timeline
+  model={model}                      // keyframe `val`s are epoch milliseconds
+  timeMode={TimelineTimeMode.ABSOLUTE}
+  options={{ now: Date.now() }}      // reference for the "now" marker (optional)
+/>
+```
+
+Because the absolute axis is infinite, the view auto-frames your events on
+entering the mode, and the toolbar's **Focus events** button (wired to
+`focusEvents()`) brings you back to them at any time — it frames the events that
+have occurred (`val ≤ now`), falling back to all events when none have yet.
+Provide `options.dateFormatter` to customise the ruler labels.
+
 ## Interaction modes
 
 Set through `interactionMode` (or the toolbar):
@@ -129,7 +154,8 @@ Set through `interactionMode` (or the toolbar):
 setTime(val) / getTime()
 getModel() / getSelected()
 setZoom(z) / getZoom() / zoomBy(factor) / zoomToFit()
-setInteractionMode(mode)
+focusEvents()                         // frame events that have occurred (absolute mode)
+setInteractionMode(mode) / setTimeMode(mode)
 selectAll() / deselectAll()
 scrollToVal(val)
 redraw()
