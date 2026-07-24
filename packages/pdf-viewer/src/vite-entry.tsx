@@ -14,6 +14,7 @@ export type {
 	PdfSearchResult,
 	PdfSearchState,
 	PdfSearchOptions,
+	PdfHighlightOptions,
 	PdfZoomLevel,
 	PdfRotation,
 	PdfSpreadMode,

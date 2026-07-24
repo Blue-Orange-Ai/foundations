@@ -133,6 +133,14 @@ export interface PdfSearchOptions {
 	matchWholeWord?: boolean;
 }
 
+/** Options for the programmatic highlight helpers. */
+export interface PdfHighlightOptions {
+	/** Highlight colour (any CSS/hex colour). Defaults to yellow. */
+	color?: string;
+	/** Scroll the (first) highlight into view after creating it. Default false. */
+	focus?: boolean;
+}
+
 /**
  * Imperative handle for driving the viewer from the outside. Obtain it via a
  * React `ref` on `<PdfViewer ref={ref} />` or through the `onReady` callback.
@@ -174,6 +182,24 @@ export interface PdfViewerApi {
 	clearSelection(): void;
 	/** Convert the current text selection into a highlight annotation. */
 	highlightSelection(color?: string): void;
+	/**
+	 * Create persistent highlight annotation(s) over rectangles you already know
+	 * (e.g. from a previous selection, a search result, or your own store). Rects
+	 * are grouped by their `pageIndex`, one annotation per page. Pass
+	 * `{ focus: true }` to scroll the first rect into view.
+	 */
+	highlightRects(rects: PdfRect[], options?: PdfHighlightOptions): void;
+	/** Scroll a known rectangle into view (no highlight is created). */
+	focusRect(rect: PdfRect): void;
+	/**
+	 * Find `query` throughout the document, create a persistent highlight
+	 * annotation over every match, and (optionally) focus the first. Resolves
+	 * with the flattened match rectangles.
+	 */
+	highlightText(
+		query: string,
+		options?: PdfHighlightOptions & PdfSearchOptions,
+	): Promise<PdfRect[]>;
 
 	/* ---- search ---- */
 	search(query: string, options?: PdfSearchOptions): Promise<PdfSearchState>;

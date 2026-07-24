@@ -56,6 +56,32 @@ const taskToPromise = <T,>(task: {
 }): Promise<T> =>
 	new Promise<T>((resolve, reject) => task.wait(resolve, reject));
 
+/** Flatten a public PdfRect into the { origin, size } Rect the engine expects. */
+const toEngineRect = (r: PdfRect) => ({
+	origin: { x: r.x, y: r.y },
+	size: { width: r.width, height: r.height },
+});
+
+/** Axis-aligned bounding box (engine Rect) covering all of `rects`. */
+const boundingEngineRect = (rects: PdfRect[]) => {
+	const minX = Math.min(...rects.map((r) => r.x));
+	const minY = Math.min(...rects.map((r) => r.y));
+	const maxX = Math.max(...rects.map((r) => r.x + r.width));
+	const maxY = Math.max(...rects.map((r) => r.y + r.height));
+	return { origin: { x: minX, y: minY }, size: { width: maxX - minX, height: maxY - minY } };
+};
+
+/** Group rects by their page index, preserving order within each page. */
+const groupByPage = (rects: PdfRect[]): Map<number, PdfRect[]> => {
+	const byPage = new Map<number, PdfRect[]>();
+	for (const r of rects) {
+		const list = byPage.get(r.pageIndex);
+		if (list) list.push(r);
+		else byPage.set(r.pageIndex, [r]);
+	}
+	return byPage;
+};
+
 export interface ControllerArgs {
 	documentId: string;
 	engine: PdfEngine;
@@ -405,6 +431,85 @@ export const usePdfViewerController = ({
 					} as any);
 				}
 				sel.clear(documentId);
+			},
+			highlightRects: (rects, options) => {
+				const anno = annotation.provides;
+				if (!anno || rects.length === 0) return;
+				const color = options?.color ?? '#FFEB3B';
+				const scope = anno.forDocument(documentId);
+				// One highlight annotation per page; the page's rects become the
+				// per-line segment rects and their union becomes the bounding rect.
+				groupByPage(rects).forEach((pageRects, pageIndex) => {
+					scope.createAnnotation(pageIndex, {
+						type: PdfAnnotationSubtype.HIGHLIGHT,
+						pageIndex,
+						id: uuid(),
+						rect: boundingEngineRect(pageRects),
+						segmentRects: pageRects.map(toEngineRect),
+						strokeColor: color,
+						opacity: 1,
+						blendMode: PdfBlendMode.Multiply,
+						created: new Date(),
+					} as any);
+				});
+				if (options?.focus) {
+					const first = rects[0];
+					scroll.provides?.scrollToPage({
+						pageNumber: first.pageIndex + 1,
+						pageCoordinates: { x: first.x, y: first.y },
+						alignY: 25,
+					});
+				}
+			},
+			focusRect: (rect) => {
+				scroll.provides?.scrollToPage({
+					pageNumber: rect.pageIndex + 1,
+					pageCoordinates: { x: rect.x, y: rect.y },
+					alignY: 25,
+				});
+			},
+			highlightText: async (query, options) => {
+				const s = search.provides;
+				if (!s || !query) return [];
+				const flags: MatchFlag[] = [];
+				if (options?.matchCase) flags.push(MatchFlag.MatchCase);
+				if (options?.matchWholeWord) flags.push(MatchFlag.MatchWholeWord);
+				s.setFlags(flags);
+				s.startSearch();
+				const result = await taskToPromise(s.searchAllPages(query));
+				const anno = annotation.provides?.forDocument(documentId);
+				const color = options?.color ?? '#FFEB3B';
+				const all: PdfRect[] = [];
+				for (const hit of result.results) {
+					const pageRects = hit.rects.map((rc) =>
+						flattenRect(rc, hit.pageIndex),
+					);
+					if (pageRects.length === 0) continue;
+					all.push(...pageRects);
+					anno?.createAnnotation(hit.pageIndex, {
+						type: PdfAnnotationSubtype.HIGHLIGHT,
+						pageIndex: hit.pageIndex,
+						id: uuid(),
+						rect: boundingEngineRect(pageRects),
+						segmentRects: pageRects.map(toEngineRect),
+						strokeColor: color,
+						opacity: 1,
+						blendMode: PdfBlendMode.Multiply,
+						created: new Date(),
+					} as any);
+				}
+				// Drop the transient search overlay now that persistent highlight
+				// annotations exist, so matches aren't double-highlighted.
+				s.stopSearch();
+				if (options?.focus && all.length > 0) {
+					const first = all[0];
+					scroll.provides?.scrollToPage({
+						pageNumber: first.pageIndex + 1,
+						pageCoordinates: { x: first.x, y: first.y },
+						alignY: 25,
+					});
+				}
+				return all;
 			},
 
 			/* search */
