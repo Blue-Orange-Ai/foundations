@@ -7,6 +7,7 @@ import React from 'react';
 
 import { Viewport } from '@embedpdf/plugin-viewport/react';
 import { Scroller } from '@embedpdf/plugin-scroll/react';
+import { ZoomGestureWrapper } from '@embedpdf/plugin-zoom/react';
 import { RenderLayer } from '@embedpdf/plugin-render/react';
 import { TilingLayer } from '@embedpdf/plugin-tiling/react';
 import { SearchLayer } from '@embedpdf/plugin-search/react';
@@ -29,55 +30,64 @@ export const PdfDocumentView: React.FC = () => {
 	return (
 		<Viewport documentId={documentId} className="blue-orange-pdf-viewport">
 			<GlobalPointerProvider documentId={documentId}>
-				<Scroller
+				<ZoomGestureWrapper
 					documentId={documentId}
-					renderPage={({ pageIndex, width, height }) => (
-						<div
-							className="blue-orange-pdf-page"
-							style={{ width, height }}
-						>
-							<PagePointerProvider
-								documentId={documentId}
-								pageIndex={pageIndex}
-								style={fill}
+					enablePinch={config.enablePinchZoom}
+					enableWheel={config.enableWheelZoom}
+				>
+					<Scroller
+						documentId={documentId}
+						renderPage={({ pageIndex, width, height }) => (
+							<div
+								className="blue-orange-pdf-page"
+								style={{ width, height }}
 							>
-								<RenderLayer
+								<PagePointerProvider
 									documentId={documentId}
 									pageIndex={pageIndex}
 									style={fill}
-								/>
-								<TilingLayer
-									documentId={documentId}
-									pageIndex={pageIndex}
-									style={fill}
-								/>
-								{config.enableSearch && (
-									<SearchLayer
+								>
+									<RenderLayer
 										documentId={documentId}
 										pageIndex={pageIndex}
 										style={fill}
 									/>
-								)}
-								{config.enableSelection && (
-									<SelectionLayer
-										documentId={documentId}
-										pageIndex={pageIndex}
-									/>
-								)}
-								{(config.enableAnnotations || config.enableForms) && (
-									<AnnotationLayer
+									<TilingLayer
 										documentId={documentId}
 										pageIndex={pageIndex}
 										style={fill}
-										annotationRenderers={
-											config.enableForms ? formRenderers : undefined
-										}
 									/>
-								)}
-							</PagePointerProvider>
-						</div>
-					)}
-				/>
+									{config.enableSearch && (
+										<SearchLayer
+											documentId={documentId}
+											pageIndex={pageIndex}
+											style={fill}
+										/>
+									)}
+									{config.enableSelection && (
+										<SelectionLayer
+											documentId={documentId}
+											pageIndex={pageIndex}
+										/>
+									)}
+									{(config.enableAnnotations ||
+										config.enableForms) && (
+										<AnnotationLayer
+											documentId={documentId}
+											pageIndex={pageIndex}
+											style={fill}
+											annotationRenderers={
+												config.enableForms
+													? formRenderers
+													: undefined
+											}
+										/>
+									)}
+								</PagePointerProvider>
+							</div>
+						)}
+					/>
+				</ZoomGestureWrapper>
 			</GlobalPointerProvider>
 		</Viewport>
 	);

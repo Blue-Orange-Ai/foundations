@@ -7,6 +7,7 @@ import React, { createContext, useContext } from 'react';
 import type {
 	PdfScrollMode,
 	PdfSidePanelTab,
+	PdfTheme,
 	PdfViewerApi,
 	PdfViewerProps,
 	PdfZoomLevel,
@@ -16,9 +17,14 @@ import type {
 
 export interface ResolvedConfig {
 	fileName: string;
+	theme: PdfTheme;
 	// features
 	showToolbar: boolean;
 	showSidePanel: boolean;
+	showPageControls: boolean;
+	showZoomControls: boolean;
+	showSpreadControls: boolean;
+	showHistoryControls: boolean;
 	enableThumbnails: boolean;
 	enableOutline: boolean;
 	enableSearch: boolean;
@@ -36,6 +42,8 @@ export interface ResolvedConfig {
 	minZoom: number;
 	maxZoom: number;
 	zoomStep: number;
+	enablePinchZoom: boolean;
+	enableWheelZoom: boolean;
 	// initial state
 	initialPage?: number;
 	initialZoom: PdfZoomLevel;
@@ -52,8 +60,13 @@ const bool = (value: boolean | undefined, fallback: boolean): boolean =>
 /** Resolve the raw props into a config object with all defaults applied. */
 export const resolveConfig = (props: PdfViewerProps): ResolvedConfig => ({
 	fileName: props.fileName ?? 'document.pdf',
+	theme: props.theme ?? 'light',
 	showToolbar: bool(props.showToolbar, true),
 	showSidePanel: bool(props.showSidePanel, true),
+	showPageControls: bool(props.showPageControls, true),
+	showZoomControls: bool(props.showZoomControls, true),
+	showSpreadControls: bool(props.showSpreadControls, true),
+	showHistoryControls: bool(props.showHistoryControls, true),
 	enableThumbnails: bool(props.enableThumbnails, true),
 	enableOutline: bool(props.enableOutline, true),
 	enableSearch: bool(props.enableSearch, true),
@@ -70,6 +83,8 @@ export const resolveConfig = (props: PdfViewerProps): ResolvedConfig => ({
 	minZoom: props.minZoom ?? 0.25,
 	maxZoom: props.maxZoom ?? 10,
 	zoomStep: props.zoomStep ?? 0.1,
+	enablePinchZoom: bool(props.enablePinchZoom, true),
+	enableWheelZoom: bool(props.enableWheelZoom, true),
 	initialPage: props.initialPage,
 	initialZoom: props.initialZoom ?? 'automatic',
 	initialRotation: props.initialRotation ?? 0,
@@ -83,6 +98,8 @@ export interface PdfViewerContextValue {
 	config: ResolvedConfig;
 	props: PdfViewerProps;
 	documentId: string | null;
+	/** True only once the active document has finished loading. */
+	documentReady: boolean;
 	/** Imperative API, available once a document is mounted. */
 	apiRef: React.MutableRefObject<PdfViewerApi | null>;
 	/** Chrome UI state. */

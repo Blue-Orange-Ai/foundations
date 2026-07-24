@@ -27,6 +27,9 @@ export type PdfScrollMode = 'vertical' | 'horizontal';
 /** Which panel is shown in the side bar. */
 export type PdfSidePanelTab = 'thumbnails' | 'outline' | 'search';
 
+/** Colour theme. `auto` follows the OS `prefers-color-scheme`. */
+export type PdfTheme = 'light' | 'dark' | 'auto';
+
 /* -------------------------------------------------------------------------- */
 /*  Document / selection payloads                                             */
 /* -------------------------------------------------------------------------- */
@@ -277,10 +280,26 @@ export interface PdfViewerProps {
 	minZoom?: number;
 	maxZoom?: number;
 	zoomStep?: number;
+	/** Zoom with a two-finger pinch gesture — trackpad or touch (default true). */
+	enablePinchZoom?: boolean;
+	/** Zoom with Cmd/Ctrl + scroll wheel (default true). */
+	enableWheelZoom?: boolean;
+
+	/* ---- theme ---- */
+	/** Colour theme (default `light`). `auto` follows the OS setting. */
+	theme?: PdfTheme;
 
 	/* ---- feature toggles (all default on unless noted) ---- */
 	showToolbar?: boolean;
 	showSidePanel?: boolean;
+	/** Show the page navigation controls (prev/next + page number). Default true. */
+	showPageControls?: boolean;
+	/** Show the zoom controls (out/in/fit + editable percentage). Default true. */
+	showZoomControls?: boolean;
+	/** Show the single/double page spread controls. Default true. */
+	showSpreadControls?: boolean;
+	/** Show the undo/redo history controls. Default true. */
+	showHistoryControls?: boolean;
 	/** Initial side panel tab. */
 	defaultSidePanelTab?: PdfSidePanelTab;
 	/** Start with the side panel open (default true). */

@@ -1,22 +1,55 @@
 /* ==========================================================================
    Foundations PDF Viewer
    Layout + chrome for the headless EmbedPDF wrapper. All interactive chrome
-   (buttons, dropdowns, inputs, toggles, tabs) is provided by
-   @blue-orange-ai/foundations-core; the styles here only handle the viewer
-   surface, panels and page canvas.
+   (buttons, inputs) is provided by @blue-orange-ai/foundations-core; the styles
+   here handle the viewer surface, panels and page canvas.
+
+   Theming follows the foundation-system convention: a `.dark` ancestor class
+   switches the palette. The viewer exposes its own scoped custom properties so
+   both modes are driven from one place.
    ========================================================================== */
 
 .blue-orange-pdf-viewer {
+	/* Light palette (default) */
+	--bo-pdf-surface: #ffffff;
+	--bo-pdf-bg: #f3f4f6;
+	--bo-pdf-border: #e5e7eb;
+	--bo-pdf-text: #1f2937;
+	--bo-pdf-muted: #6b7280;
+	--bo-pdf-hover: #f3f4f6;
+	--bo-pdf-active-bg: #000000;
+	--bo-pdf-active-text: #ffffff;
+	--bo-pdf-page-bg: #ffffff;
+	--bo-pdf-accent: #6366f1;
+	--bo-pdf-result-active-bg: #eef2ff;
+	--bo-pdf-mark-bg: #fde68a;
+
 	display: flex;
 	flex-direction: column;
 	width: 100%;
 	height: 100%;
 	min-height: 0;
 	position: relative;
-	background: var(--bo-pdf-bg, #f3f4f6);
-	color: #1f2937;
+	background: var(--bo-pdf-bg);
+	color: var(--bo-pdf-text);
 	overflow: hidden;
 	box-sizing: border-box;
+}
+
+/* Dark palette */
+.blue-orange-pdf-viewer.dark {
+	--bo-pdf-surface: #2b2b2e;
+	--bo-pdf-bg: #202022;
+	--bo-pdf-border: #3a3a3d;
+	--bo-pdf-text: #e8e8ea;
+	--bo-pdf-muted: #a1a1aa;
+	--bo-pdf-hover: #3a3a3d;
+	--bo-pdf-active-bg: #ffffff;
+	--bo-pdf-active-text: #000000;
+	--bo-pdf-page-bg: #ffffff;
+	--bo-pdf-accent: #818cf8;
+	--bo-pdf-result-active-bg: #313142;
+	--bo-pdf-mark-bg: #b8860b;
 }
 
 .blue-orange-pdf-viewer *,
@@ -29,11 +62,11 @@
 .blue-orange-pdf-toolbar {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: 10px;
 	flex-wrap: wrap;
 	padding: 6px 10px;
-	background: #ffffff;
-	border-bottom: 1px solid #e5e7eb;
+	background: var(--bo-pdf-surface);
+	border-bottom: 1px solid var(--bo-pdf-border);
 	z-index: 5;
 	flex: 0 0 auto;
 }
@@ -41,7 +74,7 @@
 .blue-orange-pdf-toolbar-group {
 	display: flex;
 	align-items: center;
-	gap: 4px;
+	gap: 6px;
 }
 
 .blue-orange-pdf-toolbar-spacer {
@@ -52,7 +85,27 @@
 	width: 1px;
 	align-self: stretch;
 	margin: 4px 2px;
-	background: #e5e7eb;
+	background: var(--bo-pdf-border);
+}
+
+/* Toolbar icon buttons: adopt the viewer palette + an active (toggle) state
+   that is black-on-white in light mode and inverted in dark. */
+.blue-orange-pdf-toolbar .blue-orange-default-btn-icon {
+	border-color: var(--bo-pdf-border);
+	color: var(--bo-pdf-text);
+	background: transparent;
+	transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.blue-orange-pdf-toolbar .blue-orange-default-btn-icon:hover {
+	background: var(--bo-pdf-hover);
+}
+
+.blue-orange-pdf-toolbar .blue-orange-default-btn-icon.is-active,
+.blue-orange-pdf-toolbar .blue-orange-default-btn-icon.is-active:hover {
+	background: var(--bo-pdf-active-bg);
+	color: var(--bo-pdf-active-text);
+	border-color: var(--bo-pdf-active-bg);
 }
 
 .blue-orange-pdf-page-indicator {
@@ -61,6 +114,7 @@
 	gap: 6px;
 	font-size: 13px;
 	white-space: nowrap;
+	color: var(--bo-pdf-text);
 }
 
 .blue-orange-pdf-page-indicator input {
@@ -68,10 +122,17 @@
 	text-align: center;
 }
 
-.blue-orange-pdf-zoom-indicator {
-	min-width: 52px;
-	text-align: center;
+.blue-orange-pdf-zoom-input {
+	display: flex;
+	align-items: center;
+	gap: 2px;
 	font-size: 13px;
+	color: var(--bo-pdf-muted);
+}
+
+.blue-orange-pdf-zoom-input input {
+	width: 46px;
+	text-align: center;
 	font-variant-numeric: tabular-nums;
 }
 
@@ -86,12 +147,23 @@
 .blue-orange-pdf-side-panel {
 	flex: 0 0 auto;
 	width: 240px;
-	background: #ffffff;
-	border-right: 1px solid #e5e7eb;
+	background: var(--bo-pdf-surface);
+	border-right: 1px solid var(--bo-pdf-border);
 	display: flex;
 	flex-direction: column;
 	min-height: 0;
 	overflow: hidden;
+}
+
+.blue-orange-pdf-side-panel-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 10px;
+	border-bottom: 1px solid var(--bo-pdf-border);
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--bo-pdf-text);
 }
 
 .blue-orange-pdf-side-panel-body {
@@ -115,12 +187,12 @@
 	min-height: 0;
 	width: 100%;
 	overflow: auto;
-	background: var(--bo-pdf-bg, #f3f4f6);
+	background: var(--bo-pdf-bg);
 }
 
 .blue-orange-pdf-page {
 	position: relative;
-	background: #ffffff;
+	background: var(--bo-pdf-page-bg);
 	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
 	margin: 0 auto;
 }
@@ -131,7 +203,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: #9ca3af;
+	color: var(--bo-pdf-muted);
 	font-size: 13px;
 }
 
@@ -148,19 +220,19 @@
 	border: 2px solid transparent;
 	border-radius: 6px;
 	cursor: pointer;
-	background: #ffffff;
+	background: var(--bo-pdf-page-bg);
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 	transition: border-color 0.12s ease, box-shadow 0.12s ease, transform 0.12s ease;
 	overflow: hidden;
 }
 
 .blue-orange-pdf-thumb:hover {
-	border-color: #c7d2fe;
+	border-color: var(--bo-pdf-accent);
 }
 
 .blue-orange-pdf-thumb.is-active {
-	border-color: #6366f1;
-	box-shadow: 0 0 0 1px #6366f1;
+	border-color: var(--bo-pdf-accent);
+	box-shadow: 0 0 0 1px var(--bo-pdf-accent);
 }
 
 .blue-orange-pdf-thumb.is-dragging {
@@ -174,7 +246,7 @@
 	right: 0;
 	top: -6px;
 	height: 3px;
-	background: #6366f1;
+	background: var(--bo-pdf-accent);
 	border-radius: 3px;
 }
 
@@ -212,11 +284,11 @@
 	padding: 4px 6px;
 	border-radius: 4px;
 	cursor: pointer;
-	color: #374151;
+	color: var(--bo-pdf-text);
 }
 
 .blue-orange-pdf-outline-item:hover {
-	background: #f3f4f6;
+	background: var(--bo-pdf-hover);
 }
 
 /* ---- Search panel --------------------------------------------------------- */
@@ -225,6 +297,15 @@
 	flex-direction: column;
 	gap: 8px;
 	padding: 10px;
+}
+
+/* The filter/search input fills the full width of its parent. */
+.blue-orange-pdf-search-panel .blue-orange-default-input-cont {
+	width: 100%;
+}
+
+.blue-orange-pdf-search-panel .blue-orange-default-input-cont input {
+	width: 100%;
 }
 
 .blue-orange-pdf-search-results {
@@ -240,20 +321,20 @@
 	cursor: pointer;
 	font-size: 12px;
 	line-height: 1.4;
-	color: #4b5563;
+	color: var(--bo-pdf-muted);
 }
 
 .blue-orange-pdf-search-result:hover {
-	background: #f3f4f6;
+	background: var(--bo-pdf-hover);
 }
 
 .blue-orange-pdf-search-result.is-active {
-	background: #eef2ff;
-	color: #1f2937;
+	background: var(--bo-pdf-result-active-bg);
+	color: var(--bo-pdf-text);
 }
 
 .blue-orange-pdf-search-result mark {
-	background: #fde68a;
+	background: var(--bo-pdf-mark-bg);
 	color: inherit;
 	padding: 0 1px;
 	border-radius: 2px;
@@ -267,7 +348,7 @@
 	align-items: center;
 	justify-content: center;
 	gap: 12px;
-	color: #6b7280;
+	color: var(--bo-pdf-muted);
 	font-size: 14px;
 	padding: 24px;
 	text-align: center;

@@ -19,4 +19,5 @@ export type {
 	PdfSpreadMode,
 	PdfScrollMode,
 	PdfSidePanelTab,
+	PdfTheme,
 } from './types';

@@ -115,16 +115,24 @@ const PdfController: React.FC<{
 /*  Layout                                                                    */
 /* -------------------------------------------------------------------------- */
 const PdfLayout: React.FC = () => {
-	const { config, documentId, sidePanelOpen } = usePdfViewerContext();
+	const { config, documentId, documentReady, sidePanelOpen } = usePdfViewerContext();
 
 	return (
 		<>
-			{config.showToolbar && <PdfToolbar />}
+			{config.showToolbar && documentReady && <PdfToolbar />}
 			<div className="blue-orange-pdf-body">
-				{config.showSidePanel && sidePanelOpen && documentId && <PdfSidePanel />}
+				{config.showSidePanel && sidePanelOpen && documentReady && <PdfSidePanel />}
 				<div className="blue-orange-pdf-document-area">
-					{documentId ? (
+					{documentReady ? (
 						<PdfDocumentView />
+					) : documentId ? (
+						<div className="blue-orange-pdf-status">
+							<i
+								className="ri-loader-4-line"
+								style={{ fontSize: 28 }}
+							/>
+							<span>Loading document…</span>
+						</div>
 					) : (
 						<div className="blue-orange-pdf-status">
 							<i className="ri-file-line" style={{ fontSize: 32 }} />
@@ -150,6 +158,8 @@ export const PdfInner: React.FC<{
 }> = ({ props, engine, externalRef }) => {
 	const config = useMemo(() => resolveConfig(props), [props]);
 	const { activeDocumentId } = useActiveDocument();
+	const activeDocState = useDocumentState(activeDocumentId);
+	const documentReady = activeDocState?.status === 'loaded';
 
 	const [sidePanelOpen, setSidePanelOpen] = useState(config.defaultSidePanelOpen);
 	const [activeSidePanelTab, setActiveSidePanelTab] = useState<PdfSidePanelTab>(
@@ -172,6 +182,7 @@ export const PdfInner: React.FC<{
 			config,
 			props,
 			documentId: activeDocumentId,
+			documentReady,
 			apiRef,
 			sidePanelOpen,
 			setSidePanelOpen,
@@ -184,6 +195,7 @@ export const PdfInner: React.FC<{
 			config,
 			props,
 			activeDocumentId,
+			documentReady,
 			sidePanelOpen,
 			activeSidePanelTab,
 			signatureDialogOpen,

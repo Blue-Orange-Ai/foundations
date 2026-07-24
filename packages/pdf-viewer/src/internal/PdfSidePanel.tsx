@@ -21,17 +21,7 @@ export const PdfSidePanel: React.FC = () => {
 
 	return (
 		<div className="blue-orange-pdf-side-panel">
-			<div
-				style={{
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-					padding: '8px 10px',
-					borderBottom: '1px solid #e5e7eb',
-					fontSize: 13,
-					fontWeight: 600,
-				}}
-			>
+			<div className="blue-orange-pdf-side-panel-header">
 				<span>{titles[activeSidePanelTab]}</span>
 				<ButtonIcon
 					icon="ri-close-line"

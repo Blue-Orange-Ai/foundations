@@ -226,6 +226,49 @@ export const usePdfViewerController = ({
 		props.onSearchResults(mapped);
 	}, [searchState, props.onSearchResults]);
 
+	// Scroll to the active search result. The search plugin only updates the
+	// active-index state and emits `onActiveResultChange` — it does not move the
+	// viewport itself — so we bridge that event to the scroll capability here.
+	// This covers every navigation path: clicking a result in the side panel, the
+	// toolbar next/previous buttons and the imperative API.
+	//
+	// Two headless-side subtleties make this tricky:
+	//   1. `useSearch`/`useScroll` return a fresh capability scope object on every
+	//      render, so we must NOT put `*.provides` in the deps — doing so would
+	//      re-subscribe on every render (including the re-renders that plain
+	//      scrolling triggers).
+	//   2. `onActiveResultChange` is a *behavior* emitter: it replays the current
+	//      value to every new subscriber. Combined with (1) that would re-scroll
+	//      to the active hit on every render — yanking the user back whenever they
+	//      scroll away. We subscribe once per document and only scroll when the
+	//      index genuinely changes.
+	const scrollProvidesRef = useRef(scroll.provides);
+	scrollProvidesRef.current = scroll.provides;
+	const searchProvidesRef = useRef(search.provides);
+	searchProvidesRef.current = search.provides;
+	const searchReady = !!search.provides;
+
+	useEffect(() => {
+		const s = searchProvidesRef.current;
+		if (!s) return;
+		let lastIndex = s.getState().activeResultIndex;
+		return s.onActiveResultChange((index) => {
+			if (index < 0 || index === lastIndex) return;
+			lastIndex = index;
+			const sc = scrollProvidesRef.current;
+			const result = s.getState().results[index];
+			if (!sc || !result) return;
+			const rect = result.rects[0];
+			sc.scrollToPage({
+				pageNumber: result.pageIndex + 1,
+				pageCoordinates: rect
+					? { x: rect.origin.x, y: rect.origin.y }
+					: undefined,
+				alignY: 25,
+			});
+		});
+	}, [documentId, searchReady]); // eslint-disable-line react-hooks/exhaustive-deps
+
 	/* ---------------------------------------------------------------------- */
 	/*  Controlled props                                                      */
 	/* ---------------------------------------------------------------------- */
@@ -447,14 +490,21 @@ export const usePdfViewerController = ({
 			canUndo: () => history.provides?.canUndo() ?? false,
 			canRedo: () => history.provides?.canRedo() ?? false,
 
-			/* export / print */
-			download: () => exporter.provides?.forDocument(documentId).download(),
+			/* export / print — honour the feature toggles so a disabled control
+			   cannot be triggered through the imperative API either. */
+			download: () => {
+				if (props.enableDownload === false) return;
+				exporter.provides?.forDocument(documentId).download();
+			},
 			getBytes: async () => {
 				const ex = exporter.provides;
 				if (!ex) return new ArrayBuffer(0);
 				return taskToPromise(ex.forDocument(documentId).saveAsCopy());
 			},
-			print: () => printer.provides?.forDocument(documentId).print(),
+			print: () => {
+				if (props.enablePrint === false) return;
+				printer.provides?.forDocument(documentId).print();
+			},
 
 			/* misc */
 			toggleFullscreen: () => fullscreen.provides?.toggleFullscreen(),
@@ -490,6 +540,8 @@ export const usePdfViewerController = ({
 		documentId,
 		applyOrder,
 		openSignatureDialog,
+		props.enableDownload,
+		props.enablePrint,
 	]);
 
 	// Expose the imperative handle.
