@@ -98,4 +98,7 @@
     left: 0;
     display: block;
     will-change: transform;
+    /* The canvas is focusable (tabIndex) so it can receive keyboard input, but
+       clicking it should not draw a focus ring. */
+    outline: none;
 }

@@ -1,5 +1,12 @@
 import React from 'react';
-import { ButtonIcon, Toggle } from '@blue-orange-ai/foundations-core';
+import {
+    ButtonIcon,
+    ButtonDropdown,
+    ButtonSize,
+    ButtonType,
+    DropdownItemText,
+    Toggle,
+} from '@blue-orange-ai/foundations-core';
 import './TimelineToolbar.css';
 import { TimelineInteractionMode, TimelineTimeMode } from '../../interfaces/TimelineInterfaces';
 import { defaultDateFormatter, defaultUnitFormatter } from '../../utils/timelineUtils';
@@ -26,10 +33,26 @@ export interface TimelineToolbarProps {
     onZoomOut?: () => void;
     onZoomFit?: () => void;
 
-    /** Playback controls. Rendered only when `onPlayPause` is supplied. */
+    /** Playback controls. The transport group is rendered when any of
+     * `onPlayPause`, `onPrevEvent` or `onNextEvent` is supplied. */
     playing?: boolean;
     onPlayPause?: () => void;
     onStop?: () => void;
+    /** Step the cursor to the previous / next event. Rendered as skip controls
+     * flanking the play button when supplied. */
+    onPrevEvent?: () => void;
+    onNextEvent?: () => void;
+
+    /**
+     * Current playback-speed multiplier. When supplied together with
+     * `onSpeedChange`, a speed button (e.g. `2×`) is rendered next to the
+     * transport controls and cycles through {@link TimelineToolbarProps.speeds}
+     * on click. Defaults to `1`.
+     */
+    speed?: number;
+    onSpeedChange?: (speed: number) => void;
+    /** Speed multipliers the speed button cycles through. Defaults to `[1, 2, 4]`. */
+    speeds?: number[];
 
     /** Snap toggle. Rendered only when `onSnapChange` is supplied. */
     snapEnabled?: boolean;
@@ -48,7 +71,6 @@ export interface TimelineToolbarProps {
 const MODES: { mode: TimelineInteractionMode; icon: string; label: string }[] = [
     { mode: TimelineInteractionMode.SELECTION, icon: 'ri-cursor-line', label: 'Select' },
     { mode: TimelineInteractionMode.PAN, icon: 'ri-drag-move-2-line', label: 'Pan' },
-    { mode: TimelineInteractionMode.ZOOM, icon: 'ri-search-line', label: 'Zoom' },
 ];
 
 const TIME_MODES: { mode: TimelineTimeMode; icon: string; label: string }[] = [
@@ -75,6 +97,11 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({
     playing = false,
     onPlayPause,
     onStop,
+    onPrevEvent,
+    onNextEvent,
+    speed = 1,
+    onSpeedChange,
+    speeds = [1, 2, 4],
     snapEnabled = false,
     onSnapChange,
     time,
@@ -95,22 +122,47 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({
         return absolute ? defaultDateFormatter(val, 1000) : defaultUnitFormatter(val, 1000);
     };
 
+    const formatSpeed = (val: number): string =>
+        `${Number.isInteger(val) ? val : val.toFixed(2).replace(/\.?0+$/, '')}×`;
+    // The dropdown reports the selected item's reference (its speed as a string).
+    const handleSpeedSelect = (reference: string) => {
+        const next = Number(reference);
+        if (onSpeedChange && !Number.isNaN(next)) {
+            onSpeedChange(next);
+        }
+    };
+
     return (
         <div className={rootClass} style={style}>
-            {onPlayPause && (
-                <>
+            {(onPlayPause || onPrevEvent || onNextEvent) && (
+                <div className="blue-orange-timeline-toolbar-playback">
                     <div className="blue-orange-timeline-toolbar-group">
-                        <ButtonIcon
-                            icon={playing ? 'ri-pause-line' : 'ri-play-line'}
-                            label={playing ? 'Pause' : 'Play'}
-                            onClick={onPlayPause}
-                        />
+                        {onPrevEvent && (
+                            <ButtonIcon
+                                icon="ri-skip-back-line"
+                                label="Previous event"
+                                onClick={onPrevEvent}
+                            />
+                        )}
+                        {onPlayPause && (
+                            <ButtonIcon
+                                icon={playing ? 'ri-pause-line' : 'ri-play-line'}
+                                label={playing ? 'Pause' : 'Play'}
+                                onClick={onPlayPause}
+                            />
+                        )}
+                        {onNextEvent && (
+                            <ButtonIcon
+                                icon="ri-skip-forward-line"
+                                label="Next event"
+                                onClick={onNextEvent}
+                            />
+                        )}
                         {onStop && (
                             <ButtonIcon icon="ri-stop-line" label="Stop" onClick={onStop} />
                         )}
                     </div>
-                    <div className="blue-orange-timeline-toolbar-separator" />
-                </>
+                </div>
             )}
 
             <div className="blue-orange-timeline-toolbar-group">
@@ -191,6 +243,27 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({
             )}
 
             <div className="blue-orange-timeline-toolbar-spacer" />
+
+            {onSpeedChange && (
+                <div className="blue-orange-timeline-toolbar-speed">
+                    <ButtonDropdown
+                        text={formatSpeed(speed)}
+                        tooltip="Playback speed"
+                        buttonType={ButtonType.CLEAR}
+                        size={ButtonSize.MEDIUM}
+                        onSelection={handleSpeedSelect}
+                    >
+                        {speeds.map((s) => (
+                            <DropdownItemText
+                                key={s}
+                                label={formatSpeed(s)}
+                                value={String(s)}
+                                selected={s === speed}
+                            />
+                        ))}
+                    </ButtonDropdown>
+                </div>
+            )}
 
             {onSnapChange && (
                 <div className="blue-orange-timeline-toolbar-snap">

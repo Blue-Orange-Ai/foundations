@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, ButtonType, ButtonSize, Toggle } from '@blue-orange-ai/foundations-core';
 import { Timeline, TimelineHandle } from '../../components/timeline/Timeline';
 import { TimelineToolbar } from '../../components/timeline-toolbar/TimelineToolbar';
@@ -26,6 +26,7 @@ export const Workspace: React.FC = () => {
     const [timeMode, setTimeMode] = useState<TimelineTimeMode>(TimelineTimeMode.RELATIVE);
     const [time, setTime] = useState(0);
     const [playing, setPlaying] = useState(false);
+    const [speed, setSpeed] = useState(1);
     const [log, setLog] = useState<string[]>([]);
 
     // A fixed "now" and matching date model, established once so the demo is
@@ -40,6 +41,9 @@ export const Workspace: React.FC = () => {
     const timelineRef = useRef<TimelineHandle | null>(null);
     const rafRef = useRef<number>(0);
     const lastTsRef = useRef<number>(0);
+    // Read inside the RAF loop so speed changes take effect without restarting it.
+    const speedRef = useRef<number>(speed);
+    speedRef.current = speed;
 
     const pushLog = useCallback((message: string) => {
         setLog((prev) => [message, ...prev].slice(0, 40));
@@ -54,7 +58,7 @@ export const Workspace: React.FC = () => {
         lastTsRef.current = 0;
         const tick = (ts: number) => {
             if (lastTsRef.current) {
-                const dt = ts - lastTsRef.current;
+                const dt = (ts - lastTsRef.current) * speedRef.current;
                 setTime((t) => {
                     const next = t + dt;
                     if (next >= 10000) {
@@ -82,6 +86,24 @@ export const Workspace: React.FC = () => {
         [now]
     );
 
+    // Sorted, de-duplicated event positions of the active model, used by the
+    // skip-to-previous / skip-to-next transport controls.
+    const eventTimes = useMemo(() => {
+        const vals: number[] = [];
+        model.rows.forEach((row) => row.keyframes?.forEach((kf) => vals.push(kf.val)));
+        return Array.from(new Set(vals)).sort((a, b) => a - b);
+    }, [model]);
+
+    const goToPrevEvent = useCallback(() => {
+        setPlaying(false);
+        setTime((t) => [...eventTimes].reverse().find((v) => v < t) ?? t);
+    }, [eventTimes]);
+
+    const goToNextEvent = useCallback(() => {
+        setPlaying(false);
+        setTime((t) => eventTimes.find((v) => v > t) ?? t);
+    }, [eventTimes]);
+
     const handleSelected = (e: ITimelineSelectedEvent) => {
         pushLog(`selected: ${e.selected.length} keyframe(s)`);
     };
@@ -100,6 +122,17 @@ export const Workspace: React.FC = () => {
                         <span>Snap 250ms</span>
                         <Toggle checked={snap} onChange={setSnap} />
                     </label>
+                    <label className="timeline-workspace-control">
+                        <span>Date / time</span>
+                        <Toggle
+                            checked={absolute}
+                            onChange={(on) =>
+                                handleTimeModeChange(
+                                    on ? TimelineTimeMode.ABSOLUTE : TimelineTimeMode.RELATIVE
+                                )
+                            }
+                        />
+                    </label>
                     <Button
                         text={dark ? 'Light mode' : 'Dark mode'}
                         icon={dark ? 'ri-sun-line' : 'ri-moon-line'}
@@ -117,7 +150,6 @@ export const Workspace: React.FC = () => {
                         timelineRef.current?.setInteractionMode(m);
                     }}
                     timeMode={timeMode}
-                    onTimeModeChange={handleTimeModeChange}
                     onFocusEvents={() => timelineRef.current?.focusEvents()}
                     onZoomIn={() => timelineRef.current?.zoomBy(0.8)}
                     onZoomOut={() => timelineRef.current?.zoomBy(1.25)}
@@ -132,8 +164,11 @@ export const Workspace: React.FC = () => {
                                   setTime(0);
                               }
                     }
-                    snapEnabled={snap}
-                    onSnapChange={setSnap}
+                    onPrevEvent={goToPrevEvent}
+                    onNextEvent={goToNextEvent}
+                    speed={speed}
+                    onSpeedChange={absolute ? undefined : setSpeed}
+                    speeds={[1, 2, 4, 8]}
                     time={time}
                     timeFormatter={absolute ? (v) => defaultDateFormatter(v, 1000) : undefined}
                     dark={dark}
