@@ -159,12 +159,39 @@ export const usePdfViewerController = ({
 	/*  Callback wiring                                                       */
 	/* ---------------------------------------------------------------------- */
 
-	// Page changes
+	// Callbacks and the (memoised-but-still-unstable) selection builder are read
+	// through refs so the event subscriptions below can be created ONCE per
+	// document. Subscribing in an effect keyed on `*.provides`/`props.*` would
+	// re-subscribe on every render, and because these plugin events are *behavior*
+	// emitters (they replay their last value to each new subscriber) that turns
+	// into a storm of duplicate callbacks — most visibly `onPageChange` firing
+	// repeatedly while scrolling. See the search bridge below for the same fix.
+	const onPageChangeRef = useRef(props.onPageChange);
+	onPageChangeRef.current = props.onPageChange;
+	const onSelectionChangeRef = useRef(props.onSelectionChange);
+	onSelectionChangeRef.current = props.onSelectionChange;
+	const onTextSelectedRef = useRef(props.onTextSelected);
+	onTextSelectedRef.current = props.onTextSelected;
+	const buildSelectionRef = useRef(buildSelection);
+	buildSelectionRef.current = buildSelection;
+
+	const scrollReady = !!scroll.provides;
+	const selectionReady = !!selection.provides;
+
+	// Page changes — subscribe once, and only fire when the page actually changes
+	// (the behavior emitter replays the current page on subscribe; the guard drops
+	// that replay and any duplicate emissions).
 	useEffect(() => {
 		const sc = scroll.provides;
-		if (!sc || !props.onPageChange) return;
-		return sc.onPageChange((e) => props.onPageChange?.(e.pageNumber, e.totalPages));
-	}, [scroll.provides, props.onPageChange]);
+		if (!sc) return;
+		let lastPage = scroll.state?.currentPage ?? -1;
+		return sc.onPageChange((e) => {
+			if (e.pageNumber === lastPage) return;
+			lastPage = e.pageNumber;
+			onPageChangeRef.current?.(e.pageNumber, e.totalPages);
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [documentId, scrollReady]);
 
 	// Zoom changes
 	const currentZoom = zoom.state?.currentZoomLevel ?? 1;
@@ -177,33 +204,33 @@ export const usePdfViewerController = ({
 		props.onRotationChange?.(fromRotation(rotate.rotation));
 	}, [rotate.rotation]); // eslint-disable-line react-hooks/exhaustive-deps
 
-	// Selection changes
+	// Selection changes — subscribe once per document.
 	useEffect(() => {
 		const sel = selection.provides;
 		if (!sel) return;
-		const unsub = sel.onSelectionChange(async (e) => {
+		return sel.onSelectionChange(async (e) => {
 			if (!e.selection) {
 				selectionRef.current = null;
-				props.onSelectionChange?.(null);
+				onSelectionChangeRef.current?.(null);
 				return;
 			}
-			const payload = await buildSelection();
+			const payload = await buildSelectionRef.current();
 			selectionRef.current = payload;
-			props.onSelectionChange?.(payload);
+			onSelectionChangeRef.current?.(payload);
 		});
-		return unsub;
-	}, [selection.provides, buildSelection, props.onSelectionChange]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [documentId, selectionReady]);
 
-	// Completed selections
+	// Completed selections — subscribe once per document.
 	useEffect(() => {
 		const sel = selection.provides;
-		if (!sel || !props.onTextSelected) return;
-		const unsub = sel.onEndSelection(async () => {
-			const payload = await buildSelection();
-			if (payload && payload.text) props.onTextSelected?.(payload);
+		if (!sel) return;
+		return sel.onEndSelection(async () => {
+			const payload = await buildSelectionRef.current();
+			if (payload && payload.text) onTextSelectedRef.current?.(payload);
 		});
-		return unsub;
-	}, [selection.provides, buildSelection, props.onTextSelected]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [documentId, selectionReady]);
 
 	// Annotation changes
 	useEffect(() => {
