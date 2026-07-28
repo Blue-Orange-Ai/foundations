@@ -1,0 +1,67 @@
+.file-system-demo-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.file-system-demo-toolbar-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.file-system-demo-toggles {
+    gap: 20px;
+    row-gap: 10px;
+}
+
+.file-system-demo-toggle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.file-system-demo-hints {
+    margin: 20px 0 0 0;
+    padding-left: 18px;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    opacity: 0.8;
+}
+
+.file-system-demo-status {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 10px;
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+.file-system-demo-empty {
+    padding: 20px 10px;
+    font-size: 0.8rem;
+    text-align: center;
+    opacity: 0.6;
+}
+
+.file-system-demo-log {
+    font-size: 0.75rem;
+    font-family: monospace;
+}
+
+.file-system-demo-log-entry {
+    padding: 2px 0;
+    white-space: pre-wrap;
+}
+
+.file-system-demo-log-empty {
+    opacity: 0.5;
+}

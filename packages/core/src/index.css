@@ -314,6 +314,9 @@
   --blue-orange-light-metrics-card-color: black;
   --blue-orange-dark-metrics-card-color: white;
 
+  --blue-orange-light-file-system-row-hover-background: #f7f7f9;
+  --blue-orange-dark-file-system-row-hover-background: #3f3f42;
+
   --blue-orange-light-file-system-selected-row-background: black;
   --blue-orange-dark-file-system-selected-row-background: black;
   --blue-orange-light-file-system-selected-row-color: white;

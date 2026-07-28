@@ -1,10 +1,16 @@
 .blue-orange-file-system-row-cont {
     cursor: pointer;
     min-height: 42px;
+    font-size: 0.8rem;
 }
 
 .blue-orange-file-system-row-cont:hover {
-    background-color: #f7f7f9;
+    background-color: var(--blue-orange-light-file-system-row-hover-background);
+    transition: 0.1s;
+}
+
+.dark .blue-orange-file-system-row-cont:hover {
+    background-color: var(--blue-orange-dark-file-system-row-hover-background);
     transition: 0.1s;
 }
 
@@ -19,7 +25,7 @@
 .blue-orange-file-system-row-secondary {
     opacity: 0.6;
     justify-content: center;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
 }
 
 .blue-orange-file-system-primary-item {
@@ -44,6 +50,31 @@
     opacity: 0.6;
 }
 
+.blue-orange-file-system-row-progress {
+    margin-top: 4px;
+    height: 3px;
+    width: 160px;
+    max-width: 100%;
+    border-radius: 2px;
+    overflow: hidden;
+    background-color: var(--blue-orange-light-default-border-color);
+}
+
+.dark .blue-orange-file-system-row-progress {
+    background-color: var(--blue-orange-dark-file-system-row-hover-background);
+}
+
+.blue-orange-file-system-row-progress-bar {
+    height: 100%;
+    border-radius: 2px;
+    background-color: var(--blue-orange-light-active-border-color);
+    transition: width 0.2s ease;
+}
+
+.dark .blue-orange-file-system-row-progress-bar {
+    background-color: var(--blue-orange-dark-active-border-color);
+}
+
 .blue-orange-file-system-row-selected-style {
     background-color: var(--blue-orange-light-file-system-selected-row-background);
     color: var(--blue-orange-light-file-system-selected-row-color);
@@ -51,6 +82,16 @@
 
 .blue-orange-file-system-row-selected-style:hover {
     background-color: var(--blue-orange-light-file-system-selected-row-background);
+    transition: 0.1s;
+}
+
+.dark .blue-orange-file-system-row-selected-style {
+    background-color: var(--blue-orange-dark-file-system-selected-row-background);
+    color: var(--blue-orange-dark-file-system-selected-row-color);
+}
+
+.dark .blue-orange-file-system-row-selected-style:hover {
+    background-color: var(--blue-orange-dark-file-system-selected-row-background);
     transition: 0.1s;
 }
 

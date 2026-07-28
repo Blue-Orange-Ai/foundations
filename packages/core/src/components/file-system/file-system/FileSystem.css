@@ -14,7 +14,20 @@
 }
 
 .blue-orange-file-system-header-row {
-    background-color: var(--blue-orange-light-default-border-color);
+    background-color: #f7f8f9;
+}
+
+.blue-orange-file-system-header-row th {
+    border-bottom: 1px solid #e0e1e2;
+}
+
+.dark .blue-orange-file-system-header-row {
+    background-color: #28282a;
+    color: var(--blue-orange-dark-default-text-color);
+}
+
+.dark .blue-orange-file-system-header-row th {
+    border-bottom: 1px solid #3f3f42;
 }
 
 .blue-orange-file-system-header-row-item {
@@ -23,7 +36,12 @@
     justify-content: space-between;
     align-items: center;
     padding: 4px 10px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+}
+
+.blue-orange-file-system-header-row-item-sortable {
+    cursor: pointer;
+    user-select: none;
 }
 
 .blue-orange-file-system-header-row-item-primary {

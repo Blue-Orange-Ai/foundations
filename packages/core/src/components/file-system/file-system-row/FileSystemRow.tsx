@@ -3,7 +3,7 @@ import React, {useContext, useEffect, useRef} from "react";
 import './FileSystemRow.css'
 import {ButtonIcon} from "../../buttons/button-icon/ButtonIcon";
 import {ContextMenu, IContextMenuItem} from "../../contextmenu/contextmenu/ContextMenu";
-import {FileSystemContext, IFileSystemItem} from "../file-system/FileSystem";
+import {FileSystemContext, IFileSystemItem, IFileSystemType} from "../FileSystemContext";
 import moment from 'moment';
 import {Input} from "../../inputs/input/Input";
 
@@ -16,6 +16,11 @@ interface Props {
 	onClick?: (item: IFileSystemItem, ctrlKey: boolean, shiftKey: boolean) => void,
 	onDoubleClick?: (item: IFileSystemItem) => void,
 	onDrop?: () => void,
+	/** Fired when the folder expand/collapse chevron is clicked (requires item.showDropdown). */
+	onDropdownClick?: (item: IFileSystemItem) => void,
+	/** Fired when the inline rename editor is committed with enter or by losing focus (requires item.rename). */
+	onRenameComplete?: (item: IFileSystemItem, label: string) => void,
+	/** Columns default to the ones the surrounding FileSystem renders. */
 	showFileSize?: boolean,
 	showFileType?: boolean,
 	showLastModified?: boolean,
@@ -30,13 +35,22 @@ export const FileSystemRow: React.FC<Props> = ({
 												   onClick,
 												   onDoubleClick,
 												   onDrop,
-												   showFileSize=true,
-												   showFileType=true,
-												   showLastModified=true, style={}}) => {
+												   onDropdownClick,
+												   onRenameComplete,
+												   showFileSize,
+												   showFileType,
+												   showLastModified, style={}}) => {
 
 	const selectionHandledOnMouseDownRef = useRef(false);
 
 	const fileSystemContext = useContext(FileSystemContext);
+
+	// A row on its own shows every column, inside a table it follows the columns the table renders.
+	const showFileSizeColumn = showFileSize ?? fileSystemContext?.showFileSize ?? true;
+
+	const showFileTypeColumn = showFileType ?? fileSystemContext?.showFileType ?? true;
+
+	const showLastModifiedColumn = showLastModified ?? fileSystemContext?.showLastModified ?? true;
 
 	useEffect(() => {
 		if (!fileSystemContext) {
@@ -66,6 +80,9 @@ export const FileSystemRow: React.FC<Props> = ({
 	const renameInputStyle: React.CSSProperties = {
 		height: "16px"
 	}
+
+	// The row that walks back up the tree has no meaningful date, size or type of its own.
+	const isParentDirectory = item.type === IFileSystemType.PARENT_DIRECTORY;
 
 	const paddingLeft = 10 + indent * 20;
 
@@ -161,6 +178,35 @@ export const FileSystemRow: React.FC<Props> = ({
 		}
 	}
 
+	const dropdownClicked = (ev: React.MouseEvent<HTMLDivElement>) => {
+		ev.stopPropagation();
+		if (onDropdownClick) {
+			onDropdownClick(item);
+		}
+	}
+
+	const renameValueRef = useRef<string>(item.label);
+
+	const renameCompletedRef = useRef<boolean>(false);
+
+	useEffect(() => {
+		if (item.rename) {
+			renameValueRef.current = item.label;
+			renameCompletedRef.current = false;
+		}
+	}, [item.rename, item.label]);
+
+	// Enter and the following blur both signal completion, only the first one counts.
+	const renameCompleted = () => {
+		if (renameCompletedRef.current) {
+			return;
+		}
+		renameCompletedRef.current = true;
+		if (onRenameComplete) {
+			onRenameComplete(item, renameValueRef.current);
+		}
+	}
+
 	return (
 		<tr
 			className={item.selected ? "blue-orange-file-system-row-cont blue-orange-file-system-row-selected-style" : "blue-orange-file-system-row-cont"}
@@ -174,45 +220,66 @@ export const FileSystemRow: React.FC<Props> = ({
 				<ContextMenu rightClick={true} items={contextMenuItems} onClick={contextMenuItemClickedFn}>
 					<div className="blue-orange-file-system-row-item blue-orange-file-system-row-primary" style={{...primaryRowStyle, minHeight: item.rowHeight ? item.rowHeight + "px" : "32px"}}>
 						<div className="blue-orange-file-system-primary-item">
-							{item.showDropdown && <ButtonIcon icon={item.dropdownOpen ? folderOpenIcon : folderClosedIcon} style={dropdownBtnStyle}></ButtonIcon>}
+							{item.showDropdown &&
+								<div onMouseDown={(ev) => ev.stopPropagation()} onClick={dropdownClicked}>
+									<ButtonIcon icon={item.dropdownOpen ? folderOpenIcon : folderClosedIcon} style={dropdownBtnStyle}></ButtonIcon>
+								</div>
+							}
 							{item.icon &&
 								<div className="blue-orange-file-system-row-icon">
 									<i className={item.icon} style={{fontSize: item.iconSize ?? "1rem", color: item.iconColor ?? "unset"}}></i>
 								</div>
 							}
 							<div className="blue-orange-file-system-row-content">
-								{item.rename && <Input value={item.label} style={renameInputStyle}></Input>}
+								{item.rename &&
+									<div onMouseDown={(ev) => ev.stopPropagation()} onClick={(ev) => ev.stopPropagation()}>
+										<Input
+											value={item.label}
+											focus={true}
+											style={renameInputStyle}
+											onChange={(value) => renameValueRef.current = value}
+											enterEvent={renameCompleted}
+											focusOut={renameCompleted}></Input>
+									</div>
+								}
 								{!item.rename &&
 									<div className="blue-orange-file-system-row-content-title">{item.label}</div>
 								}
 								{item.description && <div className="blue-orange-file-system-row-content-secondary">{item.description}</div>}
+								{item.progress != undefined &&
+									<div className="blue-orange-file-system-row-progress">
+										<div
+											className="blue-orange-file-system-row-progress-bar"
+											style={{width: Math.max(0, Math.min(100, item.progress)) + "%"}}></div>
+									</div>
+								}
 							</div>
 						</div>
 					</div>
 				</ContextMenu>
 			</td>
-			{showLastModified &&
+			{showLastModifiedColumn &&
 				<td>
 					<ContextMenu rightClick={true} items={contextMenuItems}>
 						<div className="blue-orange-file-system-row-item blue-orange-file-system-row-secondary">
-							{formatLastModifiedDate(item.lastModified)}
+							{!isParentDirectory && formatLastModifiedDate(item.lastModified)}
 						</div>
 					</ContextMenu>
 				</td>
 			}
-			{showFileSize &&
+			{showFileSizeColumn &&
 				<td>
 					<ContextMenu rightClick={true} items={contextMenuItems}>
 						<div
-							className="blue-orange-file-system-row-item blue-orange-file-system-row-secondary">{formatBytes(item.size, 2)}</div>
+							className="blue-orange-file-system-row-item blue-orange-file-system-row-secondary">{isParentDirectory ? "" : formatBytes(item.size, 2)}</div>
 					</ContextMenu>
 				</td>
 			}
-			{showFileType &&
+			{showFileTypeColumn &&
 				<td>
 					<ContextMenu rightClick={true} items={contextMenuItems}>
 						<div
-							className="blue-orange-file-system-row-item blue-orange-file-system-row-secondary">{item.fileType}</div>
+							className="blue-orange-file-system-row-item blue-orange-file-system-row-secondary">{isParentDirectory ? "" : item.fileType}</div>
 					</ContextMenu>
 				</td>
 			}

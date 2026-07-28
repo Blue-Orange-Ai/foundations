@@ -2,46 +2,18 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import './FileSystem.css'
 import {ButtonIcon} from "../../buttons/button-icon/ButtonIcon";
+import {FileSystemRow} from "../file-system-row/FileSystemRow";
+import {
+	FileSystemContext,
+	FileSystemContextValue,
+	IFileSystemItem,
+	IFileSystemOrderBy,
+	IFileSystemType,
+	SelectedElementsPos
+} from "../FileSystemContext";
 
-export enum IFileSystemOrderBy {
-	UNSELECTED="UNSELECTED",
-	NAME_DESC="NAME_DESC",
-	NAME_ASC="NAME_ASC",
-	LAST_MOD_DESC="LAST_MOD_DESC",
-	LAST_MOD_ASC="LAST_MOD_ASC",
-	FILE_TYPE_DESC="FILE_TYPE_DESC",
-	FILE_TYPE_ASC="FILE_TYPE_ASC",
-	FILE_SIZE_DESC="FILE_SIZE_DESC",
-	FILE_SIZE_ASC="FILE_SIZE_ASC",
-}
-
-export enum IFileSystemType {
-	FOLDER="FOLDER",
-	FILE="FILE",
-	PARENT_DIRECTORY="PARENT_DIRECTORY",
-}
-
-export interface IFileSystemItem {
-	id?: string,
-	indent: number,
-	reference: string,
-	type: IFileSystemType,
-	label: string,
-	description?: string,
-	icon?: string,
-	iconSize?: string,
-	iconColor?: string,
-	showDropdown?: boolean,
-	dropdownOpen?: boolean,
-	rename?: boolean,
-	rowHeight?: number,
-	cut?: boolean,
-	copy?: boolean,
-	selected: boolean,
-	size: number,
-	lastModified: Date,
-	fileType: string
-}
+export {FileSystemContext, IFileSystemOrderBy, IFileSystemType} from "../FileSystemContext";
+export type {FileSystemContextValue, IFileSystemItem, SelectedElementsPos} from "../FileSystemContext";
 
 interface Props {
 	children: React.ReactNode,
@@ -55,26 +27,24 @@ interface Props {
 	pasteEvent?: () => void,
 	movingEvent?: (state: boolean) => void,
 	dropEvent?: (files: FileList) => void,
+	/** When provided the column headers become clickable and toggle between ascending and descending. */
+	orderByEvent?: (orderBy: IFileSystemOrderBy) => void,
+	/**
+	 * Renders a row above the children that navigates out of the folder being
+	 * viewed. Set it while anything other than the root folder is on screen.
+	 */
+	showParentDirectory?: boolean,
+	/** Label of the parent directory row, ".." is the convention inherited from DOS and windows explorer. */
+	parentDirectoryLabel?: string,
+	parentDirectoryIcon?: string,
+	/** Fired when the parent directory row is double clicked. */
+	parentDirectoryEvent?: () => void,
+	/** Fired when a selection is dragged onto the parent directory row. */
+	parentDirectoryDropEvent?: () => void,
 	onClick?: (item: IFileSystemItem, pos: SelectedElementsPos) => void,
 	onRightClick?: (items: Array<IFileSystemItem>, pos: SelectedElementsPos) => void,
 	onDblClick?: (item: IFileSystemItem) => void,
 }
-
-export interface SelectedElementsPos {
-	x: number,
-	y: number
-}
-
-export interface FileSystemContextValue {
-	registerItem: (item: IFileSystemItem) => void,
-	unregisterItem: (item: IFileSystemItem) => void,
-	getSelectedItems: () => Array<IFileSystemItem>,
-	onClick?: (item: IFileSystemItem, pos: SelectedElementsPos) => void,
-	onRightClick?: (items: Array<IFileSystemItem>, pos: SelectedElementsPos) => void,
-	onDblClick?: (item: IFileSystemItem) => void,
-}
-
-export const FileSystemContext = React.createContext<FileSystemContextValue | null>(null);
 
 export const FileSystem: React.FC<Props> = ({
 										children,
@@ -88,6 +58,12 @@ export const FileSystem: React.FC<Props> = ({
 										pasteEvent,
 										movingEvent,
 										dropEvent,
+										orderByEvent,
+										showParentDirectory=false,
+										parentDirectoryLabel="..",
+										parentDirectoryIcon="ri-corner-left-up-line",
+										parentDirectoryEvent,
+										parentDirectoryDropEvent,
 										onClick,
 										onRightClick,
 										onDblClick,
@@ -114,11 +90,15 @@ export const FileSystem: React.FC<Props> = ({
 			registerItem,
 			unregisterItem,
 			getSelectedItems,
+			showFileSize,
+			showFileType,
+			showLastModified,
 			onClick,
 			onRightClick,
 			onDblClick,
 		};
-	}, [getSelectedItems, onClick, onDblClick, onRightClick, registerItem, unregisterItem]);
+	}, [getSelectedItems, onClick, onDblClick, onRightClick, registerItem, unregisterItem, showFileSize, showFileType,
+		showLastModified]);
 
 	const mouseDownRef = useRef<boolean>(false);
 
@@ -139,6 +119,49 @@ export const FileSystem: React.FC<Props> = ({
 		width: "10px",
 		border: "none",
 		marginLeft: "15px"
+	}
+
+	const parentDirectoryItem = useMemo<IFileSystemItem>(() => {
+		return {
+			id: "blue-orange-file-system-parent-directory",
+			reference: "blue-orange-file-system-parent-directory",
+			indent: 0,
+			type: IFileSystemType.PARENT_DIRECTORY,
+			label: parentDirectoryLabel,
+			icon: parentDirectoryIcon,
+			selected: false,
+			size: 0,
+			lastModified: new Date(),
+			fileType: ""
+		};
+	}, [parentDirectoryLabel, parentDirectoryIcon]);
+
+	const headerSortable = orderByEvent != undefined;
+
+	const toggleOrderBy = (ascOrderBy: IFileSystemOrderBy, descOrderBy: IFileSystemOrderBy) => {
+		if (!orderByEvent) {
+			return;
+		}
+		orderByEvent(orderBy == ascOrderBy ? descOrderBy : ascOrderBy);
+	}
+
+	const renderHeaderItem = (label: string, ascOrderBy: IFileSystemOrderBy, descOrderBy: IFileSystemOrderBy) => {
+		return (
+			<div
+				className={headerSortable ? "blue-orange-file-system-header-row-item blue-orange-file-system-header-row-item-sortable" : "blue-orange-file-system-header-row-item"}
+				onClick={() => toggleOrderBy(ascOrderBy, descOrderBy)}>
+				<span>{label}</span>
+				{headerSortable && orderBy != ascOrderBy && orderBy != descOrderBy &&
+					<div className="blue-orange-file-system-header-row-item-hoverable">
+						<ButtonIcon icon={"ri-arrow-down-s-line"} style={dropdownBtnStyle}></ButtonIcon>
+					</div>
+				}
+				{orderBy == descOrderBy &&
+					<ButtonIcon icon={"ri-arrow-down-s-line"} style={dropdownBtnStyle}></ButtonIcon>}
+				{orderBy == ascOrderBy &&
+					<ButtonIcon icon={"ri-arrow-up-s-line"} style={dropdownBtnStyle}></ButtonIcon>}
+			</div>
+		)
 	}
 
 	const handleDropEvent = (event: any) => {
@@ -279,63 +302,37 @@ export const FileSystem: React.FC<Props> = ({
 						<thead className="blue-orange-file-system-header-row">
 						<tr>
 							<th style={{width: "100%"}}>
-                                <div className="blue-orange-file-system-header-row-item">
-                                    <span>Name</span>
-                                    {orderBy != IFileSystemOrderBy.NAME_DESC && orderBy != IFileSystemOrderBy.NAME_ASC &&
-                                        <div className="blue-orange-file-system-header-row-item-hoverable">
-                                            <ButtonIcon icon={"ri-arrow-down-s-line"}
-                                                        style={dropdownBtnStyle}></ButtonIcon>
-                                        </div>
-                                    }
-
-                                    {orderBy == IFileSystemOrderBy.NAME_DESC &&
-                                        <ButtonIcon icon={"ri-arrow-down-s-line"}
-                                                    style={dropdownBtnStyle}></ButtonIcon>}
-                                    {orderBy == IFileSystemOrderBy.NAME_ASC &&
-                                        <ButtonIcon icon={"ri-arrow-up-s-line"} style={dropdownBtnStyle}></ButtonIcon>}
-                                </div>
+								{renderHeaderItem("Name", IFileSystemOrderBy.NAME_ASC, IFileSystemOrderBy.NAME_DESC)}
 							</th>
 							{showLastModified &&
 								<th style={{minWidth: "136px"}}>
-                                    <div className="blue-orange-file-system-header-row-item">
-                                        <span>Date Modified</span>
-                                        {orderBy == IFileSystemOrderBy.LAST_MOD_DESC &&
-                                            <ButtonIcon icon={"ri-arrow-down-s-line"}
-                                                        style={dropdownBtnStyle}></ButtonIcon>}
-                                        {orderBy == IFileSystemOrderBy.LAST_MOD_ASC &&
-                                            <ButtonIcon icon={"ri-arrow-up-s-line"}
-                                                        style={dropdownBtnStyle}></ButtonIcon>}
-                                    </div>
+									{renderHeaderItem("Date Modified", IFileSystemOrderBy.LAST_MOD_ASC, IFileSystemOrderBy.LAST_MOD_DESC)}
 								</th>
 							}
 							{showFileSize &&
 								<th style={{minWidth: "80px"}}>
-									<div className="blue-orange-file-system-header-row-item">
-										<span>Size</span>
-										{orderBy == IFileSystemOrderBy.FILE_SIZE_DESC &&
-											<ButtonIcon icon={"ri-arrow-down-s-line"}
-														style={dropdownBtnStyle}></ButtonIcon>}
-										{orderBy == IFileSystemOrderBy.FILE_SIZE_ASC &&
-											<ButtonIcon icon={"ri-arrow-up-s-line"} style={dropdownBtnStyle}></ButtonIcon>}
-									</div>
+									{renderHeaderItem("Size", IFileSystemOrderBy.FILE_SIZE_ASC, IFileSystemOrderBy.FILE_SIZE_DESC)}
 								</th>
 							}
 							{showFileType &&
 								<th style={{minWidth: "80px"}}>
-									<div className="blue-orange-file-system-header-row-item">
-										<span>Type</span>
-										{orderBy == IFileSystemOrderBy.FILE_TYPE_DESC &&
-											<ButtonIcon icon={"ri-arrow-down-s-line"}
-														style={dropdownBtnStyle}></ButtonIcon>}
-										{orderBy == IFileSystemOrderBy.FILE_TYPE_ASC &&
-											<ButtonIcon icon={"ri-arrow-up-s-line"} style={dropdownBtnStyle}></ButtonIcon>}
-									</div>
+									{renderHeaderItem("Type", IFileSystemOrderBy.FILE_TYPE_ASC, IFileSystemOrderBy.FILE_TYPE_DESC)}
 								</th>
 							}
 						</tr>
 						</thead>
 					}
 					<tbody>
+					{showParentDirectory &&
+						<FileSystemRow
+							item={parentDirectoryItem}
+							contextMenuItems={[]}
+							showFileSize={showFileSize}
+							showFileType={showFileType}
+							showLastModified={showLastModified}
+							onDoubleClick={parentDirectoryEvent}
+							onDrop={parentDirectoryDropEvent}></FileSystemRow>
+					}
 					{children}
 					</tbody>
 				</table>
