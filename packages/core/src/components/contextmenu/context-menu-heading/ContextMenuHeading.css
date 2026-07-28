@@ -3,3 +3,7 @@
     font-weight: 600;
     color: var(--blue-orange-light-default-text-color);
 }
+
+.dark .blue-orange-context-menu-heading {
+    color: var(--blue-orange-dark-default-text-color);
+}

@@ -65,11 +65,11 @@
   --blue-orange-dark-toaster-warning-color: #b7950b;
 
   --blue-orange-light-primary-btn-border-color: black;
-  --blue-orange-dark-primary-btn-border-color: white;
+  --blue-orange-dark-primary-btn-border-color: var(--blue-orange-dark-input-border-color);
   --blue-orange-light-primary-btn-background-color: black;
-  --blue-orange-dark-primary-btn-background-color: white;
+  --blue-orange-dark-primary-btn-background-color: var(--blue-orange-dark-input-background-color);
   --blue-orange-light-primary-btn-color: white;
-  --blue-orange-dark-primary-btn-color: black;
+  --blue-orange-dark-primary-btn-color: var(--blue-orange-dark-input-color);
 
   --blue-orange-light-secondary-btn-border-color: #e0e1e2;
   --blue-orange-dark-secondary-btn-border-color: #e0e1e2;
@@ -131,6 +131,8 @@
   --blue-orange-dark-context-menu-background: #28282a;
   --blue-orange-light-context-menu-row-hover-background: #e0e1e2;
   --blue-orange-dark-context-menu-row-hover-background: #47474a;
+  --blue-orange-light-context-menu-separator-color: #e0e1e2;
+  --blue-orange-dark-context-menu-separator-color: #47474a;
 
   --blue-orange-light-input-color: black;
   --blue-orange-dark-input-color: white;
