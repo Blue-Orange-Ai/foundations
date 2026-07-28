@@ -14,3 +14,15 @@
     letter-spacing: 0.05em;
     text-transform: uppercase;
 }
+
+/* The raw animations are white glyphs meant to sit on a coloured button, so the
+   demo gives them a swatch of their own to be visible against. */
+.button-development-animation {
+    height: 36px;
+    width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background-color: #18181b;
+}

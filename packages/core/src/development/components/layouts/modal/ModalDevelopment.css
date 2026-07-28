@@ -1,0 +1,10 @@
+.modal-dev-section {
+    margin-bottom: 24px;
+}
+
+.modal-dev-buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+}

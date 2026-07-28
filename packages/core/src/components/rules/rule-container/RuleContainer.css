@@ -28,3 +28,6 @@
     border: 1px solid var(--blue-orange-light-default-border-color);
     padding: 20px;
 }
+.dark .blue-orange-rule-group-condition-block {
+    border: 1px solid var(--blue-orange-dark-default-border-color);
+}

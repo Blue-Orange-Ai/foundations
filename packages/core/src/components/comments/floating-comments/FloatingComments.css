@@ -11,3 +11,6 @@
     border: 1px solid var(--blue-orange-light-default-border-color);
     overflow-y: auto;
 }
+.dark .blue-orange-comments-floating-cont {
+    border: 1px solid var(--blue-orange-dark-default-border-color);
+}

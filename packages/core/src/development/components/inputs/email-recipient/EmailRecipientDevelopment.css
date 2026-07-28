@@ -1,0 +1,10 @@
+.email-recipient-dev-section {
+    margin-bottom: 28px;
+    max-width: 640px;
+}
+
+.email-recipient-dev-output {
+    margin-top: 10px;
+    font-size: 0.75rem;
+    opacity: 0.7;
+}

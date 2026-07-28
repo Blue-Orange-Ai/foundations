@@ -1,0 +1,13 @@
+.tabs-dev-section {
+    margin-bottom: 32px;
+}
+
+.tabs-dev-panel {
+    padding: 16px 0;
+}
+
+.tabs-dev-output {
+    margin-top: 10px;
+    font-size: 0.75rem;
+    opacity: 0.7;
+}

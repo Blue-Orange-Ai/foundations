@@ -7,3 +7,7 @@
     font-size: 0.8rem;
 }
 
+
+.dark .blue-orange-render-html .mention {
+    border: 1px solid var(--blue-orange-dark-default-text-color);
+}

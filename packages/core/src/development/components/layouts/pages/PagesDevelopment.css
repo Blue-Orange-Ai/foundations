@@ -1,0 +1,22 @@
+.pages-dev-section {
+    margin-bottom: 28px;
+}
+
+.pages-dev-frame {
+    border: 1px solid var(--blue-orange-light-default-border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.dark .pages-dev-frame {
+    border: 1px solid var(--blue-orange-dark-default-border-color);
+}
+
+.pages-dev-frame-tall {
+    height: 260px;
+}
+
+.pages-dev-block {
+    padding: 16px;
+    font-size: 0.85rem;
+}

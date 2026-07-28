@@ -94,3 +94,11 @@
     background-color: black;
     z-index: 1;
 }
+
+.dark .default-avatar-cont {
+    background-color: #3f3f42;
+}
+
+.dark .avatar-edit-logo {
+    border: 2px solid var(--blue-orange-dark-default-card-background);
+}

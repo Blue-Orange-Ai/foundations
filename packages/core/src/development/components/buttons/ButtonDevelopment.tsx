@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 
 import './ButtonDevelopment.css'
 import {PaddedPage} from "../../../components/layouts/pages/padded-page/PaddedPage";
@@ -8,6 +8,9 @@ import {ButtonIcon} from "../../../components/buttons/button-icon/ButtonIcon";
 import {ButtonIconDropdown} from "../../../components/buttons/button-icon-dropdown/ButtonIconDropdown";
 import {FileUploadBtn} from "../../../components/buttons/file-upload-btn/FileUploadBtn";
 import {ButtonDropdown} from "../../../components/buttons/button-dropdown/ButtonDropdown";
+import {ButtonToggle, IButtonToggleOption} from "../../../components/buttons/button-toggle/ButtonToggle";
+import {SuccessAnimation} from "../../../components/buttons/utils/successanimation/SuccessAnimation";
+import {ErrorAnimation} from "../../../components/buttons/utils/erroranimation/ErrorAnimation";
 import {DropdownItem} from "../../../components/inputs/dropdown/items/DropdownItem/DropdownItem";
 import {DropdownItemImage} from "../../../components/inputs/dropdown/items/DropdownItemImage/DropdownItemImage";
 import {DropdownItemIcon} from "../../../components/inputs/dropdown/items/DropdownItemIcon/DropdownItemIcon";
@@ -19,10 +22,19 @@ interface Props {
 
 export const ButtonDevelopment: React.FC<Props> = ({}) => {
 
+	const toggleOptions: Array<IButtonToggleOption> = [
+		{value: "list", label: "List", icon: "ri-list-check"},
+		{value: "board", label: "Board", icon: "ri-layout-grid-line"},
+		{value: "calendar", label: "Calendar", icon: "ri-calendar-line"},
+	];
+
+	const [toggleValue, setToggleValue] = useState<string>("list");
+
+
 
 	return (
 		<PaddedPage>
-			<PageHeading>Advanced Tooltip</PageHeading>
+			<PageHeading>Buttons</PageHeading>
 			<h2>Primary Button</h2>
 			<Button text={"Primary Button"} buttonType={ButtonType.PRIMARY}></Button>
 			<h2>Secondary Button</h2>
@@ -55,9 +67,9 @@ export const ButtonDevelopment: React.FC<Props> = ({}) => {
 				<Button text={"Custom Class Large"} buttonType={ButtonType.CUSTOM} size={ButtonSize.LARGE} classes={"button-development-custom-class"}></Button>
 			</div>
 			<h2>Button Icon Left</h2>
-			<Button text={"Custom Button"} icon={"ri-planet-fill"} iconPos={ButtonIconPos.LEFT}></Button>
+			<Button text={"Custom Button"} buttonType={ButtonType.PRIMARY} icon={"ri-planet-fill"} iconPos={ButtonIconPos.LEFT}></Button>
 			<h2>Button Icon Right</h2>
-			<Button text={"Custom Button"} icon={"ri-planet-fill"} iconPos={ButtonIconPos.RIGHT}></Button>
+			<Button text={"Custom Button"} buttonType={ButtonType.PRIMARY} icon={"ri-planet-fill"} iconPos={ButtonIconPos.RIGHT}></Button>
 			<h2>Button Only Icon</h2>
 			<ButtonIcon label={"Only Icon"} icon={"ri-planet-fill"}></ButtonIcon>
 			<h2>Button Only Icon Sizes</h2>
@@ -90,7 +102,7 @@ export const ButtonDevelopment: React.FC<Props> = ({}) => {
 				</ButtonIconDropdown>
 			</div>
 			<h2>File Upload Button</h2>
-			<FileUploadBtn accept={"*"} label={"File Upload Button"} icon={"ri-planet-fill"}></FileUploadBtn>
+			<FileUploadBtn accept={"*"} label={"File Upload Button"} icon={true}></FileUploadBtn>
 			<h2>File Upload Button Sizes</h2>
 			<div className={"button-development-row"}>
 				<FileUploadBtn accept={"*"} label={"Small"} icon={true} size={ButtonSize.SMALL}></FileUploadBtn>
@@ -118,6 +130,27 @@ export const ButtonDevelopment: React.FC<Props> = ({}) => {
 					<DropdownItemText label={"Option 1"} value={"option-1"} selected={false}></DropdownItemText>
 					<DropdownItemText label={"Option 2"} value={"option-2"} selected={true}></DropdownItemText>
 				</ButtonDropdown>
+			</div>
+			<h2>Button Toggle</h2>
+			<div className={"button-development-row"}>
+				<ButtonToggle options={toggleOptions} value={toggleValue} onChange={setToggleValue}></ButtonToggle>
+			</div>
+			<div className={"button-development-row"}>
+				<ButtonToggle options={toggleOptions} value={toggleValue} onChange={setToggleValue}
+							  size={ButtonSize.SMALL}></ButtonToggle>
+				<ButtonToggle options={toggleOptions} value={toggleValue} onChange={setToggleValue}
+							  size={ButtonSize.LARGE}></ButtonToggle>
+			</div>
+			<div className={"button-development-row"}>
+				<ButtonToggle options={toggleOptions} value={toggleValue} onChange={setToggleValue}
+							  isDisabled={true}></ButtonToggle>
+			</div>
+			<h2>Result Animations</h2>
+			<div className={"button-development-row"}>
+				<Button text={"Saved"} buttonType={ButtonType.SUCCESS} isSuccess={true}></Button>
+				<Button text={"Failed"} buttonType={ButtonType.DANGER} isError={true}></Button>
+				<div className={"button-development-animation"}><SuccessAnimation></SuccessAnimation></div>
+				<div className={"button-development-animation"}><ErrorAnimation></ErrorAnimation></div>
 			</div>
 		</PaddedPage>
 	)

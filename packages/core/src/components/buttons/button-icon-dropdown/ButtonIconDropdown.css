@@ -32,3 +32,7 @@
 .blue-orange-btn-icon-dropdown-disabled {
     cursor: not-allowed;
 }
+
+.dark .blue-orange-btn-icon-dropdown {
+    border: 1px solid #3f3f42;
+}

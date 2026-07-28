@@ -1,0 +1,10 @@
+.drawer-dev-section {
+    margin-bottom: 24px;
+}
+
+.drawer-dev-buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+}

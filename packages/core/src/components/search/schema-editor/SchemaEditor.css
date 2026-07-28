@@ -146,3 +146,17 @@
     width: 100%;
     margin-bottom: 16px;
 }
+
+
+.dark .blue-orange-schema-editor-row {
+    border: 1px solid var(--blue-orange-dark-default-border-color);
+    background: var(--blue-orange-dark-default-card-background);
+}
+
+.dark .blue-orange-schema-editor-import-error {
+    color: #ff6b6b;
+}
+
+.dark .blue-orange-schema-editor-checkbox-item {
+    color: var(--blue-orange-dark-default-text-color);
+}

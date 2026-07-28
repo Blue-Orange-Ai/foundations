@@ -30,3 +30,12 @@
         left: 100%;
     }
 }
+
+.dark .blue-orange-loading-skeleton {
+    background-color: #3f3f42;
+}
+
+/* The light sweep has to be far subtler against a dark base or it reads as a flash. */
+.dark .blue-orange-loading-skeleton::before {
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.08), rgba(255,255,255,0));
+}

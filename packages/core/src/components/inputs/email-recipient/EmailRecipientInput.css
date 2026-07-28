@@ -13,3 +13,8 @@
 .blue-orange-email-recipients .tagify__input[data-dropdown] {
     color: inherit;
 }
+
+.dark .blue-orange-email-recipients + .tagify,
+.dark .tagify.blue-orange-email-recipients {
+    --tags-border-color: var(--blue-orange-dark-default-border-color);
+}

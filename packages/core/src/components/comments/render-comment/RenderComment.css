@@ -88,3 +88,19 @@
     padding: 0px;
     padding-left: 16px;
 }
+.dark .blue-orange-comments-render-body {
+    border: 1px solid var(--blue-orange-dark-default-border-color);
+}
+
+.dark .blue-orange-comments-render-cont-small {
+    border-bottom: 1px solid var(--blue-orange-dark-default-border-color);
+}
+
+.dark .blue-orange-comments-render-body-header {
+    border-bottom: 1px solid var(--blue-orange-dark-default-border-color);
+    background-color: #28282a;
+}
+
+.dark .blue-orange-comments-render-body-header-secondary {
+    color: #9da5ad;
+}

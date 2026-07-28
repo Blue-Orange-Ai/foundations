@@ -115,3 +115,8 @@
     font-size: 0.6rem;
     margin-top: 2.5px;
 }
+.dark .blue-orange-html-emoji-footer-add-emoji {
+    border: 1px solid #3f3f42;
+    background-color: var(--blue-orange-dark-default-card-background);
+    color: var(--blue-orange-dark-default-text-color);
+}

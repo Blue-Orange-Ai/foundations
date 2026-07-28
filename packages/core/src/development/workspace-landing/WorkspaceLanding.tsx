@@ -18,6 +18,17 @@ import {ScatterChartDevelopment} from "../components/charts/scatter/ScatterChart
 import {BarChartDevelopment} from "../components/charts/bar/BarChartDevelopment";
 import {RuleEditorDevelopment} from "../components/rules/rule-editor/RuleEditorDevelopment";
 import {FileSystemDevelopment} from "../components/file-system/FileSystemDevelopment";
+import {ModalDevelopment} from "../components/layouts/modal/ModalDevelopment";
+import {DrawerDevelopment} from "../components/layouts/drawer/DrawerDevelopment";
+import {TabsDevelopment} from "../components/layouts/tabs/TabsDevelopment";
+import {PagesDevelopment} from "../components/layouts/pages/PagesDevelopment";
+import {SideBarDevelopment} from "../components/layouts/sidebar/SideBarDevelopment";
+import {LoadingDevelopment} from "../components/loading/LoadingDevelopment";
+import {MediaDevelopment} from "../components/media/MediaDevelopment";
+import {MetricsDevelopment} from "../components/metrics/metrics/MetricsDevelopment";
+import {TableDevelopment} from "../components/table/table/TableDevelopment";
+import {TimeInputDevelopment} from "../components/inputs/time-input/TimeInputDevelopment";
+import {EmailRecipientDevelopment} from "../components/inputs/email-recipient/EmailRecipientDevelopment";
 import {RichTextDevelopment} from "../components/inputs/rich-text/RichTextDevelopment";
 import {FullPageCommentsDevelopment} from "../components/comments/full-page-comments/FullPageCommentsDevelopment";
 import {AdvancedTooltipDevelopment} from "../components/tooltips/advanced-tooltip/AdvancedTooltipDevelopment";
@@ -126,6 +137,8 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 	const [sidebarTooltipState, setSidebarTooltipState] = useState(false);
 
 	const [sidebarTableState, setSidebarTableState] = useState(false);
+
+	const [sidebarLayoutState, setSidebarLayoutState] = useState(false);
 
 	const changeSidebarState = (state: SideBarState) => {
 		setSidebarState(state);
@@ -514,6 +527,24 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/inputs-passport-tags")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
+							label={"Time Input"}
+							active={component == "inputs-time"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-time-line"></i>}
+							onClick={() => navigate("/inputs-time")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Email Recipients"}
+							active={component == "inputs-email-recipients"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-mail-line"></i>}
+							onClick={() => navigate("/inputs-email-recipients")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
 							label={"Text Area Input"}
 							active={component == "inputs-text-area"}
 							focused={false}
@@ -532,6 +563,58 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/inputs-toggle")}
 						></SideBarBodyItem>
 					</SideBarBodyGroup>
+					<SideBarBodyGroup opened={sidebarLayoutState} openOnActiveChild={true} onOpenedChange={setSidebarLayoutState}>
+						<SideBarBodyLabel
+							icon={sidebarLayoutState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
+							label={"Layouts"}
+							onClick={() => setSidebarLayoutState(!sidebarLayoutState)}
+						></SideBarBodyLabel>
+						<SideBarBodyItem
+							label={"Modal"}
+							active={component == "layouts-modal"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-checkbox-multiple-blank-line"></i>}
+							onClick={() => navigate("/layouts-modal")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Drawer"}
+							active={component == "layouts-drawer"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-side-bar-line"></i>}
+							onClick={() => navigate("/layouts-drawer")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Tabs"}
+							active={component == "layouts-tabs"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-layout-top-line"></i>}
+							onClick={() => navigate("/layouts-tabs")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Pages & Splits"}
+							active={component == "layouts-pages"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-layout-grid-line"></i>}
+							onClick={() => navigate("/layouts-pages")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Side Bar"}
+							active={component == "layouts-sidebar"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-side-bar-fill"></i>}
+							onClick={() => navigate("/layouts-sidebar")}
+						></SideBarBodyItem>
+					</SideBarBodyGroup>
 					<SideBarBodyItem
 						label={"Metrics Group"}
 						active={component == "metrics-group"}
@@ -540,6 +623,33 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						activeStyle={activeStyle}
 						icon={<i className="ri-dashboard-3-line"></i>}
 						onClick={() => navigate("/metrics-group")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
+						label={"Metrics"}
+						active={component == "metrics"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-bar-chart-box-line"></i>}
+						onClick={() => navigate("/metrics")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
+						label={"Loading"}
+						active={component == "loading"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-loader-4-line"></i>}
+						onClick={() => navigate("/loading")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
+						label={"Media"}
+						active={component == "media"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-image-line"></i>}
+						onClick={() => navigate("/media")}
 					></SideBarBodyItem>
 					<SideBarBodyItem
 						label={"Rules Editor"}
@@ -643,6 +753,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							activeStyle={activeStyle}
 							icon={<i className="ri-square-fill"></i>}
 							onClick={() => navigate("/table-objects")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Table (primitives)"}
+							active={component == "table-primitives"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-table-line"></i>}
+							onClick={() => navigate("/table-primitives")}
 						></SideBarBodyItem>
 					</SideBarBodyGroup>
 					<SideBarBodyItem
@@ -877,6 +996,17 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "schema-editor" && <SchemaEditorDevelopment></SchemaEditorDevelopment>}
             {component == "search-playground" && <SearchPlaygroundDevelopment></SearchPlaygroundDevelopment>}
 			{component == "file-system" && <FileSystemDevelopment></FileSystemDevelopment>}
+			{component == "layouts-modal" && <ModalDevelopment></ModalDevelopment>}
+			{component == "layouts-drawer" && <DrawerDevelopment></DrawerDevelopment>}
+			{component == "layouts-tabs" && <TabsDevelopment></TabsDevelopment>}
+			{component == "layouts-pages" && <PagesDevelopment></PagesDevelopment>}
+			{component == "layouts-sidebar" && <SideBarDevelopment></SideBarDevelopment>}
+			{component == "loading" && <LoadingDevelopment></LoadingDevelopment>}
+			{component == "media" && <MediaDevelopment></MediaDevelopment>}
+			{component == "metrics" && <MetricsDevelopment></MetricsDevelopment>}
+			{component == "table-primitives" && <TableDevelopment></TableDevelopment>}
+			{component == "inputs-time" && <TimeInputDevelopment></TimeInputDevelopment>}
+			{component == "inputs-email-recipients" && <EmailRecipientDevelopment></EmailRecipientDevelopment>}
 			{component == "inputs-color" && <ColorPickerDevelopment></ColorPickerDevelopment>}
 			{component == "inputs-icon" && <IconSelectorDevelopment></IconSelectorDevelopment>}
 			{component == "inputs-rich-text" && <RichTextDevelopment></RichTextDevelopment>}

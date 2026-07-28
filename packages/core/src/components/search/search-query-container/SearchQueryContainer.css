@@ -29,3 +29,7 @@
     padding: 10px;
     width: calc(100% - 20px);
 }
+
+.dark .blue-orange-search-query-container-block {
+    border: 1px solid var(--blue-orange-dark-default-border-color);
+}

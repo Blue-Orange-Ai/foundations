@@ -140,3 +140,8 @@
 .blue-orange-dropdown-item-selected-cont {
     width: 24px;
 }
+
+.dark .blue-orange-dropdown-selection-multiple-selection-tag {
+    background-color: #3f3f42;
+    color: var(--blue-orange-dark-default-text-color);
+}

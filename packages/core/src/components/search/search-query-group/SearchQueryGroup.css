@@ -64,3 +64,12 @@
     flex-direction: row;
     align-items: center;
 }
+
+
+.dark .blue-orange-search-query-group-cont {
+    background-color: #28282a;
+}
+
+.dark .blue-orange-search-query-group-cont-vertical-line {
+    border: 1px solid var(--blue-orange-dark-default-border-color);
+}

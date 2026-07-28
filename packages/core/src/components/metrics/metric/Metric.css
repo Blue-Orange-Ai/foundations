@@ -26,3 +26,8 @@
     display: flex;
     font-size: 0.8rem;
 }
+.dark .blue-orange-metrics-value {
+    border: 1px solid var(--blue-orange-dark-input-border-color);
+    background-color: var(--blue-orange-dark-input-background-color);
+    color: var(--blue-orange-dark-input-color);
+}

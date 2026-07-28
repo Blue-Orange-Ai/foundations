@@ -20,3 +20,7 @@
 .blue-orange-data-table-theme-object-list .blue-orange-checkbox-data-table-cell-inner-cont{
     border: none;
 }
+
+.dark .blue-orange-data-table-theme-object-list .blue-orange-checkbox-data-table-cell {
+    border-bottom: 1px solid #3f3f42;
+}
