@@ -102,6 +102,10 @@
     color: var(--blue-orange-light-default-text-color);
 }
 
+.dark .blue-orange-scatter-chart-legend-item-text {
+    color: var(--blue-orange-dark-default-text-color);
+}
+
 .blue-orange-scatter-chart-floating-legend-cont {
     position: absolute;
     z-index: 10;
@@ -110,6 +114,11 @@
     border: 1px solid var(--blue-orange-light-default-border-color);
     border-radius: 4px;
     background-color: white;
+}
+
+.dark .blue-orange-scatter-chart-floating-legend-cont {
+    border: 1px solid var(--blue-orange-dark-default-border-color);
+    background-color: var(--blue-orange-dark-default-card-background);
 }
 
 .blue-orange-scatter-chart-floating-legend-cont li {

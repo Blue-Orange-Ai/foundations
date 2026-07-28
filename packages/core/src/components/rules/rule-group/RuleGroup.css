@@ -28,6 +28,14 @@
     color: white;
 }
 
+.blue-orange-rule-group-operand-selection .blue-orange-dropdown {
+    border: 1px solid var(--blue-orange-light-primary-btn-background-color);
+}
+
+.dark .blue-orange-rule-group-operand-selection .blue-orange-dropdown {
+    border: none !important;
+}
+
 .blue-orange-rule-group-cont-vertical-line {
     height: 100%;
     z-index: -1;

@@ -19,7 +19,7 @@
     bottom: 0;
     background-color: var(--blue-orange-light-input-toggle-background-color);
     transition: 0.4s;
-    border-radius: 18px;
+    border-radius: 999px;
 }
 
 .dark .blue-orange-toggle-switch-slider {
@@ -29,8 +29,9 @@
 .blue-orange-toggle-switch-slider:before {
     position: absolute;
     content: "";
-    height: 14px;
-    width: 14px;
+    /* Knob scales with the switch height and stays circular, so it works at any size. */
+    height: calc(100% - 4px);
+    aspect-ratio: 1 / 1;
     left: 2px;
     bottom: 2px;
     background-color: var(--blue-orange-light-input-toggle-background-color-before);
@@ -52,7 +53,10 @@
 
 
 .blue-orange-toggle-switch-input:checked + .blue-orange-toggle-switch-slider:before {
-    transform: translateX(11px);
+    /* Travel the full width: sit the knob flush against the right edge (2px gap),
+       regardless of the component's width. */
+    left: calc(100% - 2px);
+    transform: translateX(-100%);
 }
 
 .blue-orange-toggle-switch-slider-error {

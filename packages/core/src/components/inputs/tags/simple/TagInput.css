@@ -13,7 +13,8 @@
     --tag-text-color: var(--blue-orange-light-input-tag-text-color);
     --tag-hover: var(--blue-orange-light-input-tag-hover-color);
     --tag-remove-btn-color: var(--blue-orange-light-input-tag-remove-color);
-    --placeholder-color: #757575;
+    --placeholder-color: var(--blue-orange-light-input-tag-placeholder-color);
+    --placeholder-color-focus: var(--blue-orange-light-input-tag-placeholder-color);
     border: 1px solid var(--blue-orange-light-input-border-color);
     width: calc(100% + 2px);
     height: 38px;
@@ -28,7 +29,8 @@
     --tag-text-color: var(--blue-orange-dark-input-tag-text-color);
     --tag-hover: var(--blue-orange-dark-input-tag-hover-color);
     --tag-remove-btn-color: var(--blue-orange-dark-input-tag-remove-color);
-    --placeholder-color: #757575;
+    --placeholder-color: var(--blue-orange-dark-input-tag-placeholder-color);
+    --placeholder-color-focus: var(--blue-orange-dark-input-tag-placeholder-color);
     border: 1px solid var(--blue-orange-dark-input-border-color);
     width: calc(100% + 2px);
     height: 42px;
@@ -76,6 +78,11 @@
 
 .tagify__dropdown__wrapper {
     border: 1px solid transparent;
+    background-color: var(--blue-orange-light-input-tag-dropdown-background-color);
+}
+
+.dark .tagify__dropdown__wrapper {
+    background-color: var(--blue-orange-dark-input-tag-dropdown-background-color);
 }
 
 .tagify__tag {
@@ -89,6 +96,11 @@
 .tagify__input {
     margin: 0;
     margin-top: 2px;
+    color: var(--blue-orange-light-input-color);
+}
+
+.dark .tagify__input {
+    color: var(--blue-orange-dark-input-color);
 }
 
 .dark .tagify__tag {
@@ -96,4 +108,22 @@
     color: var(--blue-orange-dark-input-tag-text-color);
     font-size: 0.8rem;
     border-radius: 4px;
+}
+
+.tagify__dropdown__item {
+    color: var(--blue-orange-light-input-tag-dropdown-item-color);
+}
+
+.dark .tagify__dropdown__item {
+    color: var(--blue-orange-dark-input-tag-dropdown-item-color);
+}
+
+.tagify__dropdown__item--active,
+.tagify__dropdown__item:hover {
+    background-color: var(--blue-orange-light-input-tag-dropdown-item-active-background-color);
+}
+
+.dark .tagify__dropdown__item--active,
+.dark .tagify__dropdown__item:hover {
+    background-color: var(--blue-orange-dark-input-tag-dropdown-item-active-background-color);
 }

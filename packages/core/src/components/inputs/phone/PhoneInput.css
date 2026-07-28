@@ -73,14 +73,25 @@
     border: 1px solid var(--blue-orange-light-input-border-color);
     height: 34px;
     background-color: var(--blue-orange-light-input-background-color);
+    color: var(--blue-orange-light-input-color);
     border-radius: 4px;
     padding-left: 48px;
     padding-right: 5px;
     width: calc(100% - 53px);
 }
 
+.dark .phone-input-text {
+    border: 1px solid var(--blue-orange-dark-input-border-color);
+    background-color: var(--blue-orange-dark-input-background-color);
+    color: var(--blue-orange-dark-input-color);
+}
+
 .phone-input-text:focus {
-    outline: 1.5px solid black;
+    outline: 1.5px solid var(--blue-orange-light-input-focus-border-color);
+}
+
+.dark .phone-input-text:focus {
+    outline: 1.5px solid var(--blue-orange-dark-input-focus-border-color);
 }
 
 .phone-input-text-invalid,

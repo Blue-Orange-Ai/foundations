@@ -98,7 +98,7 @@ export const ButtonDevelopment: React.FC<Props> = ({}) => {
 				<FileUploadBtn accept={"*"} label={"Large"} icon={true} size={ButtonSize.LARGE}></FileUploadBtn>
 			</div>
 			<h2>Button Dropdown</h2>
-			<ButtonDropdown text={"Primary Button"} filter={true} buttonType={ButtonType.PRIMARY}>
+			<ButtonDropdown text={"Primary Button"} filter={true} contextWidth={"max-content"} buttonType={ButtonType.PRIMARY}>
 				<DropdownItemHeading label={"Hello World"} value={"heading-1"} selected={false}></DropdownItemHeading>
 				<DropdownItemText label={"Option 1"} value={"option-1"} selected={false}></DropdownItemText>
 				<DropdownItemText label={"Option 2"} value={"option-2"} selected={true}></DropdownItemText>
@@ -106,15 +106,15 @@ export const ButtonDevelopment: React.FC<Props> = ({}) => {
 			</ButtonDropdown>
 			<h2>Button Dropdown Sizes</h2>
 			<div className={"button-development-row"}>
-				<ButtonDropdown text={"Small"} filter={true} buttonType={ButtonType.PRIMARY} size={ButtonSize.SMALL}>
+				<ButtonDropdown text={"Small"} filter={true} contextWidth={"max-content"} buttonType={ButtonType.PRIMARY} size={ButtonSize.SMALL}>
 					<DropdownItemText label={"Option 1"} value={"option-1"} selected={false}></DropdownItemText>
 					<DropdownItemText label={"Option 2"} value={"option-2"} selected={true}></DropdownItemText>
 				</ButtonDropdown>
-				<ButtonDropdown text={"Medium (default)"} filter={true} buttonType={ButtonType.PRIMARY} size={ButtonSize.MEDIUM}>
+				<ButtonDropdown text={"Medium (default)"} filter={true} contextWidth={"max-content"} buttonType={ButtonType.PRIMARY} size={ButtonSize.MEDIUM}>
 					<DropdownItemText label={"Option 1"} value={"option-1"} selected={false}></DropdownItemText>
 					<DropdownItemText label={"Option 2"} value={"option-2"} selected={true}></DropdownItemText>
 				</ButtonDropdown>
-				<ButtonDropdown text={"Large"} filter={true} buttonType={ButtonType.PRIMARY} size={ButtonSize.LARGE}>
+				<ButtonDropdown text={"Large"} filter={true} contextWidth={"max-content"} buttonType={ButtonType.PRIMARY} size={ButtonSize.LARGE}>
 					<DropdownItemText label={"Option 1"} value={"option-1"} selected={false}></DropdownItemText>
 					<DropdownItemText label={"Option 2"} value={"option-2"} selected={true}></DropdownItemText>
 				</ButtonDropdown>

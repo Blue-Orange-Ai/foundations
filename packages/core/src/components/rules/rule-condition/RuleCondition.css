@@ -22,6 +22,15 @@
     width: 250px;
 }
 
+.blue-orange-rule-condition-variable-selection .blue-orange-dropdown {
+    background-color: #e0e1e2;
+}
+
+.dark .blue-orange-rule-condition-variable-selection .blue-orange-dropdown {
+    background-color: var(--blue-orange-dark-input-select-background);
+    border: none !important;
+}
+
 .blue-orange-rule-condition-match-selection .blue-orange-dropdown-icon {
     display: none;
 }

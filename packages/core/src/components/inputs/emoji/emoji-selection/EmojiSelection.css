@@ -23,3 +23,7 @@
     background-color: var(--blue-orange-light-input-emoji-option-hover-color);
     transition: 0.2s;
 }
+
+.dark .blue-orange-html-emoji-option:hover {
+    background-color: var(--blue-orange-dark-input-emoji-option-hover-color);
+}

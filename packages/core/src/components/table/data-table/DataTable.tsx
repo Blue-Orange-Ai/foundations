@@ -148,7 +148,12 @@ export const DataTable: React.FC<Props> = ({
 	}, [schema, persistKey]);
 
 	const getSearchRecordField = (row: SearchRecord, field: TableField)=> {
-        return row.properties.find((p) => p.key === field.apiName);
+        return row?.properties?.find((p) => p.key === field.apiName);
+    }
+
+    const safeToISOString = (value: any): string => {
+        const parsed = new Date(value as string);
+        return isNaN(parsed.getTime()) ? String(value) : parsed.toISOString();
     }
 
     const getCellValue = (row: SearchRecord, field: TableField, colIdx: number): string => {
@@ -159,7 +164,7 @@ export const DataTable: React.FC<Props> = ({
                 lon: searchRecordProperty.lon
             })
         } else if (searchRecordProperty?.type == BaseDataType.DATE) {
-            return new Date(searchRecordProperty.value as string).toISOString();
+            return safeToISOString(searchRecordProperty.value);
         } else if (searchRecordProperty?.type == BaseDataType.ARRAY && field.type == TableFieldType.GEO_POINT) {
             const geoPoints = [];
             for (var i=0; i < (searchRecordProperty.array ?? []).length; i ++) {
@@ -172,7 +177,7 @@ export const DataTable: React.FC<Props> = ({
         } else if (searchRecordProperty?.type == BaseDataType.ARRAY && field.type == TableFieldType.DATE) {
             const arrayValues = [];
             for (var i=0; i < (searchRecordProperty.array ?? []).length; i ++) {
-                arrayValues.push(new Date((searchRecordProperty.array ?? [])[i].value as string).toISOString());
+                arrayValues.push(safeToISOString((searchRecordProperty.array ?? [])[i].value));
             }
             return JSON.stringify(arrayValues);
         } else if (searchRecordProperty?.type == BaseDataType.ARRAY) {
@@ -185,6 +190,20 @@ export const DataTable: React.FC<Props> = ({
             return searchRecordProperty.value as string;
         }
 		return "Not Found";
+	}
+
+	// getCellValue returns a serialised string. Multi-value and struct cells expect
+	// the parsed array/object so they can render a friendly summary instead of raw
+	// JSON. Scalar columns are left as-is.
+	const getCellDisplayValue = (value: string, field: TableField): any => {
+		if (field.multipleValues || field.type == TableFieldType.STRUCT) {
+			try {
+				return JSON.parse(value);
+			} catch (e) {
+				return value;
+			}
+		}
+		return value;
 	}
 
 	const [columnWidths, setColumnWidths] = useState<Record<number, number>>({});
@@ -1202,6 +1221,7 @@ export const DataTable: React.FC<Props> = ({
 														<React.Fragment key={"cell-" + rowIdx + "-" + colIdx}>
 															{(() => {
 																const cellValue = getCellValue(d, item, colIdx);
+																const cellDisplayValue = getCellDisplayValue(cellValue, item);
 																const cellStyle = getColumnStyle(colIdx);
 																	const isSelected = selectedCells.has(cellKey(rowIdx, colIdx));
 																	const isRowSelected = selectedRows.has(rowIdx);
@@ -1229,37 +1249,37 @@ export const DataTable: React.FC<Props> = ({
 																			<>
 																						{item.type == TableFieldType.STRING &&
 																						<TextDataCell style={{...cellStyle}}
-																								  text={cellValue}
+																								  text={cellDisplayValue}
 																								  multipleValues={item.multipleValues}
 																								  tdProps={tdProps}></TextDataCell>
 																								}
 																						{item.type == TableFieldType.NUMBER &&
 																						<NumberDataCell style={{...cellStyle}}
-																						  value={cellValue}
+																						  value={cellDisplayValue}
 																						  multipleValues={item.multipleValues}
 																						  tdProps={tdProps}></NumberDataCell>
 																						}
 																						{item.type == TableFieldType.DATE &&
 																						<DateDataCell style={{...cellStyle}}
-																							date={cellValue}
+																							date={cellDisplayValue}
 																							multipleValues={item.multipleValues}
 																							tdProps={tdProps}></DateDataCell>
 																						}
 																						{item.type == TableFieldType.CURRENCY &&
 																						<CurrencyDataCell style={{...cellStyle}}
-																						  amount={cellValue} currency={"AUD"}
+																						  amount={cellDisplayValue} currency={"AUD"}
 																						  multipleValues={item.multipleValues}
 																						  tdProps={tdProps}></CurrencyDataCell>
 																						}
 																						{item.type == TableFieldType.STRUCT &&
 																						<JsonObjDataCell style={{...cellStyle}}
-																								  obj={cellValue}
+																								  obj={cellDisplayValue}
 																								  multipleValues={item.multipleValues}
 																								  tdProps={tdProps}></JsonObjDataCell>
 																								}
 																						{item.type == TableFieldType.MARKDOWN &&
 																						<MarkdownDataCell style={{...cellStyle}}
-																								  text={cellValue}
+																								  text={cellDisplayValue}
 																								  multipleValues={item.multipleValues}
 																								  tdProps={tdProps}></MarkdownDataCell>
 																								}

@@ -109,6 +109,10 @@
     background-color: white;
 }
 
+.dark .blue-orange-dropdown-window-filter-cont {
+    background-color: black;
+}
+
 .blue-orange-dropdown-item-cont {
     display: flex;
     flex-direction: row;

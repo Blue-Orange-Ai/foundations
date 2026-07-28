@@ -7,6 +7,8 @@ import {SideBar, SideBarState} from "../../components/layouts/sidebar/default/Si
 import {SideBarHeader} from "../../components/layouts/sidebar/sidebar-header/SideBarHeader";
 import {SideBarHeaderItem} from "../../components/layouts/sidebar/items/sidebar-header-item/SideBarHeaderItem";
 import {SideBarBody} from "../../components/layouts/sidebar/sidebar-body/SideBarBody";
+import {SideBarFooter} from "../../components/layouts/sidebar/sidebar-footer/SideBarFooter";
+import {ThemeSwitch} from "./theme-switch/ThemeSwitch";
 import {SideBarBodyGroup} from "../../components/layouts/sidebar/items/sidebar-body-group/SideBarBodyGroup";
 import {SideBarBodyLabel} from "../../components/layouts/sidebar/items/sidebar-body-label/SideBarBodyLabel";
 import {SideBarBodyItem} from "../../components/layouts/sidebar/items/sidebar-body-item/SideBarBodyItem";
@@ -98,6 +100,16 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 	const { component } = useParams();
 
 	const [sidebarState, setSidebarState] = useState(SideBarState.OPEN);
+
+	const [darkMode, setDarkMode] = useState(Cookies.get("theme") === "dark");
+
+	useEffect(() => {
+		document.body.classList.toggle("dark", darkMode);
+		Cookies.set("theme", darkMode ? "dark" : "light");
+		return () => {
+			document.body.classList.remove("dark");
+		}
+	}, [darkMode]);
 
 	const [sidebarGroupState, setSidebarGroupState] = useState(false);
 
@@ -848,6 +860,9 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						></SideBarBodyItem>
 					</SideBarBodyGroup>
 				</SideBarBody>
+				<SideBarFooter>
+					<ThemeSwitch dark={darkMode} state={sidebarState} onChange={setDarkMode}></ThemeSwitch>
+				</SideBarFooter>
 			</SideBar>
 			{component == "breadcrumbs" && <BreadcrumbsDevelopment></BreadcrumbsDevelopment>}
 			{component == "buttons" && <ButtonDevelopment></ButtonDevelopment>}

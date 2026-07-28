@@ -12,8 +12,10 @@ interface Props {
 export const EmojiHeaderItem: React.FC<Props> = ({icon, index, state, onHeaderItemClicked}) => {
 
 
+	// No explicit colour here: the icon inherits `currentColor` from the wrapping
+	// header-icon class, which is theme-aware (light/dark). Hardcoding a colour
+	// would override the dark-mode rule and leave the icons unreadable.
 	const style: React.CSSProperties = {
-		color: "#393939",
 		fontSize: "1.4rem",
 		border: "none"
 	}

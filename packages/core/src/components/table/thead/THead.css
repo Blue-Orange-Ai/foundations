@@ -3,3 +3,7 @@
 .blue-orange-data-table-theme-object-list .blue-orange-table-header-cont {
     background-color: #f7f8f9;
 }
+
+.dark .blue-orange-data-table-theme-object-list .blue-orange-table-header-cont {
+    background-color: #28282a;
+}

@@ -16,6 +16,10 @@
     border-bottom: 1px solid #e0e1e2;
 }
 
+.dark .blue-orange-data-table-theme-object-list .blue-orange-primary-data-table-cell {
+    border-bottom: 1px solid #3f3f42;
+}
+
 .blue-orange-primary-data-table-image {
     margin-right: 15px;
 }

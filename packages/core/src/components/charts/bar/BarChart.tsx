@@ -7,6 +7,7 @@ import {ChartDataset, CursorPosition, LegendPosition, TooltipConfig, VerticalLin
 import {v4 as uuidv4} from "uuid";
 import {buildTooltipContent} from "../utils/ChartTooltip";
 import {createVerticalLinePlugin} from "../utils/VerticalLinePlugin";
+import {applyChartTheme, observeChartTheme} from "../utils/ChartTheme";
 
 interface Props {
 	dataset: Array<ChartDataset>,
@@ -341,6 +342,16 @@ export const BarChart: React.FC<Props> = ({
 				plugins:[htmlLegendPlugin, verticalLinePlugin]
 			};
 			chartInstanceRef.current = new Chart((ctx as CanvasRenderingContext2D), config);
+
+			// Theme the canvas-drawn grid lines / tick labels and keep them in sync
+			// with runtime light/dark toggles.
+			applyChartTheme(chartInstanceRef.current);
+			(chartInstanceRef.current as any).__disconnectTheme = observeChartTheme(() => {
+				if (chartInstanceRef.current) {
+					applyChartTheme(chartInstanceRef.current);
+				}
+			});
+
 			setTimeout(() => {
 				initRef.current = true;
 				updateChartData();
@@ -349,6 +360,7 @@ export const BarChart: React.FC<Props> = ({
 
 		return () => {
 			if (chartInstanceRef.current) {
+				(chartInstanceRef.current as any).__disconnectTheme?.();
 				chartInstanceRef.current.destroy();
 				// Null the ref so effects that fire after teardown (e.g. the
 				// cursorValue redraw under StrictMode's mount→cleanup→mount)

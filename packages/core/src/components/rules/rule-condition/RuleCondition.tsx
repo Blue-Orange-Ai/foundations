@@ -24,8 +24,9 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 
 	const [internalCondition, setInternalCondition] = useState(condition);
 
+	// Background is set in RuleCondition.css so it can be theme-aware; hardcoding
+	// a light colour here left the selection unreadable in dark mode.
 	const variableSelectionStyle: React.CSSProperties = {
-		backgroundColor: "#e0e1e2",
 		fontSize: "0.8rem"
 	}
 

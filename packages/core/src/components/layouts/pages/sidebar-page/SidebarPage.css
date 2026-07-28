@@ -16,6 +16,13 @@
     flex-grow: 1;
     height: 100%;
     overflow-y: auto;
+    background-color: var(--blue-orange-light-page-background-color);
+    color: var(--blue-orange-light-page-text-color);
+}
+
+.dark .blue-orange-layouts-sidebar-body {
+    background-color: var(--blue-orange-dark-page-background-color);
+    color: var(--blue-orange-dark-page-text-color);
 }
 
 .blue-orange-input-form-row {

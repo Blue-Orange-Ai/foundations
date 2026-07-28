@@ -11,9 +11,61 @@ import {
 	TableFieldSortState,
 	TableFieldType
 } from "../../../../components/table/data-table/DataTable";
+import {BaseData, BaseDataType, SearchRecord} from "@blue-orange-ai/foundations-clients";
 
 interface Props {
 }
+
+// The DataTable consumes SearchRecord rows (each a list of typed `properties`).
+// These helpers turn the plain demo objects into that shape based on the schema.
+const elementBaseType = (fieldType: TableFieldType): BaseDataType => {
+	switch (fieldType) {
+		case TableFieldType.NUMBER:
+		case TableFieldType.CURRENCY:
+			return BaseDataType.DOUBLE;
+		case TableFieldType.DATE:
+			return BaseDataType.DATE;
+		case TableFieldType.GEO_POINT:
+			return BaseDataType.GEO_POINT;
+		case TableFieldType.STRUCT:
+			return BaseDataType.OBJECT;
+		default:
+			return BaseDataType.TEXT;
+	}
+};
+
+const scalarValue = (fieldType: TableFieldType, raw: any): string => {
+	if (fieldType === TableFieldType.STRUCT) return JSON.stringify(raw);
+	if (fieldType === TableFieldType.DATE) return raw instanceof Date ? raw.toISOString() : String(raw);
+	return String(raw);
+};
+
+const toBaseData = (key: string, fieldType: TableFieldType, raw: any): BaseData => {
+	if (raw === null || raw === undefined) {
+		return {key, type: elementBaseType(fieldType)};
+	}
+	if (Array.isArray(raw)) {
+		return {
+			key,
+			type: BaseDataType.ARRAY,
+			array: raw.map((el) =>
+				fieldType === TableFieldType.GEO_POINT
+					? {key, type: BaseDataType.GEO_POINT, lat: el?.lat, lon: el?.lon}
+					: {key, type: elementBaseType(fieldType), value: scalarValue(fieldType, el)}
+			),
+		};
+	}
+	if (fieldType === TableFieldType.GEO_POINT) {
+		return {key, type: BaseDataType.GEO_POINT, lat: raw?.lat, lon: raw?.lon};
+	}
+	return {key, type: elementBaseType(fieldType), value: scalarValue(fieldType, raw)};
+};
+
+const toSearchRecord = (obj: any, schema: Array<TableField>): SearchRecord => {
+	const properties = schema.map((field) => toBaseData(field.apiName, field.type, obj[field.apiName]));
+	const primaryKey: BaseData = properties[0] ?? {key: "id", type: BaseDataType.TEXT, value: ""};
+	return {primaryKey, title: primaryKey, properties};
+};
 
 export const DataTableDevelopment: React.FC<Props> = ({}) => {
 	const [resizableColumns, setResizableColumns] = useState<boolean>(true);
@@ -29,7 +81,7 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 	const [lastClickedCell, setLastClickedCell] = useState<{cellIdx: number; rowIdx: number; position: DataTableCellClickPosition} | null>(null);
 	const [lastRightClickedCell, setLastRightClickedCell] = useState<{cellIdx: number; rowIdx: number; position: DataTableCellClickPosition} | null>(null);
 
-	const displaySchema: Array<TableField> = [
+	const displaySchema: Array<Omit<TableField, "apiName">> = [
 		{
 			label: "Test String",
 			type: TableFieldType.STRING,
@@ -198,9 +250,12 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 	const [generatedRowsCount, setGeneratedRowsCount] = useState<number>(40);
 	const isLoadingMoreRef = useRef<boolean>(false);
 
+	// Derive the apiName from the label so plain-object rows can be keyed to columns.
+	const schema: Array<TableField> = displaySchema.map((f) => ({...f, apiName: f.label}));
+
 	const data = useMemo(() => {
 		const generated = Array.from({length: generatedRowsCount}).map((_, i) => makeGeneratedRow(i + 1));
-		return [...baseDemoData, ...generated];
+		return [...baseDemoData, ...generated].map((row) => toSearchRecord(row, schema));
 	}, [generatedRowsCount]);
 
 	useEffect(() => {
@@ -276,7 +331,7 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 			<div style={{height: 420, overflowY: "auto", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 6, position: "relative"}}>
 				<DataTable
 					persistKey="datatable-development"
-					schema={displaySchema}
+					schema={schema}
 					data={data}
 					loading={false}
 					loadingPlaceholderRows={2}

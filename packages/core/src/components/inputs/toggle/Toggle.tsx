@@ -84,7 +84,7 @@ export const Toggle: React.FC<Props> = ({
 
 	return (
 		<>
-			<label className="blue-orange-toggle-switch" onClick={toggleChecked}>
+			<label className="blue-orange-toggle-switch" style={style} onClick={toggleChecked}>
 				<input
 					type="checkbox"
 					className={"blue-orange-toggle-switch-input " + isCheckedState}
