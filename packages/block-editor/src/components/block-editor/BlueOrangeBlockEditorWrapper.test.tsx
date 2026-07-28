@@ -12,40 +12,40 @@ import {act, render, waitFor} from "@testing-library/react";
 // ---------------------------------------------------------------------------
 
 // NB: react-scripts' Jest config sets `resetMocks: true`, which strips every
-// mock's implementation before each test. So we declare bare jest.fn()s in the
+// mock's implementation before each test. So we declare bare vi.fn()s in the
 // module factories and (re)install their behaviour in beforeEach.
-jest.mock("@blue-orange-ai/primitives-block-editor", () => ({
-	BlockEditor: jest.fn(),
+vi.mock("@blue-orange-ai/primitives-block-editor", () => ({
+	BlockEditor: vi.fn(),
 }));
 
 const buildEditorMock = (element?: any, doc?: any, options?: any) => ({
 	element,
 	doc,
 	options,
-	toJson: jest.fn(() => ({states: [{uuid: "a"}, {uuid: "b"}]})),
-	toHtmlCopy: jest.fn(() => "<p>html copy</p>"),
-	reviveDocument: jest.fn(),
-	clearDocument: jest.fn(),
-	resolveComment: jest.fn(),
-	updateInlineContext: jest.fn(),
-	closeInlineContextWindowToolbar: jest.fn(),
-	undo: jest.fn(),
-	redo: jest.fn(),
-	diffDocuments: jest.fn(() => ({close: jest.fn()})),
-	createBlock: jest.fn(),
-	toMarkdown: jest.fn(() => "# markdown"),
-	fromMarkdown: jest.fn(),
-	isTemplateMode: jest.fn(() => true),
-	getTemplateVariables: jest.fn(() => ["name"]),
-	getTemplateLoops: jest.fn(() => [{name: "items", fields: ["label"]}]),
-	getTemplateSchema: jest.fn(() => ({name: "", items: [{label: ""}]})),
-	substituteTemplateData: jest.fn(),
-	substituteVariables: jest.fn(),
-	substituteLoops: jest.fn(),
-	applyTemplateModeToBlocks: jest.fn(),
+	toJson: vi.fn(() => ({states: [{uuid: "a"}, {uuid: "b"}]})),
+	toHtmlCopy: vi.fn(() => "<p>html copy</p>"),
+	reviveDocument: vi.fn(),
+	clearDocument: vi.fn(),
+	resolveComment: vi.fn(),
+	updateInlineContext: vi.fn(),
+	closeInlineContextWindowToolbar: vi.fn(),
+	undo: vi.fn(),
+	redo: vi.fn(),
+	diffDocuments: vi.fn(() => ({close: vi.fn()})),
+	createBlock: vi.fn(),
+	toMarkdown: vi.fn(() => "# markdown"),
+	fromMarkdown: vi.fn(),
+	isTemplateMode: vi.fn(() => true),
+	getTemplateVariables: vi.fn(() => ["name"]),
+	getTemplateLoops: vi.fn(() => [{name: "items", fields: ["label"]}]),
+	getTemplateSchema: vi.fn(() => ({name: "", items: [{label: ""}]})),
+	substituteTemplateData: vi.fn(),
+	substituteVariables: vi.fn(),
+	substituteLoops: vi.fn(),
+	applyTemplateModeToBlocks: vi.fn(),
 });
 
-jest.mock("@blue-orange-ai/foundations-core", () => {
+vi.mock("@blue-orange-ai/foundations-core", () => {
 	const ReactLib = require("react");
 	const passthrough = (testid: string) => ({children}: any) =>
 		ReactLib.createElement("div", {"data-testid": testid}, children);
@@ -61,19 +61,19 @@ jest.mock("@blue-orange-ai/foundations-core", () => {
 	};
 });
 
-const mockSearchPublicUsers = jest.fn();
+const mockSearchPublicUsers = vi.fn();
 
-jest.mock("./config/BlueOrangePassportConfig", () => ({
+vi.mock("./config/BlueOrangePassportConfig", () => ({
 	__esModule: true,
 	default: {searchPublicUsers: (...args: any[]) => mockSearchPublicUsers(...args)},
 }));
 
-jest.mock("codemirror", () => ({__esModule: true, default: {}}));
+vi.mock("codemirror", () => ({__esModule: true, default: {}}));
 
 import {BlockEditor} from "@blue-orange-ai/primitives-block-editor";
 import {BlueOrangeBlockEditorHandle, BlueOrangeBlockEditorWrapper} from "./BlueOrangeBlockEditorWrapper";
 
-const MockBlockEditor = BlockEditor as unknown as jest.Mock;
+const MockBlockEditor = BlockEditor as unknown as ReturnType<typeof vi.fn>;
 
 // ---- helpers --------------------------------------------------------------
 
@@ -258,17 +258,17 @@ describe("BlueOrangeBlockEditorWrapper — imperative handle", () => {
 describe("BlueOrangeBlockEditorWrapper — change & reference events", () => {
 
 	it("invokes onChange with the serialized document on datachange", () => {
-		const onChange = jest.fn();
+		const onChange = vi.fn();
 		const {container} = render(<BlueOrangeBlockEditorWrapper onChange={onChange}/>);
 		fire(getEditorEl(container), "datachange");
 		expect(onChange).toHaveBeenCalledWith({states: [{uuid: "a"}, {uuid: "b"}]});
 	});
 
 	it("forwards reference lifecycle events to their callbacks", () => {
-		const onReferenceAdded = jest.fn();
-		const onReferenceUpdated = jest.fn();
-		const onReferenceRemoved = jest.fn();
-		const onReferenceClicked = jest.fn();
+		const onReferenceAdded = vi.fn();
+		const onReferenceUpdated = vi.fn();
+		const onReferenceRemoved = vi.fn();
+		const onReferenceClicked = vi.fn();
 		const {container} = render(
 			<BlueOrangeBlockEditorWrapper
 				onReferenceAdded={onReferenceAdded}
@@ -360,7 +360,7 @@ describe("BlueOrangeBlockEditorWrapper — inline context (mentions & emoji)", (
 	});
 
 	it("calls handleMentionAdded when a mention is selected", () => {
-		const handleMentionAdded = jest.fn();
+		const handleMentionAdded = vi.fn();
 		const {container} = render(<BlueOrangeBlockEditorWrapper handleMentionAdded={handleMentionAdded}/>);
 		fire(getEditorEl(container), "blueorangeeditorinlinecontextselectionevent", {
 			type: "mention",

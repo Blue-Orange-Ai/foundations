@@ -8,21 +8,21 @@
  * and it exposes enough surface (canvas, chartArea, scales) for the wrappers'
  * plugins and event handlers to run.
  *
- * Use via:  jest.mock('chart.js/auto', () => require('<path>/testUtils/chartMock'));
+ * Use via:  vi.mock('chart.js/auto', () => require('<path>/testUtils/chartMock'));
  */
 
 const makeCtx = () => ({
-    save: jest.fn(),
-    restore: jest.fn(),
-    beginPath: jest.fn(),
-    moveTo: jest.fn(),
-    lineTo: jest.fn(),
-    stroke: jest.fn(),
-    fill: jest.fn(),
-    fillRect: jest.fn(),
-    strokeRect: jest.fn(),
-    arc: jest.fn(),
-    setLineDash: jest.fn(),
+    save: vi.fn(),
+    restore: vi.fn(),
+    beginPath: vi.fn(),
+    moveTo: vi.fn(),
+    lineTo: vi.fn(),
+    stroke: vi.fn(),
+    fill: vi.fn(),
+    fillRect: vi.fn(),
+    strokeRect: vi.fn(),
+    arc: vi.fn(),
+    setLineDash: vi.fn(),
     lineWidth: 1,
     strokeStyle: "#000",
     fillStyle: "#000",
@@ -58,23 +58,23 @@ class MockChart {
         // so draw()/update() blow up (the "Cannot read properties of null" crash
         // seen in the browser). This lets tests catch draws on a stale instance.
         this.destroyed = false;
-        this.update = jest.fn(() => {
+        this.update = vi.fn(() => {
             if (this.destroyed) throw new Error("Cannot read properties of null (reading 'ownerDocument')");
         });
-        this.destroy = jest.fn(() => {
+        this.destroy = vi.fn(() => {
             this.destroyed = true;
             this.ctx = null;
         });
-        this.draw = jest.fn(() => {
+        this.draw = vi.fn(() => {
             if (this.destroyed) throw new Error("Cannot read properties of null (reading 'save')");
         });
-        this.setActiveElements = jest.fn();
-        this.setDatasetVisibility = jest.fn();
-        this.isDatasetVisible = jest.fn(() => true);
-        this.toggleDataVisibility = jest.fn();
-        this.getDatasetMeta = jest.fn(() => ({ data: [], hidden: false }));
-        this.getElementsAtEventForMode = jest.fn(() => []);
-        this.tooltip = { setActiveElements: jest.fn() };
+        this.setActiveElements = vi.fn();
+        this.setDatasetVisibility = vi.fn();
+        this.isDatasetVisible = vi.fn(() => true);
+        this.toggleDataVisibility = vi.fn();
+        this.getDatasetMeta = vi.fn(() => ({ data: [], hidden: false }));
+        this.getElementsAtEventForMode = vi.fn(() => []);
+        this.tooltip = { setActiveElements: vi.fn() };
 
         MockChart.instances.push(this);
         MockChart.lastInstance = this;
@@ -88,4 +88,5 @@ MockChart.reset = () => {
     MockChart.lastInstance = null;
 };
 
-module.exports = { __esModule: true, default: MockChart };
+export default MockChart;
+export { MockChart };

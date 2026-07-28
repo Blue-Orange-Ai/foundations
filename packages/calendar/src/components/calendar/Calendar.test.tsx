@@ -56,7 +56,7 @@ describe('Calendar', () => {
     });
 
     it('calls onViewChange when controlled', () => {
-        const onViewChange = jest.fn();
+        const onViewChange = vi.fn();
         render(
             <Calendar
                 events={events}
@@ -84,7 +84,7 @@ describe('Calendar', () => {
         });
 
         it('re-renders the grid in the timezone that is chosen', () => {
-            const onTimezoneChange = jest.fn();
+            const onTimezoneChange = vi.fn();
             render(
                 <Calendar
                     events={events}
@@ -157,7 +157,7 @@ describe('Calendar', () => {
         });
 
         it('moves the main view to a date picked in the mini calendar', () => {
-            const onDateChange = jest.fn();
+            const onDateChange = vi.fn();
             const { container } = render(
                 <Calendar
                     events={events}
@@ -180,7 +180,7 @@ describe('Calendar', () => {
         });
 
         it('hides events of a shared calendar that is unticked', () => {
-            const onVisibleSourcesChange = jest.fn();
+            const onVisibleSourcesChange = vi.fn();
             const { container } = render(
                 <Calendar
                     events={sourced}
@@ -313,7 +313,7 @@ describe('Calendar', () => {
         });
 
         it('reports a created event and shows it in the grid', () => {
-            const onEventCreate = jest.fn();
+            const onEventCreate = vi.fn();
             const Harness = () => {
                 const [list, setList] = React.useState(events);
                 return (

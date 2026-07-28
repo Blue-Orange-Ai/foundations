@@ -5,7 +5,7 @@ import {makeDataPoint, makeTooltipModel} from "../testUtils/tooltipFixtures";
 import {ScatterChart} from "./ScatterChart";
 import {LegendPosition} from "../types/ChartTypes";
 
-jest.mock("chart.js/auto", () => require("../testUtils/chartMock"));
+vi.mock("chart.js/auto", () => vi.importActual("../testUtils/chartMock"));
 
 const anyChart = MockChart as any;
 const getConfig = () => anyChart.lastInstance.config;
@@ -21,7 +21,7 @@ const invokeTooltip = (model: any) => {
 const dataset = [{label: "Points", data: [{x: 1, y: 2}], borderColor: "#2d88ff"}];
 
 beforeAll(() => {
-    (HTMLCanvasElement.prototype as any).getContext = jest.fn(() => ({canvas: document.createElement("canvas")}));
+    (HTMLCanvasElement.prototype as any).getContext = vi.fn(() => ({canvas: document.createElement("canvas")}));
 });
 
 beforeEach(() => {

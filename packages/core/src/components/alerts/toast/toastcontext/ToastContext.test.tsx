@@ -4,7 +4,7 @@ import {ToastProvider, ToastContext, ToastLocation, Toast, ToastContextType} fro
 import {ToasterType} from '../toaster/Toaster';
 
 // Mock ButtonIcon since Toaster uses it and it depends on tippy.js
-jest.mock('../../../buttons/button-icon/ButtonIcon', () => ({
+vi.mock('../../../buttons/button-icon/ButtonIcon', () => ({
     ButtonIcon: ({icon, label, onClick}: {icon: string, label?: string, onClick?: () => void}) => (
         <button data-testid="button-icon" data-icon={icon} onClick={onClick}>{label}</button>
     )
@@ -69,11 +69,11 @@ const ToastConsumer: React.FC<{onContext?: (ctx: ToastContextType) => void}> = (
 describe('ToastContext', () => {
 
     beforeEach(() => {
-        jest.useFakeTimers();
+        vi.useFakeTimers();
     });
 
     afterEach(() => {
-        jest.useRealTimers();
+        vi.useRealTimers();
     });
 
     // ── Provider rendering ─────────────────────────────────────
@@ -251,7 +251,7 @@ describe('ToastContext', () => {
         expect(screen.getByText('Test Toast')).toBeInTheDocument();
 
         act(() => {
-            jest.advanceTimersByTime(3000);
+            vi.advanceTimersByTime(3000);
         });
 
         expect(screen.queryByText('Test Toast')).toBeNull();
@@ -268,7 +268,7 @@ describe('ToastContext', () => {
         expect(screen.getByText('Persistent Toast')).toBeInTheDocument();
 
         act(() => {
-            jest.advanceTimersByTime(10000);
+            vi.advanceTimersByTime(10000);
         });
 
         expect(screen.getByText('Persistent Toast')).toBeInTheDocument();
@@ -298,14 +298,14 @@ describe('ToastContext', () => {
 
         fireEvent.click(screen.getByTestId('add'));
         act(() => {
-            jest.advanceTimersByTime(3000);
+            vi.advanceTimersByTime(3000);
         });
 
         // Add again — should reset timeout
         fireEvent.click(screen.getByTestId('add'));
 
         act(() => {
-            jest.advanceTimersByTime(3000);
+            vi.advanceTimersByTime(3000);
         });
 
         // Should still exist because timeout was reset
@@ -348,19 +348,19 @@ describe('ToastContext', () => {
 
         // Update TTL to 10s before the 3s timeout fires
         act(() => {
-            jest.advanceTimersByTime(1000);
+            vi.advanceTimersByTime(1000);
         });
         fireEvent.click(screen.getByTestId('update-ttl'));
 
         // Original 3s has passed but toast should still be there
         act(() => {
-            jest.advanceTimersByTime(5000);
+            vi.advanceTimersByTime(5000);
         });
         expect(screen.getByText('TTL Toast')).toBeInTheDocument();
 
         // Now advance past the new 10s TTL
         act(() => {
-            jest.advanceTimersByTime(5000);
+            vi.advanceTimersByTime(5000);
         });
         expect(screen.queryByText('TTL Toast')).toBeNull();
     });
@@ -548,7 +548,7 @@ describe('ToastContext', () => {
     // ── Cleanup ────────────────────────────────────────────────
 
     it('clears all timeouts on unmount', () => {
-        const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
+        const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout');
 
         const {unmount} = render(
             <ToastProvider>

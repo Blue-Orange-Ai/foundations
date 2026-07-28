@@ -52,7 +52,7 @@ describe('AccordionHeader', () => {
     });
 
     it('passes through interactive elements', () => {
-        const handleClick = jest.fn();
+        const handleClick = vi.fn();
         render(
             <AccordionHeader>
                 <button onClick={handleClick}>Click me</button>

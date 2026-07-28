@@ -78,7 +78,7 @@ describe('FormGroup', () => {
     // ── Requirement checks ────────────────────────────────────────────────
 
     it('blocks submission and shows a required message when a required input is empty', async () => {
-        const onSubmit = jest.fn();
+        const onSubmit = vi.fn();
         render(<Harness onSubmit={onSubmit}/>);
 
         await act(async () => {
@@ -90,7 +90,7 @@ describe('FormGroup', () => {
     });
 
     it('submits the values of every registered input once the requirements pass', async () => {
-        const onSubmit = jest.fn();
+        const onSubmit = vi.fn();
         render(<Harness onSubmit={onSubmit} initialEmail="tom@blueorange.ai"/>);
 
         await act(async () => {
@@ -102,7 +102,7 @@ describe('FormGroup', () => {
     });
 
     it('submits the value the user typed, not the value the input started with', async () => {
-        const onSubmit = jest.fn();
+        const onSubmit = vi.fn();
         render(<Harness onSubmit={onSubmit} initialEmail="tom@blueorange.ai"/>);
 
         const inputs = screen.getAllByRole('textbox');
@@ -129,8 +129,8 @@ describe('FormGroup', () => {
     // ── Validation ────────────────────────────────────────────────────────
 
     it('runs the input validate callback on submit and blocks when it errors', async () => {
-        const onSubmit = jest.fn();
-        const validate = jest.fn().mockResolvedValue({state: 'error', message: 'Not a valid email'});
+        const onSubmit = vi.fn();
+        const validate = vi.fn().mockResolvedValue({state: 'error', message: 'Not a valid email'});
         render(<Harness onSubmit={onSubmit} validate={validate} initialEmail="nope"/>);
 
         await act(async () => {
@@ -143,7 +143,7 @@ describe('FormGroup', () => {
     });
 
     it('runs the required check before the validate callback', async () => {
-        const validate = jest.fn().mockResolvedValue({state: 'success'});
+        const validate = vi.fn().mockResolvedValue({state: 'success'});
         render(<Harness validate={validate}/>);
 
         await act(async () => {
@@ -155,7 +155,7 @@ describe('FormGroup', () => {
     });
 
     it('runs the input validate callback on blur', async () => {
-        const validate = jest.fn().mockResolvedValue({state: 'error', message: 'Not a valid email'});
+        const validate = vi.fn().mockResolvedValue({state: 'error', message: 'Not a valid email'});
         render(<Harness validate={validate} initialEmail="nope"/>);
 
         await act(async () => {
@@ -201,7 +201,7 @@ describe('FormGroup', () => {
     });
 
     it('clears the summary once the form submits successfully', async () => {
-        const onSubmit = jest.fn();
+        const onSubmit = vi.fn();
         render(<Harness onSubmit={onSubmit} initialEmail="tom@blueorange.ai"/>);
 
         await act(async () => {
@@ -215,7 +215,7 @@ describe('FormGroup', () => {
     // ── Unmounted inputs ──────────────────────────────────────────────────
 
     it('stops validating inputs that have been removed from the form', async () => {
-        const onSubmit = jest.fn();
+        const onSubmit = vi.fn();
         const Conditional: React.FC = () => {
             const [show, setShow] = useState(true);
             return (
@@ -268,7 +268,7 @@ describe('FormField', () => {
     };
 
     it('registers a composition of components and blocks submission while it is empty', async () => {
-        const onSubmit = jest.fn();
+        const onSubmit = vi.fn();
         render(<CheckboxHarness onSubmit={onSubmit}/>);
 
         await act(async () => {
@@ -280,7 +280,7 @@ describe('FormField', () => {
     });
 
     it('submits once the wrapped value is filled in', async () => {
-        const onSubmit = jest.fn();
+        const onSubmit = vi.fn();
         const {container} = render(<CheckboxHarness onSubmit={onSubmit}/>);
 
         fireEvent.click(container.querySelector('.blue-orange-checkbox input')!);

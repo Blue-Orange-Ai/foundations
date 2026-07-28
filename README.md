@@ -29,7 +29,7 @@ A comprehensive React component library monorepo by [Blue Orange AI](https://git
 
 ## Overview
 
-Foundations is a modular UI component ecosystem built with **React 18** and **TypeScript**. It uses **Lerna v8** with **npm workspaces** for monorepo management. All packages follow **fixed versioning** — every package shares the same version number, currently managed in `lerna.json`.
+Foundations is a modular UI component ecosystem built with **React** (18 & 19 compatible) and **TypeScript**. It uses **Lerna v8** with **npm workspaces** for monorepo management. All packages follow **fixed versioning** — every package shares the same version number, currently managed in `lerna.json`.
 
 The library covers a wide range of UI needs: core components (buttons, inputs, tables, modals), rich text editing, code editors, graph visualization, maps, chat interfaces, search UIs, and more.
 
@@ -104,7 +104,7 @@ cd packages/core
 npm start
 ```
 
-This launches a local dev environment (via `react-scripts start` or `react-app-rewired start`) where you can test components in the browser. Each package has a `src/development/` directory with a local dev interface that is **not** included in the library build.
+This launches a local **Vite** dev server (serving the package's root `index.html`) where you can test components in the browser. `npm run dev` is an alias for `npm start`. Each package has a `src/development/` directory with a local dev interface that is **not** included in the library build.
 
 ### Building
 
@@ -137,7 +137,7 @@ cd packages/core
 npm test
 ```
 
-Tests use **Jest** with **React Testing Library**, run through `react-scripts test`.
+Tests use **Vitest** with **React Testing Library** (jsdom environment). Use `npm test` for a single run or `npm run test:watch` for watch mode.
 
 ---
 
@@ -211,10 +211,10 @@ packages/<name>/
 
 ### Build System
 
-- **UI packages** use **Vite** for library builds, producing ESM and UMD output, plus `tsc` for type declarations
+- **UI packages** use **Vite** end-to-end: dev server (`vite`), library build (`vite build`, producing ESM and UMD output), and tests (**Vitest**), plus `tsc` for type declarations
 - The **clients** package uses plain `tsc`, outputting CommonJS to `lib/`
 - Entry point for Vite packages is `src/vite-entry.tsx` — a barrel file re-exporting all public components
-- Dev servers use **Create React App** (`react-scripts start`) or **react-app-rewired** (for packages needing custom webpack config, e.g., Monaco)
+- Each package has a root `index.html` that loads `src/index.tsx` — this is the Vite dev-server entry. Monaco-based packages wire their editor workers via `src/monaco-environment.ts` (imported only by the dev entry, not the library build)
 - **TypeScript** target: ES5, module: ESNext, strict mode enabled
 
 ### Component Conventions
@@ -257,9 +257,10 @@ For more details on Lerna workflows, see [LERNA_GUIDE.md](LERNA_GUIDE.md).
 
 | Library | Usage |
 |---------|-------|
-| [React 18](https://react.dev) | UI framework (peer dependency) |
+| [React 18 / 19](https://react.dev) | UI framework (peer dependency, `^18.2.0 \|\| ^19.0.0`) |
 | [TypeScript](https://www.typescriptlang.org) | Type safety across all packages |
-| [Vite](https://vitejs.dev) | Library build tooling |
+| [Vite](https://vitejs.dev) | Dev server, library build, and test tooling |
+| [Vitest](https://vitest.dev) | Unit testing (with React Testing Library) |
 | [Lerna](https://lerna.js.org) | Monorepo management |
 | [TipTap](https://tiptap.dev) | Rich text editing (core) |
 | [Monaco Editor](https://microsoft.github.io/monaco-editor/) | Code editing (code-editors, pipelines, deployment-manager) |

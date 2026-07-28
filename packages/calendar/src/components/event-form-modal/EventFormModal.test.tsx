@@ -11,7 +11,7 @@ const end = new Date(2026, 6, 22, 10, 0, 0);
 
 describe('EventFormModal', () => {
     it('renders the full field set', () => {
-        render(<EventFormModal start={start} end={end} onCancel={jest.fn()} onCreate={jest.fn()} />);
+        render(<EventFormModal start={start} end={end} onCancel={vi.fn()} onCreate={vi.fn()} />);
         expect(screen.getByText('Title')).toBeInTheDocument();
         expect(screen.getByText('When')).toBeInTheDocument();
         expect(screen.getByText('Location')).toBeInTheDocument();
@@ -24,7 +24,7 @@ describe('EventFormModal', () => {
 
     it('hides guest fields unless email compatibility is on', () => {
         const { rerender } = render(
-            <EventFormModal start={start} end={end} onCancel={jest.fn()} onCreate={jest.fn()} />
+            <EventFormModal start={start} end={end} onCancel={vi.fn()} onCreate={vi.fn()} />
         );
         expect(screen.queryByText('Required guests')).not.toBeInTheDocument();
 
@@ -33,8 +33,8 @@ describe('EventFormModal', () => {
                 start={start}
                 end={end}
                 emailCompatibility={true}
-                onCancel={jest.fn()}
-                onCreate={jest.fn()}
+                onCancel={vi.fn()}
+                onCreate={vi.fn()}
             />
         );
         expect(screen.getByText('Required guests')).toBeInTheDocument();
@@ -42,8 +42,8 @@ describe('EventFormModal', () => {
     });
 
     it('builds an event with the defaults on submit', () => {
-        const onCreate = jest.fn();
-        render(<EventFormModal start={start} end={end} onCancel={jest.fn()} onCreate={onCreate} />);
+        const onCreate = vi.fn();
+        render(<EventFormModal start={start} end={end} onCancel={vi.fn()} onCreate={onCreate} />);
         fireEvent.click(screen.getByText('Create'));
 
         expect(onCreate).toHaveBeenCalledTimes(1);
@@ -58,7 +58,7 @@ describe('EventFormModal', () => {
 
     it('mirrors the title into the modal header as it is edited', () => {
         const { container } = render(
-            <EventFormModal start={start} end={end} onCancel={jest.fn()} onCreate={jest.fn()} />
+            <EventFormModal start={start} end={end} onCancel={vi.fn()} onCreate={vi.fn()} />
         );
         const header = container.querySelector('.blue-orange-modal-header-label') as HTMLElement;
         expect(header).toHaveTextContent('New event');
@@ -74,8 +74,8 @@ describe('EventFormModal', () => {
                 start={start}
                 end={end}
                 sources={[{ id: 'w', name: 'Work', borderColor: 'rgb(1, 2, 3)' }]}
-                onCancel={jest.fn()}
-                onCreate={jest.fn()}
+                onCancel={vi.fn()}
+                onCreate={vi.fn()}
             />
         );
         const swatch = container.querySelector(
@@ -91,7 +91,7 @@ describe('EventFormModal', () => {
     });
 
     it('prefills fields and saves an edited event under the same id', () => {
-        const onCreate = jest.fn();
+        const onCreate = vi.fn();
         const initialEvent: ICalendarEvent = {
             id: 'evt-42',
             title: 'Standup',
@@ -107,7 +107,7 @@ describe('EventFormModal', () => {
                 initialEvent={initialEvent}
                 start={start}
                 end={end}
-                onCancel={jest.fn()}
+                onCancel={vi.fn()}
                 onCreate={onCreate}
             />
         );
@@ -129,8 +129,8 @@ describe('EventFormModal', () => {
                 start={start}
                 end={end}
                 emailCompatibility={true}
-                onCancel={jest.fn()}
-                onCreate={jest.fn()}
+                onCancel={vi.fn()}
+                onCreate={vi.fn()}
             />
         );
         const labels = Array.from(

@@ -4,7 +4,7 @@ import {Toaster, ToasterType} from './Toaster';
 import {ToastLocation} from '../toastcontext/ToastContext';
 
 // Mock ButtonIcon since it uses tippy.js which is hard to test in jsdom
-jest.mock('../../../buttons/button-icon/ButtonIcon', () => ({
+vi.mock('../../../buttons/button-icon/ButtonIcon', () => ({
     ButtonIcon: ({icon, label, onClick}: {icon: string, label?: string, onClick?: () => void}) => (
         <button data-testid="button-icon" data-icon={icon} onClick={onClick}>{label}</button>
     )
@@ -259,21 +259,21 @@ describe('Toaster', () => {
     // ── onClick / handleClick ──────────────────────────────────
 
     it('calls onClose when clicking a temporary toast with closeOnClick=true (default)', () => {
-        const onClose = jest.fn();
+        const onClose = vi.fn();
         const {container} = render(<Toaster {...defaultProps} ttl={3000} onClose={onClose}/>);
         fireEvent.click(container.firstChild as HTMLElement);
         expect(onClose).toHaveBeenCalledTimes(1);
     });
 
     it('does not call onClose when clicking a temporary toast with closeOnClick=false', () => {
-        const onClose = jest.fn();
+        const onClose = vi.fn();
         const {container} = render(<Toaster {...defaultProps} ttl={3000} onClose={onClose} closeOnClick={false}/>);
         fireEvent.click(container.firstChild as HTMLElement);
         expect(onClose).not.toHaveBeenCalled();
     });
 
     it('does not call onClose when clicking a persistent toast (no ttl)', () => {
-        const onClose = jest.fn();
+        const onClose = vi.fn();
         const {container} = render(<Toaster {...defaultProps} onClose={onClose}/>);
         fireEvent.click(container.firstChild as HTMLElement);
         expect(onClose).not.toHaveBeenCalled();
@@ -289,7 +289,7 @@ describe('Toaster', () => {
     // ── Close button click (handleCloseClick) ──────────────────
 
     it('calls onClose when close button is clicked on persistent toast', () => {
-        const onClose = jest.fn();
+        const onClose = vi.fn();
         const {container} = render(<Toaster {...defaultProps} onClose={onClose}/>);
         const closeBtn = container.querySelector('.blue-orange-toaster-close') as HTMLElement;
         fireEvent.click(closeBtn);
@@ -297,8 +297,8 @@ describe('Toaster', () => {
     });
 
     it('stops propagation when close button is clicked', () => {
-        const onClose = jest.fn();
-        const parentClick = jest.fn();
+        const onClose = vi.fn();
+        const parentClick = vi.fn();
         const {container} = render(
             <div onClick={parentClick}>
                 <Toaster {...defaultProps} onClose={onClose}/>
@@ -316,7 +316,7 @@ describe('Toaster', () => {
     // ── Default prop values ────────────────────────────────────
 
     it('defaults closeOnClick to true', () => {
-        const onClose = jest.fn();
+        const onClose = vi.fn();
         const {container} = render(<Toaster {...defaultProps} ttl={3000} onClose={onClose}/>);
         fireEvent.click(container.firstChild as HTMLElement);
         expect(onClose).toHaveBeenCalledTimes(1);
@@ -339,7 +339,7 @@ describe('Toaster', () => {
                 description="Task completed"
                 icon={<span data-testid="icon">V</span>}
                 action={<button>Undo</button>}
-                onClose={jest.fn()}
+                onClose={vi.fn()}
             />
         );
         expect(screen.getByText('Success!')).toBeInTheDocument();

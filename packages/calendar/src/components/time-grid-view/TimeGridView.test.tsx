@@ -155,7 +155,7 @@ describe('TimeGridView', () => {
                     view={CalendarView.DAY}
                     events={[]}
                     showNowIndicator={false}
-                    onRangeSelect={jest.fn()}
+                    onRangeSelect={vi.fn()}
                 />
             );
             const column = container.querySelector('.blue-orange-calendar-time-column')!;
@@ -167,7 +167,7 @@ describe('TimeGridView', () => {
         });
 
         it('reports the dragged range on release and clears the draft', () => {
-            const onRangeSelect = jest.fn();
+            const onRangeSelect = vi.fn();
             const { container } = render(
                 <TimeGridView
                     date={date}
@@ -190,7 +190,7 @@ describe('TimeGridView', () => {
         });
 
         it('ignores a press that never moves', () => {
-            const onRangeSelect = jest.fn();
+            const onRangeSelect = vi.fn();
             const { container } = render(
                 <TimeGridView
                     date={date}
@@ -208,7 +208,7 @@ describe('TimeGridView', () => {
         });
 
         it('does not start a selection from an existing event', () => {
-            const onRangeSelect = jest.fn();
+            const onRangeSelect = vi.fn();
             render(
                 <TimeGridView
                     date={date}

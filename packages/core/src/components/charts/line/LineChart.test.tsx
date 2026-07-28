@@ -6,8 +6,8 @@ import {LineChart} from "./LineChart";
 import {LegendPosition} from "../types/ChartTypes";
 
 // Replace Chart.js with the recording mock.
-jest.mock("chart.js/auto", () => require("../testUtils/chartMock"));
-jest.mock("chartjs-adapter-moment", () => ({}), {virtual: true});
+vi.mock("chart.js/auto", () => vi.importActual("../testUtils/chartMock"));
+vi.mock("chartjs-adapter-moment", () => ({}), {virtual: true});
 
 const anyChart = MockChart as any;
 
@@ -26,7 +26,7 @@ const dataset = [{label: "CPU", data: [{x: 1, y: 2}], borderColor: "#2d88ff"}];
 
 beforeAll(() => {
     // jsdom has no canvas 2D context; return a stub so Chart(ctx) doesn't warn.
-    (HTMLCanvasElement.prototype as any).getContext = jest.fn(() => ({canvas: document.createElement("canvas")}));
+    (HTMLCanvasElement.prototype as any).getContext = vi.fn(() => ({canvas: document.createElement("canvas")}));
 });
 
 beforeEach(() => {
@@ -148,7 +148,7 @@ describe("LineChart - vertical cursor line", () => {
 
 describe("LineChart - cursor synchronisation", () => {
     it("reports the cursor position via onCursorMove", () => {
-        const onCursorMove = jest.fn();
+        const onCursorMove = vi.fn();
         render(<LineChart dataset={dataset} onCursorMove={onCursorMove} animationTimeout={0}/>);
         const plugin = getConfig().plugins.find((p: any) => p.id === "verticalCursorLine");
         const chart = anyChart.lastInstance;
@@ -157,7 +157,7 @@ describe("LineChart - cursor synchronisation", () => {
     });
 
     it("reports null when the pointer leaves", () => {
-        const onCursorMove = jest.fn();
+        const onCursorMove = vi.fn();
         render(<LineChart dataset={dataset} onCursorMove={onCursorMove} animationTimeout={0}/>);
         const plugin = getConfig().plugins.find((p: any) => p.id === "verticalCursorLine");
         const chart = anyChart.lastInstance;
