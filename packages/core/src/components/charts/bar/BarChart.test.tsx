@@ -5,7 +5,7 @@ import {makeDataPoint, makeTooltipModel} from "../testUtils/tooltipFixtures";
 import {BarChart} from "./BarChart";
 import {LegendPosition} from "../types/ChartTypes";
 
-jest.mock("chart.js/auto", () => require("../testUtils/chartMock"));
+vi.mock("chart.js/auto", () => vi.importActual("../testUtils/chartMock"));
 
 const anyChart = MockChart as any;
 const getConfig = () => anyChart.lastInstance.config;
@@ -22,7 +22,7 @@ const dataset = [{label: "Sales", data: [1, 2, 3], borderColor: "#2d88ff"}];
 const labels = ["Jan", "Feb", "Mar"];
 
 beforeAll(() => {
-    (HTMLCanvasElement.prototype as any).getContext = jest.fn(() => ({canvas: document.createElement("canvas")}));
+    (HTMLCanvasElement.prototype as any).getContext = vi.fn(() => ({canvas: document.createElement("canvas")}));
 });
 
 beforeEach(() => {

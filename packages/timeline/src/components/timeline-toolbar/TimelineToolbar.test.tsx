@@ -12,7 +12,7 @@ describe('TimelineToolbar', () => {
     });
 
     it('fires onModeChange when a mode button is clicked', () => {
-        const onModeChange = jest.fn();
+        const onModeChange = vi.fn();
         const { container } = render(
             <TimelineToolbar mode={TimelineInteractionMode.SELECTION} onModeChange={onModeChange} />
         );
@@ -34,7 +34,7 @@ describe('TimelineToolbar', () => {
     });
 
     it('renders the time-mode switch and fires onTimeModeChange', () => {
-        const onTimeModeChange = jest.fn();
+        const onTimeModeChange = vi.fn();
         const { container } = render(
             <TimelineToolbar
                 mode={TimelineInteractionMode.SELECTION}
@@ -64,8 +64,8 @@ describe('TimelineToolbar', () => {
     });
 
     it('renders skip-to-previous / skip-to-next event controls flanking play', () => {
-        const onPrevEvent = jest.fn();
-        const onNextEvent = jest.fn();
+        const onPrevEvent = vi.fn();
+        const onNextEvent = vi.fn();
         const { container } = render(
             <TimelineToolbar
                 mode={TimelineInteractionMode.SELECTION}
@@ -91,7 +91,7 @@ describe('TimelineToolbar', () => {
     });
 
     it('shows the Focus events button only in absolute mode', () => {
-        const onFocusEvents = jest.fn();
+        const onFocusEvents = vi.fn();
         const { rerender, container } = render(
             <TimelineToolbar
                 mode={TimelineInteractionMode.SELECTION}

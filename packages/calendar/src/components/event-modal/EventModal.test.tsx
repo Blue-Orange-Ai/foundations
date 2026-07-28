@@ -18,28 +18,28 @@ const event: ICalendarEvent = {
 
 describe('EventModal', () => {
     it('renders the event title and details', () => {
-        render(<EventModal event={event} onClose={jest.fn()} />);
+        render(<EventModal event={event} onClose={vi.fn()} />);
         expect(screen.getByText('Design Review')).toBeInTheDocument();
         expect(screen.getByText('Room 4')).toBeInTheDocument();
         expect(screen.getByText('Review the new calendar package.')).toBeInTheDocument();
     });
 
     it('renders the formatted time range and a readable duration', () => {
-        render(<EventModal event={event} onClose={jest.fn()} />);
+        render(<EventModal event={event} onClose={vi.fn()} />);
         expect(screen.getByText(/1:00 PM - 2:00 PM/)).toBeInTheDocument();
         expect(screen.getByText('1 hour')).toBeInTheDocument();
     });
 
     it('calls onEdit for an owned event', () => {
-        const onEdit = jest.fn();
-        render(<EventModal event={event} onClose={jest.fn()} onEdit={onEdit} />);
+        const onEdit = vi.fn();
+        render(<EventModal event={event} onClose={vi.fn()} onEdit={onEdit} />);
         fireEvent.click(screen.getByText('Edit'));
         expect(onEdit).toHaveBeenCalledWith(event);
     });
 
     it('confirms before deleting and reports the scope', () => {
-        const onDelete = jest.fn();
-        render(<EventModal event={event} onClose={jest.fn()} onDelete={onDelete} />);
+        const onDelete = vi.fn();
+        render(<EventModal event={event} onClose={vi.fn()} onDelete={onDelete} />);
 
         // First press opens the confirmation screen rather than deleting.
         fireEvent.click(screen.getByText('Delete'));
@@ -52,9 +52,9 @@ describe('EventModal', () => {
     });
 
     it('offers a "delete for everyone" choice when the event has guests', () => {
-        const onDelete = jest.fn();
+        const onDelete = vi.fn();
         const withGuests: ICalendarEvent = { ...event, requiredGuests: ['a@b.com'] };
-        render(<EventModal event={withGuests} onClose={jest.fn()} onDelete={onDelete} />);
+        render(<EventModal event={withGuests} onClose={vi.fn()} onDelete={onDelete} />);
 
         fireEvent.click(screen.getByText('Delete'));
         expect(screen.getByText('Delete for everyone')).toBeInTheDocument();
@@ -64,7 +64,7 @@ describe('EventModal', () => {
     });
 
     it('shows accept / decline / tentative for an invitation the viewer does not own', () => {
-        const onRespond = jest.fn();
+        const onRespond = vi.fn();
         const invite: ICalendarEvent = {
             ...event,
             organizer: 'boss@corp.com',
@@ -74,10 +74,10 @@ describe('EventModal', () => {
             <EventModal
                 event={invite}
                 currentUser="me@corp.com"
-                onClose={jest.fn()}
+                onClose={vi.fn()}
                 onRespond={onRespond}
-                onEdit={jest.fn()}
-                onDelete={jest.fn()}
+                onEdit={vi.fn()}
+                onDelete={vi.fn()}
             />
         );
         // No owner controls.
@@ -88,13 +88,13 @@ describe('EventModal', () => {
     });
 
     it('lets a decline propose a new time', () => {
-        const onRespond = jest.fn();
+        const onRespond = vi.fn();
         const invite: ICalendarEvent = { ...event, organizer: 'boss@corp.com' };
         render(
             <EventModal
                 event={invite}
                 currentUser="me@corp.com"
-                onClose={jest.fn()}
+                onClose={vi.fn()}
                 onRespond={onRespond}
             />
         );
@@ -108,13 +108,13 @@ describe('EventModal', () => {
     });
 
     it('lets the viewer colour an invitation they received', () => {
-        const onColorChange = jest.fn();
+        const onColorChange = vi.fn();
         const invite: ICalendarEvent = { ...event, organizer: 'boss@corp.com' };
         render(
             <EventModal
                 event={invite}
                 currentUser="me@corp.com"
-                onClose={jest.fn()}
+                onClose={vi.fn()}
                 onColorChange={onColorChange}
             />
         );
@@ -127,8 +127,8 @@ describe('EventModal', () => {
         render(
             <EventModal
                 event={{ ...event, isReadOnly: true }}
-                onClose={jest.fn()}
-                onColorChange={jest.fn()}
+                onClose={vi.fn()}
+                onColorChange={vi.fn()}
             />
         );
         expect(screen.queryByPlaceholderText('#e0e1e2')).not.toBeInTheDocument();
@@ -138,9 +138,9 @@ describe('EventModal', () => {
         render(
             <EventModal
                 event={{ ...event, isReadOnly: true }}
-                onClose={jest.fn()}
-                onDelete={jest.fn()}
-                onEdit={jest.fn()}
+                onClose={vi.fn()}
+                onDelete={vi.fn()}
+                onEdit={vi.fn()}
             />
         );
         expect(screen.queryByText('Delete')).not.toBeInTheDocument();

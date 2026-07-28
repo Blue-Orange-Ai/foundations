@@ -50,7 +50,7 @@ describe('MonthDayCell', () => {
     });
 
     it('fires onDayClick when the cell is clicked', () => {
-        const onDayClick = jest.fn();
+        const onDayClick = vi.fn();
         render(
             <MonthDayCell
                 date={new Date('2026-07-15T00:00:00')}
@@ -64,8 +64,8 @@ describe('MonthDayCell', () => {
     });
 
     it('fires onEventClick without triggering onDayClick', () => {
-        const onEventClick = jest.fn();
-        const onDayClick = jest.fn();
+        const onEventClick = vi.fn();
+        const onDayClick = vi.fn();
         render(
             <MonthDayCell
                 date={new Date('2026-07-15T00:00:00')}

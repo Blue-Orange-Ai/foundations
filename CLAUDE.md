@@ -19,9 +19,9 @@ Each package under `packages/` is standalone. Always `cd` into the specific pack
 ```bash
 cd packages/<package-name>
 npm install
-npm start              # local dev server (react-scripts start or react-app-rewired start)
+npm start              # local dev server (Vite; `npm run dev` is an alias)
 npm run build          # production build (vite build && tsc)
-npm test               # Jest + React Testing Library
+npm test               # Vitest + React Testing Library
 ```
 
 ### Cross-repo commands (from root)
@@ -71,8 +71,8 @@ All packages live under `packages/`. There is no root-level source code.
 - Most packages use **Vite** for library builds (`vite.config.js`), producing `dist/index.mjs` (ESM) and `dist/index.umd.js` (UMD), plus `tsc` for type declarations into `dist/types/`
 - The `clients` package uses plain `tsc` outputting to `lib/`
 - Entry point for Vite packages: `src/vite-entry.tsx` — a barrel file re-exporting all public components
-- Dev server uses `react-scripts start` (CRA) or `react-app-rewired start` (for packages needing webpack config like Monaco)
-- React 18 is a peer dependency across all UI packages
+- Dev server, library build, and tests all run on **Vite**: `npm start`/`npm run dev` (Vite dev server, serves each package's root `index.html`), `npm run build` (`vite build && tsc`), `npm test` (Vitest). Monaco packages wire their editor workers via `src/monaco-environment.ts` (imported only by the dev entry, not the library build)
+- React 18 **and** 19 are supported — `react`/`react-dom` peer dependencies are `^18.2.0 || ^19.0.0` across all UI packages
 
 ### Component conventions
 

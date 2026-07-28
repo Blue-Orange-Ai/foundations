@@ -40,7 +40,7 @@ const stub2dContext = () => {
 
 beforeAll(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (HTMLCanvasElement.prototype as any).getContext = jest.fn(() => stub2dContext());
+    (HTMLCanvasElement.prototype as any).getContext = vi.fn(() => stub2dContext());
 });
 
 const model: ITimelineModel = {

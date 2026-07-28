@@ -39,7 +39,8 @@
     "web-worker": "^1.3.0"
   },
   "peerDependencies": {
-    "react": "^18.2.0"
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.17.0",
@@ -51,12 +52,9 @@
     "@types/react-dom": "^18.2.22",
     "@types/uuid": "^9.0.8",
     "ajv": "^8.17.1",
-    "customize-cra": "^1.0.0",
     "react": "^18.2.0",
-    "react-app-rewired": "^2.2.1",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.3",
-    "react-scripts": "5.0.1",
     "rehype-katex": "^6.0.3",
     "rehype-stringify": "^9.0.3",
     "remark": "^14.0.3",
@@ -68,39 +66,17 @@
     "unified": "^10.1.2",
     "vite": "^5.1.6",
     "vite-plugin-dts": "^4.0.3",
-    "web-vitals": "^2.1.4"
+    "@vitejs/plugin-react": "^4.3.4",
+    "vitest": "^2.1.9",
+    "jsdom": "^25.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "vite",
+    "dev": "vite",
     "build": "vite build && tsc",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "jest": {
-    "transformIgnorePatterns": [
-      "/node_modules/(?!(.+\\.mjs$|remark-.*|rehype-.*|unified|bail|devlop|is-plain-obj|trough|vfile|vfile-.*|mdast-util-.*|unist-util-.*|micromark|micromark-.*|decode-named-character-reference|character-entities|character-entities-.*|character-reference-invalid|ccount|escape-string-regexp|markdown-table|zwitch|longest-streak|hast-util-.*|property-information|comma-separated-tokens|space-separated-tokens|web-namespaces|trim-lines|katex|stringify-entities|hastscript|parse5|direction|html-void-elements|estree-util-.*|permerror|shiki|@shikijs|oniguruma-to-es|regex|regex-recursion|regex-utilities|unicode-escape))"
-    ],
-    "moduleNameMapper": {
-      "\\.(css|less|scss|sass)$": "<rootDir>/src/__mocks__/styleMock.js"
-    }
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "publishConfig": {
     "@blue-orange-ai:registry": "https://npm.pkg.github.com"

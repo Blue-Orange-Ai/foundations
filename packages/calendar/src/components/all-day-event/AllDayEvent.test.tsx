@@ -18,7 +18,7 @@ describe('AllDayEvent', () => {
     });
 
     it('fires onClick with the event', () => {
-        const onClick = jest.fn();
+        const onClick = vi.fn();
         render(<AllDayEvent event={event} onClick={onClick} />);
         fireEvent.click(screen.getByText('Conference'));
         expect(onClick).toHaveBeenCalledWith(event);

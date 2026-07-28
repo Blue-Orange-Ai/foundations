@@ -6,7 +6,7 @@ import { getTimezoneName } from '../../utils/calendarUtils';
 describe('TimezonePicker', () => {
     it('ticks the selected timezone and keeps it at the top of the list', () => {
         const { container } = render(
-            <TimezonePicker timezone="Asia/Tokyo" onSelect={jest.fn()} onClose={jest.fn()} />
+            <TimezonePicker timezone="Asia/Tokyo" onSelect={vi.fn()} onClose={vi.fn()} />
         );
         const options = container.querySelectorAll(
             '.blue-orange-calendar-timezone-picker-option'
@@ -22,8 +22,8 @@ describe('TimezonePicker', () => {
     });
 
     it('moves the tick to whichever zone the search turns up and selects it', () => {
-        const onSelect = jest.fn();
-        render(<TimezonePicker timezone="Asia/Tokyo" onSelect={onSelect} onClose={jest.fn()} />);
+        const onSelect = vi.fn();
+        render(<TimezonePicker timezone="Asia/Tokyo" onSelect={onSelect} onClose={vi.fn()} />);
         fireEvent.change(screen.getByPlaceholderText('Search timezones...'), {
             target: { value: 'Tokyo' },
         });
@@ -32,8 +32,8 @@ describe('TimezonePicker', () => {
     });
 
     it('selects the device timezone from the footer button', () => {
-        const onSelect = jest.fn();
-        render(<TimezonePicker timezone="Asia/Tokyo" onSelect={onSelect} onClose={jest.fn()} />);
+        const onSelect = vi.fn();
+        render(<TimezonePicker timezone="Asia/Tokyo" onSelect={onSelect} onClose={vi.fn()} />);
         fireEvent.click(screen.getByText('Current timezone'));
         expect(onSelect).toHaveBeenCalledWith(getTimezoneName());
     });

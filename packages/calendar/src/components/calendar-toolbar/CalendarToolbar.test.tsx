@@ -6,10 +6,10 @@ import { CalendarView } from '../../interfaces/CalendarInterfaces';
 const baseProps = {
     date: new Date('2026-07-21T00:00:00'),
     view: CalendarView.MONTH,
-    onPrev: jest.fn(),
-    onNext: jest.fn(),
-    onToday: jest.fn(),
-    onViewChange: jest.fn(),
+    onPrev: vi.fn(),
+    onNext: vi.fn(),
+    onToday: vi.fn(),
+    onViewChange: vi.fn(),
 };
 
 describe('CalendarToolbar', () => {
@@ -26,14 +26,14 @@ describe('CalendarToolbar', () => {
     });
 
     it('calls onToday when Today is clicked', () => {
-        const onToday = jest.fn();
+        const onToday = vi.fn();
         render(<CalendarToolbar {...baseProps} onToday={onToday} />);
         fireEvent.click(screen.getByText('Today'));
         expect(onToday).toHaveBeenCalledTimes(1);
     });
 
     it('calls onViewChange with the selected view', () => {
-        const onViewChange = jest.fn();
+        const onViewChange = vi.fn();
         render(<CalendarToolbar {...baseProps} onViewChange={onViewChange} />);
         fireEvent.click(screen.getByText('Week'));
         expect(onViewChange).toHaveBeenCalledWith(CalendarView.WEEK);
@@ -42,7 +42,7 @@ describe('CalendarToolbar', () => {
     it('shows the create button only when onCreate is provided', () => {
         const { rerender } = render(<CalendarToolbar {...baseProps} />);
         expect(screen.queryByText('New event')).not.toBeInTheDocument();
-        rerender(<CalendarToolbar {...baseProps} onCreate={jest.fn()} />);
+        rerender(<CalendarToolbar {...baseProps} onCreate={vi.fn()} />);
         expect(screen.getByText('New event')).toBeInTheDocument();
     });
 

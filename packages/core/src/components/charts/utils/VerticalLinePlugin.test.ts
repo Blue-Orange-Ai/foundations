@@ -14,13 +14,13 @@ const makeChart = (scaleOverrides: any = {}) => ({
         },
     },
     ctx: {
-        save: jest.fn(),
-        restore: jest.fn(),
-        beginPath: jest.fn(),
-        moveTo: jest.fn(),
-        lineTo: jest.fn(),
-        stroke: jest.fn(),
-        setLineDash: jest.fn(),
+        save: vi.fn(),
+        restore: vi.fn(),
+        beginPath: vi.fn(),
+        moveTo: vi.fn(),
+        lineTo: vi.fn(),
+        stroke: vi.fn(),
+        setLineDash: vi.fn(),
         lineWidth: 1,
         strokeStyle: "#000",
     },
@@ -187,7 +187,7 @@ describe("resolveValueToPixel / resolvePixelToValue", () => {
 
 describe("createVerticalLinePlugin - onCursorMove callback", () => {
     it("reports the resolved data value while moving inside the chart", () => {
-        const onCursorMove = jest.fn();
+        const onCursorMove = vi.fn();
         const plugin = createVerticalLinePlugin(() => ({enabled: true, onCursorMove}));
         const chart = makeChart();
         plugin.afterEvent(chart, {event: {type: "mousemove", x: 60, y: 40}, changed: false});
@@ -195,7 +195,7 @@ describe("createVerticalLinePlugin - onCursorMove callback", () => {
     });
 
     it("reports null once when the cursor leaves the chart area", () => {
-        const onCursorMove = jest.fn();
+        const onCursorMove = vi.fn();
         const plugin = createVerticalLinePlugin(() => ({enabled: true, onCursorMove}));
         const chart = makeChart();
         plugin.afterEvent(chart, {event: {type: "mousemove", x: 60, y: 40}, changed: false});
@@ -211,7 +211,7 @@ describe("createVerticalLinePlugin - onCursorMove callback", () => {
     });
 
     it("reports null on mouseout", () => {
-        const onCursorMove = jest.fn();
+        const onCursorMove = vi.fn();
         const plugin = createVerticalLinePlugin(() => ({enabled: true, onCursorMove}));
         const chart = makeChart();
         plugin.afterEvent(chart, {event: {type: "mousemove", x: 60, y: 40}, changed: false});
@@ -221,7 +221,7 @@ describe("createVerticalLinePlugin - onCursorMove callback", () => {
     });
 
     it("still fires the callback when the line itself is disabled", () => {
-        const onCursorMove = jest.fn();
+        const onCursorMove = vi.fn();
         const plugin = createVerticalLinePlugin(() => ({enabled: false, onCursorMove}));
         const chart = makeChart();
         const args: any = {event: {type: "mousemove", x: 60, y: 40}, changed: false};

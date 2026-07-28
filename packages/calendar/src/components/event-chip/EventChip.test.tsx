@@ -37,7 +37,7 @@ describe('EventChip', () => {
     });
 
     it('fires onClick with the event', () => {
-        const onClick = jest.fn();
+        const onClick = vi.fn();
         render(<EventChip event={timedEvent} onClick={onClick} />);
         fireEvent.click(screen.getByText('Standup'));
         expect(onClick).toHaveBeenCalledWith(timedEvent);

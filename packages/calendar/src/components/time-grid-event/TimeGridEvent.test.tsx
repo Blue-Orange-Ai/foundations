@@ -46,7 +46,7 @@ describe('TimeGridEvent', () => {
     });
 
     it('fires onClick with the event', () => {
-        const onClick = jest.fn();
+        const onClick = vi.fn();
         render(<TimeGridEvent layout={layout} onClick={onClick} />);
         fireEvent.click(screen.getByText('Design Review'));
         expect(onClick).toHaveBeenCalledWith(event);

@@ -4,8 +4,8 @@ import MockChart from "../testUtils/chartMock";
 import {makeDataPoint, makeTooltipModel} from "../testUtils/tooltipFixtures";
 import {ComboChart} from "./ComboChart";
 
-jest.mock("chart.js/auto", () => require("../testUtils/chartMock"));
-jest.mock("chartjs-adapter-moment", () => ({}), {virtual: true});
+vi.mock("chart.js/auto", () => vi.importActual("../testUtils/chartMock"));
+vi.mock("chartjs-adapter-moment", () => ({}), {virtual: true});
 
 const anyChart = MockChart as any;
 const getConfig = () => anyChart.lastInstance.config;
@@ -24,7 +24,7 @@ const lineDatasets = [
 ];
 
 beforeAll(() => {
-    (HTMLCanvasElement.prototype as any).getContext = jest.fn(() => ({canvas: document.createElement("canvas")}));
+    (HTMLCanvasElement.prototype as any).getContext = vi.fn(() => ({canvas: document.createElement("canvas")}));
 });
 
 beforeEach(() => {
@@ -140,7 +140,7 @@ describe("ComboChart - vertical cursor line (stacked areas)", () => {
 
 describe("ComboChart - cursor synchronisation", () => {
     it("reports the cursor position via onCursorMove", () => {
-        const onCursorMove = jest.fn();
+        const onCursorMove = vi.fn();
         render(<ComboChart dataset={lineDatasets} stackedAreas onCursorMove={onCursorMove} animationTimeout={0}/>);
         const plugin = getConfig().plugins.find((p: any) => p.id === "verticalCursorLine");
         const chart = anyChart.lastInstance;

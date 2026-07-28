@@ -19,7 +19,7 @@ describe("resolveTooltipFieldValue", () => {
     });
 
     it("invokes a function with the context", () => {
-        const fn = jest.fn((c: TooltipContext) => `x=${c.xLabel}`);
+        const fn = vi.fn((c: TooltipContext) => `x=${c.xLabel}`);
         expect(resolveTooltipFieldValue(fn, ctx)).toBe("x=5");
         expect(fn).toHaveBeenCalledWith(ctx);
     });
@@ -209,7 +209,7 @@ describe("buildTooltipContent - custom y label and value", () => {
         const model = makeTooltipModel([
             makeDataPoint({datasetLabel: "CPU", formattedValue: "12", datasetIndex: 3, dataIndex: 9}),
         ]);
-        const yLabel = jest.fn(() => "label");
+        const yLabel = vi.fn(() => "label");
         buildTooltipContent(model, {classPrefix: "line", tooltip: {yLabel}});
         expect(yLabel).toHaveBeenCalledWith(
             expect.objectContaining({datasetLabel: "CPU", datasetIndex: 3, index: 9})
