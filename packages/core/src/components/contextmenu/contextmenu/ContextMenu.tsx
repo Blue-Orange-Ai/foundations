@@ -41,6 +41,21 @@ type ForwardingRefWrapperProps = {
 	children?: React.ReactNode;
 };
 
+/**
+ * Wraps the children in an element the menu can measure and hit test against.
+ *
+ * Declared out here on purpose: a component created inside ContextMenu would be
+ * a new component type on every render, so React would throw away and rebuild
+ * the children's DOM each time the menu re-renders. That loses focus inside the
+ * children and breaks double clicks, because the element under the pointer is
+ * replaced between the two clicks.
+ */
+const ForwardingRefWrapper = React.forwardRef<HTMLDivElement, ForwardingRefWrapperProps>(
+	(props, ref) => {
+		return <div ref={ref}>{props.children}</div>;
+	}
+);
+
 export const ContextMenu: React.FC<Props> = ({
 												 children,
 												 items,
@@ -247,12 +262,6 @@ export const ContextMenu: React.FC<Props> = ({
 			setVisible(true);
 		}
 	};
-
-	const ForwardingRefWrapper = React.forwardRef<HTMLDivElement, ForwardingRefWrapperProps>(
-		(props, ref) => {
-			return <div ref={ref}>{props.children}</div>;
-		}
-	);
 
 	const close = () => {
 		setVisible(false);

@@ -46,6 +46,27 @@ describe("FileSystem demo", () => {
 		expect(rowLabels(container)).not.toContain("..");
 	});
 
+	it("opens a folder as the new view through a full click, click, double click sequence", () => {
+		const {container} = render(<FileSystemDevelopment/>);
+
+		const label = screen.getByText("Media");
+		fireEvent.mouseDown(label);
+		fireEvent.mouseUp(label);
+		fireEvent.click(label);
+
+		// selecting the row must not replace it — a browser only counts a second
+		// click as a double click when it lands on the same element
+		expect(label.isConnected).toBe(true);
+
+		fireEvent.mouseDown(label);
+		fireEvent.mouseUp(label);
+		fireEvent.click(label);
+		fireEvent.doubleClick(label);
+
+		expect(rowLabels(container)[0]).toEqual("..");
+		expect(rowLabels(container)).toContain("hero-banner.png");
+	});
+
 	it("expands folders in place when the new view toggle is off", () => {
 		const {container} = render(<FileSystemDevelopment/>);
 
