@@ -54,6 +54,7 @@
 
 .blue-orange-sidebar-body-item-icon {
     margin-right: 15px;
+    flex-shrink: 0;
 }
 
 .blue-orange-sidebar-closed .blue-orange-sidebar-body-item-icon {
@@ -69,6 +70,9 @@
     flex-grow: 1;
     align-items: center;
     cursor: pointer;
+    /* Lets the label shrink past its text width so it can be truncated. */
+    min-width: 0;
+    overflow: hidden;
 }
 
 .blue-orange-sidebar-closed .blue-orange-sidebar-body-item-left {
@@ -78,6 +82,16 @@
 
 .blue-orange-sidebar-body-item-label {
     cursor: pointer;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.blue-orange-sidebar-body-item-right {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
 }
 
 .blue-orange-sidebar-closed .blue-orange-sidebar-body-item-label {

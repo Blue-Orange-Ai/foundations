@@ -3,6 +3,8 @@
 // resolves the correct colours for the active (light/dark) theme, applies them to
 // a live chart instance and watches for runtime theme toggles.
 
+import {isDarkMode, observeDarkMode} from "../../utils/DarkMode";
+
 export interface ChartThemeColors {
 	gridColor: string;
 	tickColor: string;
@@ -23,11 +25,7 @@ const DARK_THEME: ChartThemeColors = {
 
 // Dark mode is signalled by a `dark` class on <body> (see the dev app) or <html>.
 export const isChartDarkMode = (): boolean => {
-	if (typeof document === "undefined") {
-		return false;
-	}
-	return document.body.classList.contains("dark") ||
-		document.documentElement.classList.contains("dark");
+	return isDarkMode();
 };
 
 export const getChartThemeColors = (): ChartThemeColors => {
@@ -58,11 +56,5 @@ export const applyChartTheme = (chart: any): void => {
 // Watches for `dark` class toggles on <body>/<html> and invokes the callback so a
 // mounted chart can re-theme itself. Returns a disconnect function for cleanup.
 export const observeChartTheme = (onChange: () => void): (() => void) => {
-	if (typeof MutationObserver === "undefined" || typeof document === "undefined") {
-		return () => {};
-	}
-	const observer = new MutationObserver(() => onChange());
-	observer.observe(document.body, {attributes: true, attributeFilter: ["class"]});
-	observer.observe(document.documentElement, {attributes: true, attributeFilter: ["class"]});
-	return () => observer.disconnect();
+	return observeDarkMode(onChange);
 };

@@ -25,6 +25,7 @@
 
 .blue-orange-sidebar-body-label-icon {
     margin-right: 15px;
+    flex-shrink: 0;
 }
 
 .blue-orange-sidebar-body-label-left {
@@ -33,9 +34,22 @@
     flex-grow: 1;
     align-items: center;
     cursor: pointer;
+    /* Lets the label shrink past its text width so it can be truncated. */
+    min-width: 0;
+    overflow: hidden;
 }
 
 .blue-orange-sidebar-body-label-text {
     cursor: pointer;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.blue-orange-sidebar-body-label-right {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
 }
 

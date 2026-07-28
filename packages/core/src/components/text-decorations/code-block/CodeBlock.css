@@ -5,6 +5,20 @@
     border: 1px solid var(--blue-orange-light-default-border-color);
     border-radius: 4px;
     position: relative;
+    /* Keeps the highlighted block's own background inside the rounded corners. */
+    overflow: hidden;
+}
+
+.dark .blue-orange-code-block{
+    border: 1px solid var(--blue-orange-dark-default-border-color);
+}
+
+/* Shiki emits a bare <pre>, whose default margin would show the page through
+   the block. */
+.blue-orange-code-block pre {
+    margin: 0;
+    padding: 12px;
+    overflow-x: auto;
 }
 
 .blue-orange-code-block-language {
@@ -14,6 +28,10 @@
     font-size: 0.6rem;
     color: var(--blue-orange-light-default-text-color);
     opacity: 0.4;
+}
+
+.dark .blue-orange-code-block-language {
+    color: var(--blue-orange-dark-default-text-color);
 }
 
 .blue-orange-code-block-copy-btn {

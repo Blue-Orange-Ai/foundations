@@ -31,10 +31,14 @@
     flex-direction: row;
     flex-grow: 1;
     align-items: center;
+    /* Lets the title shrink past its text width so it can be truncated. */
+    min-width: 0;
+    overflow: hidden;
 }
 
 .blue-orange-sidebar-header-item-media {
     margin-right: 15px;
+    flex-shrink: 0;
 }
 
 .blue-orange-sidebar-header-item-small-cont .blue-orange-sidebar-header-item-media {
@@ -45,10 +49,15 @@
     flex-grow: 1;
     font-size: 1.2rem;
     font-weight: 700;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .blue-orange-sidebar-header-item-action {
     margin-left: 15px;
+    flex-shrink: 0;
 }
 
 .blue-orange-sidebar-header-item-small-cont {

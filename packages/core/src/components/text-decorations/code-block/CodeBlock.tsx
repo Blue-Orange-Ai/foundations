@@ -4,11 +4,13 @@ import './CodeBlock.css'
 import {RenderHtml} from "../render-html/RenderHtml";
 import {codeToHtml } from 'shiki';
 import {ButtonIcon} from "../../buttons/button-icon/ButtonIcon";
+import {isDarkMode, observeDarkMode} from "../../utils/DarkMode";
 
 export interface CodeRender {
 	code: string,
 	lang: string,
-	theme: "github-light" | "github-dark"
+	/** Leave it out to follow the light/dark theme the rest of the page is using. */
+	theme?: "github-light" | "github-dark"
 }
 
 interface Props {
@@ -26,10 +28,18 @@ export const CodeBlock: React.FC<Props> = ({value, style={}}) => {
 
 	const [mouseEntered, setMouseEntered] = useState<boolean>(false);
 
-	const formatCode = useCallback(async (input: CodeRender): Promise<void> => {
+	// Shiki bakes the colours into the markup it generates, so the block has to be
+	// highlighted again whenever the page switches between light and dark.
+	const [darkMode, setDarkMode] = useState<boolean>(isDarkMode);
+
+	useEffect(() => {
+		return observeDarkMode(() => setDarkMode(isDarkMode()));
+	}, []);
+
+	const formatCode = useCallback(async (input: CodeRender, dark: boolean): Promise<void> => {
 		const formatedCode = await codeToHtml(input.code, {
 			lang: input.lang,
-			theme: input.theme
+			theme: input.theme ?? (dark ? "github-dark" : "github-light")
 		});
 		setHtml(formatedCode)
 	}, [])
@@ -62,8 +72,8 @@ export const CodeBlock: React.FC<Props> = ({value, style={}}) => {
 	}
 
 	useEffect(() => {
-		formatCode(value)
-	}, [value]);
+		formatCode(value, darkMode)
+	}, [value, darkMode]);
 
 	return (
 		<div className="blue-orange-code-block" style={style} onMouseEnter={handleMouseEntered} onMouseLeave={handleMouseLeave}>
