@@ -1,0 +1,65 @@
+.dev-tools-gallery {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    min-height: 0;
+}
+
+.dev-tools-gallery-sidebar {
+    flex: 0 0 220px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #e0e1e2;
+    background-color: #fafafa;
+    overflow-y: auto;
+}
+
+.dev-tools-gallery-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    font-weight: 600;
+    font-size: 14px;
+    border-bottom: 1px solid #e0e1e2;
+}
+
+.dev-tools-gallery-brand i {
+    font-size: 18px;
+    color: dodgerblue;
+}
+
+.dev-tools-gallery-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    gap: 2px;
+}
+
+.dev-tools-gallery-nav-item {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #1a1a1a;
+    background-color: transparent;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.dev-tools-gallery-nav-item:hover {
+    background-color: #eceded;
+}
+
+.dev-tools-gallery-nav-item.active {
+    color: dodgerblue;
+    background-color: #eaf3ff;
+    font-weight: 600;
+}
+
+.dev-tools-gallery-main {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+}
