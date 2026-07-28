@@ -1,6 +1,7 @@
 import React, {useRef, useState} from "react";
 
 import './SideBarBodyItem.css'
+import {useSideBarCollapsedTooltip} from "../../SideBarContext";
 
 interface Props {
 	label: string,
@@ -35,6 +36,10 @@ export const SideBarBodyItem: React.FC<Props> = ({
 													 onClick}) => {
 
 	const rightSideRef = useRef<HTMLDivElement | null>(null);
+
+	const itemRef = useRef<HTMLDivElement | null>(null);
+
+	useSideBarCollapsedTooltip(itemRef, label);
 
 	const isDescendantOf = (parent:HTMLElement | null, child:HTMLElement | null) =>{
 		if (parent && child) {
@@ -76,6 +81,7 @@ export const SideBarBodyItem: React.FC<Props> = ({
 
 	return (
 		<div
+			ref={itemRef}
 			style={active ? activeStyle : style}
 			onMouseEnter={mouseEntered}
 			onMouseLeave={mouseLeave}

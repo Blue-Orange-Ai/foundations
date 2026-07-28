@@ -1,6 +1,7 @@
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 
 import './SideBarBodyItemLink.css'
+import {useSideBarCollapsedTooltip} from "../../SideBarContext";
 
 interface Props {
 	label: string,
@@ -38,6 +39,10 @@ export const SideBarBodyItemLink: React.FC<Props> = ({
 
 	const [isHovered, setIsHovered] = useState(false);
 
+	const itemRef = useRef<HTMLAnchorElement | null>(null);
+
+	useSideBarCollapsedTooltip(itemRef, label);
+
 	const itemClicked = () => {
 		if (onClick) {
 			onClick()
@@ -54,6 +59,7 @@ export const SideBarBodyItemLink: React.FC<Props> = ({
 
 	return (
 		<a
+			ref={itemRef}
 			href={href}
 			style={active ? activeStyle : style}
 			onMouseEnter={mouseEntered}

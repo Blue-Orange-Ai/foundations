@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 
 import './SideBar.css'
 import Cookies from "js-cookie";
@@ -11,6 +11,7 @@ import {SideBarBodyItem} from "../items/sidebar-body-item/SideBarBodyItem";
 import {SideBarBodyItemLink} from "../items/sidebar-body-item-link/SideBarBodyItemLink";
 import {SideBarBodyLabel} from "../items/sidebar-body-label/SideBarBodyLabel";
 import {Input} from "../../../inputs/input/Input";
+import {SideBarContext} from "../SideBarContext";
 
 export enum SideBarState {
 	CLOSED,
@@ -24,6 +25,12 @@ interface Props {
 	openWidth?: number;
 	resizable?: boolean;
 	filter?: boolean;
+	/**
+	 * Force every group open while the sidebar is collapsed. Collapsed groups
+	 * hide their header, so without this the items inside a closed group would
+	 * have no icon in the rail at all.
+	 */
+	expandGroupsOnCollapse?: boolean;
 	changeState?: (state: SideBarState) => void;
 }
 
@@ -34,6 +41,7 @@ export const SideBar: React.FC<Props> = ({
 											 openWidth=250,
 											 resizable=true,
 											 filter = true,
+											 expandGroupsOnCollapse = true,
 											 changeState}) => {
 
 	const headerItems: React.ReactNode[] = [];
@@ -241,29 +249,38 @@ export const SideBar: React.FC<Props> = ({
 		sideBarState.current = state;
 	}, [state]);
 
+	// Memoised so resizing the sidebar does not re-render every item through
+	// a fresh context value.
+	const sidebarContext = useMemo(() => ({
+		collapsed: state == SideBarState.CLOSED,
+		expandGroupsOnCollapse: expandGroupsOnCollapse
+	}), [state, expandGroupsOnCollapse]);
+
 	return (
-		<div
-			ref={sidebarRef}
-			className={state == SideBarState.OPEN ? "blue-orange-sidebar" : "blue-orange-sidebar blue-orange-sidebar-closed"}
-			style={{width: width + "px"}}>
-			<div className="blue-orange-sidebar-header">{headerItems}</div>
-			<div className="blue-orange-sidebar-body">
-				{filter && state == SideBarState.OPEN &&
-					<div className="blue-orange-sidebar-body-filter">
-						<Input
-							value={bodySearchQuery}
-							placeholder={"Filter..."}
-							style={{height: "32px", fontSize: "14px"}}
-							onChange={setBodySearchQuery}
-						></Input>
+		<SideBarContext.Provider value={sidebarContext}>
+			<div
+				ref={sidebarRef}
+				className={state == SideBarState.OPEN ? "blue-orange-sidebar" : "blue-orange-sidebar blue-orange-sidebar-closed"}
+				style={{width: width + "px"}}>
+				<div className="blue-orange-sidebar-header">{headerItems}</div>
+				<div className="blue-orange-sidebar-body">
+					{filter && state == SideBarState.OPEN &&
+						<div className="blue-orange-sidebar-body-filter">
+							<Input
+								value={bodySearchQuery}
+								placeholder={"Filter..."}
+								style={{height: "32px", fontSize: "14px"}}
+								onChange={setBodySearchQuery}
+							></Input>
+						</div>
+					}
+					<div className="blue-orange-sidebar-body-list">
+						{searchedBodyItems}
 					</div>
-				}
-				<div className="blue-orange-sidebar-body-list">
-					{searchedBodyItems}
 				</div>
+				<div className="blue-orange-sidebar-footer">{footerItems}</div>
+				<div ref={sidebarControlRef} className={resizable ? "blue-orange-sidebar-control" : "blue-orange-sidebar-control-disabled"}></div>
 			</div>
-			<div className="blue-orange-sidebar-footer">{footerItems}</div>
-			<div ref={sidebarControlRef} className={resizable ? "blue-orange-sidebar-control" : "blue-orange-sidebar-control-disabled"}></div>
-		</div>
+		</SideBarContext.Provider>
 	)
 }

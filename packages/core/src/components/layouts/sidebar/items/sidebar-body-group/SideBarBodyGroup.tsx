@@ -7,6 +7,7 @@ import {SideBarBodyItemLink} from "../sidebar-body-item-link/SideBarBodyItemLink
 import {Accordion} from "../../../../accordion/accordion/Accordion";
 import {AccordionHeader} from "../../../../accordion/accordion-header/AccordionHeader";
 import {AccordionBody} from "../../../../accordion/accordion-body/AccordionBody";
+import {useSideBar} from "../../SideBarContext";
 
 
 
@@ -28,6 +29,14 @@ export const SideBarBodyGroup: React.FC<Props> = ({
 	const initialisedRef = useRef<boolean>(false);
 
     const [internalOpened, setInternalOpened] = useState<boolean>(opened);
+
+	const {collapsed, expandGroupsOnCollapse} = useSideBar();
+
+	// The collapsed sidebar hides group headers, so a closed group would hide
+	// its items' icons entirely. Forcing the accordion open is derived rather
+	// than stored, which leaves the caller's own opened state untouched and
+	// restores it as soon as the sidebar reopens.
+	const effectiveOpened = (collapsed && expandGroupsOnCollapse) || internalOpened;
 
     const headerItems: React.ReactNode[] = [];
 
@@ -112,8 +121,8 @@ export const SideBarBodyGroup: React.FC<Props> = ({
     }, [opened]);
 
 	return (
-		<div style={{paddingLeft: "10px", width: "calc(100% - 10px)"}}>
-			<Accordion opened={internalOpened}>
+		<div className="blue-orange-sidebar-body-group">
+			<Accordion opened={effectiveOpened}>
 				<AccordionHeader>{headerItems}</AccordionHeader>
 				<AccordionBody>{sortedBodyItems}</AccordionBody>
 			</Accordion>

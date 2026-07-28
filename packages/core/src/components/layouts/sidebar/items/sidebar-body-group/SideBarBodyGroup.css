@@ -1,0 +1,14 @@
+
+
+.blue-orange-sidebar-body-group {
+    padding-left: 10px;
+    width: calc(100% - 10px);
+}
+
+/* Collapsed the sidebar shows nothing but icons, so the group indentation is
+   dropped — it would nudge nested icons off centre, and compound with every
+   level of nesting. */
+.blue-orange-sidebar-closed .blue-orange-sidebar-body-group {
+    padding-left: 0px;
+    width: 100%;
+}
