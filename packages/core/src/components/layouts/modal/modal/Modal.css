@@ -12,6 +12,11 @@
     left: 0;
 }
 
+/* while animating out the modal is still mounted — let clicks through to the page underneath */
+.blue-orange-modal-window:not(.blue-orange-modal-window-open) {
+    pointer-events: none;
+}
+
 .blue-orange-modal-backdrop {
     position: absolute;
     width: 100%;
@@ -19,8 +24,13 @@
     top: 0;
     left: 0;
     background-color: black;
-    opacity: 0.6;
+    opacity: 0;
     z-index: 1;
+    transition: opacity 0.2s ease-out;
+}
+
+.blue-orange-modal-window-open .blue-orange-modal-backdrop {
+    opacity: 0.6;
 }
 
 .blue-orange-modal-content {
@@ -33,6 +43,21 @@
     background-color: var(--blue-orange-light-default-card-background);
     display: flex;
     flex-direction: column;
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+}
+
+.blue-orange-modal-window-open .blue-orange-modal-card {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .blue-orange-modal-backdrop,
+    .blue-orange-modal-card {
+        transition: none;
+    }
 }
 
 .dark .blue-orange-modal-card {

@@ -23,21 +23,25 @@ type OpenModal = "NONE" | "BASIC" | "FORM" | "WIDE" | "CONFIRM";
 
 const USAGE = `const [open, setOpen] = useState(false);
 
-{open &&
-    <Modal width={480} onClose={() => setOpen(false)}>
-        <ModalHeader label="Invite a teammate" onClose={() => setOpen(false)}></ModalHeader>
-        <ModalDescription description="They will receive an email invitation."></ModalDescription>
-        <ModalBody>
-            <Input label="Email" placeholder="person@company.com"></Input>
-        </ModalBody>
-        <ModalFooter>
-            <ModalFooterLeft>
-                <Button text="Cancel" buttonType={ButtonType.CLEAR} onClick={() => setOpen(false)}></Button>
-            </ModalFooterLeft>
-            <ModalFooterRight>
-                <Button text="Send invite" buttonType={ButtonType.PRIMARY}></Button>
-            </ModalFooterRight>
-        </ModalFooter>
+<Modal open={open} width={480} onClose={() => setOpen(false)}>
+    <ModalHeader label="Invite a teammate" onClose={() => setOpen(false)}></ModalHeader>
+    <ModalDescription description="They will receive an email invitation."></ModalDescription>
+    <ModalBody>
+        <Input label="Email" placeholder="person@company.com"></Input>
+    </ModalBody>
+    <ModalFooter>
+        <ModalFooterLeft>
+            <Button text="Cancel" buttonType={ButtonType.CLEAR} onClick={() => setOpen(false)}></Button>
+        </ModalFooterLeft>
+        <ModalFooterRight>
+            <Button text="Send invite" buttonType={ButtonType.PRIMARY}></Button>
+        </ModalFooterRight>
+    </ModalFooter>
+</Modal>`;
+
+const UNCONTROLLED_USAGE = `{open &&
+    <Modal onClose={() => setOpen(false)}>
+        ...
     </Modal>
 }`;
 
@@ -52,8 +56,12 @@ export const ModalDevelopment: React.FC<Props> = ({}) => {
 			<PageHeading>Modal</PageHeading>
 			<Paragraph>
 				A modal renders over the page with its own backdrop. Clicking the backdrop, the header's close icon or
-				any of your own buttons calls back through onClose — the modal itself holds no open state, the caller
-				decides when it is mounted.
+				any of your own buttons calls back through onClose — the caller decides what open is next.
+			</Paragraph>
+			<Paragraph>
+				Pass a single boolean through open to control it. The modal stays mounted while it animates out, so
+				closing fades and scales back down instead of disappearing. Leaving open off keeps the old behaviour —
+				rendering the modal means it is open, and unmounting it removes it with no closing animation.
 			</Paragraph>
 
 			<div className="modal-dev-section">
@@ -72,80 +80,80 @@ export const ModalDevelopment: React.FC<Props> = ({}) => {
 
 			<div className="modal-dev-section">
 				<FormHeading label="Usage"></FormHeading>
+				<Paragraph>
+					One boolean opens and closes the modal, and both animations run off it.
+				</Paragraph>
 				<CodeBlock value={{code: USAGE, lang: "tsx"}}></CodeBlock>
+				<Paragraph>
+					Mounting the modal conditionally still works — it opens with the same animation, but React removes
+					it before the closing one can run.
+				</Paragraph>
+				<CodeBlock value={{code: UNCONTROLLED_USAGE, lang: "tsx"}}></CodeBlock>
 			</div>
 
-			{open === "BASIC" &&
-				<Modal onClose={close}>
-					<ModalHeader label="Basic modal" onClose={close}></ModalHeader>
-					<ModalBody>
-						<Paragraph>
-							The default width is 375px. Everything between the header and the footer is yours.
-						</Paragraph>
-					</ModalBody>
-					<ModalFooter>
-						<ModalFooterRight>
-							<Button text="Close" buttonType={ButtonType.PRIMARY} onClick={close}></Button>
-						</ModalFooterRight>
-					</ModalFooter>
-				</Modal>
-			}
+			<Modal open={open === "BASIC"} onClose={close}>
+				<ModalHeader label="Basic modal" onClose={close}></ModalHeader>
+				<ModalBody>
+					<Paragraph>
+						The default width is 375px. Everything between the header and the footer is yours.
+					</Paragraph>
+				</ModalBody>
+				<ModalFooter>
+					<ModalFooterRight>
+						<Button text="Close" buttonType={ButtonType.PRIMARY} onClick={close}></Button>
+					</ModalFooterRight>
+				</ModalFooter>
+			</Modal>
 
-			{open === "FORM" &&
-				<Modal width={480} onClose={close}>
-					<ModalHeader label="Invite a teammate" onClose={close}></ModalHeader>
-					<ModalDescription description="They will receive an email invitation."></ModalDescription>
-					<ModalBody>
-						<Input label="Full name" placeholder="Ada Lovelace"></Input>
-						<div style={{height: "12px"}}></div>
-						<Input label="Email" placeholder="person@company.com" isEmail={true}></Input>
-					</ModalBody>
-					<ModalFooter>
-						<ModalFooterLeft>
-							<Button text="Cancel" buttonType={ButtonType.CLEAR} onClick={close}></Button>
-						</ModalFooterLeft>
-						<ModalFooterRight>
-							<Button text="Send invite" buttonType={ButtonType.PRIMARY} onClick={close}></Button>
-						</ModalFooterRight>
-					</ModalFooter>
-				</Modal>
-			}
+			<Modal open={open === "FORM"} width={480} onClose={close}>
+				<ModalHeader label="Invite a teammate" onClose={close}></ModalHeader>
+				<ModalDescription description="They will receive an email invitation."></ModalDescription>
+				<ModalBody>
+					<Input label="Full name" placeholder="Ada Lovelace"></Input>
+					<div style={{height: "12px"}}></div>
+					<Input label="Email" placeholder="person@company.com" isEmail={true}></Input>
+				</ModalBody>
+				<ModalFooter>
+					<ModalFooterLeft>
+						<Button text="Cancel" buttonType={ButtonType.CLEAR} onClick={close}></Button>
+					</ModalFooterLeft>
+					<ModalFooterRight>
+						<Button text="Send invite" buttonType={ButtonType.PRIMARY} onClick={close}></Button>
+					</ModalFooterRight>
+				</ModalFooter>
+			</Modal>
 
-			{open === "WIDE" &&
-				<Modal width={720} minHeight={320} onClose={close}>
-					<ModalHeader label="Wide modal" onClose={close}></ModalHeader>
-					<ModalDescription description="width and minHeight size the card."></ModalDescription>
-					<ModalBody>
-						<Paragraph>
-							Use a wider card for side by side content, tables or anything that reads badly in a narrow
-							column.
-						</Paragraph>
-					</ModalBody>
-					<ModalFooter>
-						<ModalFooterRight>
-							<Button text="Done" buttonType={ButtonType.PRIMARY} onClick={close}></Button>
-						</ModalFooterRight>
-					</ModalFooter>
-				</Modal>
-			}
+			<Modal open={open === "WIDE"} width={720} minHeight={320} onClose={close}>
+				<ModalHeader label="Wide modal" onClose={close}></ModalHeader>
+				<ModalDescription description="width and minHeight size the card."></ModalDescription>
+				<ModalBody>
+					<Paragraph>
+						Use a wider card for side by side content, tables or anything that reads badly in a narrow
+						column.
+					</Paragraph>
+				</ModalBody>
+				<ModalFooter>
+					<ModalFooterRight>
+						<Button text="Done" buttonType={ButtonType.PRIMARY} onClick={close}></Button>
+					</ModalFooterRight>
+				</ModalFooter>
+			</Modal>
 
-			{open === "CONFIRM" &&
-				<Modal onClose={close}>
-					<ModalHeader label="Delete workspace" onClose={close}></ModalHeader>
-					<ModalDescription description="This cannot be undone."></ModalDescription>
-					<ModalBody>
-						<Paragraph>Every project, file and comment in this workspace will be removed.</Paragraph>
-					</ModalBody>
-					<ModalFooter>
-						<ModalFooterLeft>
-							<Button text="Cancel" buttonType={ButtonType.CLEAR} onClick={close}></Button>
-						</ModalFooterLeft>
-						<ModalFooterRight>
-							<Button text="Delete" buttonType={ButtonType.DANGER} onClick={close}></Button>
-						</ModalFooterRight>
-					</ModalFooter>
-				</Modal>
-			}
+			<Modal open={open === "CONFIRM"} onClose={close}>
+				<ModalHeader label="Delete workspace" onClose={close}></ModalHeader>
+				<ModalDescription description="This cannot be undone."></ModalDescription>
+				<ModalBody>
+					<Paragraph>Every project, file and comment in this workspace will be removed.</Paragraph>
+				</ModalBody>
+				<ModalFooter>
+					<ModalFooterLeft>
+						<Button text="Cancel" buttonType={ButtonType.CLEAR} onClick={close}></Button>
+					</ModalFooterLeft>
+					<ModalFooterRight>
+						<Button text="Delete" buttonType={ButtonType.DANGER} onClick={close}></Button>
+					</ModalFooterRight>
+				</ModalFooter>
+			</Modal>
 		</PaddedPage>
 	)
 }

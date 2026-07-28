@@ -12,6 +12,11 @@
     left: 0;
 }
 
+/* while animating out the drawer is still mounted — let clicks through to the page underneath */
+.blue-orange-drawer-window:not(.blue-orange-drawer-window-open) {
+    pointer-events: none;
+}
+
 .blue-orange-drawer-backdrop {
     position: absolute;
     width: 100%;
@@ -19,8 +24,13 @@
     top: 0;
     left: 0;
     background-color: black;
-    opacity: 0.6;
+    opacity: 0;
     z-index: 1;
+    transition: opacity 0.2s ease-out;
+}
+
+.blue-orange-drawer-window-open .blue-orange-drawer-backdrop {
+    opacity: 0.6;
 }
 
 .blue-orange-drawer-content {
@@ -89,5 +99,15 @@
 }
 
 .blue-orange-drawer-card-enter {
-    transform: translateX(0);
+    transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .blue-orange-drawer-backdrop,
+    .blue-orange-drawer-card-right,
+    .blue-orange-drawer-card-left,
+    .blue-orange-drawer-card-top,
+    .blue-orange-drawer-card-bottom {
+        transition: none;
+    }
 }
