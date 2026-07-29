@@ -1,0 +1,46 @@
+.blue-orange-hover-card-development-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.blue-orange-hover-card-development-mention {
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.blue-orange-hover-card-development-profile {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+}
+
+.blue-orange-hover-card-development-initials {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--blue-orange-light-empty-media-background-color);
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+
+.dark .blue-orange-hover-card-development-initials {
+    background-color: var(--blue-orange-dark-empty-media-background-color);
+}
+
+.blue-orange-hover-card-development-name {
+    font-weight: 700;
+}
+
+.blue-orange-hover-card-development-handle {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}

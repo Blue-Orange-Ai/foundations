@@ -1,0 +1,12 @@
+.blue-orange-card-development-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.blue-orange-card-development-metric {
+    font-size: 1.75rem;
+    font-weight: 700;
+}

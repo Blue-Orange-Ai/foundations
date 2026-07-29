@@ -1,0 +1,10 @@
+.blue-orange-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--blue-orange-light-card-color);
+}
+
+.dark .blue-orange-card-title {
+    color: var(--blue-orange-dark-card-color);
+}

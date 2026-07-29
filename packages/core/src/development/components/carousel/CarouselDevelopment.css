@@ -1,0 +1,30 @@
+.blue-orange-carousel-development-block {
+    max-width: 640px;
+    margin-bottom: 8px;
+}
+
+.blue-orange-carousel-development-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 160px;
+    border-radius: 8px;
+    border: 1px solid var(--blue-orange-light-default-border-color);
+    background-color: var(--blue-orange-light-default-card-background);
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.dark .blue-orange-carousel-development-slide {
+    border: 1px solid var(--blue-orange-dark-default-border-color);
+    background-color: var(--blue-orange-dark-default-card-background);
+}
+
+.blue-orange-carousel-development-vertical {
+    height: 260px;
+    max-width: 320px;
+}
+
+.blue-orange-carousel-development-vertical .blue-orange-carousel-development-slide {
+    height: 120px;
+}

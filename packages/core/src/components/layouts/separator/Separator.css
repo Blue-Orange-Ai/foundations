@@ -1,0 +1,37 @@
+.blue-orange-separator {
+    background-color: var(--blue-orange-light-separator-color);
+    flex-shrink: 0;
+}
+
+.dark .blue-orange-separator {
+    background-color: var(--blue-orange-dark-separator-color);
+}
+
+.blue-orange-separator-horizontal {
+    width: 100%;
+    height: 1px;
+}
+
+.blue-orange-separator-vertical {
+    width: 1px;
+    align-self: stretch;
+    min-height: 16px;
+}
+
+.blue-orange-separator-labelled {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.blue-orange-separator-label {
+    font-size: 0.75rem;
+    white-space: nowrap;
+    color: var(--blue-orange-light-separator-label-color);
+}
+
+.dark .blue-orange-separator-label {
+    color: var(--blue-orange-dark-separator-label-color);
+}

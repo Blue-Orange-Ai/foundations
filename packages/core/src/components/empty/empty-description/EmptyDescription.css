@@ -1,0 +1,9 @@
+.blue-orange-empty-description {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--blue-orange-light-muted-text-color);
+}
+
+.dark .blue-orange-empty-description {
+    color: var(--blue-orange-dark-muted-text-color);
+}

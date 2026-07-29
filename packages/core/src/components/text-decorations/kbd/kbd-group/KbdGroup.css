@@ -1,0 +1,15 @@
+.blue-orange-kbd-group {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+}
+
+.blue-orange-kbd-group-separator {
+    font-size: 0.75rem;
+    color: var(--blue-orange-light-muted-text-color);
+}
+
+.dark .blue-orange-kbd-group-separator {
+    color: var(--blue-orange-dark-muted-text-color);
+}

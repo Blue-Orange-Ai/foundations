@@ -1,0 +1,7 @@
+.blue-orange-card-content {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.875rem;
+    flex-grow: 1;
+    min-width: 0;
+}

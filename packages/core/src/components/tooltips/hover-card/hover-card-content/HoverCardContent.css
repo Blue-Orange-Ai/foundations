@@ -1,0 +1,35 @@
+.blue-orange-hover-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--blue-orange-light-hover-card-border-color);
+    background-color: var(--blue-orange-light-hover-card-background-color);
+    color: var(--blue-orange-light-hover-card-color);
+    font-size: 0.875rem;
+    animation: blue-orange-hover-card-in 0.15s ease-out;
+}
+
+.dark .blue-orange-hover-card-content {
+    border: 1px solid var(--blue-orange-dark-hover-card-border-color);
+    background-color: var(--blue-orange-dark-hover-card-background-color);
+    color: var(--blue-orange-dark-hover-card-color);
+}
+
+@keyframes blue-orange-hover-card-in {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .blue-orange-hover-card-content {
+        animation: none;
+    }
+}

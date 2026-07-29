@@ -1,0 +1,50 @@
+.blue-orange-carousel {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.blue-orange-carousel:focus-visible {
+    outline: 2px solid var(--blue-orange-light-active-border-color);
+    outline-offset: 2px;
+}
+
+.blue-orange-carousel-vertical {
+    flex-direction: column;
+}
+
+/* shared by CarouselPrevious and CarouselNext — defined here so the styling is
+   loaded whenever a carousel is, whichever controls are used */
+.blue-orange-carousel-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--blue-orange-light-carousel-control-border-color);
+    background-color: var(--blue-orange-light-carousel-control-background-color);
+    color: var(--blue-orange-light-carousel-control-color);
+    font-size: 1.125rem;
+    cursor: pointer;
+}
+
+.dark .blue-orange-carousel-control {
+    border: 1px solid var(--blue-orange-dark-carousel-control-border-color);
+    background-color: var(--blue-orange-dark-carousel-control-background-color);
+    color: var(--blue-orange-dark-carousel-control-color);
+}
+
+.blue-orange-carousel-control:focus-visible {
+    outline: 2px solid var(--blue-orange-light-active-border-color);
+    outline-offset: 2px;
+}
+
+.blue-orange-carousel-control-disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+}

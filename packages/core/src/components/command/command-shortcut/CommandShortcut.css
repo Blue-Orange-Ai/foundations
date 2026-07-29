@@ -1,0 +1,14 @@
+.blue-orange-command-shortcut {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    padding-left: 12px;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: var(--blue-orange-light-muted-text-color);
+}
+
+.dark .blue-orange-command-shortcut {
+    color: var(--blue-orange-dark-muted-text-color);
+}

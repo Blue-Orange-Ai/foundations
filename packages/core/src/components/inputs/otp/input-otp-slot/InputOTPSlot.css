@@ -1,0 +1,60 @@
+.blue-orange-input-otp-slot {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 44px;
+    border: 1px solid var(--blue-orange-light-input-otp-border-color);
+    border-radius: 6px;
+    background-color: var(--blue-orange-light-input-otp-background-color);
+    color: var(--blue-orange-light-input-otp-color);
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: text;
+}
+
+.dark .blue-orange-input-otp-slot {
+    border: 1px solid var(--blue-orange-dark-input-otp-border-color);
+    background-color: var(--blue-orange-dark-input-otp-background-color);
+    color: var(--blue-orange-dark-input-otp-color);
+}
+
+.blue-orange-input-otp-slot-active {
+    z-index: 1;
+    border-color: var(--blue-orange-light-input-otp-active-border-color);
+    box-shadow: 0 0 0 1px var(--blue-orange-light-input-otp-active-border-color);
+}
+
+.dark .blue-orange-input-otp-slot-active {
+    border-color: var(--blue-orange-dark-input-otp-active-border-color);
+    box-shadow: 0 0 0 1px var(--blue-orange-dark-input-otp-active-border-color);
+}
+
+.blue-orange-input-otp-slot-error {
+    border-color: var(--blue-orange-light-input-error-border-color);
+}
+
+.dark .blue-orange-input-otp-slot-error {
+    border-color: var(--blue-orange-dark-input-error-border-color);
+}
+
+@keyframes blue-orange-input-otp-caret-blink {
+    0%, 49% {
+        opacity: 1;
+    }
+    50%, 100% {
+        opacity: 0;
+    }
+}
+
+.blue-orange-input-otp-caret {
+    width: 1px;
+    height: 18px;
+    background-color: var(--blue-orange-light-input-otp-color);
+    animation: blue-orange-input-otp-caret-blink 1s step-end infinite;
+}
+
+.dark .blue-orange-input-otp-caret {
+    background-color: var(--blue-orange-dark-input-otp-color);
+}

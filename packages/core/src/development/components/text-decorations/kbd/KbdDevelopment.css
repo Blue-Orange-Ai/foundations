@@ -1,0 +1,17 @@
+.blue-orange-kbd-development-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.blue-orange-kbd-development-sentence {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 0.875rem;
+}

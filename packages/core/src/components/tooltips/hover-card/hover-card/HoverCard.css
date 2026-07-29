@@ -1,0 +1,14 @@
+.blue-orange-hover-card {
+    display: inline-block;
+    width: fit-content;
+}
+
+.blue-orange-hover-card-trigger-cont {
+    display: inline-block;
+    width: fit-content;
+}
+
+.blue-orange-hover-card-panel {
+    position: fixed;
+    z-index: 99999999;
+}

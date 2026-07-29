@@ -1,0 +1,13 @@
+.blue-orange-pagination-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+    color: var(--blue-orange-light-muted-text-color);
+}
+
+.dark .blue-orange-pagination-ellipsis {
+    color: var(--blue-orange-dark-muted-text-color);
+}

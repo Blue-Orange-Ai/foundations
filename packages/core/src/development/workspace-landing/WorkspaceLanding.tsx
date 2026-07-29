@@ -98,6 +98,20 @@ import {SearchPlaygroundDevelopment} from "../components/search/search-playgroun
 import {MetricsGroupDevelopment} from "../components/metrics/metrics-group/MetricsGroupDevelopment";
 import {ValidationDevelopment} from "../components/inputs/validation/ValidationDevelopment";
 import {FormGroupDevelopment} from "../components/inputs/form-group/FormGroupDevelopment";
+import {CardDevelopment} from "../components/card/CardDevelopment";
+import {CarouselDevelopment} from "../components/carousel/CarouselDevelopment";
+import {CommandDevelopment} from "../components/command/CommandDevelopment";
+import {EmptyDevelopment} from "../components/empty/EmptyDevelopment";
+import {MenubarDevelopment} from "../components/menubar/MenubarDevelopment";
+import {NavigationMenuDevelopment} from "../components/navigation-menu/NavigationMenuDevelopment";
+import {PaginationDevelopment} from "../components/pagination/PaginationDevelopment";
+import {SpinnerDevelopment} from "../components/loading/spinner/SpinnerDevelopment";
+import {SliderDevelopment} from "../components/inputs/slider/SliderDevelopment";
+import {OTPInputDevelopment} from "../components/inputs/otp-input/OTPInputDevelopment";
+import {KbdDevelopment} from "../components/text-decorations/kbd/KbdDevelopment";
+import {SeparatorDevelopment} from "../components/layouts/separator/SeparatorDevelopment";
+import {ButtonTabsDevelopment} from "../components/layouts/button-tabs/ButtonTabsDevelopment";
+import {HoverCardDevelopment} from "../components/tooltips/hover-card/HoverCardDevelopment";
 
 interface Props {
 }
@@ -235,6 +249,24 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						onClick={() => navigate("/buttons")}
 						icon={<i className="ri-radio-button-line"></i>}
 					></SideBarBodyItem>
+					<SideBarBodyItem
+						label={"Card"}
+						active={component == "card"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-square-line"></i>}
+						onClick={() => navigate("/card")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
+						label={"Carousel"}
+						active={component == "carousel"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-slideshow-line"></i>}
+						onClick={() => navigate("/carousel")}
+					></SideBarBodyItem>
 					<SideBarBodyGroup opened={sidebarChartState} openOnActiveChild={true} onOpenedChange={setSidebarChartState}>
 						<SideBarBodyLabel
 							icon={sidebarChartState ? <i className={"ri-arrow-down-s-fill"}></i> : <i className={"ri-arrow-right-s-fill"}></i>}
@@ -305,6 +337,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						></SideBarBodyItem>
 					</SideBarBodyGroup>
 					<SideBarBodyItem
+						label={"Command"}
+						active={component == "command"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-terminal-box-line"></i>}
+						onClick={() => navigate("/command")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
 						label={"Context Menu"}
 						active={component == "context-menu"}
 						focused={false}
@@ -312,6 +353,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						activeStyle={activeStyle}
 						icon={<i className="ri-menu-line"></i>}
 						onClick={() => navigate("/context-menu")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
+						label={"Empty"}
+						active={component == "empty"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-inbox-line"></i>}
+						onClick={() => navigate("/empty")}
 					></SideBarBodyItem>
 					<SideBarBodyItem
 						label={"File System"}
@@ -562,6 +612,24 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							icon={<i className="ri-toggle-line"></i>}
 							onClick={() => navigate("/inputs-toggle")}
 						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"OTP Input"}
+							active={component == "inputs-otp"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-shield-keyhole-line"></i>}
+							onClick={() => navigate("/inputs-otp")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Slider Input"}
+							active={component == "inputs-slider"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-equalizer-line"></i>}
+							onClick={() => navigate("/inputs-slider")}
+						></SideBarBodyItem>
 					</SideBarBodyGroup>
 					<SideBarBodyGroup opened={sidebarLayoutState} openOnActiveChild={true} onOpenedChange={setSidebarLayoutState}>
 						<SideBarBodyLabel
@@ -595,6 +663,24 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							activeStyle={activeStyle}
 							icon={<i className="ri-layout-top-line"></i>}
 							onClick={() => navigate("/layouts-tabs")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Button Tabs"}
+							active={component == "layouts-button-tabs"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-layout-row-line"></i>}
+							onClick={() => navigate("/layouts-button-tabs")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Separator"}
+							active={component == "layouts-separator"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-separator"></i>}
+							onClick={() => navigate("/layouts-separator")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
 							label={"Pages & Splits"}
@@ -641,6 +727,42 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						activeStyle={activeStyle}
 						icon={<i className="ri-loader-4-line"></i>}
 						onClick={() => navigate("/loading")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
+						label={"Spinner"}
+						active={component == "spinner"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-loader-2-line"></i>}
+						onClick={() => navigate("/spinner")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
+						label={"Menubar"}
+						active={component == "menubar"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-menu-2-line"></i>}
+						onClick={() => navigate("/menubar")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
+						label={"Navigation Menu"}
+						active={component == "navigation-menu"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-navigation-line"></i>}
+						onClick={() => navigate("/navigation-menu")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
+						label={"Pagination"}
+						active={component == "pagination"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-more-line"></i>}
+						onClick={() => navigate("/pagination")}
 					></SideBarBodyItem>
 					<SideBarBodyItem
 						label={"Media"}
@@ -721,6 +843,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/tooltips-advanced")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
+							label={"Hover Card"}
+							active={component == "tooltips-hover-card"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-profile-line"></i>}
+							onClick={() => navigate("/tooltips-hover-card")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
 							label={"Simple Tooltip"}
 							active={component == "tooltips-simple"}
 							focused={false}
@@ -787,6 +918,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							activeStyle={activeStyle}
 							icon={<i className="ri-price-tag-2-line"></i>}
 							onClick={() => navigate("/text-decoration-badge")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Kbd"}
+							active={component == "text-decoration-kbd"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-keyboard-box-line"></i>}
+							onClick={() => navigate("/text-decoration-kbd")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
 							label={"Code Block"}
@@ -1065,6 +1205,20 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "inputs-file-upload-table" && <FileUploadTableDevelopment></FileUploadTableDevelopment>}
 			{component == "inputs-help" && <HelpTooltipDevelopment></HelpTooltipDevelopment>}
 			{component == "table-objects" && <ObjectTableDevelopment></ObjectTableDevelopment>}
+			{component == "card" && <CardDevelopment></CardDevelopment>}
+			{component == "carousel" && <CarouselDevelopment></CarouselDevelopment>}
+			{component == "command" && <CommandDevelopment></CommandDevelopment>}
+			{component == "empty" && <EmptyDevelopment></EmptyDevelopment>}
+			{component == "menubar" && <MenubarDevelopment></MenubarDevelopment>}
+			{component == "navigation-menu" && <NavigationMenuDevelopment></NavigationMenuDevelopment>}
+			{component == "pagination" && <PaginationDevelopment></PaginationDevelopment>}
+			{component == "spinner" && <SpinnerDevelopment></SpinnerDevelopment>}
+			{component == "inputs-slider" && <SliderDevelopment></SliderDevelopment>}
+			{component == "inputs-otp" && <OTPInputDevelopment></OTPInputDevelopment>}
+			{component == "text-decoration-kbd" && <KbdDevelopment></KbdDevelopment>}
+			{component == "layouts-separator" && <SeparatorDevelopment></SeparatorDevelopment>}
+			{component == "layouts-button-tabs" && <ButtonTabsDevelopment></ButtonTabsDevelopment>}
+			{component == "tooltips-hover-card" && <HoverCardDevelopment></HoverCardDevelopment>}
 		</SidebarPage>
 	)
 }

@@ -1,0 +1,15 @@
+.blue-orange-card-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.blue-orange-card-footer-separated {
+    padding-top: 16px;
+    border-top: 1px solid var(--blue-orange-light-card-border-color);
+}
+
+.dark .blue-orange-card-footer-separated {
+    border-top: 1px solid var(--blue-orange-dark-card-border-color);
+}

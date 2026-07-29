@@ -1,0 +1,64 @@
+.blue-orange-navigation-menu-link {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    color: var(--blue-orange-light-navigation-menu-color);
+}
+
+.dark .blue-orange-navigation-menu-link {
+    color: var(--blue-orange-dark-navigation-menu-color);
+}
+
+.blue-orange-navigation-menu-link:hover {
+    background-color: var(--blue-orange-light-navigation-menu-hover-background-color);
+}
+
+.dark .blue-orange-navigation-menu-link:hover {
+    background-color: var(--blue-orange-dark-navigation-menu-hover-background-color);
+}
+
+.blue-orange-navigation-menu-link-active {
+    background-color: var(--blue-orange-light-navigation-menu-hover-background-color);
+}
+
+.dark .blue-orange-navigation-menu-link-active {
+    background-color: var(--blue-orange-dark-navigation-menu-hover-background-color);
+}
+
+.blue-orange-navigation-menu-link:focus-visible {
+    outline: 2px solid var(--blue-orange-light-active-border-color);
+    outline-offset: 1px;
+}
+
+.blue-orange-navigation-menu-link-icon {
+    font-size: 1.125rem;
+    line-height: 1.4;
+    opacity: 0.8;
+}
+
+.blue-orange-navigation-menu-link-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.blue-orange-navigation-menu-link-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.blue-orange-navigation-menu-link-description {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: var(--blue-orange-light-muted-text-color);
+}
+
+.dark .blue-orange-navigation-menu-link-description {
+    color: var(--blue-orange-dark-muted-text-color);
+}

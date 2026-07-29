@@ -1,0 +1,9 @@
+.blue-orange-command-separator {
+    height: 1px;
+    margin: 4px -4px;
+    background-color: var(--blue-orange-light-command-border-color);
+}
+
+.dark .blue-orange-command-separator {
+    background-color: var(--blue-orange-dark-command-border-color);
+}

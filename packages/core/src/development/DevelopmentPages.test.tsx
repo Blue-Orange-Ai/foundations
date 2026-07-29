@@ -13,6 +13,20 @@ import {TimeInputDevelopment} from "./components/inputs/time-input/TimeInputDeve
 import {EmailRecipientDevelopment} from "./components/inputs/email-recipient/EmailRecipientDevelopment";
 import {AvatarDevelopment} from "./components/avatar/AvatarDevelopment";
 import {ButtonDevelopment} from "./components/buttons/ButtonDevelopment";
+import {CardDevelopment} from "./components/card/CardDevelopment";
+import {CarouselDevelopment} from "./components/carousel/CarouselDevelopment";
+import {CommandDevelopment} from "./components/command/CommandDevelopment";
+import {EmptyDevelopment} from "./components/empty/EmptyDevelopment";
+import {MenubarDevelopment} from "./components/menubar/MenubarDevelopment";
+import {NavigationMenuDevelopment} from "./components/navigation-menu/NavigationMenuDevelopment";
+import {PaginationDevelopment} from "./components/pagination/PaginationDevelopment";
+import {SpinnerDevelopment} from "./components/loading/spinner/SpinnerDevelopment";
+import {SliderDevelopment} from "./components/inputs/slider/SliderDevelopment";
+import {OTPInputDevelopment} from "./components/inputs/otp-input/OTPInputDevelopment";
+import {KbdDevelopment} from "./components/text-decorations/kbd/KbdDevelopment";
+import {SeparatorDevelopment} from "./components/layouts/separator/SeparatorDevelopment";
+import {ButtonTabsDevelopment} from "./components/layouts/button-tabs/ButtonTabsDevelopment";
+import {HoverCardDevelopment} from "./components/tooltips/hover-card/HoverCardDevelopment";
 
 // Every page is rendered in both themes: a component that only styles itself for
 // light mode still renders, but these at least prove no page throws in either.
@@ -30,6 +44,20 @@ const PAGES: Array<[string, React.FC<any>]> = [
 	["Email Recipient Input", EmailRecipientDevelopment],
 	["Avatar", AvatarDevelopment],
 	["Buttons", ButtonDevelopment],
+	["Card", CardDevelopment],
+	["Carousel", CarouselDevelopment],
+	["Command", CommandDevelopment],
+	["Empty", EmptyDevelopment],
+	["Menubar", MenubarDevelopment],
+	["Navigation Menu", NavigationMenuDevelopment],
+	["Pagination", PaginationDevelopment],
+	["Spinner", SpinnerDevelopment],
+	["Slider", SliderDevelopment],
+	["OTP Input", OTPInputDevelopment],
+	["Kbd", KbdDevelopment],
+	["Separator", SeparatorDevelopment],
+	["Button Tabs", ButtonTabsDevelopment],
+	["Hover Card", HoverCardDevelopment],
 ];
 
 describe("development pages", () => {

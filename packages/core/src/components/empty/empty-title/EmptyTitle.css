@@ -1,0 +1,10 @@
+.blue-orange-empty-title {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--blue-orange-light-default-text-color);
+}
+
+.dark .blue-orange-empty-title {
+    color: var(--blue-orange-dark-default-text-color);
+}

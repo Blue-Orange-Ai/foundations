@@ -1,0 +1,16 @@
+.blue-orange-command {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid var(--blue-orange-light-command-border-color);
+    background-color: var(--blue-orange-light-command-background-color);
+    color: var(--blue-orange-light-command-color);
+}
+
+.dark .blue-orange-command {
+    border: 1px solid var(--blue-orange-dark-command-border-color);
+    background-color: var(--blue-orange-dark-command-background-color);
+    color: var(--blue-orange-dark-command-color);
+}

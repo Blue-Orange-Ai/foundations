@@ -1,0 +1,10 @@
+.blue-orange-input-otp-separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--blue-orange-light-muted-text-color);
+}
+
+.dark .blue-orange-input-otp-separator {
+    color: var(--blue-orange-dark-muted-text-color);
+}

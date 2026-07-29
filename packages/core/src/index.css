@@ -333,6 +333,122 @@
   --blue-orange-light-file-system-selected-row-color: white;
   --blue-orange-dark-file-system-selected-row-color: white;
 
+  /* Muted (secondary) text shared by the newer components */
+  --blue-orange-light-muted-text-color: #71717a;
+  --blue-orange-dark-muted-text-color: #a1a1aa;
+
+  --blue-orange-light-card-background-color: white;
+  --blue-orange-dark-card-background-color: #28282a;
+  --blue-orange-light-card-border-color: #e0e1e2;
+  --blue-orange-dark-card-border-color: #3f3f42;
+  --blue-orange-light-card-color: black;
+  --blue-orange-dark-card-color: white;
+
+  --blue-orange-light-carousel-control-background-color: white;
+  --blue-orange-dark-carousel-control-background-color: #28282a;
+  --blue-orange-light-carousel-control-border-color: #e0e1e2;
+  --blue-orange-dark-carousel-control-border-color: #3f3f42;
+  --blue-orange-light-carousel-control-color: black;
+  --blue-orange-dark-carousel-control-color: white;
+
+  --blue-orange-light-command-background-color: white;
+  --blue-orange-dark-command-background-color: #28282a;
+  --blue-orange-light-command-border-color: #e0e1e2;
+  --blue-orange-dark-command-border-color: #3f3f42;
+  --blue-orange-light-command-color: black;
+  --blue-orange-dark-command-color: white;
+  --blue-orange-light-command-item-active-background-color: #f4f4f5;
+  --blue-orange-dark-command-item-active-background-color: #3f3f42;
+  --blue-orange-light-command-group-label-color: #71717a;
+  --blue-orange-dark-command-group-label-color: #a1a1aa;
+
+  --blue-orange-light-empty-media-background-color: #f4f4f5;
+  --blue-orange-dark-empty-media-background-color: #3f3f42;
+  --blue-orange-light-empty-border-color: #e0e1e2;
+  --blue-orange-dark-empty-border-color: #3f3f42;
+
+  --blue-orange-light-hover-card-background-color: white;
+  --blue-orange-dark-hover-card-background-color: #28282a;
+  --blue-orange-light-hover-card-border-color: #e0e1e2;
+  --blue-orange-dark-hover-card-border-color: #3f3f42;
+  --blue-orange-light-hover-card-color: black;
+  --blue-orange-dark-hover-card-color: white;
+
+  --blue-orange-light-input-otp-background-color: white;
+  --blue-orange-dark-input-otp-background-color: #2a2a2c;
+  --blue-orange-light-input-otp-border-color: #e0e1e2;
+  --blue-orange-dark-input-otp-border-color: #3f3f42;
+  --blue-orange-light-input-otp-active-border-color: black;
+  --blue-orange-dark-input-otp-active-border-color: white;
+  --blue-orange-light-input-otp-color: black;
+  --blue-orange-dark-input-otp-color: white;
+
+  --blue-orange-light-kbd-background-color: #f4f4f5;
+  --blue-orange-dark-kbd-background-color: #3f3f42;
+  --blue-orange-light-kbd-border-color: #e0e1e2;
+  --blue-orange-dark-kbd-border-color: #4a4a4e;
+  --blue-orange-light-kbd-color: #52525b;
+  --blue-orange-dark-kbd-color: #e4e4e7;
+
+  --blue-orange-light-menubar-background-color: white;
+  --blue-orange-dark-menubar-background-color: #28282a;
+  --blue-orange-light-menubar-border-color: #e0e1e2;
+  --blue-orange-dark-menubar-border-color: #3f3f42;
+  --blue-orange-light-menubar-color: black;
+  --blue-orange-dark-menubar-color: white;
+  --blue-orange-light-menubar-trigger-hover-background-color: #f4f4f5;
+  --blue-orange-dark-menubar-trigger-hover-background-color: #3f3f42;
+  --blue-orange-light-menubar-trigger-active-background-color: #e0e1e2;
+  --blue-orange-dark-menubar-trigger-active-background-color: #47474a;
+
+  --blue-orange-light-navigation-menu-background-color: white;
+  --blue-orange-dark-navigation-menu-background-color: #28282a;
+  --blue-orange-light-navigation-menu-border-color: #e0e1e2;
+  --blue-orange-dark-navigation-menu-border-color: #3f3f42;
+  --blue-orange-light-navigation-menu-color: black;
+  --blue-orange-dark-navigation-menu-color: white;
+  --blue-orange-light-navigation-menu-hover-background-color: #f4f4f5;
+  --blue-orange-dark-navigation-menu-hover-background-color: #3f3f42;
+
+  --blue-orange-light-pagination-color: black;
+  --blue-orange-dark-pagination-color: white;
+  --blue-orange-light-pagination-hover-background-color: #f4f4f5;
+  --blue-orange-dark-pagination-hover-background-color: #3f3f42;
+  --blue-orange-light-pagination-active-background-color: black;
+  --blue-orange-dark-pagination-active-background-color: white;
+  --blue-orange-light-pagination-active-color: white;
+  --blue-orange-dark-pagination-active-color: black;
+  --blue-orange-light-pagination-border-color: #e0e1e2;
+  --blue-orange-dark-pagination-border-color: #3f3f42;
+
+  --blue-orange-light-separator-color: #e0e1e2;
+  --blue-orange-dark-separator-color: #3f3f42;
+  --blue-orange-light-separator-label-color: #71717a;
+  --blue-orange-dark-separator-label-color: #a1a1aa;
+
+  --blue-orange-light-slider-track-color: #e4e4e7;
+  --blue-orange-dark-slider-track-color: #3f3f42;
+  --blue-orange-light-slider-range-color: black;
+  --blue-orange-dark-slider-range-color: white;
+  --blue-orange-light-slider-thumb-background-color: white;
+  --blue-orange-dark-slider-thumb-background-color: #1e1e1e;
+  --blue-orange-light-slider-thumb-border-color: black;
+  --blue-orange-dark-slider-thumb-border-color: white;
+
+  --blue-orange-light-spinner-color: black;
+  --blue-orange-dark-spinner-color: white;
+
+  --blue-orange-light-button-tabs-background-color: #f4f4f5;
+  --blue-orange-dark-button-tabs-background-color: #28282a;
+  --blue-orange-light-button-tabs-border-color: #e0e1e2;
+  --blue-orange-dark-button-tabs-border-color: #3f3f42;
+  --blue-orange-light-button-tabs-color: #71717a;
+  --blue-orange-dark-button-tabs-color: #a1a1aa;
+  --blue-orange-light-button-tabs-active-background-color: white;
+  --blue-orange-dark-button-tabs-active-background-color: #47474a;
+  --blue-orange-light-button-tabs-active-color: black;
+  --blue-orange-dark-button-tabs-active-color: white;
+
   --blue-orange-light-input-label-font-size: 0.8rem;
   --blue-orange-dark-input-label-font-size: 0.8rem;
   --blue-orange-light-input-label-font-weight: 700;

@@ -1,0 +1,11 @@
+.blue-orange-command-dialog {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* the modal supplies its own padding — the palette fills it edge to edge */
+.blue-orange-command-dialog .blue-orange-command {
+    border: none;
+    background-color: transparent;
+}

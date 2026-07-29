@@ -1,0 +1,23 @@
+.blue-orange-empty-media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    color: var(--blue-orange-light-muted-text-color);
+}
+
+.dark .blue-orange-empty-media {
+    color: var(--blue-orange-dark-muted-text-color);
+}
+
+.blue-orange-empty-media-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    font-size: 1.5rem;
+    background-color: var(--blue-orange-light-empty-media-background-color);
+}
+
+.dark .blue-orange-empty-media-icon {
+    background-color: var(--blue-orange-dark-empty-media-background-color);
+}

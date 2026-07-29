@@ -1,0 +1,13 @@
+.blue-orange-command-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 12px;
+    font-size: 0.875rem;
+    text-align: center;
+    color: var(--blue-orange-light-muted-text-color);
+}
+
+.dark .blue-orange-command-empty {
+    color: var(--blue-orange-dark-muted-text-color);
+}

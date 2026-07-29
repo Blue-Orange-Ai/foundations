@@ -1,0 +1,31 @@
+.blue-orange-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+    border-radius: 8px;
+    border: 1px solid var(--blue-orange-light-card-border-color);
+    background-color: var(--blue-orange-light-card-background-color);
+    color: var(--blue-orange-light-card-color);
+}
+
+.dark .blue-orange-card {
+    border: 1px solid var(--blue-orange-dark-card-border-color);
+    background-color: var(--blue-orange-dark-card-background-color);
+    color: var(--blue-orange-dark-card-color);
+}
+
+.blue-orange-card-clickable {
+    cursor: pointer;
+    transition: box-shadow 0.15s ease-out, transform 0.15s ease-out;
+}
+
+.blue-orange-card-clickable:hover {
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .blue-orange-card-clickable {
+        transition: none;
+    }
+}

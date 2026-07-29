@@ -1,0 +1,20 @@
+.blue-orange-card-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 6px 12px;
+}
+
+/* everything except the action stacks down the first column */
+.blue-orange-card-header > *:not(.blue-orange-card-action) {
+    grid-column: 1;
+}
+
+.blue-orange-card-header-separated {
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--blue-orange-light-card-border-color);
+}
+
+.dark .blue-orange-card-header-separated {
+    border-bottom: 1px solid var(--blue-orange-dark-card-border-color);
+}

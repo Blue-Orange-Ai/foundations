@@ -1,0 +1,18 @@
+.blue-orange-button-tabs-development-panel {
+    max-width: 420px;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--blue-orange-light-default-border-color);
+    font-size: 0.875rem;
+}
+
+.dark .blue-orange-button-tabs-development-panel {
+    border: 1px solid var(--blue-orange-dark-default-border-color);
+}
+
+.blue-orange-button-tabs-development-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}

@@ -1,0 +1,8 @@
+.blue-orange-spinner-development-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 8px;
+}
