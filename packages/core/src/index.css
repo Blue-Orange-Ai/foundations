@@ -296,6 +296,17 @@
   --blue-orange-light-table-border-color: black;
   --blue-orange-dark-table-border-color: white;
 
+  /* object list theme — the outer frame and the row separators must share this colour */
+  --blue-orange-light-table-object-list-border-color: #e0e1e2;
+  --blue-orange-dark-table-object-list-border-color: #3f3f42;
+
+  --blue-orange-light-table-row-hover-background-color: #e0e1e2;
+  --blue-orange-dark-table-row-hover-background-color: #47474a;
+
+  /* the data table header band, the row number gutter and the corner cell all share this colour */
+  --blue-orange-light-data-table-header-background-color: #e0e1e2;
+  --blue-orange-dark-data-table-header-background-color: #28282a;
+
   --blue-orange-light-badge-background-color: #18181b;
   --blue-orange-dark-badge-background-color: #3f3f42;
   --blue-orange-light-badge-color: white;

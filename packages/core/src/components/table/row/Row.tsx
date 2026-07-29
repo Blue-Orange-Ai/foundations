@@ -16,7 +16,7 @@ export const Row: React.FC<Props> = ({
 										 children,
 										 background = "transparent",
 										 hoverEffect = true,
-										 hoverBackgroundColor = "#e0e1e2",
+										 hoverBackgroundColor,
 										 onClick,
 										 id,
 										 rowRef}) => {
@@ -25,9 +25,17 @@ export const Row: React.FC<Props> = ({
 
 	const rowId = id ? id : uuidv4();
 
+	const hovered = hover && hoverEffect;
+
+	// with no colour given the hover background is left to CSS so it can follow the light and dark themes
+	const themedHover = hovered && hoverBackgroundColor === undefined;
+
 	const rowStyle: React.CSSProperties = {
-		backgroundColor: hover && hoverEffect  ? hoverBackgroundColor : background,
 		transition: 'background-color 0.3s ease'
+	}
+
+	if (!themedHover) {
+		rowStyle.backgroundColor = hovered ? hoverBackgroundColor : background;
 	}
 
 	const rowClicked = () => {
@@ -38,6 +46,7 @@ export const Row: React.FC<Props> = ({
 
 	return (
 		<tr
+			className={themedHover ? "blue-orange-table-row blue-orange-table-row-hover" : "blue-orange-table-row"}
 			style={rowStyle}
 			ref={rowRef}
 			onClick={rowClicked}

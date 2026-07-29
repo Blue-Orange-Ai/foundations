@@ -205,7 +205,7 @@ export const FileUploadTable: React.FC<Props> = ({
 						<Row
 							key={fileItem.id}
 							background={fileItem.hasError ? "rgba(220, 53, 69, 0.1)" : "transparent"}
-							hoverBackgroundColor={fileItem.hasError ? "rgba(220, 53, 69, 0.15)" : "#e0e1e2"}
+							hoverBackgroundColor={fileItem.hasError ? "rgba(220, 53, 69, 0.15)" : undefined}
 						>
 							<PrimaryCell
 								text={fileItem.file.name}

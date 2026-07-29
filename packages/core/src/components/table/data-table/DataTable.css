@@ -19,18 +19,12 @@
     position: relative;
 }
 
-thead {
-    position: sticky !important;
-    top: 0;
-    z-index: 2;
-}
-
 .blue-orange-tables-data-table .blue-orange-table-header-cont {
-    background-color: #e0e1e2;
+    background-color: var(--blue-orange-light-data-table-header-background-color);
 }
 
 .dark .blue-orange-tables-data-table .blue-orange-table-header-cont {
-    background-color: #28282a;
+    background-color: var(--blue-orange-dark-data-table-header-background-color);
     color: var(--blue-orange-dark-default-text-color);
 }
 
@@ -66,38 +60,123 @@ thead {
     white-space: nowrap;
 }
 
-.blue-orange-data-table th.blue-orange-data-table-row-number-header {
+/* ── Freezing ──────────────────────────────────────────────────────────────
+   Stacking order, top down: the corner cell (3) sits over the frozen header (2), which sits over the
+   frozen row number gutter (1), which sits over the ordinary cells. Every frozen cell needs an opaque
+   background of its own or the cells travelling underneath it show through.
+
+   The table is border-collapse, which means the borders belong to the table rather than to the cells,
+   so a cell that is lifted out of the flow by position: sticky leaves its borders behind and appears
+   to lose them. Frozen cells drop their borders and redraw them as inset shadows, which do move with
+   the cell. Every collapsed border a frozen cell used to share with a neighbour is dropped from that
+   neighbour too, otherwise the neighbour keeps drawing the same line one pixel away and the seam
+   reads as two pixels wide until you scroll. */
+
+.blue-orange-tables-data-table {
+    --blue-orange-data-table-frozen-border-color: var(--blue-orange-light-table-border-color);
+}
+
+.dark .blue-orange-tables-data-table {
+    --blue-orange-data-table-frozen-border-color: var(--blue-orange-dark-table-border-color);
+}
+
+/* freezing here is driven by the freezeHeader prop, so opt out of the sticky header every Table has */
+.blue-orange-tables-data-table thead.blue-orange-table-header-cont {
+    position: static;
+    z-index: auto;
+}
+
+.blue-orange-tables-data-table-freeze-header thead.blue-orange-table-header-cont {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+/* top, right and bottom on every header cell, and the left edge on the first one, so the line each
+   pair of neighbours shares is drawn exactly once */
+.blue-orange-tables-data-table-freeze-header thead.blue-orange-table-header-cont tr > * {
+    border: none;
+    box-shadow:
+        inset 0 1px 0 var(--blue-orange-data-table-frozen-border-color),
+        inset -1px 0 0 var(--blue-orange-data-table-frozen-border-color),
+        inset 0 -1px 0 var(--blue-orange-data-table-frozen-border-color);
+}
+
+.blue-orange-tables-data-table-freeze-header thead.blue-orange-table-header-cont tr > *:first-child {
+    box-shadow:
+        inset 0 1px 0 var(--blue-orange-data-table-frozen-border-color),
+        inset 1px 0 0 var(--blue-orange-data-table-frozen-border-color),
+        inset -1px 0 0 var(--blue-orange-data-table-frozen-border-color),
+        inset 0 -1px 0 var(--blue-orange-data-table-frozen-border-color);
+}
+
+/* the header now owns the line above the first row */
+.blue-orange-tables-data-table-freeze-header tbody tr:first-child > * {
+    border-top: none;
+}
+
+.blue-orange-tables-data-table-freeze-row-numbers .blue-orange-data-table th.blue-orange-data-table-row-number-header,
+.blue-orange-tables-data-table-freeze-row-numbers .blue-orange-data-table td.blue-orange-data-table-row-number-cell {
     position: sticky;
     left: 0;
+    border: none;
+}
+
+.blue-orange-tables-data-table-freeze-row-numbers th.blue-orange-data-table-row-number-header {
+    box-shadow:
+        inset 0 1px 0 var(--blue-orange-data-table-frozen-border-color),
+        inset 1px 0 0 var(--blue-orange-data-table-frozen-border-color),
+        inset -1px 0 0 var(--blue-orange-data-table-frozen-border-color),
+        inset 0 -1px 0 var(--blue-orange-data-table-frozen-border-color);
+}
+
+.blue-orange-tables-data-table-freeze-row-numbers td.blue-orange-data-table-row-number-cell {
+    box-shadow:
+        inset 1px 0 0 var(--blue-orange-data-table-frozen-border-color),
+        inset -1px 0 0 var(--blue-orange-data-table-frozen-border-color),
+        inset 0 -1px 0 var(--blue-orange-data-table-frozen-border-color);
+}
+
+/* the gutter now owns the line down its right hand side */
+.blue-orange-tables-data-table-freeze-row-numbers td.blue-orange-data-table-row-number-cell + td,
+.blue-orange-tables-data-table-freeze-row-numbers th.blue-orange-data-table-row-number-header + th,
+.blue-orange-tables-data-table-freeze-row-numbers th.blue-orange-data-table-row-number-header + td {
+    border-left: none;
+}
+
+.blue-orange-data-table th.blue-orange-data-table-row-number-header {
     z-index: 3;
-    background-color: inherit;
+    background-color: var(--blue-orange-light-data-table-header-background-color);
     user-select: none;
     cursor: default;
 }
 
+.dark .blue-orange-data-table th.blue-orange-data-table-row-number-header {
+    background-color: var(--blue-orange-dark-data-table-header-background-color);
+    color: var(--blue-orange-dark-default-text-color);
+}
+
 .blue-orange-data-table td.blue-orange-data-table-row-number-cell {
-    position: sticky;
-    left: 0;
     z-index: 1;
-    background-color: #e0e1e2;
+    background-color: var(--blue-orange-light-data-table-header-background-color);
     user-select: none;
     cursor: default;
 }
 
 .dark .blue-orange-data-table td.blue-orange-data-table-row-number-cell {
-    background-color: #28282a;
+    background-color: var(--blue-orange-dark-data-table-header-background-color);
     color: var(--blue-orange-dark-default-text-color);
 }
 
 .blue-orange-data-table-theme-object-list .blue-orange-data-table-row-number-cell {
     background-color: #f7f8f9;
     border: none;
-    border-bottom: 1px solid #e0e1e2;
+    border-bottom: 1px solid var(--blue-orange-light-table-object-list-border-color);
 }
 
 .dark .blue-orange-data-table-theme-object-list .blue-orange-data-table-row-number-cell {
     background-color: #202022;
-    border-bottom: 1px solid #3f3f42;
+    border-bottom: 1px solid var(--blue-orange-dark-table-object-list-border-color);
 }
 
 .blue-orange-data-table-cell-selected {

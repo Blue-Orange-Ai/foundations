@@ -1,2 +1,9 @@
 
+/* only applied when no hoverBackgroundColor was given, so a caller supplied colour always wins */
+.blue-orange-table-row-hover {
+    background-color: var(--blue-orange-light-table-row-hover-background-color);
+}
 
+.dark .blue-orange-table-row-hover {
+    background-color: var(--blue-orange-dark-table-row-hover-background-color);
+}

@@ -62,6 +62,8 @@ interface Props {
     loading?: boolean,
 	loadingPlaceholderRows?: number,
 	showRowNumbers?: boolean,
+	freezeHeader?: boolean,
+	freezeRowNumbers?: boolean,
 	persistKey?: string,
 	enableInfiniteScroll?: boolean,
 	onEndReached?: () => void,
@@ -87,6 +89,8 @@ export const DataTable: React.FC<Props> = ({
                                                loading=false,
                                                loadingPlaceholderRows=10,
 											   showRowNumbers=false,
+											   freezeHeader=true,
+											   freezeRowNumbers=true,
 											   persistKey,
 											   enableInfiniteScroll=false,
 											   onEndReached,
@@ -1105,9 +1109,15 @@ export const DataTable: React.FC<Props> = ({
 		return style;
 	}
 
+	const containerClassName = [
+		"blue-orange-tables-data-table",
+		freezeHeader ? "blue-orange-tables-data-table-freeze-header" : null,
+		freezeRowNumbers ? "blue-orange-tables-data-table-freeze-row-numbers" : null,
+	].filter(Boolean).join(" ");
+
 	return (
 		<>
-			<div className="blue-orange-tables-data-table">
+			<div className={containerClassName}>
                 <Table
 					containerRef={tableContainerRef}
 					theme={TableTheme.DATASET}

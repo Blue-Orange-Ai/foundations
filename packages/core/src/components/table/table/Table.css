@@ -10,11 +10,28 @@
     border-collapse: collapse;
 }
 
+/* the container is the scroll parent, so the header stays in view. The DataTable opts out of this and
+   drives it from its freezeHeader prop instead. */
+.blue-orange-data-table-cont thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
 .blue-orange-data-table-theme-object-list {
-    border: 1px solid var(--blue-orange-light-default-border-color);
+    border: 1px solid var(--blue-orange-light-table-object-list-border-color);
     border-radius: 4px;
-    border-bottom: none;
     border-collapse: collapse;
+}
+
+.dark .blue-orange-data-table-theme-object-list {
+    border-color: var(--blue-orange-dark-table-object-list-border-color);
+}
+
+/* the frame closes the bottom of the table, so the last row must not draw a separator too */
+.blue-orange-data-table-theme-object-list tbody:last-child tr:last-child td,
+.blue-orange-data-table-theme-object-list tfoot:last-child tr:last-child td {
+    border-bottom: none;
 }
 
 .blue-orange-data-table td {

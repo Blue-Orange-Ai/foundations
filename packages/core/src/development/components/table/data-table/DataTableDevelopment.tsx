@@ -73,6 +73,8 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 	const [cellsSelectable, setCellsSelectable] = useState<boolean>(true);
 	const [rowSelectable, setRowSelectable] = useState<boolean>(false);
 	const [showRowNumbers, setShowRowNumbers] = useState<boolean>(true);
+	const [freezeHeader, setFreezeHeader] = useState<boolean>(true);
+	const [freezeRowNumbers, setFreezeRowNumbers] = useState<boolean>(true);
 	const [enableInfiniteScroll, setEnableInfiniteScroll] = useState<boolean>(true);
 	const [showLoadingRow, setShowLoadingRow] = useState<boolean>(false);
 	const [endReachedCount, setEndReachedCount] = useState<number>(0);
@@ -310,6 +312,14 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 				<Checkbox checked={showRowNumbers} onCheckboxChange={setShowRowNumbers}></Checkbox>
 				<span style={{marginLeft: 8}}>Show row numbers</span>
 			</div>
+			<div style={{marginBottom: 12}}>
+				<Checkbox checked={freezeHeader} onCheckboxChange={setFreezeHeader}></Checkbox>
+				<span style={{marginLeft: 8}}>Freeze header row</span>
+			</div>
+			<div style={{marginBottom: 12}}>
+				<Checkbox checked={freezeRowNumbers} onCheckboxChange={setFreezeRowNumbers}></Checkbox>
+				<span style={{marginLeft: 8}}>Freeze row numbers</span>
+			</div>
 			<div style={{marginBottom: 12, fontSize: 12, fontFamily: "monospace"}}>
 				End reached count: {endReachedCount}
 			</div>
@@ -336,6 +346,8 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 					loading={false}
 					loadingPlaceholderRows={2}
 					showRowNumbers={showRowNumbers}
+					freezeHeader={freezeHeader}
+					freezeRowNumbers={freezeRowNumbers}
 					enableInfiniteScroll={enableInfiniteScroll}
 					onEndReached={handleEndReached}
 					showLoadingRow={showLoadingRow}
