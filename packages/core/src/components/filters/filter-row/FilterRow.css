@@ -1,0 +1,98 @@
+.blue-orange-filter-row {
+    --blue-orange-filter-row-height: 36px;
+
+    display: inline-flex;
+    flex-direction: row;
+    align-items: stretch;
+    max-width: 100%;
+    min-height: var(--blue-orange-filter-row-height);
+    border: 1px solid var(--blue-orange-light-filter-row-border-color);
+    border-radius: 6px;
+    background-color: var(--blue-orange-light-filter-row-background-color);
+    color: var(--blue-orange-light-filter-row-color);
+    font-size: 0.8rem;
+}
+
+.dark .blue-orange-filter-row {
+    border: 1px solid var(--blue-orange-dark-filter-row-border-color);
+    background-color: var(--blue-orange-dark-filter-row-background-color);
+    color: var(--blue-orange-dark-filter-row-color);
+}
+
+.blue-orange-filter-row-sm {
+    --blue-orange-filter-row-height: 30px;
+
+    font-size: 0.75rem;
+}
+
+.blue-orange-filter-row-full-width {
+    display: flex;
+    width: 100%;
+}
+
+/*
+ * The corners are rounded on the end segments rather than by clipping the row,
+ * so a dropdown opened from a segment is never cut off.
+ */
+.blue-orange-filter-row > *:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.blue-orange-filter-row > *:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+/*
+ * Controls dropped into a segment give up their own chrome — the row supplies
+ * the border, the background and the height.
+ */
+.blue-orange-filter-row .blue-orange-dropdown-cont,
+.blue-orange-filter-row .blue-orange-default-input-cont {
+    width: 100%;
+    min-width: 0;
+}
+
+.blue-orange-filter-row .blue-orange-dropdown {
+    width: 100%;
+    height: var(--blue-orange-filter-row-height);
+    min-width: 0;
+    padding: 0;
+    border: none !important;
+    border-radius: 0;
+    background-color: transparent !important;
+    font-size: inherit;
+    gap: 4px;
+}
+
+.blue-orange-filter-row .blue-orange-dropdown-selection {
+    width: auto;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.blue-orange-filter-row .blue-orange-dropdown-icon {
+    width: 16px;
+    opacity: 0.6;
+}
+
+.blue-orange-filter-row .blue-orange-input,
+.blue-orange-filter-row .blue-orange-search-group-input {
+    width: 100%;
+    height: var(--blue-orange-filter-row-height);
+    padding: 0;
+    border: none !important;
+    border-radius: 0;
+    background-color: transparent !important;
+    font-size: inherit;
+}
+
+.blue-orange-filter-row .blue-orange-input:focus {
+    outline: none;
+}
+
+/* validation messages would break the row apart — they belong under it */
+.blue-orange-filter-row .blue-orange-input-validation-message {
+    display: none;
+}

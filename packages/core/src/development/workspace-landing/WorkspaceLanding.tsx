@@ -112,6 +112,8 @@ import {KbdDevelopment} from "../components/text-decorations/kbd/KbdDevelopment"
 import {SeparatorDevelopment} from "../components/layouts/separator/SeparatorDevelopment";
 import {ButtonTabsDevelopment} from "../components/layouts/button-tabs/ButtonTabsDevelopment";
 import {HoverCardDevelopment} from "../components/tooltips/hover-card/HoverCardDevelopment";
+import {StepperDevelopment} from "../components/stepper/StepperDevelopment";
+import {TimelineDevelopment} from "../components/timeline/TimelineDevelopment";
 
 interface Props {
 }
@@ -765,6 +767,24 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						onClick={() => navigate("/pagination")}
 					></SideBarBodyItem>
 					<SideBarBodyItem
+						label={"Stepper"}
+						active={component == "stepper"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-guide-line"></i>}
+						onClick={() => navigate("/stepper")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
+						label={"Timeline"}
+						active={component == "timeline"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-history-line"></i>}
+						onClick={() => navigate("/timeline")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
 						label={"Media"}
 						active={component == "media"}
 						focused={false}
@@ -1219,6 +1239,8 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "layouts-separator" && <SeparatorDevelopment></SeparatorDevelopment>}
 			{component == "layouts-button-tabs" && <ButtonTabsDevelopment></ButtonTabsDevelopment>}
 			{component == "tooltips-hover-card" && <HoverCardDevelopment></HoverCardDevelopment>}
+			{component == "stepper" && <StepperDevelopment></StepperDevelopment>}
+			{component == "timeline" && <TimelineDevelopment></TimelineDevelopment>}
 		</SidebarPage>
 	)
 }

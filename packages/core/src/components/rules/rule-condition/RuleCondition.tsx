@@ -7,11 +7,13 @@ import {DropdownItemIcon} from "../../inputs/dropdown/items/DropdownItemIcon/Dro
 import {DropdownItemText} from "../../inputs/dropdown/items/DropdownItemText/DropdownItemText";
 import {Input} from "../../inputs/input/Input";
 import {Checkbox} from "../../inputs/checkbox/Checkbox";
-import {ButtonIcon} from "../../buttons/button-icon/ButtonIcon";
 import {ICondition, IOperand, IRuleSchemaProperty} from "../rule-editor/RuleEditor";
 import {RuleContainer} from "../rule-container/RuleContainer";
 import {DateInput} from "../../inputs/date/datepicker/inputs/dateinput/DateInput";
 import {TimePrecision} from "../../inputs/date/datepicker/items/datecontextwindowsingle/DateContextWindowSingle";
+import {FilterRow} from "../../filters/filter-row/FilterRow";
+import {FilterRowSegment} from "../../filters/filter-row-segment/FilterRowSegment";
+import {FilterRowAction} from "../../filters/filter-row-action/FilterRowAction";
 
 interface Props {
 	condition: ICondition,
@@ -23,20 +25,6 @@ interface Props {
 export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onDelete}) => {
 
 	const [internalCondition, setInternalCondition] = useState(condition);
-
-	// Background is set in RuleCondition.css so it can be theme-aware; hardcoding
-	// a light colour here left the selection unreadable in dark mode.
-	const variableSelectionStyle: React.CSSProperties = {
-		fontSize: "0.8rem"
-	}
-
-	const matchSelectionStyle: React.CSSProperties = {
-		flexShrink: "0",
-		border: "none",
-		fontWeight: "600",
-		textAlign: "center",
-		fontSize: "0.8rem"
-	}
 
 	const parseDateOrDefault = (dateString: string): Date => {
 		const parsedDate = new Date(dateString);
@@ -202,25 +190,38 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 		return "Number";
 	}
 
+	const selectedProperty = getSchemaPropertyFromVariableName(internalCondition.variable);
+
+	const selectedType = getNormalizedType(selectedProperty);
+
+	// a boolean is fully described by its operator — "is true" leaves nothing to type
+	const takesComparisonValue = selectedType != "BOOLEAN";
+
+	// a regular expression is matched as written, so case folding does not apply
+	const takesMatchCase = determineComparisonInputType() == "String" && internalCondition.operand != IOperand.REGEX;
+
 	return (
-		<div className={"blue-orange-rule-condition-cont"}>
-			<div className={"blue-orange-rule-condition-start-text"}>Value of</div>
-			<div className={"blue-orange-rule-condition-variable-selection"}>
-				<Dropdown filter={true} style={variableSelectionStyle} onSelection={(item) => updateVariable(item.reference)} contextWidth="fit-content">
-					{schema.map((item, index) => (
+		<FilterRow fullWidth={true} classes="blue-orange-rule-condition-cont">
+			<FilterRowSegment muted={true} label="Value of"></FilterRowSegment>
+			<FilterRowSegment
+				control={true}
+				maxWidth={280}
+				classes="blue-orange-rule-condition-variable-selection">
+				<Dropdown filter={true} onSelection={(item) => updateVariable(item.reference)} contextWidth="fit-content">
+					{schema.map((item) => (
 						<DropdownItemIcon
 							key={item.key}
 							src={getIconFromSchemaType(item.key, item.value)}
-							label={index + "-" + item.key}
+							label={item.key}
 							value={item.key}
 							selected={internalCondition.variable == item.key}
 							disabled={isDisabled(item.key)}></DropdownItemIcon>
 					))}
 				</Dropdown>
-			</div>
-			<div className={"blue-orange-rule-condition-match-selection"}>
+			</FilterRowSegment>
+			<FilterRowSegment control={true} classes="blue-orange-rule-condition-match-selection">
 				{getNormalizedType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "STRING" &&
-					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
+					<Dropdown onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
 						<DropdownItemText label={"Equals"} value={"EQUALS"} selected={"EQUALS" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"Not Equals"} value={"NOT_EQUALS"} selected={"NOT_EQUALS" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"Contains"} value={"CONTAINS"} selected={"CONTAINS" == condition.operand}></DropdownItemText>
@@ -230,7 +231,7 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 					</Dropdown>
 				}
 				{getNormalizedType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "NUMBER" &&
-					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
+					<Dropdown onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
 						<DropdownItemText label={"equals"} value={"EQUALS"} selected={"EQUALS" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"does not equal"} value={"NOT_EQUALS"} selected={"NOT_EQUALS" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"is greater than"} value={"GREATER_THAN"} selected={"GREATER_THAN" == condition.operand}></DropdownItemText>
@@ -240,13 +241,13 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 					</Dropdown>
 				}
 				{getNormalizedType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "BOOLEAN" &&
-					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
+					<Dropdown onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
 						<DropdownItemText label={"is true"} value={"EQUALS"} selected={"EQUALS" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"is false"} value={"NOT_EQUALS"} selected={"NOT_EQUALS" == condition.operand}></DropdownItemText>
 					</Dropdown>
 				}
 				{getNormalizedType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "DATE" &&
-					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
+					<Dropdown onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
 						<DropdownItemText label={"equals"} value={"EQUALS"} selected={"EQUALS" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"does not equal"} value={"NOT_EQUALS"} selected={"NOT_EQUALS" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"is before"} value={"DATE_BEFORE_SPECIFIC"} selected={"DATE_BEFORE_SPECIFIC" == condition.operand}></DropdownItemText>
@@ -257,7 +258,7 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 				}
 				{getNormalizedType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "ARRAY" &&
 					getNormalizedArrayType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "STRING" &&
-					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
+					<Dropdown onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
 						<DropdownItemText label={"array length equal to"} value={"ARRAY_LENGTH_EQUAL"} selected={"ARRAY_LENGTH_EQUAL" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"array length greater than"} value={"ARRAY_LENGTH_GREATER_THAN"} selected={"ARRAY_LENGTH_GREATER_THAN" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"array length greater than or equal to"} value={"ARRAY_LENGTH_GREATER_THAN_OR_EQUAL"} selected={"ARRAY_LENGTH_GREATER_THAN_OR_EQUAL" == condition.operand}></DropdownItemText>
@@ -274,7 +275,7 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 				}
 				{getNormalizedType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "ARRAY" &&
 					getNormalizedArrayType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "NUMBER" &&
-					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
+					<Dropdown onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
 						<DropdownItemText label={"array length equal to"} value={"ARRAY_LENGTH_EQUAL"} selected={"ARRAY_LENGTH_EQUAL" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"array length greater than"} value={"ARRAY_LENGTH_GREATER_THAN"} selected={"ARRAY_LENGTH_GREATER_THAN" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"array length greater than or equal to"} value={"ARRAY_LENGTH_GREATER_THAN_OR_EQUAL"} selected={"ARRAY_LENGTH_GREATER_THAN_OR_EQUAL" == condition.operand}></DropdownItemText>
@@ -300,7 +301,7 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 				}
 				{getNormalizedType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "ARRAY" &&
 					getNormalizedArrayType(getSchemaPropertyFromVariableName(internalCondition.variable)) == "DATE" &&
-					<Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
+					<Dropdown onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
 						<DropdownItemText label={"array length equal to"} value={"ARRAY_LENGTH_EQUAL"} selected={"ARRAY_LENGTH_EQUAL" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"array length greater than"} value={"ARRAY_LENGTH_GREATER_THAN"} selected={"ARRAY_LENGTH_GREATER_THAN" == condition.operand}></DropdownItemText>
 						<DropdownItemText label={"array length greater than or equal to"} value={"ARRAY_LENGTH_GREATER_THAN_OR_EQUAL"} selected={"ARRAY_LENGTH_GREATER_THAN_OR_EQUAL" == condition.operand}></DropdownItemText>
@@ -313,35 +314,39 @@ export const RuleCondition: React.FC<Props> = ({condition, schema, onChange, onD
 						<DropdownItemText label={"array has a date after today plus"} value={"ARRAY_CONTAINS_RELATIVE_DATE_AFTER"} selected={"ARRAY_CONTAINS_RELATIVE_DATE_AFTER" == condition.operand}></DropdownItemText>
 					</Dropdown>
 				}
-			</div>
-			<div className={"blue-orange-rule-condition-user-input"}>
-				{determineComparisonInputType() != "Date" &&
-					<Input
-						value={parseStringOrDefault(internalCondition.comparison)}
-						isNumber={determineComparisonInputType() == "Number"}
-						onChange={updateComparison}
-					></Input>
-				}
-				{determineComparisonInputType() == "Date" &&
-					<DateInput
-						value={parseDateOrDefault(internalCondition.comparison)}
-						displayFormat={"yyyy-MM-DD HH:mm:ss"}
-						showTime={true}
-						timePrecision={TimePrecision.MILLISECOND}
-						onChange={(value) => updateDateComparison(value)}></DateInput>
-				}
-			</div>
-			{determineComparisonInputType() == "String" &&
-				<div className={"blue-orange-rule-condition-checkbox"}>
-					<Checkbox checked={!internalCondition.ignoreCase} onCheckboxChange={updateMatchCase}></Checkbox>
-					<div className={"blue-orange-rule-condition-checkbox-label"}>
-						Match Case
-					</div>
-				</div>
+			</FilterRowSegment>
+			{takesComparisonValue &&
+				<FilterRowSegment grow={true} classes="blue-orange-rule-condition-user-input">
+					{determineComparisonInputType() != "Date" &&
+						<Input
+							value={parseStringOrDefault(internalCondition.comparison)}
+							isNumber={determineComparisonInputType() == "Number"}
+							placeholder={"Enter a value"}
+							onChange={updateComparison}
+						></Input>
+					}
+					{determineComparisonInputType() == "Date" &&
+						<DateInput
+							value={parseDateOrDefault(internalCondition.comparison)}
+							displayFormat={"yyyy-MM-DD HH:mm:ss"}
+							showTime={true}
+							timePrecision={TimePrecision.MILLISECOND}
+							onChange={(value) => updateDateComparison(value)}></DateInput>
+					}
+				</FilterRowSegment>
 			}
-			<div className={"blue-orange-rule-condition-checkbox"}>
-				<ButtonIcon icon="ri-close-line" label={"Delete"} onClick={() => removeCondition(condition)}></ButtonIcon>
-			</div>
-		</div>
+			{/* with no value to type the row would stop short of its own border */}
+			{!takesComparisonValue && <div className="blue-orange-rule-condition-spacer"></div>}
+			{takesMatchCase &&
+				<FilterRowSegment classes="blue-orange-rule-condition-match-case">
+					<Checkbox checked={!internalCondition.ignoreCase} onCheckboxChange={updateMatchCase}></Checkbox>
+					<span className={"blue-orange-rule-condition-match-case-label"}>Match case</span>
+				</FilterRowSegment>
+			}
+			<FilterRowAction
+				icon="ri-close-line"
+				label={"Delete"}
+				onClick={() => removeCondition(condition)}></FilterRowAction>
+		</FilterRow>
 	)
 }

@@ -1,0 +1,13 @@
+.blue-orange-timeline {
+    display: flex;
+    width: 100%;
+}
+
+.blue-orange-timeline-vertical {
+    flex-direction: column;
+}
+
+.blue-orange-timeline-horizontal {
+    flex-direction: row;
+    align-items: stretch;
+}

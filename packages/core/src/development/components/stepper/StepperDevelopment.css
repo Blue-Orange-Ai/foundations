@@ -1,0 +1,32 @@
+.blue-orange-stepper-development-block {
+    max-width: 460px;
+}
+
+.blue-orange-stepper-development-panel {
+    max-width: 320px;
+    padding-top: 8px;
+}
+
+/* roughly the width of a modal, to show the small view really does fit */
+.blue-orange-stepper-development-narrow {
+    max-width: 372px;
+    margin-bottom: 8px;
+}
+
+.blue-orange-stepper-development-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 460px;
+}
+
+.blue-orange-stepper-development-overlay-body {
+    padding-top: 16px;
+}
+
+.blue-orange-stepper-development-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    margin-top: 16px;
+}

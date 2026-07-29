@@ -1,0 +1,257 @@
+.blue-orange-timeline-item {
+    display: flex;
+    min-width: 0;
+}
+
+.blue-orange-timeline-item-vertical {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 12px;
+}
+
+.blue-orange-timeline-item-horizontal {
+    flex-direction: column;
+    flex: 1 1 0;
+    min-width: 0;
+    gap: 8px;
+}
+
+/* Rail — the marker and the line running to the next event */
+
+.blue-orange-timeline-rail {
+    display: flex;
+    flex-shrink: 0;
+}
+
+.blue-orange-timeline-item-vertical .blue-orange-timeline-rail {
+    flex-direction: column;
+    align-items: center;
+}
+
+.blue-orange-timeline-item-horizontal .blue-orange-timeline-rail {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+
+.blue-orange-timeline-connector {
+    background-color: var(--blue-orange-light-timeline-line-color);
+}
+
+.dark .blue-orange-timeline-connector {
+    background-color: var(--blue-orange-dark-timeline-line-color);
+}
+
+.blue-orange-timeline-item-vertical .blue-orange-timeline-connector {
+    flex-grow: 1;
+    width: 2px;
+    min-height: 16px;
+    margin: 4px 0;
+}
+
+.blue-orange-timeline-item-horizontal .blue-orange-timeline-connector {
+    flex-grow: 1;
+    height: 2px;
+    min-width: 16px;
+    margin: 0 4px;
+}
+
+/* Marker */
+
+.blue-orange-timeline-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--blue-orange-light-timeline-indicator-border-color);
+    background-color: var(--blue-orange-light-timeline-indicator-background-color);
+    color: var(--blue-orange-light-timeline-indicator-color);
+    font-size: 0.875rem;
+    line-height: 1;
+}
+
+.dark .blue-orange-timeline-indicator {
+    border: 2px solid var(--blue-orange-dark-timeline-indicator-border-color);
+    background-color: var(--blue-orange-dark-timeline-indicator-background-color);
+    color: var(--blue-orange-dark-timeline-indicator-color);
+}
+
+/* a bare event keeps the same footprint so the rail stays aligned */
+.blue-orange-timeline-indicator-dot {
+    width: 12px;
+    height: 12px;
+    margin: 8px;
+    background-color: var(--blue-orange-light-timeline-indicator-border-color);
+}
+
+.dark .blue-orange-timeline-indicator-dot {
+    background-color: var(--blue-orange-dark-timeline-indicator-border-color);
+}
+
+.blue-orange-timeline-indicator-active {
+    border-color: var(--blue-orange-light-timeline-active-color);
+    color: var(--blue-orange-light-timeline-active-color);
+}
+
+.dark .blue-orange-timeline-indicator-active {
+    border-color: var(--blue-orange-dark-timeline-active-color);
+    color: var(--blue-orange-dark-timeline-active-color);
+}
+
+.blue-orange-timeline-indicator-active.blue-orange-timeline-indicator-dot {
+    background-color: var(--blue-orange-light-timeline-active-color);
+}
+
+.dark .blue-orange-timeline-indicator-active.blue-orange-timeline-indicator-dot {
+    background-color: var(--blue-orange-dark-timeline-active-color);
+}
+
+.blue-orange-timeline-indicator-success {
+    border-color: var(--blue-orange-light-timeline-success-color);
+    color: var(--blue-orange-light-timeline-success-color);
+}
+
+.dark .blue-orange-timeline-indicator-success {
+    border-color: var(--blue-orange-dark-timeline-success-color);
+    color: var(--blue-orange-dark-timeline-success-color);
+}
+
+.blue-orange-timeline-indicator-success.blue-orange-timeline-indicator-dot {
+    background-color: var(--blue-orange-light-timeline-success-color);
+}
+
+.dark .blue-orange-timeline-indicator-success.blue-orange-timeline-indicator-dot {
+    background-color: var(--blue-orange-dark-timeline-success-color);
+}
+
+.blue-orange-timeline-indicator-warning {
+    border-color: var(--blue-orange-light-timeline-warning-color);
+    color: var(--blue-orange-light-timeline-warning-color);
+}
+
+.dark .blue-orange-timeline-indicator-warning {
+    border-color: var(--blue-orange-dark-timeline-warning-color);
+    color: var(--blue-orange-dark-timeline-warning-color);
+}
+
+.blue-orange-timeline-indicator-warning.blue-orange-timeline-indicator-dot {
+    background-color: var(--blue-orange-light-timeline-warning-color);
+}
+
+.dark .blue-orange-timeline-indicator-warning.blue-orange-timeline-indicator-dot {
+    background-color: var(--blue-orange-dark-timeline-warning-color);
+}
+
+.blue-orange-timeline-indicator-error {
+    border-color: var(--blue-orange-light-timeline-error-color);
+    color: var(--blue-orange-light-timeline-error-color);
+}
+
+.dark .blue-orange-timeline-indicator-error {
+    border-color: var(--blue-orange-dark-timeline-error-color);
+    color: var(--blue-orange-dark-timeline-error-color);
+}
+
+.blue-orange-timeline-indicator-error.blue-orange-timeline-indicator-dot {
+    background-color: var(--blue-orange-light-timeline-error-color);
+}
+
+.dark .blue-orange-timeline-indicator-error.blue-orange-timeline-indicator-dot {
+    background-color: var(--blue-orange-dark-timeline-error-color);
+}
+
+/* media (an avatar, an image) replaces the marker, so it carries no chrome */
+.blue-orange-timeline-indicator-media {
+    width: auto;
+    height: auto;
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
+    overflow: hidden;
+}
+
+.blue-orange-timeline-indicator .blue-orange-spinner {
+    color: inherit;
+}
+
+/* Content */
+
+.blue-orange-timeline-item-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.blue-orange-timeline-item-vertical .blue-orange-timeline-item-content {
+    flex-grow: 1;
+    padding-bottom: 24px;
+}
+
+.blue-orange-timeline-item-vertical:last-child .blue-orange-timeline-item-content {
+    padding-bottom: 0;
+}
+
+.blue-orange-timeline-item-horizontal .blue-orange-timeline-item-content {
+    padding-right: 16px;
+}
+
+.blue-orange-timeline-leading {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    color: var(--blue-orange-light-muted-text-color);
+}
+
+.dark .blue-orange-timeline-leading {
+    color: var(--blue-orange-dark-muted-text-color);
+}
+
+.blue-orange-timeline-item-vertical .blue-orange-timeline-leading {
+    width: 90px;
+    padding-top: 5px;
+    text-align: right;
+    align-items: flex-end;
+}
+
+.blue-orange-timeline-item-horizontal .blue-orange-timeline-leading {
+    padding-right: 16px;
+}
+
+/* Alternating */
+
+.blue-orange-timeline-item-alternate {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
+}
+
+.blue-orange-timeline-side {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.blue-orange-timeline-item-alternate .blue-orange-timeline-side-start {
+    align-items: flex-end;
+    text-align: right;
+}
+
+.blue-orange-timeline-item-alternate .blue-orange-timeline-side-end {
+    align-items: flex-start;
+    text-align: left;
+}
+
+/* the leading label sits opposite the event, so it never takes a fixed width */
+.blue-orange-timeline-item-alternate .blue-orange-timeline-leading {
+    width: auto;
+    text-align: inherit;
+    align-items: inherit;
+    padding-top: 5px;
+}

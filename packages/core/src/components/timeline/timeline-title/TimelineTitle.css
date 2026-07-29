@@ -1,0 +1,14 @@
+.blue-orange-timeline-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--blue-orange-light-timeline-title-color);
+}
+
+.dark .blue-orange-timeline-title {
+    color: var(--blue-orange-dark-timeline-title-color);
+}

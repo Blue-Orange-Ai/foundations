@@ -1,0 +1,8 @@
+.blue-orange-timeline-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 0.875rem;
+    min-width: 0;
+}

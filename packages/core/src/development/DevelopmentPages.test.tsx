@@ -27,6 +27,10 @@ import {KbdDevelopment} from "./components/text-decorations/kbd/KbdDevelopment";
 import {SeparatorDevelopment} from "./components/layouts/separator/SeparatorDevelopment";
 import {ButtonTabsDevelopment} from "./components/layouts/button-tabs/ButtonTabsDevelopment";
 import {HoverCardDevelopment} from "./components/tooltips/hover-card/HoverCardDevelopment";
+import {StepperDevelopment} from "./components/stepper/StepperDevelopment";
+import {TimelineDevelopment} from "./components/timeline/TimelineDevelopment";
+import {RuleEditorDevelopment} from "./components/rules/rule-editor/RuleEditorDevelopment";
+import {SearchQueryEditorDevelopment} from "./components/search/search-query-editor/SearchQueryEditorDevelopment";
 
 // Every page is rendered in both themes: a component that only styles itself for
 // light mode still renders, but these at least prove no page throws in either.
@@ -58,6 +62,10 @@ const PAGES: Array<[string, React.FC<any>]> = [
 	["Separator", SeparatorDevelopment],
 	["Button Tabs", ButtonTabsDevelopment],
 	["Hover Card", HoverCardDevelopment],
+	["Stepper", StepperDevelopment],
+	["Timeline", TimelineDevelopment],
+	["Rule Editor", RuleEditorDevelopment],
+	["Search Query Editor", SearchQueryEditorDevelopment],
 ];
 
 describe("development pages", () => {

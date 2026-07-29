@@ -6,14 +6,13 @@
     align-items: center;
 }
 
+/*
+ * The field and operator line is laid out by FilterRow — everything here is the
+ * small amount of tuning the search editor asks of it.
+ */
+
 .blue-orange-search-query-condition-cont-header {
     width: 100%;
-    border-radius: 4px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    height: 48px;
-    justify-content: space-between;
 }
 
 .blue-orange-search-query-condition-cont-body {
@@ -24,31 +23,19 @@
     margin-top: 10px;
 }
 
-.blue-orange-search-query-condition-start-text {
-    text-transform: capitalize;
-    opacity: 0.8;
-    font-weight: 600;
-    margin-right: 20px;
-    flex-shrink: 0;
-    font-size: 0.8rem;
+.blue-orange-search-query-condition-variable-selection .blue-orange-dropdown-selection {
+    font-weight: 500;
 }
 
-.blue-orange-search-query-condition-variable-selection {
-    flex-grow: 1;
-}
-
-.blue-orange-search-query-condition-match-selection {
-    margin-left: 10px;
-}
-
-.blue-orange-search-query-condition-match-selection .blue-orange-dropdown-icon {
-    display: none;
-}
-
+/* the operator reads as the verb of the sentence */
 .blue-orange-search-query-condition-match-selection .blue-orange-dropdown-selection {
-    width: 100%;
-    text-decoration: underline;
-    font-weight: 700;
+    font-weight: 600;
+}
+
+.blue-orange-search-query-condition-match-case-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    opacity: 0.75;
 }
 
 .blue-orange-search-query-condition-user-input {
@@ -61,25 +48,4 @@
     width: 100%;
     align-items: center;
     justify-content: space-between;
-}
-
-.blue-orange-search-query-condition-checkbox {
-    width: 80px;
-    display: flex;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-.blue-orange-search-query-condition-checkbox-label {
-    position: absolute;
-    left: 0;
-    right: 0;
-    margin: auto;
-    font-size: 0.6rem;
-    font-weight: 600;
-    text-align: center;
-    bottom: 2px;
-    opacity: 0.4;
 }

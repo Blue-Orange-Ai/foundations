@@ -1,0 +1,79 @@
+.blue-orange-filter-row-segment {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    min-width: 0;
+    padding: 0 10px;
+    white-space: nowrap;
+}
+
+/* the hairline between two segments */
+.blue-orange-filter-row-segment + .blue-orange-filter-row-segment,
+.blue-orange-filter-row-segment + .blue-orange-filter-row-action,
+.blue-orange-filter-row-action + .blue-orange-filter-row-segment {
+    border-left: 1px solid var(--blue-orange-light-filter-row-separator-color);
+}
+
+.dark .blue-orange-filter-row-segment + .blue-orange-filter-row-segment,
+.dark .blue-orange-filter-row-segment + .blue-orange-filter-row-action,
+.dark .blue-orange-filter-row-action + .blue-orange-filter-row-segment {
+    border-left: 1px solid var(--blue-orange-dark-filter-row-separator-color);
+}
+
+/* a segment whose content did not apply — e.g. no operator for the field type —
+   collapses rather than leaving an empty cell between two hairlines */
+.blue-orange-filter-row-segment:empty {
+    display: none;
+}
+
+.blue-orange-filter-row-segment-grow {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.blue-orange-filter-row-segment-muted {
+    color: var(--blue-orange-light-filter-row-muted-color);
+    font-weight: 500;
+}
+
+.dark .blue-orange-filter-row-segment-muted {
+    color: var(--blue-orange-dark-filter-row-muted-color);
+}
+
+.blue-orange-filter-row-segment-control:hover {
+    background-color: var(--blue-orange-light-filter-row-hover-background-color);
+}
+
+.dark .blue-orange-filter-row-segment-control:hover {
+    background-color: var(--blue-orange-dark-filter-row-hover-background-color);
+}
+
+.blue-orange-filter-row-segment-clickable {
+    cursor: pointer;
+}
+
+.blue-orange-filter-row-segment-clickable:hover {
+    background-color: var(--blue-orange-light-filter-row-hover-background-color);
+}
+
+.dark .blue-orange-filter-row-segment-clickable:hover {
+    background-color: var(--blue-orange-dark-filter-row-hover-background-color);
+}
+
+.blue-orange-filter-row-segment-clickable:focus-visible {
+    outline: 2px solid var(--blue-orange-light-active-border-color);
+    outline-offset: -2px;
+}
+
+.blue-orange-filter-row-segment-icon {
+    font-size: 0.9rem;
+    line-height: 1;
+    opacity: 0.7;
+}
+
+.blue-orange-filter-row-segment-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

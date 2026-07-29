@@ -1,0 +1,291 @@
+.blue-orange-stepper {
+    /* the size of a step, in one place — the indicator, the dot and the offset
+       that drops the stacked separator onto the middle of the circles all read
+       from these, so a size variant only has to set them */
+    --blue-orange-stepper-indicator-size: 32px;
+    --blue-orange-stepper-dot-size: 12px;
+    --blue-orange-stepper-head-padding: 4px;
+
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 16px;
+}
+
+/* Size variants */
+
+.blue-orange-stepper-sm {
+    --blue-orange-stepper-indicator-size: 24px;
+    --blue-orange-stepper-dot-size: 8px;
+    --blue-orange-stepper-head-padding: 2px;
+
+    gap: 12px;
+}
+
+.blue-orange-stepper-sm .blue-orange-stepper-indicator {
+    font-size: 0.75rem;
+}
+
+.blue-orange-stepper-sm .blue-orange-stepper-step-head {
+    gap: 8px;
+}
+
+.blue-orange-stepper-sm .blue-orange-stepper-step-title {
+    font-size: 0.8rem;
+}
+
+.blue-orange-stepper-sm .blue-orange-stepper-step-description {
+    font-size: 0.75rem;
+}
+
+.blue-orange-stepper-sm .blue-orange-stepper-separator-horizontal {
+    min-width: 12px;
+    margin: 0 6px;
+}
+
+.blue-orange-stepper-sm .blue-orange-stepper-step-body {
+    padding-bottom: 14px;
+}
+
+.blue-orange-stepper-lg {
+    --blue-orange-stepper-indicator-size: 40px;
+    --blue-orange-stepper-dot-size: 14px;
+}
+
+.blue-orange-stepper-lg .blue-orange-stepper-indicator {
+    font-size: 1rem;
+}
+
+.blue-orange-stepper-lg .blue-orange-stepper-step-title {
+    font-size: 1rem;
+}
+
+.blue-orange-stepper-nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+
+.blue-orange-stepper-step-head {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    border-radius: 6px;
+    padding: var(--blue-orange-stepper-head-padding);
+}
+
+.blue-orange-stepper-step-head-clickable {
+    cursor: pointer;
+}
+
+.blue-orange-stepper-step-head-disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.blue-orange-stepper-step-head:focus-visible {
+    outline: 2px solid var(--blue-orange-light-active-border-color);
+    outline-offset: 1px;
+}
+
+.blue-orange-stepper-step-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.blue-orange-stepper-step-title-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.blue-orange-stepper-step-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--blue-orange-light-stepper-title-color);
+}
+
+.dark .blue-orange-stepper-step-title {
+    color: var(--blue-orange-dark-stepper-title-color);
+}
+
+/* a pending step reads as secondary until it is reached */
+.blue-orange-stepper-step-head:not(.blue-orange-stepper-step-head-active) .blue-orange-stepper-step-title {
+    font-weight: 500;
+    opacity: 0.75;
+}
+
+.blue-orange-stepper-step-description {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: var(--blue-orange-light-muted-text-color);
+}
+
+.dark .blue-orange-stepper-step-description {
+    color: var(--blue-orange-dark-muted-text-color);
+}
+
+/* Stacked titles — the text sits under the indicator instead of beside it */
+
+.blue-orange-stepper-title-below .blue-orange-stepper-nav {
+    align-items: flex-start;
+}
+
+.blue-orange-stepper-title-below .blue-orange-stepper-step-head {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    max-width: 180px;
+}
+
+.blue-orange-stepper-title-below .blue-orange-stepper-step-text {
+    align-items: center;
+    text-align: center;
+}
+
+.blue-orange-stepper-title-below .blue-orange-stepper-step-title-row {
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* the text is free to wrap once it is no longer sharing a line with the indicator */
+.blue-orange-stepper-title-below .blue-orange-stepper-step-title {
+    white-space: normal;
+}
+
+/*
+ * The heads are now as tall as their text, so the line has to be pushed down
+ * onto the middle of the indicator by hand: the head padding, plus half of the
+ * indicator, less half of the 2px line. Both indicator variants share the same
+ * box, so one offset covers them at every size.
+ */
+.blue-orange-stepper-title-below .blue-orange-stepper-separator-horizontal {
+    margin-top: calc(
+        var(--blue-orange-stepper-head-padding)
+        + (var(--blue-orange-stepper-indicator-size) / 2)
+        - 1px
+    );
+}
+
+/* Caption — one label for the active step, above a bare rail of indicators */
+
+.blue-orange-stepper-captioned {
+    gap: 10px;
+}
+
+.blue-orange-stepper-caption {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.blue-orange-stepper-caption-count {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--blue-orange-light-muted-text-color);
+}
+
+.dark .blue-orange-stepper-caption-count {
+    color: var(--blue-orange-dark-muted-text-color);
+}
+
+.blue-orange-stepper-caption-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--blue-orange-light-stepper-title-color);
+}
+
+.dark .blue-orange-stepper-caption-title {
+    color: var(--blue-orange-dark-stepper-title-color);
+}
+
+.blue-orange-stepper-caption-description {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: var(--blue-orange-light-muted-text-color);
+}
+
+.dark .blue-orange-stepper-caption-description {
+    color: var(--blue-orange-dark-muted-text-color);
+}
+
+/* nothing but indicators on the rail, so the line runs the full width */
+.blue-orange-stepper-captioned .blue-orange-stepper-separator-horizontal {
+    margin: 0 6px;
+}
+
+.blue-orange-stepper-panels {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.blue-orange-stepper-panel {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 0;
+}
+
+.blue-orange-stepper-panel-hidden {
+    display: none;
+}
+
+/* Vertical */
+
+.blue-orange-stepper-vertical {
+    gap: 0;
+}
+
+.blue-orange-stepper-step-row {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
+}
+
+.blue-orange-stepper-step-rail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.blue-orange-stepper-step-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+    padding-bottom: 20px;
+}
+
+/* the head has no indicator in vertical mode — the rail column carries it */
+.blue-orange-stepper-vertical .blue-orange-stepper-step-head {
+    padding: 4px 0;
+    min-height: 32px;
+}
+
+.blue-orange-stepper-vertical .blue-orange-stepper-step-title {
+    white-space: normal;
+}
+
+.blue-orange-stepper-vertical .blue-orange-stepper-panel {
+    padding-top: 8px;
+}
+
+.blue-orange-stepper-vertical .blue-orange-stepper-step-row:last-child .blue-orange-stepper-step-body {
+    padding-bottom: 0;
+}

@@ -16,6 +16,9 @@ import {
 	SearchQueryLeafOperand
 } from "../search-query-editor/SearchQueryEditor";
 import {TextArea} from "../../inputs/textarea/TextArea";
+import {FilterRow} from "../../filters/filter-row/FilterRow";
+import {FilterRowSegment} from "../../filters/filter-row-segment/FilterRowSegment";
+import {FilterRowAction} from "../../filters/filter-row-action/FilterRowAction";
 import {Modal} from "../../layouts/modal/modal/Modal";
 import {ModalHeader} from "../../layouts/modal/modal-header/ModalHeader";
 import {ModalBody} from "../../layouts/modal/modal-body/ModalBody";
@@ -40,20 +43,6 @@ export const SearchQueryCondition: React.FC<Props> = ({condition, schema, onChan
 	useEffect(() => {
 		setInternalCondition(condition);
 	}, [condition]);
-
-	const variableSelectionStyle: React.CSSProperties = {
-		backgroundColor: "#e0e1e2",
-		fontSize: "0.8rem"
-	}
-
-	const matchSelectionStyle: React.CSSProperties = {
-		flexShrink: "0",
-		border: "none",
-		fontWeight: "600",
-		textAlign: "center",
-		fontSize: "0.8rem",
-        background: "transparent"
-	}
 
 	const inputRowStyle: React.CSSProperties = {
 		display: "flex",
@@ -241,7 +230,9 @@ export const SearchQueryCondition: React.FC<Props> = ({condition, schema, onChan
 		return "String";
 	}
 
-	const normalizedType = normalizeSchemaType(getSchemaPropertyFromVariableName(internalCondition.variable)?.type ?? "");
+	const selectedProperty = getSchemaPropertyFromVariableName(internalCondition.variable);
+
+	const normalizedType = normalizeSchemaType(selectedProperty?.type ?? "");
 
 	useEffect(() => {
 		const operand = internalCondition.operand;
@@ -433,10 +424,13 @@ export const SearchQueryCondition: React.FC<Props> = ({condition, schema, onChan
 
 	return (
 		<div className={"blue-orange-search-query-condition-cont"}>
-			<div className="blue-orange-search-query-condition-cont-header">
-                <div className={"blue-orange-search-query-condition-start-text"}>Value of</div>
-                <div className={"blue-orange-search-query-condition-variable-selection"}>
-                    <Dropdown filter={true} style={variableSelectionStyle} onSelection={(item) => updateVariable(item.reference)} contextWidth="fit-content">
+			<FilterRow fullWidth={true} classes="blue-orange-search-query-condition-cont-header">
+                <FilterRowSegment muted={true} label="Value of"></FilterRowSegment>
+                <FilterRowSegment
+                    control={true}
+                    grow={true}
+                    classes="blue-orange-search-query-condition-variable-selection">
+                    <Dropdown filter={true} onSelection={(item) => updateVariable(item.reference)} contextWidth="fit-content">
                         {schema.map((item) => (
                             <DropdownItemIcon
                                 key={item.apiName}
@@ -447,10 +441,10 @@ export const SearchQueryCondition: React.FC<Props> = ({condition, schema, onChan
                                 disabled={false}></DropdownItemIcon>
                         ))}
                     </Dropdown>
-                </div>
-                <div className={"blue-orange-search-query-condition-match-selection"}>
+                </FilterRowSegment>
+                <FilterRowSegment control={true} classes="blue-orange-search-query-condition-match-selection">
                     {normalizedType == "STRING" &&
-                        <Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
+                        <Dropdown onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
                             <DropdownItemText label={"Equals"} value={"PHRASE"} selected={"PHRASE" == internalCondition.operand}></DropdownItemText>
                             <DropdownItemText label={"Starts With"} value={"PHRASE_PREFIX"} selected={"PHRASE_PREFIX" == internalCondition.operand}></DropdownItemText>
                             <DropdownItemText label={"Fuzzy"} value={"FUZZY"} selected={"FUZZY" == internalCondition.operand}></DropdownItemText>
@@ -460,19 +454,19 @@ export const SearchQueryCondition: React.FC<Props> = ({condition, schema, onChan
                         </Dropdown>
                     }
                     {normalizedType == "GEO" &&
-                        <Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
+                        <Dropdown onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
                             <DropdownItemText label={"Geo Distance"} value={"GEO_DISTANCE"} selected={"GEO_DISTANCE" == internalCondition.operand}></DropdownItemText>
                             <DropdownItemText label={"Geo Bounding Box"} value={"GEO_BOUNDING_BOX"} selected={"GEO_BOUNDING_BOX" == internalCondition.operand}></DropdownItemText>
                             <DropdownItemText label={"Geo Polygon"} value={"GEO_POLYGON"} selected={"GEO_POLYGON" == internalCondition.operand}></DropdownItemText>
                         </Dropdown>
                     }
                     {normalizedType == "VECTOR" &&
-                        <Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
+                        <Dropdown onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
                             <DropdownItemText label={"KNN"} value={"KNN"} selected={"KNN" == internalCondition.operand}></DropdownItemText>
                         </Dropdown>
                     }
                     {(normalizedType == "NUMBER" || normalizedType == "DATE") &&
-                        <Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
+                        <Dropdown onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
                             <DropdownItemText label={"equals"} value={"EQUALS"} selected={"EQUALS" == internalCondition.operand}></DropdownItemText>
                             <DropdownItemText label={"is greater than"} value={"GREATER_THAN"} selected={"GREATER_THAN" == internalCondition.operand}></DropdownItemText>
                             <DropdownItemText label={"is greater than or equal to"} value={"GREATER_THAN_OR_EQUAL_TO"} selected={"GREATER_THAN_OR_EQUAL_TO" == internalCondition.operand}></DropdownItemText>
@@ -481,25 +475,24 @@ export const SearchQueryCondition: React.FC<Props> = ({condition, schema, onChan
                         </Dropdown>
                     }
                     {normalizedType == "BOOLEAN" &&
-                        <Dropdown style={matchSelectionStyle} onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
+                        <Dropdown onSelection={(item) => updateOperand(item.reference)} contextWidth="fit-content">
                             <DropdownItemText label={"is true"} value={"TRUE"} selected={"TRUE" == internalCondition.operand}></DropdownItemText>
                             <DropdownItemText label={"is false"} value={"FALSE"} selected={"FALSE" == internalCondition.operand}></DropdownItemText>
                         </Dropdown>
                     }
-                </div>
+                </FilterRowSegment>
                 {normalizedType == "STRING" &&
                     !(internalCondition.operand == SearchQueryLeafOperand.REGEX || internalCondition.operand == SearchQueryLeafOperand.WILDCARD) &&
-                    <div className={"blue-orange-search-query-condition-checkbox"}>
+                    <FilterRowSegment classes="blue-orange-search-query-condition-match-case">
                         <Checkbox checked={!internalCondition.ignoreCase} onCheckboxChange={updateMatchCase}></Checkbox>
-                        <div className={"blue-orange-search-query-condition-checkbox-label"}>
-                            Match Case
-                        </div>
-                    </div>
+                        <span className={"blue-orange-search-query-condition-match-case-label"}>Match case</span>
+                    </FilterRowSegment>
                 }
-                <div className={"blue-orange-search-query-condition-checkbox"}>
-                    <ButtonIcon icon="ri-close-line" label={"Delete"} onClick={() => removeCondition()}></ButtonIcon>
-                </div>
-            </div>
+                <FilterRowAction
+                    icon="ri-close-line"
+                    label={"Delete"}
+                    onClick={() => removeCondition()}></FilterRowAction>
+            </FilterRow>
             <div className="blue-orange-search-query-condition-cont-body">
                 <div className={"blue-orange-search-query-condition-user-input"}>
                     {

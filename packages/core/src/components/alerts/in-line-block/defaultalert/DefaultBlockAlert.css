@@ -12,11 +12,11 @@
 .blue-orange-default-alert {
     width: 100%;
     box-sizing: border-box;
-    padding: 24px;
+    padding: 12px 14px;
     display: flex;
     flex-direction: row;
     align-items: flex-start;
-    gap: 12px;
+    gap: 10px;
     border-radius: 4px;
     position: relative;
     border: 1px solid currentColor;
@@ -66,27 +66,33 @@
 .blue-orange-default-alert-icon {
     display: flex;
     align-items: flex-start;
-    padding-top: 2px;
+    font-size: 1rem;
+    line-height: 1.4;
 }
 
 .blue-orange-default-alert-main-body {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    gap: 6px;
+    gap: 2px;
+    min-width: 0;
 }
 
+/* with no title the description carries the block on its own, so it lines up
+   with the icon rather than sitting under a heading */
 .blue-orange-default-alert-main-body-description-only {
-    margin-top: 2px;
+    justify-content: center;
 }
 
 .blue-orange-default-alert-main-body-title {
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 0.875rem;
+    line-height: 1.4;
 }
 
 .blue-orange-default-alert-main-body-description {
     font-size: 0.8rem;
+    line-height: 1.5;
     opacity: 0.8;
 }
 

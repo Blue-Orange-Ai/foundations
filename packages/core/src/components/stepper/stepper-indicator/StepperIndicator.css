@@ -1,0 +1,79 @@
+/* The size comes from the Stepper, falling back to the medium size when the
+   indicator is used on its own. */
+.blue-orange-stepper-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--blue-orange-stepper-indicator-size, 32px);
+    height: var(--blue-orange-stepper-indicator-size, 32px);
+    border-radius: 50%;
+    border: 1px solid var(--blue-orange-light-stepper-indicator-border-color);
+    background-color: var(--blue-orange-light-stepper-indicator-background-color);
+    color: var(--blue-orange-light-stepper-indicator-color);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1;
+    transition: background-color 0.15s ease-out, border-color 0.15s ease-out, color 0.15s ease-out;
+}
+
+.dark .blue-orange-stepper-indicator {
+    border: 1px solid var(--blue-orange-dark-stepper-indicator-border-color);
+    background-color: var(--blue-orange-dark-stepper-indicator-background-color);
+    color: var(--blue-orange-dark-stepper-indicator-color);
+}
+
+.blue-orange-stepper-indicator-active {
+    border-color: var(--blue-orange-light-stepper-active-background-color);
+    background-color: var(--blue-orange-light-stepper-active-background-color);
+    color: var(--blue-orange-light-stepper-active-color);
+}
+
+.dark .blue-orange-stepper-indicator-active {
+    border-color: var(--blue-orange-dark-stepper-active-background-color);
+    background-color: var(--blue-orange-dark-stepper-active-background-color);
+    color: var(--blue-orange-dark-stepper-active-color);
+}
+
+.blue-orange-stepper-indicator-completed {
+    border-color: var(--blue-orange-light-stepper-completed-background-color);
+    background-color: var(--blue-orange-light-stepper-completed-background-color);
+    color: var(--blue-orange-light-stepper-completed-color);
+}
+
+.dark .blue-orange-stepper-indicator-completed {
+    border-color: var(--blue-orange-dark-stepper-completed-background-color);
+    background-color: var(--blue-orange-dark-stepper-completed-background-color);
+    color: var(--blue-orange-dark-stepper-completed-color);
+}
+
+.blue-orange-stepper-indicator-error {
+    border-color: var(--blue-orange-light-stepper-error-background-color);
+    background-color: var(--blue-orange-light-stepper-error-background-color);
+    color: var(--blue-orange-light-stepper-error-color);
+}
+
+.dark .blue-orange-stepper-indicator-error {
+    border-color: var(--blue-orange-dark-stepper-error-background-color);
+    background-color: var(--blue-orange-dark-stepper-error-background-color);
+    color: var(--blue-orange-dark-stepper-error-color);
+}
+
+/* the dot variant keeps the same footprint so the rail stays aligned */
+.blue-orange-stepper-indicator-dot {
+    width: var(--blue-orange-stepper-dot-size, 12px);
+    height: var(--blue-orange-stepper-dot-size, 12px);
+    margin: calc((var(--blue-orange-stepper-indicator-size, 32px) - var(--blue-orange-stepper-dot-size, 12px)) / 2);
+    font-size: 0;
+}
+
+/* the spinner inherits the indicator's colour */
+.blue-orange-stepper-indicator .blue-orange-spinner {
+    color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .blue-orange-stepper-indicator {
+        transition: none;
+    }
+}

@@ -1,68 +1,36 @@
-
+/*
+ * The condition is laid out by FilterRow — everything here is the small amount
+ * of tuning the rule editor asks of it.
+ */
 
 .blue-orange-rule-condition-cont {
     width: 100%;
-    border-radius: 4px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    height: 48px;
-}
-
-.blue-orange-rule-condition-start-text {
-    text-transform: capitalize;
-    opacity: 0.8;
-    font-weight: 600;
-    margin-right: 20px;
-    flex-shrink: 0;
-    font-size: 0.8rem;
 }
 
 .blue-orange-rule-condition-variable-selection {
-    width: 250px;
+    flex-shrink: 1;
 }
 
-.blue-orange-rule-condition-variable-selection .blue-orange-dropdown {
-    background-color: #e0e1e2;
+.blue-orange-rule-condition-variable-selection .blue-orange-dropdown-selection {
+    font-weight: 500;
 }
 
-.dark .blue-orange-rule-condition-variable-selection .blue-orange-dropdown {
-    background-color: var(--blue-orange-dark-input-select-background);
-    border: none !important;
-}
-
-.blue-orange-rule-condition-match-selection .blue-orange-dropdown-icon {
-    display: none;
-}
-
+/* the operator reads as the verb of the sentence */
 .blue-orange-rule-condition-match-selection .blue-orange-dropdown-selection {
-    width: 100%;
-    text-decoration: underline;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .blue-orange-rule-condition-user-input {
-    margin-left: 4px;
+    min-width: 120px;
+}
+
+/* fills the gap left by a condition that takes no value, e.g. a boolean */
+.blue-orange-rule-condition-spacer {
     flex-grow: 1;
 }
 
-.blue-orange-rule-condition-checkbox {
-    width: 80px;
-    display: flex;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-.blue-orange-rule-condition-checkbox-label {
-    position: absolute;
-    left: 0;
-    right: 0;
-    margin: auto;
-    font-size: 0.6rem;
-    font-weight: 600;
-    text-align: center;
-    bottom: 2px;
-    opacity: 0.4;
+.blue-orange-rule-condition-match-case-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    opacity: 0.75;
 }
