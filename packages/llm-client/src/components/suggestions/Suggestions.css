@@ -32,6 +32,10 @@
     transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
 }
 
+.dark .blue-orange-llm-suggestion i{
+    color: white;
+}
+
 .blue-orange-llm-suggestions-grid .blue-orange-llm-suggestion {
     flex: 1 1 240px;
     max-width: 300px;

@@ -468,7 +468,7 @@
  *
  * `width: calc(100% - 0px)` works because everything inside `.blue-orange-llm`
  * is `box-sizing: border-box`, so the padding sits inside the row's width. */
-.blue-orange-llm-composer-controls-left .blue-orange-context-menu-general-row {
+.blue-orange-llm-composer-controls .blue-orange-context-menu-general-row {
     padding: 6px 20px !important;
     width: calc(100% - 0px) !important;
     display: flex !important;
