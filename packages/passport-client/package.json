@@ -1,14 +1,14 @@
 {
   "name": "@blue-orange-ai/foundations-passport-client",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
   "author": "Blue Orange AI",
   "private": false,
   "dependencies": {
-    "@blue-orange-ai/foundations-clients": "^0.1.0",
-    "@blue-orange-ai/foundations-core": "^0.1.4",
+    "@blue-orange-ai/foundations-clients": "^0.2.0",
+    "@blue-orange-ai/foundations-core": "^0.2.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -39,12 +39,12 @@
     "@types/moment": "^2.13.0",
     "@types/react-toggle": "^4.0.5",
     "@types/uuid": "^10.0.0",
-    "ts-loader": "^9.5.1",
     "@vitejs/plugin-react": "^4.3.4",
-    "vitest": "^2.1.9",
     "jsdom": "^25.0.1",
+    "ts-loader": "^9.5.1",
     "vite": "^5.1.6",
-    "vite-plugin-dts": "^4.0.3"
+    "vite-plugin-dts": "^4.0.3",
+    "vitest": "^2.1.9"
   },
   "scripts": {
     "start": "vite",

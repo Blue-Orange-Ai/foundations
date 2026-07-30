@@ -1,13 +1,13 @@
 {
   "name": "@blue-orange-ai/foundations-pdf-viewer",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
   "author": "Blue Orange AI",
   "private": false,
   "dependencies": {
-    "@blue-orange-ai/foundations-core": "^0.1.4",
+    "@blue-orange-ai/foundations-core": "^0.2.0",
     "@embedpdf/core": "^2.14.4",
     "@embedpdf/engines": "^2.14.4",
     "@embedpdf/models": "^2.14.4",
@@ -49,16 +49,16 @@
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@types/uuid": "^9.0.8",
+    "@vitejs/plugin-react": "^4.3.4",
     "ajv": "^8.17.1",
+    "jsdom": "^25.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.3",
     "typescript": "^5.4.5",
     "vite": "^5.1.6",
     "vite-plugin-dts": "^4.0.3",
-    "@vitejs/plugin-react": "^4.3.4",
-    "vitest": "^2.1.9",
-    "jsdom": "^25.0.1"
+    "vitest": "^2.1.9"
   },
   "scripts": {
     "start": "vite",
