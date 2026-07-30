@@ -14,6 +14,7 @@ import { BlueOrangeMedia, MediaPermission } from '@blue-orange-ai/foundations-cl
 import { AgentClient } from '../../services/AgentClient';
 import { SessionStore } from '../../services/SessionStore';
 import { Suggestion, WelcomeBranding } from '../../interfaces/ChatInterfaces';
+import { ComposerConfig } from '../../interfaces/ComposerInterfaces';
 
 export interface MediaConfig {
     /** Base URL of the media service (BlueOrangeMedia). */
@@ -47,6 +48,12 @@ export interface LlmAgentConfig {
     welcome?: WelcomeBranding;
     /** Starter prompts shown on the welcome screen. */
     suggestions?: Suggestion[];
+    /**
+     * Composer presentation — the "+" menu (files, tools, skills), highlighted
+     * modes, model picker, generation settings and dictation. `Assistant` merges
+     * its own props over this.
+     */
+    composer?: ComposerConfig;
     /** localStorage namespace for persisted sessions. */
     sessionNamespace?: string;
     /** Fetch available models from /config/models on mount (default true). */

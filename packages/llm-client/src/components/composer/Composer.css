@@ -1,18 +1,24 @@
+/* Surfaces follow core's input treatment: a 1px border in the input border
+   colour, the input background, a 4px radius, and a 1.5px focus outline. */
 .blue-orange-llm-composer {
     width: 100%;
     max-width: 780px;
     margin: 0 auto;
     background: var(--llm-input-bg);
     border: 1px solid var(--llm-input-border);
-    border-radius: 16px;
-    padding: 8px 8px 8px 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    border-radius: 4px;
+    padding: 8px;
 }
 
 .blue-orange-llm-composer:focus-within {
-    border-color: var(--llm-primary);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    outline: 1.5px solid var(--llm-input-focus-border);
+}
+
+/* -- Message box ------------------------------------------------------- */
+
+.blue-orange-llm-composer-message {
+    display: flex;
+    padding: 2px 4px 6px;
 }
 
 .blue-orange-llm-composer-row {
@@ -23,6 +29,7 @@
 
 .blue-orange-llm-composer-textarea {
     flex: 1;
+    width: 100%;
     border: none;
     outline: none;
     resize: none;
@@ -31,7 +38,7 @@
     font-size: 0.95rem;
     line-height: 1.5;
     max-height: 220px;
-    padding: 8px 4px;
+    padding: 6px 4px;
     font-family: inherit;
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -45,36 +52,212 @@
     color: var(--llm-muted);
 }
 
-.blue-orange-llm-composer-attach,
-.blue-orange-llm-composer-send {
+.blue-orange-llm-composer-file-input {
+    display: none;
+}
+
+/* -- Control row ------------------------------------------------------- */
+
+.blue-orange-llm-composer-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.blue-orange-llm-composer-controls-left,
+.blue-orange-llm-composer-controls-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.blue-orange-llm-composer-controls-left {
+    flex: 1 1 auto;
+    overflow: hidden;
+}
+
+.blue-orange-llm-composer-controls-right {
+    flex: 0 0 auto;
+}
+
+/* The "+" button — core's icon-button geometry with the composer's 4px radius. */
+.blue-orange-llm-composer-plus {
     flex-shrink: 0;
-    height: 36px;
-    width: 36px;
+    height: 32px;
+    width: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: none;
-    border-radius: 10px;
+    border: 1px solid var(--llm-input-border);
+    border-radius: 4px;
+    background: var(--llm-input-bg);
+    color: var(--llm-text);
     cursor: pointer;
-    font-size: 1.15rem;
-    background: transparent;
-    color: var(--llm-muted);
+    font-size: 1.1rem;
+    transition: background 0.15s ease, border-color 0.15s ease;
 }
 
-.blue-orange-llm-composer-attach:hover {
+.blue-orange-llm-composer-plus:hover:not(:disabled) {
+    background: var(--llm-hover);
+}
+
+.blue-orange-llm-composer-plus:disabled {
+    color: var(--llm-muted);
+    cursor: not-allowed;
+}
+
+/* Highlighted modes, e.g. Research. */
+.blue-orange-llm-composer-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 32px;
+    padding: 0 11px;
+    border: 1px solid var(--llm-input-border);
+    border-radius: 4px;
+    background: var(--llm-input-bg);
+    color: var(--llm-text);
+    font-family: inherit;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.blue-orange-llm-composer-pill:hover:not(:disabled) {
+    background: var(--llm-hover);
+}
+
+.blue-orange-llm-composer-pill-active {
+    border-color: var(--llm-primary);
+    background: var(--llm-primary);
+    color: var(--llm-primary-contrast);
+}
+
+.blue-orange-llm-composer-pill-active:hover:not(:disabled) {
+    background: var(--llm-primary);
+}
+
+.blue-orange-llm-composer-pill:disabled {
+    color: var(--llm-muted);
+    cursor: not-allowed;
+}
+
+/* Model picker + settings triggers. */
+.blue-orange-llm-composer-chip {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    max-width: 210px;
+    height: 32px;
+    padding: 0 8px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--llm-muted);
+    font-family: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.blue-orange-llm-composer-chip:hover:not(:disabled),
+.blue-orange-llm-composer-chip-open {
     background: var(--llm-hover);
     color: var(--llm-text);
 }
 
-.blue-orange-llm-composer-send {
-    background: var(--llm-hover);
+.blue-orange-llm-composer-chip:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.blue-orange-llm-composer-chip-label {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.blue-orange-llm-composer-chip-sub {
     color: var(--llm-muted);
+    font-size: 0.72rem;
+}
+
+.blue-orange-llm-composer-chip-caret {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+/* Microphone and other icon-only controls. */
+.blue-orange-llm-composer-icon-btn {
+    flex-shrink: 0;
+    height: 32px;
+    width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--llm-muted);
+    cursor: pointer;
+    font-size: 1.05rem;
     transition: background 0.15s ease, color 0.15s ease;
 }
 
+.blue-orange-llm-composer-icon-btn:hover:not(:disabled) {
+    background: var(--llm-hover);
+    color: var(--llm-text);
+}
+
+.blue-orange-llm-composer-icon-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.blue-orange-llm-composer-icon-btn-live {
+    color: var(--llm-danger);
+    animation: blue-orange-llm-mic-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes blue-orange-llm-mic-pulse {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(214, 69, 69, 0.35);
+    }
+    50% {
+        box-shadow: 0 0 0 5px rgba(214, 69, 69, 0);
+    }
+}
+
+/* Send / stop — square with a 4px radius, on the same background as the other
+   input surfaces; the icon colour carries the state rather than a fill. */
+.blue-orange-llm-composer-send {
+    flex-shrink: 0;
+    height: 32px;
+    width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--llm-input-border);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    background: var(--llm-input-bg);
+    color: var(--llm-muted);
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
 .blue-orange-llm-composer-send-active {
-    background: var(--llm-primary);
-    color: var(--llm-primary-contrast);
+    color: var(--llm-text);
+    border-color: var(--llm-text);
+}
+
+.blue-orange-llm-composer-send-active:hover {
+    background: var(--llm-hover);
 }
 
 .blue-orange-llm-composer-send:disabled {
@@ -83,7 +266,108 @@
 
 .blue-orange-llm-composer-stop {
     background: var(--llm-text);
+    border-color: var(--llm-text);
     color: var(--llm-page-bg);
+}
+
+/* -- Settings panel ---------------------------------------------------- */
+
+.blue-orange-llm-composer-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.blue-orange-llm-composer-settings-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--llm-muted);
+}
+
+.blue-orange-llm-composer-setting-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.blue-orange-llm-composer-setting-labels {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.blue-orange-llm-composer-setting-label {
+    font-size: 0.83rem;
+    color: var(--llm-text);
+}
+
+.blue-orange-llm-composer-setting-desc {
+    font-size: 0.72rem;
+    line-height: 1.35;
+    color: var(--llm-muted);
+}
+
+.blue-orange-llm-composer-setting-body {
+    margin-top: 8px;
+}
+
+/* Core's Slider reads its colours from theme variables a consuming app may not
+   define, so map them onto the local tokens inside the panel. */
+.blue-orange-llm-composer-settings .blue-orange-slider-cont {
+    --blue-orange-light-slider-track-color: var(--llm-hover);
+    --blue-orange-dark-slider-track-color: var(--llm-hover);
+    --blue-orange-light-slider-range-color: var(--llm-primary);
+    --blue-orange-dark-slider-range-color: var(--llm-primary);
+    --blue-orange-light-slider-thumb-background-color: var(--llm-card-bg);
+    --blue-orange-dark-slider-thumb-background-color: var(--llm-card-bg);
+    --blue-orange-light-slider-thumb-border-color: var(--llm-primary);
+    --blue-orange-dark-slider-thumb-border-color: var(--llm-primary);
+}
+
+.blue-orange-llm-composer-settings .blue-orange-slider-value {
+    color: var(--llm-muted);
+    font-size: 0.75rem;
+}
+
+/* Enumerated settings, e.g. reasoning effort. */
+.blue-orange-llm-composer-segmented {
+    display: flex;
+    gap: 4px;
+    padding: 3px;
+    border: 1px solid var(--llm-input-border);
+    border-radius: 4px;
+    background: var(--llm-accent-soft);
+}
+
+.blue-orange-llm-composer-segment {
+    flex: 1;
+    padding: 5px 8px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--llm-muted);
+    font-family: inherit;
+    font-size: 0.76rem;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.blue-orange-llm-composer-segment:hover:not(:disabled) {
+    color: var(--llm-text);
+}
+
+.blue-orange-llm-composer-segment-active {
+    background: var(--llm-card-bg);
+    color: var(--llm-text);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.blue-orange-llm-composer-segment:disabled {
+    cursor: not-allowed;
 }
 
 /* -- Attachment previews ---------------------------------------------- */
@@ -103,8 +387,8 @@
     max-width: 220px;
     padding: 6px 10px;
     background: var(--llm-card-bg);
-    border: 1px solid var(--llm-border);
-    border-radius: 10px;
+    border: 1px solid var(--llm-input-border);
+    border-radius: 4px;
     overflow: hidden;
 }
 
@@ -113,7 +397,7 @@
 }
 
 .blue-orange-llm-attach-icon {
-    color: var(--llm-primary);
+    color: var(--llm-text);
     font-size: 1.1rem;
     flex-shrink: 0;
 }
@@ -146,7 +430,7 @@
     background: transparent;
     color: var(--llm-muted);
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 4px;
     flex-shrink: 0;
 }
 
@@ -168,4 +452,58 @@
     height: 100%;
     background: var(--llm-primary);
     transition: width 0.2s ease;
+}
+
+/* Row geometry for the "+" menu.
+ *
+ * Core's own `.blue-orange-context-menu-general-row` insets each row by 32px and
+ * sizes it at `calc(100% - 64px)`, which in a fit-content panel leaves too little
+ * room for a label like "Add photos and files". Scoping the override under the
+ * composer's left control group keeps it off every other core context menu in a
+ * host application that embeds core alongside this package — the menu panel is
+ * `position: fixed` but still a DOM descendant of the group, so a descendant
+ * selector reaches it. `!important` is belt and braces: the selector is already
+ * more specific than core's, this just makes the override immune to load order
+ * and to host styles of its own.
+ *
+ * `width: calc(100% - 0px)` works because everything inside `.blue-orange-llm`
+ * is `box-sizing: border-box`, so the padding sits inside the row's width. */
+.blue-orange-llm-composer-controls-left .blue-orange-context-menu-general-row {
+    padding: 6px 20px !important;
+    width: calc(100% - 0px) !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    position: relative !important;
+    font-size: 0.8rem !important;
+    line-height: 1.25rem !important;
+    font-weight: 500 !important;
+    /* Not part of the requested block: without it a label can still wrap inside
+       core's 200px minimum panel width. */
+    white-space: nowrap !important;
+}
+
+/* Core wraps tooltip targets in a div; keep those wrappers out of the layout. */
+.blue-orange-llm-composer-controls .blue-orange-simple-tooltip,
+.blue-orange-llm-composer-row .blue-orange-simple-tooltip {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+/* -- Narrow screens ---------------------------------------------------- */
+
+@media (max-width: 640px) {
+    .blue-orange-llm-composer-pill span {
+        display: none;
+    }
+
+    .blue-orange-llm-composer-pill {
+        padding: 0 9px;
+    }
+
+    .blue-orange-llm-composer-chip-label {
+        max-width: 90px;
+    }
 }

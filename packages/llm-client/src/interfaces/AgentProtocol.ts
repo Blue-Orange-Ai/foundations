@@ -106,6 +106,15 @@ export interface ChatRequest {
     agent_dsl?: string;
     /** Optional system prompt override applied to the turn. */
     system_prompt?: string;
+    /**
+     * Sampling temperature. Client hint — only sent when the UI sets it, and
+     * ignored by a service that does not declare the field.
+     */
+    temperature?: number;
+    /** Reasoning-effort hint ("low" | "medium" | "high"), same caveat as above. */
+    effort?: string;
+    /** UI-selected modes (e.g. "research") forwarded verbatim, same caveat. */
+    modes?: string[];
 }
 
 /** `GET /config/models` item. */

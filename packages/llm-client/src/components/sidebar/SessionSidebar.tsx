@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
 import {
+    Button,
+    ButtonType,
+    Input,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    ModalFooterRight,
+    ModalHeader,
     SideBar,
     SideBarState,
     SideBarHeader,
@@ -64,19 +72,22 @@ export const SessionSidebar: React.FC<Props> = ({
     isDark,
     onToggleTheme,
 }) => {
-    const [editingId, setEditingId] = useState<string | null>(null);
+    // Renaming happens in a modal rather than in place: core's SideBarBodyGroup
+    // only renders its own item types, so an inline edit row is dropped from the
+    // tree — the conversation would vanish from the list mid-rename.
+    const [renaming, setRenaming] = useState<ChatSession | null>(null);
     const [draftTitle, setDraftTitle] = useState('');
 
     const startEdit = (session: ChatSession) => {
-        setEditingId(session.id);
+        setRenaming(session);
         setDraftTitle(session.title);
     };
 
     const commitEdit = () => {
-        if (editingId && draftTitle.trim()) {
-            onRename(editingId, draftTitle.trim());
+        if (renaming && draftTitle.trim()) {
+            onRename(renaming.id, draftTitle.trim());
         }
-        setEditingId(null);
+        setRenaming(null);
     };
 
     // Bucket sessions by recency, preserving reverse-chronological order within.
@@ -92,27 +103,6 @@ export const SessionSidebar: React.FC<Props> = ({
         .forEach((s) => buckets[bucketForTimestamp(s.updatedAt)].push(s));
 
     const renderItem = (session: ChatSession) => {
-        // While renaming, swap the row for a dedicated edit input (SideBarBodyItem
-        // renders only its `label` string, so editing lives outside it).
-        if (editingId === session.id) {
-            return (
-                <div key={session.id} className="blue-orange-llm-session-edit-row">
-                    <i className="ri-chat-1-line blue-orange-llm-session-edit-icon" />
-                    <input
-                        className="blue-orange-llm-session-edit"
-                        value={draftTitle}
-                        autoFocus
-                        onChange={(e) => setDraftTitle(e.target.value)}
-                        onBlur={commitEdit}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') commitEdit();
-                            if (e.key === 'Escape') setEditingId(null);
-                        }}
-                    />
-                </div>
-            );
-        }
-
         const hoverItems = (
             <div className="blue-orange-llm-session-actions">
                 <SimpleTooltip label="Rename">
@@ -266,6 +256,35 @@ export const SessionSidebar: React.FC<Props> = ({
                     </div>
                 </SideBarFooter>
             </SideBar>
+
+            <Modal open={Boolean(renaming)} onClose={() => setRenaming(null)} width={380}>
+                <ModalHeader label="Rename conversation" onClose={() => setRenaming(null)} />
+                <ModalBody>
+                    <Input
+                        value={draftTitle}
+                        label="Title"
+                        placeholder="Conversation title"
+                        focus
+                        onChange={setDraftTitle}
+                        enterEvent={commitEdit}
+                    />
+                </ModalBody>
+                <ModalFooter>
+                    <ModalFooterRight>
+                        <Button
+                            text="Cancel"
+                            buttonType={ButtonType.SECONDARY}
+                            onClick={() => setRenaming(null)}
+                        />
+                        <Button
+                            text="Rename"
+                            buttonType={ButtonType.PRIMARY}
+                            isDisabled={draftTitle.trim().length === 0}
+                            onClick={commitEdit}
+                        />
+                    </ModalFooterRight>
+                </ModalFooter>
+            </Modal>
         </div>
     );
 };

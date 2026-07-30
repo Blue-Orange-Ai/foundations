@@ -15,7 +15,8 @@
     --llm-card-bg: var(--blue-orange-light-default-card-background, #ffffff);
     --llm-page-bg: #ffffff;
     --llm-input-bg: var(--blue-orange-light-input-background-color, #ffffff);
-    --llm-input-border: var(--blue-orange-light-input-border-color, #cbd2d9);
+    --llm-input-border: var(--blue-orange-light-input-border-color, #e0e1e2);
+    --llm-input-focus-border: var(--blue-orange-light-input-focus-border-color, #000000);
     --llm-hover: var(--blue-orange-light-context-menu-row-hover-background, #f2f4f6);
     --llm-primary: var(--blue-orange-light-primary-btn-background-color, #2f6df6);
     --llm-primary-contrast: #ffffff;
@@ -23,6 +24,18 @@
     --llm-user-bubble-text: var(--blue-orange-light-default-text-color, #1f2933);
     --llm-accent-soft: #f5f7fa;
     --llm-danger: #d64545;
+
+    /* Core's own variables, restated from the tokens above. Core ships the
+       component rules but not their variable definitions, so a consuming app
+       that has not copied core's index.css would otherwise render its context
+       menus and modals with missing colours (invisible separators, unstyled
+       panels). Set here rather than overridden per class, so core's CSS keeps
+       full control of the rules themselves. Only variables the tokens above do
+       *not* derive from are listed — remapping those would be a var cycle. */
+    --blue-orange-light-context-menu-background: var(--llm-card-bg);
+    --blue-orange-light-context-menu-separator-color: var(--llm-hover);
+    --blue-orange-light-input-dropdown-item-hover-color: var(--llm-hover);
+    --blue-orange-light-input-dropdown-item-focus-background-color: var(--llm-hover);
 
     color: var(--llm-text);
     display: flex;
@@ -44,8 +57,9 @@
     --llm-border: var(--blue-orange-dark-default-border-color, #333a44);
     --llm-card-bg: var(--blue-orange-dark-default-card-background, #21262d);
     --llm-page-bg: #16191d;
-    --llm-input-bg: var(--blue-orange-dark-input-background-color, #21262d);
-    --llm-input-border: var(--blue-orange-dark-input-border-color, #3a4048);
+    --llm-input-bg: var(--blue-orange-dark-input-background-color, #2a2a2c);
+    --llm-input-border: var(--blue-orange-dark-input-border-color, #3f3f42);
+    --llm-input-focus-border: var(--blue-orange-dark-input-focus-border-color, #ffffff);
     --llm-hover: var(--blue-orange-dark-context-menu-row-hover-background, #2a2f37);
     --llm-primary: var(--blue-orange-dark-primary-btn-background-color, #3b82f6);
     --llm-primary-contrast: #ffffff;
@@ -53,4 +67,33 @@
     --llm-user-bubble-text: #e6e8eb;
     --llm-accent-soft: #21262d;
     --llm-danger: #f26d6d;
+
+    --blue-orange-dark-context-menu-background: var(--llm-card-bg);
+    --blue-orange-dark-context-menu-separator-color: var(--llm-hover);
+    --blue-orange-dark-input-dropdown-item-hover-color: var(--llm-hover);
+    --blue-orange-dark-input-dropdown-item-focus-background-color: var(--llm-hover);
+}
+
+/* `.shadow` and `.no-select` are applied by core components (context menu
+   panels, modal cards, hover cards) but defined in core's dev-only App.css, so
+   they never reach a consumer through `dist/style.css`. Restate them here,
+   scoped to the assistant, with core's own values. */
+.blue-orange-llm .shadow {
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.blue-orange-llm .no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* ModalFooterLeft/Right ship without any rules of their own, so a pair of
+   footer buttons stacks vertically. Lay them out as a row. */
+.blue-orange-llm .blue-orange-modal-footer-left,
+.blue-orange-llm .blue-orange-modal-footer-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }

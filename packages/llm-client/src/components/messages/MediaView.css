@@ -38,9 +38,12 @@
     background: var(--llm-card-bg);
 }
 
+/* Not --llm-primary: that token comes from core's primary *button* colour, which
+   is legitimately black in some themes and disappears on a dark card. A file
+   icon reads fine in the body colour in both themes. */
 .blue-orange-llm-media-chip-icon {
     font-size: 1.4rem;
-    color: var(--llm-primary);
+    color: var(--llm-text);
     flex-shrink: 0;
 }
 

@@ -1,0 +1,133 @@
+/* Dev-only overlay: deliberately neutral so it reads over both themes. */
+
+.mock-panel-chip {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    background: rgba(20, 24, 31, 0.9);
+    color: #e8ecf2;
+    font-size: 0.78rem;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.mock-panel-chip:hover {
+    background: rgba(20, 24, 31, 1);
+}
+
+.mock-panel {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 200;
+    width: 268px;
+    padding: 12px 14px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+    background: rgba(20, 24, 31, 0.95);
+    color: #e8ecf2;
+    font-size: 0.8rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.mock-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.mock-panel-title {
+    flex: 1;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.mock-panel-dot {
+    height: 8px;
+    width: 8px;
+    border-radius: 50%;
+    background: #43c47c;
+    box-shadow: 0 0 0 3px rgba(67, 196, 124, 0.18);
+}
+
+.mock-panel-dot-off {
+    background: #8b939f;
+    box-shadow: 0 0 0 3px rgba(139, 147, 159, 0.18);
+}
+
+.mock-panel-close {
+    border: none;
+    background: transparent;
+    color: #9aa3b0;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0;
+}
+
+.mock-panel-close:hover {
+    color: #e8ecf2;
+}
+
+.mock-panel-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+.mock-panel-field > span {
+    color: #9aa3b0;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.mock-panel-field select {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #e8ecf2;
+    font-family: inherit;
+    font-size: 0.8rem;
+}
+
+.mock-panel-note {
+    margin: 0 0 10px;
+    color: #9aa3b0;
+    font-size: 0.72rem;
+    line-height: 1.45;
+}
+
+.mock-panel-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.mock-panel-actions button {
+    flex: 1 1 auto;
+    padding: 6px 9px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #e8ecf2;
+    font-family: inherit;
+    font-size: 0.74rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.mock-panel-actions button:hover {
+    background: rgba(255, 255, 255, 0.12);
+}

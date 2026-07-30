@@ -2,6 +2,7 @@ import React from 'react';
 import { SimpleTooltip } from '@blue-orange-ai/foundations-core';
 
 import { Attachment, ChatSession, Suggestion, WelcomeBranding } from '../../interfaces/ChatInterfaces';
+import { ComposerConfig } from '../../interfaces/ComposerInterfaces';
 import { MessageList } from '../messages/MessageList';
 import { Composer } from '../composer/Composer';
 import { ThreadWelcome } from './ThreadWelcome';
@@ -18,6 +19,8 @@ interface Props {
     branding?: WelcomeBranding;
     suggestions?: Suggestion[];
     followUps?: Suggestion[];
+    /** How the prompt box presents itself — menus, model picker, settings, voice. */
+    composer?: ComposerConfig;
 
     sidebarOpen: boolean;
     onToggleSidebar: () => void;
@@ -35,6 +38,7 @@ export const Thread: React.FC<Props> = ({
     branding,
     suggestions,
     followUps,
+    composer,
     sidebarOpen,
     onToggleSidebar,
     feedback,
@@ -68,6 +72,7 @@ export const Thread: React.FC<Props> = ({
                         />
                         <div className="blue-orange-llm-thread-welcome-composer">
                             <Composer
+                                {...composer}
                                 onSend={onSend}
                                 onStop={onStop}
                                 isRunning={isRunning}
@@ -109,7 +114,7 @@ export const Thread: React.FC<Props> = ({
                         variant="row"
                     />
                 )}
-                <Composer onSend={onSend} onStop={onStop} isRunning={isRunning} />
+                <Composer {...composer} onSend={onSend} onStop={onStop} isRunning={isRunning} />
                 <div className="blue-orange-llm-thread-disclaimer">
                     The assistant can make mistakes. Verify important information.
                 </div>

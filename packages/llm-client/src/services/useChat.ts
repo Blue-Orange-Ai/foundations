@@ -27,9 +27,41 @@ export interface SendOptions {
     toolIds?: string[];
     systemPrompt?: string;
     model?: string;
+    /** Sampling temperature, when the composer exposes one. */
+    temperature?: number;
+    /** Reasoning-effort hint ("low" | "medium" | "high"). */
+    effort?: string;
+    /** Highlighted modes selected in the composer, e.g. ["research"]. */
+    modes?: string[];
+    /** Any further fields to merge into the request body verbatim. */
+    extra?: Record<string, any>;
 }
 
 const now = () => Date.now();
+
+/**
+ * Assemble the wire request for one turn. `extra` is merged first so the named
+ * fields always win, and unset options drop out of the JSON entirely.
+ */
+const buildRequest = (
+    prompt: string,
+    attachmentUuids: string[],
+    history: ChatMessageDto[],
+    model: string | undefined,
+    opts: SendOptions,
+): ChatRequest => ({
+    ...(opts.extra || {}),
+    prompt,
+    model,
+    attachments: attachmentUuids,
+    history,
+    thinking: opts.thinking,
+    tool_ids: opts.toolIds,
+    system_prompt: opts.systemPrompt,
+    temperature: opts.temperature,
+    effort: opts.effort,
+    modes: opts.modes && opts.modes.length > 0 ? opts.modes : undefined,
+});
 
 /** Project the completed messages of a session into the server `history` shape. */
 export const buildHistory = (messages: ChatMessage[]): ChatMessageDto[] =>
@@ -174,15 +206,13 @@ export const useChat = ({ client, session, onSessionChange, defaults }: UseChatA
                 true,
             );
 
-            const request: ChatRequest = {
-                prompt: trimmed,
+            const request = buildRequest(
+                trimmed,
+                readyAttachments.map((a) => a.uuid),
+                buildHistory(priorMessages),
                 model,
-                attachments: readyAttachments.map((a) => a.uuid),
-                history: buildHistory(priorMessages),
-                thinking: opts.thinking,
-                tool_ids: opts.toolIds,
-                system_prompt: opts.systemPrompt,
-            };
+                opts,
+            );
             runTurn(priorMessages, request, assistantMessage.id);
         },
         [defaults, isRunning, patchSession, runTurn],
@@ -233,15 +263,13 @@ export const useChat = ({ client, session, onSessionChange, defaults }: UseChatA
                 true,
             );
 
-            const request: ChatRequest = {
-                prompt: messageText(userMessage),
+            const request = buildRequest(
+                messageText(userMessage),
+                (userMessage.attachments || []).map((a) => a.uuid),
+                buildHistory(priorMessages),
                 model,
-                attachments: (userMessage.attachments || []).map((a) => a.uuid),
-                history: buildHistory(priorMessages),
-                thinking: opts.thinking,
-                tool_ids: opts.toolIds,
-                system_prompt: opts.systemPrompt,
-            };
+                opts,
+            );
             runTurn(priorMessages, request, assistantMessageId);
         },
         [defaults, isRunning, patchSession, runTurn],

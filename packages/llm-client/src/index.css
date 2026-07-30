@@ -122,9 +122,9 @@
   --blue-orange-light-input-color: black;
   --blue-orange-dark-input-color: white;
   --blue-orange-light-input-border-color: #e0e1e2;
-  --blue-orange-dark-input-border-color: #28282a;
+  --blue-orange-dark-input-border-color: #3f3f42;
   --blue-orange-light-input-background-color: white;
-  --blue-orange-dark-input-background-color: black;
+  --blue-orange-dark-input-background-color: #2a2a2c;
   --blue-orange-light-input-focus-border-color: black;
   --blue-orange-dark-input-focus-border-color: white;
   --blue-orange-light-input-select-background: #f7f7f9;
@@ -269,7 +269,9 @@
   --blue-orange-dark-badge-color: white;
 
   --blue-orange-light-default-text-color: black;
-  --blue-orange-dark-default-text-color: black;
+  /* Matches core's own index.css — the dark value drives --llm-text, so black
+     here left the model picker and other core inputs black-on-black. */
+  --blue-orange-dark-default-text-color: white;
 
   --blue-orange-light-default-tag-background-color: #18181b;
   --blue-orange-dark-default-tag-background-color: #18181b;

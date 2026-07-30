@@ -15,6 +15,10 @@ export * from './components/thread/Thread';
 export * from './components/thread/ThreadWelcome';
 export * from './components/sidebar/SessionSidebar';
 export * from './components/composer/Composer';
+export * from './components/composer/ComposerAddMenu';
+export * from './components/composer/ComposerModelMenu';
+export * from './components/composer/ComposerSettingsMenu';
+export * from './components/composer/ComposerPopover';
 export * from './components/composer/AttachmentPreview';
 export * from './components/suggestions/Suggestions';
 export * from './components/model-picker/ModelPicker';
@@ -34,7 +38,9 @@ export * from './services/AgentClient';
 export * from './services/SessionStore';
 export * from './services/StreamAccumulator';
 export * from './services/useChat';
+export * from './services/useSpeechRecognition';
 
 // Types ----------------------------------------------------------------------
 export * from './interfaces/AgentProtocol';
 export * from './interfaces/ChatInterfaces';
+export * from './interfaces/ComposerInterfaces';

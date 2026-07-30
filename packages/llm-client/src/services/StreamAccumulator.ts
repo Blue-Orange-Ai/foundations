@@ -43,16 +43,18 @@ export class StreamAccumulator {
             case 'ACTION':
                 this.applyAction(event);
                 // A tool call interrupts the current text/reasoning run: a
-                // subsequent TEXT should start a fresh part after the action.
+                // subsequent TEXT should start a fresh part after the action, and
+                // the reasoning that led here is finished (closeReasoning clears
+                // the open index, so later THINKING opens a new part).
                 this.openTextIndex = -1;
-                this.openReasoningIndex = -1;
+                this.closeReasoning();
                 break;
             case 'MEDIA':
                 if (event.media) {
                     this.parts.push({ type: 'media', media: event.media });
                 }
                 this.openTextIndex = -1;
-                this.openReasoningIndex = -1;
+                this.closeReasoning();
                 break;
             case 'USAGE':
             case 'COMPLETE':

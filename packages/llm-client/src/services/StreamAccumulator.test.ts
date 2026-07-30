@@ -68,6 +68,22 @@ describe('StreamAccumulator', () => {
         expect((parts[4] as TextPart).text).toBe('second');
     });
 
+    it('finishes an open reasoning run when a tool call or media interrupts it', () => {
+        const acc = new StreamAccumulator();
+        acc.apply(ev({ type: 'THINKING', content: 'plan the lookup' }));
+        let parts = acc.apply(
+            ev({ type: 'ACTION', action: { id: 'a1', action_type: 'GREP', title: 'Search', status: 'RUNNING' } }),
+        );
+        // Otherwise the reasoning panel spins on "Thinking…" for the whole turn.
+        expect((parts[0] as ReasoningPart).inProgress).toBe(false);
+
+        // Reasoning after the action opens a fresh part rather than reopening it.
+        acc.apply(ev({ type: 'THINKING', content: 'now interpret it' }));
+        parts = acc.apply(ev({ type: 'MEDIA', media: { uuid: 'm1' } }));
+        expect(parts.map((p) => p.type)).toEqual(['reasoning', 'action', 'reasoning', 'media']);
+        expect((parts[2] as ReasoningPart).inProgress).toBe(false);
+    });
+
     it('captures usage and error', () => {
         const acc = new StreamAccumulator();
         acc.apply(ev({ type: 'TEXT', content: 'hi', model: 'gpt-4o', provider: 'open-ai' }));

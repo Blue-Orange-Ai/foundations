@@ -210,27 +210,3 @@
     color: var(--llm-danger);
 }
 
-.blue-orange-llm-session-edit-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    margin: 2px 0;
-}
-
-.blue-orange-llm-session-edit-icon {
-    color: var(--llm-muted);
-    flex-shrink: 0;
-}
-
-.blue-orange-llm-session-edit {
-    flex: 1;
-    min-width: 0;
-    border: 1px solid var(--llm-primary);
-    border-radius: 6px;
-    background: var(--llm-input-bg);
-    color: var(--llm-text);
-    font-size: 0.85rem;
-    padding: 5px 8px;
-    outline: none;
-}
