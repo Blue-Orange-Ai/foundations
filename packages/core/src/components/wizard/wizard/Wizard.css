@@ -1,0 +1,65 @@
+.blue-orange-wizard {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 0;
+    gap: 16px;
+}
+
+.blue-orange-wizard-header {
+    flex-shrink: 0;
+}
+
+/* the body takes the height that is left and scrolls, so a wizard drops into a
+   modal or a drawer without pushing its footer off the bottom */
+.blue-orange-wizard-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.blue-orange-wizard-stage {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 0;
+    gap: 12px;
+}
+
+.blue-orange-wizard-stage-hidden {
+    display: none;
+}
+
+/* Vertical — the stages open in place under their own step */
+
+.blue-orange-wizard-vertical .blue-orange-wizard-body {
+    overflow-y: visible;
+}
+
+.blue-orange-wizard-vertical .blue-orange-wizard-stage {
+    padding-bottom: 8px;
+}
+
+.blue-orange-wizard-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-shrink: 0;
+    padding-top: 4px;
+}
+
+.blue-orange-wizard-footer-left,
+.blue-orange-wizard-footer-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.blue-orange-wizard-footer-right {
+    margin-left: auto;
+}

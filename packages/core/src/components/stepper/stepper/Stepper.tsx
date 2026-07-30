@@ -12,6 +12,8 @@ import {
 	StepperTitlePlacement
 } from "./StepperTypes";
 import {Badge} from "../../text-decorations/badge/Badge";
+import {Accordion} from "../../accordion/accordion/Accordion";
+import {AccordionBody} from "../../accordion/accordion-body/AccordionBody";
 
 interface StepMetaData {
 	uuid: string;
@@ -44,6 +46,11 @@ interface Props {
 	clickable?: boolean;
 	/** Renders the children of the active step underneath (or beside) the nav. */
 	showPanels?: boolean;
+	/**
+	 * Vertical steppers only. Keeps every panel mounted and animates the active
+	 * one open as the one before it closes, instead of swapping them outright.
+	 */
+	animatePanels?: boolean;
 	classes?: string;
 	style?: React.CSSProperties;
 }
@@ -64,6 +71,7 @@ export const Stepper: React.FC<Props> = ({
 											 formatStepCount = (current: number, total: number) => "Step " + current + " of " + total,
 											 clickable = false,
 											 showPanels = true,
+											 animatePanels = false,
 											 classes = "",
 											 style = {}}) => {
 
@@ -257,7 +265,18 @@ export const Stepper: React.FC<Props> = ({
 						</div>
 						<div className="blue-orange-stepper-step-body">
 							{renderHead(step, index, false)}
-							{showPanels && step.children && step.uuid === active &&
+							{/*
+							  * Animated panels all stay mounted so the one being left behind has
+							  * something to collapse; the plain version just swaps them over.
+							  */}
+							{showPanels && step.children && animatePanels &&
+								<Accordion opened={step.uuid === active}>
+									<AccordionBody>
+										<div className="blue-orange-stepper-panel">{step.children}</div>
+									</AccordionBody>
+								</Accordion>
+							}
+							{showPanels && step.children && !animatePanels && step.uuid === active &&
 								<div className="blue-orange-stepper-panel">{step.children}</div>
 							}
 						</div>

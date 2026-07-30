@@ -114,6 +114,7 @@ import {ButtonTabsDevelopment} from "../components/layouts/button-tabs/ButtonTab
 import {HoverCardDevelopment} from "../components/tooltips/hover-card/HoverCardDevelopment";
 import {StepperDevelopment} from "../components/stepper/StepperDevelopment";
 import {TimelineDevelopment} from "../components/timeline/TimelineDevelopment";
+import {WizardDevelopment} from "../components/wizard/WizardDevelopment";
 
 interface Props {
 }
@@ -785,6 +786,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						onClick={() => navigate("/timeline")}
 					></SideBarBodyItem>
 					<SideBarBodyItem
+						label={"Wizard"}
+						active={component == "wizard"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-magic-line"></i>}
+						onClick={() => navigate("/wizard")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
 						label={"Media"}
 						active={component == "media"}
 						focused={false}
@@ -1241,6 +1251,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "tooltips-hover-card" && <HoverCardDevelopment></HoverCardDevelopment>}
 			{component == "stepper" && <StepperDevelopment></StepperDevelopment>}
 			{component == "timeline" && <TimelineDevelopment></TimelineDevelopment>}
+			{component == "wizard" && <WizardDevelopment></WizardDevelopment>}
 		</SidebarPage>
 	)
 }

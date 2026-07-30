@@ -15,6 +15,7 @@ const renderStepper = (props: {
 	clickable?: boolean,
 	orientation?: StepperOrientation,
 	titlePlacement?: StepperTitlePlacement,
+	animatePanels?: boolean,
 	onStepChange?: (uuid: string, index: number) => void
 } = {}) => {
 	return render(
@@ -23,6 +24,7 @@ const renderStepper = (props: {
 			clickable={props.clickable}
 			orientation={props.orientation}
 			titlePlacement={props.titlePlacement}
+			animatePanels={props.animatePanels}
 			onStepChange={props.onStepChange}>
 			<StepperStep uuid="details" title="Your details">
 				<span>Details panel</span>
@@ -392,6 +394,20 @@ describe('Stepper', () => {
 		);
 		expect(container.querySelector('.blue-orange-stepper-caption')).toBeNull();
 		expect(screen.getByText('Your details')).toBeInTheDocument();
+	});
+
+	it('keeps every panel mounted when the vertical panels animate', () => {
+		const {container} = renderStepper({orientation: StepperOrientation.VERTICAL, animatePanels: true});
+		// all three are mounted, each in its own accordion, so the one being left
+		// behind has something to collapse
+		expect(container.querySelectorAll('.blue-orange-accordion').length).toBe(3);
+		expect(container.querySelectorAll('.blue-orange-stepper-panel').length).toBe(3);
+		expect(screen.getByText('Details panel')).toBeInTheDocument();
+	});
+
+	it('ignores the animation on a horizontal stepper', () => {
+		const {container} = renderStepper({animatePanels: true});
+		expect(container.querySelector('.blue-orange-accordion')).toBeNull();
 	});
 
 	it('ignores children that are not a StepperStep', () => {

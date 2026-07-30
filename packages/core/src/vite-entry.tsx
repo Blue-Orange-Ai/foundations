@@ -106,6 +106,10 @@ export * from './components/stepper/stepper-step/StepperStep';
 export * from './components/stepper/stepper-indicator/StepperIndicator';
 export * from './components/stepper/stepper-separator/StepperSeparator';
 
+// Wizard
+export * from './components/wizard/wizard/Wizard';
+export * from './components/wizard/wizard-stage/WizardStage';
+
 // Timeline
 export * from './components/timeline/timeline/Timeline';
 export * from './components/timeline/timeline/TimelineContext';

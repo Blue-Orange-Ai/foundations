@@ -29,6 +29,7 @@ import {ButtonTabsDevelopment} from "./components/layouts/button-tabs/ButtonTabs
 import {HoverCardDevelopment} from "./components/tooltips/hover-card/HoverCardDevelopment";
 import {StepperDevelopment} from "./components/stepper/StepperDevelopment";
 import {TimelineDevelopment} from "./components/timeline/TimelineDevelopment";
+import {WizardDevelopment} from "./components/wizard/WizardDevelopment";
 import {RuleEditorDevelopment} from "./components/rules/rule-editor/RuleEditorDevelopment";
 import {SearchQueryEditorDevelopment} from "./components/search/search-query-editor/SearchQueryEditorDevelopment";
 
@@ -64,6 +65,7 @@ const PAGES: Array<[string, React.FC<any>]> = [
 	["Hover Card", HoverCardDevelopment],
 	["Stepper", StepperDevelopment],
 	["Timeline", TimelineDevelopment],
+	["Wizard", WizardDevelopment],
 	["Rule Editor", RuleEditorDevelopment],
 	["Search Query Editor", SearchQueryEditorDevelopment],
 ];
