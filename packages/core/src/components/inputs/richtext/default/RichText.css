@@ -56,7 +56,8 @@
     min-height: 100px;
     padding-left: 15px;
     padding-right: 15px;
-    width: calc(100% - 30px);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .blue-orange-rich-text-editor-single-line .tiptap {

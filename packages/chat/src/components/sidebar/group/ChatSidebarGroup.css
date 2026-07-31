@@ -1,6 +1,7 @@
 .blue-orange-chat-sidebar-group {
     padding-left: 10px;
-    width: calc(100% - 10px);
+    width: 100%;
+    box-sizing: border-box;
     cursor: pointer;
 }
 

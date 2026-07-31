@@ -1,7 +1,8 @@
 
 
 .blue-orange-rich-text-editor-uploaded-file-cont {
-    width: calc(100% - 20px);
+    width: 100%;
+    box-sizing: border-box;
     display: flex;
     flex-direction: row;
     align-items: center;

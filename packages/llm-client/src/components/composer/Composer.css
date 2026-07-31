@@ -456,11 +456,11 @@
 
 /* Row geometry for the "+" menu.
  *
- * Core's own `.blue-orange-context-menu-general-row` insets each row by 32px and
- * sizes it at `calc(100% - 64px)`, which in a fit-content panel leaves too little
- * room for a label like "Add photos and files". Scoping the override under the
- * composer's left control group keeps it off every other core context menu in a
- * host application that embeds core alongside this package — the menu panel is
+ * Core's own `.blue-orange-context-menu-general-row` pads each row by 32px a
+ * side (border-box), which in a fit-content panel leaves too little room for a
+ * label like "Add photos and files". Scoping the override under the composer's
+ * left control group keeps it off every other core context menu in a host
+ * application that embeds core alongside this package — the menu panel is
  * `position: fixed` but still a DOM descendant of the group, so a descendant
  * selector reaches it. `!important` is belt and braces: the selector is already
  * more specific than core's, this just makes the override immune to load order

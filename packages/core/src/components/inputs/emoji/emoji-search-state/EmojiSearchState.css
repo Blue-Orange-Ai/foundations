@@ -9,7 +9,8 @@
 }
 
 .blue-orange-html-emoji-filter-cont {
-    width: calc(100% - 10px);
+    width: 100%;
+    box-sizing: border-box;
     padding: 10px 5px 5px;
     background-color: var(--blue-orange-light-input-emoji-filter-background-color);
 }
@@ -19,7 +20,8 @@
 }
 
 .blue-orange-html-emoji-body-display {
-    width: calc(100% - 30px);
+    width: 100%;
+    box-sizing: border-box;
     padding-left: 15px;
     padding-right: 15px;
     display: flex;

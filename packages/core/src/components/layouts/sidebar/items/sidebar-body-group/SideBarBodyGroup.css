@@ -2,7 +2,8 @@
 
 .blue-orange-sidebar-body-group {
     padding-left: 10px;
-    width: calc(100% - 10px);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Collapsed the sidebar shows nothing but icons, so the group indentation is

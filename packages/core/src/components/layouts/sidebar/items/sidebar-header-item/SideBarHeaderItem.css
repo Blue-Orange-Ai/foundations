@@ -18,7 +18,8 @@
 .blue-orange-sidebar-header-item-cont {
     padding-left: 15px;
     padding-right: 15px;
-    width: calc(100% - 30px);
+    width: 100%;
+    box-sizing: border-box;
     display: flex;
     flex-direction: row;
     align-items: center;

@@ -1,5 +1,6 @@
 .passport-user-group-table {
-    width: calc(100% - 2px);
+    width: 100%;
+    box-sizing: border-box;
     border: 1px solid #e0e1e2;
     min-height: 200px;
     display: flex;

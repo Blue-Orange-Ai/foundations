@@ -13,7 +13,8 @@
 }
 
 .blue-orange-color-picker-input-cont {
-    width: calc(100% - 10px);
+    width: 100%;
+    box-sizing: border-box;
     border: 1px solid var(--blue-orange-light-input-border-color);
     height: 34px;
     background-color: var(--blue-orange-light-input-background-color);
