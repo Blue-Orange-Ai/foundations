@@ -8,8 +8,9 @@
 }
 
 .blue-orange-default-text-area{
-    min-width: calc(100% - 10px);
-    max-width: calc(100% - 10px);
+    min-width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     border: 1px solid var(--blue-orange-light-input-border-color);
     background-color: var(--blue-orange-light-input-background-color);
     color: var(--blue-orange-light-input-color);
@@ -20,8 +21,8 @@
 }
 
 .dark .blue-orange-default-text-area{
-    min-width: calc(100% - 10px);
-    max-width: calc(100% - 10px);
+    min-width: 100%;
+    max-width: 100%;
     border: 1px solid var(--blue-orange-dark-input-border-color);
     background-color: var(--blue-orange-dark-input-background-color);
     color: var(--blue-orange-dark-input-color);

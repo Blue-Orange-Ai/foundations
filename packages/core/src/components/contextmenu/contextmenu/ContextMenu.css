@@ -21,7 +21,8 @@
 }
 
 .blue-orange-default-context-menu-row{
-    width: calc(100% - 10px);
+    width: 100%;
+    box-sizing: border-box;
     padding: 5px;
     display: flex;
     flex-direction: row;
@@ -52,7 +53,8 @@
 
 .blue-orange-context-menu-general-row {
     padding: 6px 32px 6px 32px;
-    width: calc(100% - 64px);
+    width: 100%;
+    box-sizing: border-box;
     display: flex;
     flex-direction: row;
     align-items: center;

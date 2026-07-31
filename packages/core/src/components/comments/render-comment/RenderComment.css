@@ -33,7 +33,8 @@
     height: 36px;
     border-bottom: 1px solid var(--blue-orange-light-default-border-color);
     background-color: #f7f8fa;
-    width: calc(100% - 32px);
+    width: 100%;
+    box-sizing: border-box;
     padding-left: 16px;
     padding-right: 16px;
     display: flex;
@@ -79,12 +80,13 @@
 }
 
 .blue-orange-comments-render-body-cont {
-    width: calc(100% - 32px);
+    width: 100%;
+    box-sizing: border-box;
     padding: 16px;
 }
 
 .blue-orange-comments-render-cont-small .blue-orange-comments-render-body-cont {
-    width: calc(100% - 16px);
+    width: 100%;
     padding: 0px;
     padding-left: 16px;
 }

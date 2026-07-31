@@ -1,5 +1,6 @@
 .blue-orange-schema-editor-container {
-    width: calc(100% - 40px);
+    width: 100%;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -35,7 +36,8 @@
 }
 
 .blue-orange-schema-editor-row {
-    max-width: calc(100% - 24px) !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
     padding: 12px;
     border: 1px solid var(--blue-orange-light-default-border-color);
     border-radius: 8px;

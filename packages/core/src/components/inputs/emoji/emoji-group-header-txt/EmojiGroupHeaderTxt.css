@@ -1,6 +1,7 @@
 
 .blue-orange-html-emoji-header-txt{
-    width: calc(100% - 30px);
+    width: 100%;
+    box-sizing: border-box;
     padding-left: 15px;
     padding-right: 15px;
     font-size: 0.7rem;

@@ -13,7 +13,8 @@
 }
 
 .blue-orange-metrics-value {
-    width: calc(100% - 10px);
+    width: 100%;
+    box-sizing: border-box;
     border: 1px solid var(--blue-orange-light-input-border-color);
     height: 36px;
     background-color: var(--blue-orange-light-input-background-color);

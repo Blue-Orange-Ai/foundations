@@ -6,7 +6,8 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    width: calc(100% - 40px);
+    width: 100%;
+    box-sizing: border-box;
     border: 1px solid var(--blue-orange-light-default-border-color);
     border-radius: 4px;
 }
