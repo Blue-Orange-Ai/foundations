@@ -1,0 +1,25 @@
+.er-diagram-workspace-main-window{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.er-diagram-workspace-controls {
+    width: 95%;
+    padding: 8px 0;
+    display: flex;
+    gap: 8px;
+}
+
+.er-diagram-workspace-display-window {
+    width: 95%;
+    height: 90%;
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+}
