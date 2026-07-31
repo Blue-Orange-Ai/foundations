@@ -57,19 +57,19 @@ describe('EventFormModal', () => {
     });
 
     it('mirrors the title into the modal header as it is edited', () => {
-        const { container } = render(
+        const { baseElement } = render(
             <EventFormModal start={start} end={end} onCancel={vi.fn()} onCreate={vi.fn()} />
         );
-        const header = container.querySelector('.blue-orange-modal-header-label') as HTMLElement;
+        const header = baseElement.querySelector('.blue-orange-modal-header-label') as HTMLElement;
         expect(header).toHaveTextContent('New event');
 
-        const titleInput = container.querySelector('.blue-orange-input') as HTMLInputElement;
+        const titleInput = baseElement.querySelector('.blue-orange-input') as HTMLInputElement;
         fireEvent.change(titleInput, { target: { value: 'Sprint planning' } });
         expect(header).toHaveTextContent('Sprint planning');
     });
 
     it('fills the header swatch when busy and outlines it when free', () => {
-        const { container } = render(
+        const { baseElement } = render(
             <EventFormModal
                 start={start}
                 end={end}
@@ -78,7 +78,7 @@ describe('EventFormModal', () => {
                 onCreate={vi.fn()}
             />
         );
-        const swatch = container.querySelector(
+        const swatch = baseElement.querySelector(
             '.blue-orange-calendar-event-form-swatch'
         ) as HTMLElement;
         // Busy by default: filled.
@@ -101,7 +101,7 @@ describe('EventFormModal', () => {
             calendarId: 'work',
             availability: CalendarEventAvailability.FREE,
         };
-        const { container } = render(
+        const { baseElement } = render(
             <EventFormModal
                 mode="edit"
                 initialEvent={initialEvent}
@@ -111,7 +111,7 @@ describe('EventFormModal', () => {
                 onCreate={onCreate}
             />
         );
-        const header = container.querySelector('.blue-orange-modal-header-label') as HTMLElement;
+        const header = baseElement.querySelector('.blue-orange-modal-header-label') as HTMLElement;
         expect(header).toHaveTextContent('Standup');
         // The primary button reads "Save" when editing.
         fireEvent.click(screen.getByText('Save'));
@@ -124,7 +124,7 @@ describe('EventFormModal', () => {
     });
 
     it('places the guest fields directly under the When block', () => {
-        const { container } = render(
+        const { baseElement } = render(
             <EventFormModal
                 start={start}
                 end={end}
@@ -134,7 +134,7 @@ describe('EventFormModal', () => {
             />
         );
         const labels = Array.from(
-            container.querySelectorAll('.blue-orange-calendar-event-form-label')
+            baseElement.querySelectorAll('.blue-orange-calendar-event-form-label')
         ).map((node) => node.textContent);
         const whenAt = labels.indexOf('When');
         expect(labels[whenAt + 1]).toBe('Required guests');

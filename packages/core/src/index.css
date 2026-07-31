@@ -438,6 +438,15 @@
   --blue-orange-light-spinner-color: black;
   --blue-orange-dark-spinner-color: white;
 
+  --blue-orange-light-tabs-color: #71717a;
+  --blue-orange-dark-tabs-color: #a1a1aa;
+  --blue-orange-light-tabs-hover-color: black;
+  --blue-orange-dark-tabs-hover-color: white;
+  --blue-orange-light-tabs-active-color: black;
+  --blue-orange-dark-tabs-active-color: white;
+  --blue-orange-light-tabs-indicator-color: black;
+  --blue-orange-dark-tabs-indicator-color: white;
+
   --blue-orange-light-button-tabs-background-color: #f4f4f5;
   --blue-orange-dark-button-tabs-background-color: #28282a;
   --blue-orange-light-button-tabs-border-color: #e0e1e2;

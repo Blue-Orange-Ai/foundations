@@ -1,15 +1,17 @@
 
 
+/* Sized off the edges rather than 100vw/100vh — a viewport unit includes the scrollbar gutter, which
+   left the window a scrollbar's width wider than the page it covers. */
 .blue-orange-modal-window {
     position: fixed;
-    width: 100vw;
-    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 99999999 !important;
     top: 0;
     left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 /* while animating out the modal is still mounted — let clicks through to the page underneath */
@@ -37,9 +39,15 @@
     z-index: 2;
 }
 
+/* border-box so the width, minWidth and minHeight props are the size the card actually renders at
+   rather than the size of its content box inside the 24px padding. */
 .blue-orange-modal-card {
+    box-sizing: border-box;
     padding: 24px;
     border-radius: 8px;
+    /* carried here rather than left to the `shadow` utility class, which the card can no longer
+       inherit from an app level stylesheet now that it is portalled out to the body */
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
     background-color: var(--blue-orange-light-default-card-background);
     display: flex;
     flex-direction: column;

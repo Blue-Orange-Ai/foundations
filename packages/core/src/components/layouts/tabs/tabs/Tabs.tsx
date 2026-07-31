@@ -90,21 +90,9 @@ export const Tabs: React.FC<Props> = ({
 		}
 	}, [active, persistInUrl, urlParamName]);
 
-	const tabHeaderInActiveStyle: React.CSSProperties = headerInActiveStyle ? headerInActiveStyle : {
-		color: "#393939",
-		opacity: "0.6",
-		borderBottom: "2px solid transparent",
-		borderRadius: "0px",
-		marginBottom: "-2px"
-	}
+	const tabHeaderInActiveStyle: React.CSSProperties = headerInActiveStyle ?? {}
 
-	const tabHeaderActiveStyle: React.CSSProperties = headerActiveStyle ? headerActiveStyle : {
-		color: "#393939",
-		opacity: "1",
-		borderBottom: "2px solid black",
-		borderRadius: "0px",
-		marginBottom: "-2px"
-	}
+	const tabHeaderActiveStyle: React.CSSProperties = headerActiveStyle ?? {}
 
 	const updateActiveTab = (uuid: string) => {
 		if (onClick) {
@@ -118,8 +106,12 @@ export const Tabs: React.FC<Props> = ({
 			<div className="blue-orange-tab-header" style={headerStyle}>
 				{tabMetaData.map((metaData, index) => (
 					<Button
+						key={metaData.uuid}
 						text={metaData.name}
 						buttonType={ButtonType.CUSTOM}
+						classes={metaData.uuid == active ?
+							"blue-orange-tab-header-item blue-orange-tab-header-item-active" :
+							"blue-orange-tab-header-item"}
 						icon={metaData.icon}
 						iconPos={ButtonIconPos.LEFT}
 						style={metaData.uuid == active ? tabHeaderActiveStyle : tabHeaderInActiveStyle}

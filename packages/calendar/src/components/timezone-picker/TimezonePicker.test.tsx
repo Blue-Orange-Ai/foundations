@@ -5,10 +5,10 @@ import { getTimezoneName } from '../../utils/calendarUtils';
 
 describe('TimezonePicker', () => {
     it('ticks the selected timezone and keeps it at the top of the list', () => {
-        const { container } = render(
+        const { baseElement } = render(
             <TimezonePicker timezone="Asia/Tokyo" onSelect={vi.fn()} onClose={vi.fn()} />
         );
-        const options = container.querySelectorAll(
+        const options = baseElement.querySelectorAll(
             '.blue-orange-calendar-timezone-picker-option'
         );
         expect(options[0]).toHaveTextContent('Asia / Tokyo');
@@ -17,7 +17,7 @@ describe('TimezonePicker', () => {
         ).toBeInTheDocument();
         // Exactly one row is ticked.
         expect(
-            container.querySelectorAll('.blue-orange-calendar-timezone-picker-option-tick').length
+            baseElement.querySelectorAll('.blue-orange-calendar-timezone-picker-option-tick').length
         ).toBe(1);
     });
 
