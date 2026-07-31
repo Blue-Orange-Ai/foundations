@@ -62,7 +62,8 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
-    width: calc(100% - 40px);
+    width: 100%;
+    box-sizing: border-box;
     background-color: #e0e1e2;
     min-height: 200px;
     margin-top: 20px;

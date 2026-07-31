@@ -15,7 +15,8 @@
 }
 
 .blue-orange-deployment-service-home-tabs {
-    width: calc(100% - 32px);
+    width: 100%;
+    box-sizing: border-box;
     padding-left: 16px;
     padding-right: 16px;
     border-bottom: 2px solid #e0e1e2;
@@ -26,7 +27,8 @@
 }
 
 .blue-orange-deployment-service-home-top-banner {
-    width: calc(100% - 32px);
+    width: 100%;
+    box-sizing: border-box;
     padding-left: 16px;
     padding-right: 16px;
     display: flex;

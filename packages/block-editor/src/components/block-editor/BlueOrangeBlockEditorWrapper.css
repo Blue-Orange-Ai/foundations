@@ -12,7 +12,8 @@
     font-weight: 350;
     color: #abb2bf;
     background-color: #282c34;
-    width: calc(100% - 48px);
+    width: 100%;
+    box-sizing: border-box;
     padding: 34px 16px 32px 32px;
     height: unset;
     border-radius: 20px;

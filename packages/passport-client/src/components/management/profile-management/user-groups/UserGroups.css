@@ -20,7 +20,8 @@
 }
 
 .passport-filter-groups-input {
-    width: calc(100% - 47px);
+    width: 100%;
+    box-sizing: border-box;
     border: 1px solid #e0e1e2;
     height: 32px;
     background-color: #f7f7f9;
