@@ -147,6 +147,7 @@ Tests use **Vitest** with **React Testing Library** (jsdom environment). Use `np
 
 ```
 foundations/
+├── .github/workflows/      # CI, versioning, release and publish automation
 ├── lerna.json              # Lerna config (fixed versioning)
 ├── package.json            # Root workspace config
 ├── package-lock.json
@@ -233,7 +234,37 @@ packages/<name>/
 
 ## Publishing
 
-All packages are published to the **GitHub Packages** npm registry under the `@blue-orange-ai` scope.
+All packages are published to the **GitHub Packages** npm registry under the `@blue-orange-ai` scope. Releases are automated by GitHub Actions — see [.github/workflows/README.md](.github/workflows/README.md) for the full flow.
+
+### Releasing from `main`
+
+The bump is taken from the head commit message (with squash merges, the PR title):
+
+| Commit / PR title | Result |
+|-------------------|--------|
+| `[major] drop React 17 support` | `0.2.0` → `1.0.0` |
+| `[minor] add calendar range picker` | `0.2.0` → `0.3.0` |
+| `fix dropdown overflow` | `0.2.0` → `0.2.1` |
+
+Each release commits the version bump, creates the `vX.Y.Z` tag, opens a `release/vX.Y.Z` branch at that tag, publishes a GitHub Release, and then builds and publishes every package.
+
+### Patching an older release
+
+Check out the release branch for the version (`release/v0.1.4`), or run the **Open Maintenance Branch from Tag** workflow for tags that have none, and push your fix. The next patch in that line (`v0.1.5`) is cut and published under a `v0.1` dist-tag, leaving `latest` on the newest release:
+
+```bash
+npm install @blue-orange-ai/foundations-core@v0.1
+```
+
+### Dirty builds
+
+Put `[dirty]` in a commit message on a feature branch to publish a prerelease of every package without merging:
+
+```bash
+npm install @blue-orange-ai/foundations-core@dirty
+```
+
+### Manual publishing
 
 List all packages and their versions:
 

@@ -1,0 +1,129 @@
+name: Dirty Build
+
+# Publishes a throwaway prerelease of every package straight off a feature
+# branch, so an app can install work-in-progress components before the change
+# is merged. Put [dirty] in the commit message (or run it by hand):
+#
+#   0.2.1-dirty.20260804-121530.a1b2c3d4   published under the `dirty` dist-tag
+#
+# The version is the *next* patch plus a prerelease suffix, so a dirty build
+# always sorts above the release it branched from and below the next real one.
+# Nothing is committed to the branch: the version bump lives in a local commit
+# that only the v<version> tag points at, keeping feature branches clean of
+# version churn and merge conflicts.
+#
+#   npm i @blue-orange-ai/foundations-core@dirty
+#   npm i @blue-orange-ai/foundations-core@0.2.1-dirty.20260804-121530.a1b2c3d4
+
+on:
+  push:
+    branches-ignore:
+      - main
+      - 'release/**'
+      - 'hotfix/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
+
+# A newer dirty build of the same branch supersedes the one in flight.
+concurrency:
+  group: dirty-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dirty-build:
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.head_commit.message, '[dirty]')
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@blue-orange-ai'
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Generate dirty version
+        id: dirty_version
+        run: |
+          LATEST_TAG=$(git tag -l 'v*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          LERNA_VERSION="v$(node -p "require('./lerna.json').version")"
+          CURRENT=$(printf '%s\n%s\n' "${LATEST_TAG:-v0.0.0}" "$LERNA_VERSION" | sort -V | tail -1)
+          [[ $CURRENT =~ ^v?([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]
+          MAJOR=${BASH_REMATCH[1]}; MINOR=${BASH_REMATCH[2]}; PATCH=$((BASH_REMATCH[3] + 1))
+          TIMESTAMP=$(date -u +%Y%m%d-%H%M%S)
+          SHORT_SHA=${GITHUB_SHA:0:8}
+          echo "version=${MAJOR}.${MINOR}.${PATCH}-dirty.${TIMESTAMP}.${SHORT_SHA}" >> $GITHUB_OUTPUT
+
+      # PAT_TOKEN for the install as well as the publish: the private
+      # @blue-orange-ai/primitives-* dependencies live outside this repository.
+      - name: Install dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: npm ci
+
+      # --exact pins the internal foundations-* dependencies to this exact
+      # prerelease, so a consumer of a dirty build never resolves a sibling
+      # package to a different build. --no-git-tag-version keeps Lerna out of
+      # git; the commit and tag below are made deliberately.
+      - name: Set dirty version with Lerna
+        run: |
+          npx lerna version "${{ steps.dirty_version.outputs.version }}" \
+            --force-publish \
+            --exact \
+            --no-git-tag-version \
+            --no-push \
+            --yes
+
+      # The commit is never pushed to the branch — only the tag is, so the
+      # exact source of a dirty build stays retrievable via `git checkout <tag>`
+      # without polluting the branch history.
+      - name: Tag the dirty build
+        run: |
+          VERSION="${{ steps.dirty_version.outputs.version }}"
+          git commit -am "chore(dirty): $VERSION [skip ci]"
+          git tag -a "v$VERSION" -m "Dirty build $VERSION from ${{ github.ref_name }}"
+          git push origin "refs/tags/v$VERSION"
+
+      - name: Build all packages
+        run: npx lerna run build
+
+      - name: Publish to GitHub Packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          npx lerna publish from-package \
+            --yes \
+            --no-git-reset \
+            --dist-tag dirty
+
+      - name: Summary
+        run: |
+          VERSION="${{ steps.dirty_version.outputs.version }}"
+          {
+            echo "### Dirty build published"
+            echo
+            echo "- version: \`$VERSION\`"
+            echo "- dist-tag: \`dirty\`"
+            echo "- branch: \`${{ github.ref_name }}\`"
+            echo "- tag: \`v$VERSION\`"
+            echo
+            echo '```bash'
+            echo "npm i @blue-orange-ai/foundations-core@$VERSION"
+            echo '```'
+          } >> $GITHUB_STEP_SUMMARY
