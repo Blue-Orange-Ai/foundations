@@ -8,6 +8,7 @@ node_modules/
 /packages/graph/dist/
 /packages/code-editors/dist/
 /packages/llm-client/dist/
+/packages/icons/dist/
 
 # OS files
 .DS_Store

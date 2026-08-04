@@ -44,6 +44,7 @@ The library covers a wide range of UI needs: core components (buttons, inputs, t
 | **[chat](packages/chat)** | Chat UI components for messaging interfaces | UI |
 | **[code-editors](packages/code-editors)** | Monaco-based code editors | UI |
 | **[graph](packages/graph)** | Graph visualization with ELK layout engine | UI |
+| **[icons](packages/icons)** | SVG icon set — `<Icon icon="…" />`, per-icon components, sizes and intents | UI |
 | **[map](packages/map)** | Map components built on Leaflet | UI |
 | **[llm-client](packages/llm-client)** | LLM chat and interaction UI | UI |
 | **[search-client](packages/search-client)** | Search interface UI | UI |
@@ -162,6 +163,7 @@ foundations/
     ├── core/               # Core component library
     ├── deployment-manager/ # Deployment management UI
     ├── graph/              # Graph visualization
+    ├── icons/              # SVG icon set
     ├── llm-client/         # LLM interaction UI
     ├── map/                # Map components
     ├── passport-client/    # Auth/user management UI

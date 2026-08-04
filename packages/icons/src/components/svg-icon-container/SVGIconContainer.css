@@ -1,0 +1,10 @@
+.foundations-icon {
+    display: inline-block;
+    flex: 0 0 auto;
+    line-height: 0;
+    vertical-align: text-bottom;
+}
+
+.foundations-icon > svg {
+    display: block;
+}

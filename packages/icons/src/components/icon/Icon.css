@@ -1,0 +1,37 @@
+/*
+ * Intent colours. The glyphs are filled with `currentColor`, so setting `color`
+ * on the root element is enough to recolour them. Each value is overridable
+ * through the same CSS custom property scheme used by the other foundations
+ * packages.
+ */
+.foundations-intent-primary {
+    color: var(--blue-orange-light-icon-intent-primary-color, #2d72d2);
+}
+
+.foundations-intent-success {
+    color: var(--blue-orange-light-icon-intent-success-color, #238551);
+}
+
+.foundations-intent-warning {
+    color: var(--blue-orange-light-icon-intent-warning-color, #c87619);
+}
+
+.foundations-intent-danger {
+    color: var(--blue-orange-light-icon-intent-danger-color, #cd4246);
+}
+
+.dark .foundations-intent-primary {
+    color: var(--blue-orange-dark-icon-intent-primary-color, #8abbff);
+}
+
+.dark .foundations-intent-success {
+    color: var(--blue-orange-dark-icon-intent-success-color, #72ca9b);
+}
+
+.dark .foundations-intent-warning {
+    color: var(--blue-orange-dark-icon-intent-warning-color, #fbb360);
+}
+
+.dark .foundations-intent-danger {
+    color: var(--blue-orange-dark-icon-intent-danger-color, #fa999c);
+}

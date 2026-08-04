@@ -43,6 +43,7 @@ All packages live under `packages/`. There is no root-level source code.
 - **core** — The main component library: accordion, alerts, avatar, breadcrumbs, buttons, charts, comments, context menus, dropdowns, emoji, file system, inputs, layouts (modal, drawer, sidebar, tabs, pages), loading, media, metrics, rules, search, tables, text decorations, tooltips
 - **block-editor** — Block-based editor (depends on core, uses primitives-block-editor)
 - **graph** — Graph visualization (uses ELK layout, depends on primitives-graph)
+- **icons** — SVG icon set with a Blueprint-style API (`<Icon icon="…" />`, `IconNames`, per-icon components). Standalone: no internal dependencies. `src/generated/` is produced from the `remixicon` SVG sources by `npm run generate` and checked in — edit `scripts/generate-icons.mjs`, never the generated files
 - **map** — Map components (depends on primitives-map)
 - **code-editors** — Monaco-based code editors
 - **llm-client** — LLM chat/interaction UI (depends on core)
