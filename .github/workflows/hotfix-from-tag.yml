@@ -1,0 +1,70 @@
+name: Open Maintenance Branch from Tag
+
+# Starts a maintenance line from any existing tag — including tags cut before
+# these workflows existed, which have no release branch of their own.
+#
+#   1. Run this with tag = v0.1.4  ->  creates hotfix/v0.1.4 at that commit
+#   2. Push your fix to that branch
+#   3. maintenance-release.yml cuts v0.1.5, tags it, and publishes the packages
+#      under the `v0.1` dist-tag (npm `latest` is left alone)
+#
+# Creating the branch deliberately does not cut a release; the first commit
+# pushed to it does.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to branch from (e.g. v0.1.4)'
+        required: true
+        type: string
+      branch_type:
+        description: 'Branch prefix — hotfix marks its releases as prereleases'
+        type: choice
+        options: [hotfix, release]
+        default: hotfix
+
+permissions:
+  contents: write
+
+jobs:
+  create-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: Create the branch at the tag
+        env:
+          TAG: ${{ github.event.inputs.tag }}
+          BRANCH_TYPE: ${{ github.event.inputs.branch_type }}
+        run: |
+          # maintenance-release.yml parses the version out of the branch name,
+          # so the tag has to be a plain vX.Y.Z.
+          if ! [[ $TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Tag must look like v1.2.3 (got '$TAG')."
+            exit 1
+          fi
+          if ! git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "Tag $TAG does not exist in this repository."
+            exit 1
+          fi
+          BRANCH="$BRANCH_TYPE/$TAG"
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            echo "Branch $BRANCH already exists — push your fix to it."
+            exit 1
+          fi
+          # ^{} dereferences the annotated tag object Lerna creates — a branch
+          # ref has to point at a commit, not at the tag object.
+          COMMIT=$(git rev-parse "${TAG}^{commit}")
+          git push origin "$COMMIT:refs/heads/$BRANCH"
+          {
+            echo "### Maintenance branch created"
+            echo
+            echo "- branch: \`$BRANCH\`"
+            echo "- from tag: \`$TAG\`"
+            echo
+            echo "Push a fix to \`$BRANCH\` to cut the next patch on that line."
+          } >> $GITHUB_STEP_SUMMARY

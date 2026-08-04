@@ -1,0 +1,183 @@
+name: Automatic Versioning and Tagging
+
+# Cuts a release off main: bumps every package (Lerna fixed mode), commits,
+# tags vX.Y.Z, opens a release/vX.Y.Z branch at that tag and publishes a
+# GitHub Release. The Release event is what kicks off release-publish.yml.
+#
+# The bump is driven by the head commit message, so a squash-merged PR titled
+# "[minor] add calendar range picker" cuts a minor release:
+#   [major] ... -> X+1.0.0
+#   [minor] ... -> X.Y+1.0
+#   anything else -> X.Y.Z+1
+# A run can also be started by hand from the Actions tab.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump to apply'
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+
+permissions:
+  contents: write
+
+# Releases must not overlap: a cancelled run can leave a tag without its
+# release branch, and two concurrent runs would race for the same version.
+concurrency:
+  group: versioning-main
+  cancel-in-progress: false
+
+jobs:
+  version-and-tag:
+    runs-on: ubuntu-latest
+    # [dirty] pushes are prerelease builds (dirty-build.yml) and must not cut a
+    # release. [skip release] is the escape hatch for everything else.
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (!contains(github.event.head_commit.message, '[dirty]') &&
+       !contains(github.event.head_commit.message, '[skip release]'))
+
+    steps:
+      # PAT_TOKEN, not GITHUB_TOKEN: pushes and releases made with GITHUB_TOKEN
+      # do not trigger further workflows, which would leave release-publish.yml
+      # (and every downstream package publish) waiting forever.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      # Commit messages and PR titles are attacker-controlled free text: they
+      # routinely contain backticks, quotes and $(...) that the shell would
+      # execute if the value were interpolated into the script. Pass them
+      # through the environment, where the runner never parses them.
+      - name: Determine version bump
+        id: version_bump
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          MANUAL_BUMP: ${{ github.event.inputs.bump }}
+          HEAD_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "bump_type=$MANUAL_BUMP" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          # grep is line-oriented, so the marker is honoured on any line of the
+          # message — a merge commit carries the PR title on its second line.
+          if echo "$HEAD_COMMIT_MESSAGE" | grep -qE "^\[major\]"; then
+            echo "bump_type=major" >> $GITHUB_OUTPUT
+          elif echo "$HEAD_COMMIT_MESSAGE" | grep -qE "^\[minor\]"; then
+            echo "bump_type=minor" >> $GITHUB_OUTPUT
+          else
+            echo "bump_type=patch" >> $GITHUB_OUTPUT
+          fi
+
+      # The baseline is the highest stable tag, cross-checked against
+      # lerna.json so a hand-run `lerna publish` can never be rolled back over.
+      - name: Get current version
+        id: current
+        run: |
+          LATEST_TAG=$(git tag -l 'v*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          LERNA_VERSION="v$(node -p "require('./lerna.json').version")"
+          CURRENT=$(printf '%s\n%s\n' "${LATEST_TAG:-v0.0.0}" "$LERNA_VERSION" | sort -V | tail -1)
+          echo "latest_tag=${LATEST_TAG:-none}" >> $GITHUB_OUTPUT
+          echo "current=$CURRENT" >> $GITHUB_OUTPUT
+
+      - name: Calculate new version
+        id: new_version
+        run: |
+          CURRENT="${{ steps.current.outputs.current }}"
+          BUMP_TYPE="${{ steps.version_bump.outputs.bump_type }}"
+          if [[ $CURRENT =~ ^v?([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            MAJOR=${BASH_REMATCH[1]}; MINOR=${BASH_REMATCH[2]}; PATCH=${BASH_REMATCH[3]}
+          else
+            MAJOR=0; MINOR=0; PATCH=0
+          fi
+          case $BUMP_TYPE in
+            major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+            minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+            patch) PATCH=$((PATCH + 1)) ;;
+            *) echo "Unknown bump type: $BUMP_TYPE"; exit 1 ;;
+          esac
+          echo "new_version=v${MAJOR}.${MINOR}.${PATCH}" >> $GITHUB_OUTPUT
+          echo "plain_version=${MAJOR}.${MINOR}.${PATCH}" >> $GITHUB_OUTPUT
+
+      - name: Fail if tag already exists
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
+          if git rev-parse -q --verify "refs/tags/$NEW_VERSION" >/dev/null; then
+            echo "Tag $NEW_VERSION already exists — refusing to overwrite it."
+            exit 1
+          fi
+
+      # `lerna version` is what rewrites lerna.json, every package.json and the
+      # internal ^X.Y.Z ranges between packages, then commits and tags — the
+      # same mechanics as running it locally. --force-publish keeps all 16
+      # packages on one version (fixed mode) even when only some changed, and
+      # --no-push leaves the push to the steps below so ordering is explicit.
+      # Run through npx rather than `npm ci` to avoid installing the whole
+      # workspace (private @blue-orange-ai/primitives-* deps included) just to
+      # rewrite version numbers; the pin matches the root devDependency.
+      - name: Bump all packages with Lerna
+        run: |
+          npx --yes lerna@8.1.9 version "${{ steps.new_version.outputs.plain_version }}" \
+            --force-publish \
+            --no-push \
+            --yes \
+            --message "chore(release): %s [skip ci]"
+
+      - name: Push commit, tag and release branch
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.new_version }}"
+          # The release branch is the tag's commit under a branch name, so the
+          # code for any release can be checked out — and patched — directly.
+          git push origin HEAD:refs/heads/main
+          git push origin "refs/tags/$NEW_VERSION"
+          git push origin "HEAD:refs/heads/release/$NEW_VERSION"
+
+      - name: Build release notes
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          {
+            echo "## Changes"
+            echo
+            if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+              echo "Manual release triggered by @${ACTOR}."
+            else
+              echo "$HEAD_COMMIT_MESSAGE"
+            fi
+            echo
+            echo "## Version"
+            echo "- Type: ${{ steps.version_bump.outputs.bump_type }}"
+            echo "- Previous: ${{ steps.current.outputs.current }}"
+            echo "- New: ${{ steps.new_version.outputs.new_version }}"
+            echo "- Release branch: \`release/${{ steps.new_version.outputs.new_version }}\`"
+            echo
+            echo "All @blue-orange-ai/foundations-* packages ship at this version."
+          } > release-notes.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          tag_name: ${{ steps.new_version.outputs.new_version }}
+          name: Release ${{ steps.new_version.outputs.new_version }}
+          body_path: release-notes.md
+          draft: false
+          prerelease: false

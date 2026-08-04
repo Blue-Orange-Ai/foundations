@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@blue-orange-ai'
+
+      # Several packages depend on @blue-orange-ai/primitives-* which live in
+      # other repositories' package registries. GITHUB_TOKEN is scoped to this
+      # repository only and cannot read them, so installs use PAT_TOKEN.
+      - name: Install dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: npm ci
+
+      - name: Build all packages
+        run: npx lerna run build
+
+      # `clients` has no test suite (its test script is the npm placeholder that
+      # exits 1), and a few UI packages have no spec files yet — vitest also
+      # exits 1 on an empty run, hence --passWithNoTests.
+      - name: Test all packages
+        run: npx lerna run test --ignore @blue-orange-ai/foundations-clients -- --passWithNoTests

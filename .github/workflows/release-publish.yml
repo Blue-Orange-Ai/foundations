@@ -1,0 +1,106 @@
+name: Release — publish all packages
+
+# Builds the tagged code and publishes every @blue-orange-ai/foundations-*
+# package to GitHub Packages. Triggered by the Releases that versioning.yml and
+# maintenance-release.yml create; can also be re-run by hand against any tag if
+# a publish half-failed (`lerna publish from-package` skips versions that are
+# already on the registry, so re-runs are safe).
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to publish (e.g. v0.2.1)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: publish-${{ github.event.release.tag_name || github.event.inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve tag
+        id: tag
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          INPUT_TAG: ${{ github.event.inputs.tag }}
+        run: echo "tag=${RELEASE_TAG:-$INPUT_TAG}" >> $GITHUB_OUTPUT
+
+      # fetch-depth: 0 brings every tag along, which the dist-tag decision below
+      # needs in order to tell a current release from an old-line patch.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ steps.tag.outputs.tag }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@blue-orange-ai'
+
+      - name: Verify the tag carries its own version
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          LERNA_VERSION="v$(node -p "require('./lerna.json').version")"
+          if [ "$TAG" != "$LERNA_VERSION" ]; then
+            echo "Tag $TAG does not match lerna.json ($LERNA_VERSION) — refusing to publish."
+            exit 1
+          fi
+
+      # Publishing an old-line patch must not move npm's `latest` backwards:
+      # v0.1.5 cut from release/v0.1.4 while main sits at v0.3.0 goes out under
+      # the `v0.1` dist-tag, so `npm i @blue-orange-ai/foundations-core@v0.1`
+      # resolves it while plain installs stay on the newest release.
+      - name: Determine dist-tag
+        id: dist_tag
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          HIGHEST=$(git tag -l 'v*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          if [ "$TAG" = "$HIGHEST" ]; then
+            echo "dist_tag=latest" >> $GITHUB_OUTPUT
+          else
+            [[ $TAG =~ ^v([0-9]+)\.([0-9]+)\. ]]
+            echo "dist_tag=v${BASH_REMATCH[1]}.${BASH_REMATCH[2]}" >> $GITHUB_OUTPUT
+          fi
+
+      # PAT_TOKEN for the install as well as the publish: the private
+      # @blue-orange-ai/primitives-* dependencies live outside this repository.
+      - name: Install dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: npm ci
+
+      - name: Build all packages
+        run: npx lerna run build
+
+      # from-package publishes whatever versions the checked-out package.json
+      # files declare — the tag already carries the bump, so no versioning or
+      # git write happens here.
+      - name: Publish to GitHub Packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          npx lerna publish from-package \
+            --yes \
+            --no-git-reset \
+            --dist-tag "${{ steps.dist_tag.outputs.dist_tag }}"
+
+      - name: Summary
+        run: |
+          {
+            echo "### Published ${{ steps.tag.outputs.tag }}"
+            echo
+            echo "- dist-tag: \`${{ steps.dist_tag.outputs.dist_tag }}\`"
+            echo "- registry: https://npm.pkg.github.com"
+          } >> $GITHUB_STEP_SUMMARY
