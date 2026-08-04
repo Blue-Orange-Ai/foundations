@@ -85,20 +85,99 @@ free of version churn and `main` never inherits a dirty version.
 
 ## Requirements
 
-**`secrets.PAT_TOKEN`** — a personal access token with `repo` and
-`write:packages` scope. It is used for three things the built-in `GITHUB_TOKEN`
-cannot do:
+### Reaching the private `primitives` packages
 
-- reading the private `@blue-orange-ai/primitives-*` dependencies, which live in
-  other repositories' registries
-- pushing tags, branches and Releases in a way that **triggers other
-  workflows** — events authored by `GITHUB_TOKEN` do not start new runs, which
-  would leave every release unpublished
-- publishing packages to the organisation's registry
+Four packages here build against `@blue-orange-ai/primitives-*`, which is
+published from the **private** `primitives` repository. In the lockfile they are
+the only entries resolved from `npm.pkg.github.com`:
 
-**Branch protection on `main`** — if it is enabled, the token's identity needs
-permission to push the release commit (a bypass allowance), otherwise
-`versioning.yml` fails at the push step.
+```
+@blue-orange-ai/primitives-block-editor   @blue-orange-ai/primitives-logger
+@blue-orange-ai/primitives-graph          @blue-orange-ai/primitives-map
+```
+
+Everything else comes from public npm, and the sibling `foundations-*` packages
+are workspace links — so the runner needs exactly one credential, for the
+`npm.pkg.github.com` host.
+
+Two pieces have to line up:
+
+**1. The npmrc on the runner.** `actions/setup-node` does this, given a scope:
+
+```yaml
+- uses: actions/setup-node@v4
+  with:
+    registry-url: 'https://npm.pkg.github.com'
+    scope: '@blue-orange-ai'
+```
+
+It writes `//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}` into the
+runner's npmrc. The repo's own `.npmrc` only maps the scope to the registry and
+holds no credential, so nothing conflicts, and `npx lerna` still comes from
+public npm.
+
+**2. `NODE_AUTH_TOKEN` on every step that touches the registry** — `npm ci`,
+`lerna publish`. It is not job-wide on purpose; steps that don't need the
+credential don't get it.
+
+### Which token
+
+**`secrets.PAT_TOKEN` — a classic PAT (what these workflows use).** Scopes:
+`repo` and `write:packages` (which implies `read:packages`). The account it
+belongs to needs read access to the `primitives` repository. Fine-grained tokens
+do **not** work against the npm registry — GitHub Packages npm accepts classic
+PATs, `GITHUB_TOKEN`, and GitHub App installation tokens only.
+
+Three things here need it that `GITHUB_TOKEN` cannot do:
+
+- read `@blue-orange-ai/primitives-*` from another repository's registry
+- push tags, branches and Releases in a way that **triggers other workflows** —
+  events authored by `GITHUB_TOKEN` start no new runs, so the release would be
+  tagged and never published
+- publish to the organisation's registry
+
+Store it as an **organisation** secret so `primitives`, `foundations` and every
+other consumer share one credential and one rotation.
+
+> If the org enforces SAML SSO, the PAT must be authorised for the org
+> (`Configure SSO` next to the token). An unauthorised token fails with a 401
+> that looks identical to a missing-scope error.
+
+**Alternative — grant the packages access to this repo.** On each
+`primitives-*` package: *Package settings → Manage Actions access → Add
+repository → foundations (Read)*. Then `GITHUB_TOKEN` can install them and no
+secret is needed for `npm ci`. Note this only covers **reading**: `PAT_TOKEN` is
+still required for tagging/releasing (workflow triggering) and publishing, so it
+narrows the blast radius rather than removing the secret.
+
+**Alternative — a GitHub App.** Install an org-level app with
+`contents: write` + `packages: write`, and mint a token per run with
+`actions/create-github-app-token@v2`. Installation tokens work against the npm
+registry, expire in an hour, and are not tied to a person's account. Worth it if
+PAT ownership is a concern; otherwise the classic PAT is less machinery.
+
+### Verifying access
+
+From a workflow run (or locally with the same token):
+
+```bash
+npm view @blue-orange-ai/primitives-graph version \
+  --registry=https://npm.pkg.github.com \
+  --//npm.pkg.github.com/:_authToken=$TOKEN
+```
+
+`401` means the token is unauthenticated (missing, wrong, or SSO-unauthorised);
+`404` on a package that exists means the token authenticated but the account
+cannot see the `primitives` repo — grant it read access there.
+
+Each installing workflow fails fast with an explicit message when `PAT_TOKEN` is
+unset, rather than surfacing a bare 401 from deep inside `npm ci`.
+
+### Branch protection
+
+If `main` is protected, the token's identity needs permission to push the
+release commit (a bypass allowance), otherwise `versioning.yml` fails at the
+push step.
 
 ## Notes
 

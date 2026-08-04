@@ -27,9 +27,21 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
           scope: '@blue-orange-ai'
 
-      # Several packages depend on @blue-orange-ai/primitives-* which live in
-      # other repositories' package registries. GITHUB_TOKEN is scoped to this
-      # repository only and cannot read them, so installs use PAT_TOKEN.
+      # graph, llm-graph, block-editor and map pull @blue-orange-ai/primitives-*
+      # from the private registry (see the lockfile's npm.pkg.github.com
+      # entries). setup-node above wrote the matching auth line into the
+      # runner's npmrc; NODE_AUTH_TOKEN fills it in. Without a token npm ci
+      # fails with a bare 401, so check for it up front.
+      - name: Check registry credentials
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          if [ -z "$PAT_TOKEN" ]; then
+            echo "::error::secrets.PAT_TOKEN is not set. It is needed to read the private"
+            echo "::error::@blue-orange-ai/primitives-* packages. See .github/workflows/README.md."
+            exit 1
+          fi
+
       - name: Install dependencies
         env:
           NODE_AUTH_TOKEN: ${{ secrets.PAT_TOKEN }}

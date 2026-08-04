@@ -74,6 +74,16 @@ jobs:
             echo "dist_tag=v${BASH_REMATCH[1]}.${BASH_REMATCH[2]}" >> $GITHUB_OUTPUT
           fi
 
+      - name: Check registry credentials
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          if [ -z "$PAT_TOKEN" ]; then
+            echo "::error::secrets.PAT_TOKEN is not set — it is needed to read the private"
+            echo "::error::@blue-orange-ai/primitives-* deps and to publish. See .github/workflows/README.md."
+            exit 1
+          fi
+
       # PAT_TOKEN for the install as well as the publish: the private
       # @blue-orange-ai/primitives-* dependencies live outside this repository.
       - name: Install dependencies
