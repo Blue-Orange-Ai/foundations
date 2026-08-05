@@ -6,6 +6,20 @@
     padding: 16px 0;
 }
 
+.tabs-dev-resizable {
+    resize: horizontal;
+    overflow: auto;
+    min-width: 120px;
+    max-width: 100%;
+    padding: 12px;
+    border: 1px dashed var(--blue-orange-light-default-border-color);
+    border-radius: 4px;
+}
+
+.dark .tabs-dev-resizable {
+    border: 1px dashed var(--blue-orange-dark-default-border-color);
+}
+
 .tabs-dev-output {
     margin-top: 10px;
     font-size: 0.75rem;

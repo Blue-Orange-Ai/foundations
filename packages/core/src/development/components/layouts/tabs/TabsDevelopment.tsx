@@ -24,7 +24,13 @@ const USAGE = `<Tabs activeTab="overview" onClick={(uuid) => console.log(uuid)}>
 
 // persistInUrl writes the active tab into the query string so a
 // refresh or a shared link lands on the same tab
-<Tabs persistInUrl={true} urlParamName="section"> ... </Tabs>`;
+<Tabs persistInUrl={true} urlParamName="section"> ... </Tabs>
+
+// tabs that do not fit the header are collapsed into a dropdown,
+// which follows the container as it is resized. Turn it off with
+// collapseOverflow, or rename the button with overflowLabel
+<Tabs collapseOverflow={false}> ... </Tabs>
+<Tabs overflowLabel="Others" overflowIcon="ri-more-line"> ... </Tabs>`;
 
 export const TabsDevelopment: React.FC<Props> = ({}) => {
 
@@ -86,6 +92,40 @@ export const TabsDevelopment: React.FC<Props> = ({}) => {
 						<div className="tabs-dev-panel">So does this one.</div>
 					</Tab>
 				</Tabs>
+			</div>
+
+			<div className="tabs-dev-section">
+				<FormHeading label="More than fits"></FormHeading>
+				<Paragraph>
+					Drag the bottom right corner of the box to narrow it. The tabs that no longer fit move into
+					a More dropdown, and come back as soon as there is room for them again. Selecting a tab from
+					the dropdown marks the More button as active.
+				</Paragraph>
+				<div className="tabs-dev-resizable">
+					<Tabs>
+						<Tab uuid="summary" name="Summary" icon="ri-dashboard-line">
+							<div className="tabs-dev-panel">Summary panel</div>
+						</Tab>
+						<Tab uuid="members" name="Members" icon="ri-team-line">
+							<div className="tabs-dev-panel">Members panel</div>
+						</Tab>
+						<Tab uuid="billing" name="Billing" icon="ri-bank-card-line">
+							<div className="tabs-dev-panel">Billing panel</div>
+						</Tab>
+						<Tab uuid="integrations" name="Integrations" icon="ri-plug-line">
+							<div className="tabs-dev-panel">Integrations panel</div>
+						</Tab>
+						<Tab uuid="notifications" name="Notifications" icon="ri-notification-3-line">
+							<div className="tabs-dev-panel">Notifications panel</div>
+						</Tab>
+						<Tab uuid="audit" name="Audit log" icon="ri-file-list-3-line">
+							<div className="tabs-dev-panel">Audit log panel</div>
+						</Tab>
+						<Tab uuid="advanced" name="Advanced" icon="ri-settings-3-line">
+							<div className="tabs-dev-panel">Advanced panel</div>
+						</Tab>
+					</Tabs>
+				</div>
 			</div>
 
 			<div className="tabs-dev-section">

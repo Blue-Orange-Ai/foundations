@@ -23,8 +23,47 @@
 .blue-orange-tab-header {
     display: flex;
     flex-direction: row;
+    flex-wrap: nowrap;
     align-items: center;
     width: 100%;
+    min-width: 0;
+    position: relative;
+}
+
+/*
+ * Zero sized and clipped so the row inside it never adds to the page, while
+ * still being laid out at its natural width for measuring.
+ */
+.blue-orange-tab-header-measure {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.blue-orange-tab-header-measure-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    width: max-content;
+}
+
+/*
+ * The dropdown puts its own wrappers around the more button, so flatten them
+ * out and the button lines up with the tabs beside it. The :first-child keeps
+ * this off the popup panel, which is the wrapper's second child.
+ */
+.blue-orange-tab-header-more-cont,
+.blue-orange-tab-header-more-cont > div,
+.blue-orange-tab-header-more-cont > div > div:first-child {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
 }
 
 .blue-orange-tab-header {
@@ -37,6 +76,7 @@
 
 .blue-orange-tab-header .blue-orange-tab-header-item {
     border-radius: 0;
+    flex: 0 0 auto;
     margin-bottom: -2px;
     border-bottom: 2px solid transparent;
     color: var(--blue-orange-light-tabs-color);
