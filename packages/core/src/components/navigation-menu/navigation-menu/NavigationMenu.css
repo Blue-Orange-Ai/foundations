@@ -69,6 +69,7 @@
 
 .blue-orange-navigation-menu-trigger-arrow-open {
     transform: rotate(180deg);
+    transform-origin: center;
 }
 
 .blue-orange-navigation-menu-panel {

@@ -3,6 +3,7 @@ import React, {useState} from "react";
 import './ButtonDevelopment.css'
 import {PaddedPage} from "../../../components/layouts/pages/padded-page/PaddedPage";
 import {PageHeading} from "../../../components/text-decorations/page-heading/PageHeading";
+import {Paragraph} from "../../../components/text-decorations/paragraph/Paragraph";
 import {Button, ButtonIconPos, ButtonSize, ButtonType} from "../../../components/buttons/button/Button";
 import {ButtonIcon} from "../../../components/buttons/button-icon/ButtonIcon";
 import {ButtonIconDropdown} from "../../../components/buttons/button-icon-dropdown/ButtonIconDropdown";
@@ -30,11 +31,94 @@ export const ButtonDevelopment: React.FC<Props> = ({}) => {
 
 	const [toggleValue, setToggleValue] = useState<string>("list");
 
+	// Each demo button below holds its own key in here, so several can be
+	// spinning at once and each one clears on its own timer.
+	const [loading, setLoading] = useState<Record<string, boolean>>({});
 
+	const runLoading = (key: string, duration: number = 2500) => {
+		setLoading(current => ({...current, [key]: true}));
+		setTimeout(() => {
+			setLoading(current => ({...current, [key]: false}));
+		}, duration);
+	};
 
 	return (
 		<PaddedPage>
 			<PageHeading>Buttons</PageHeading>
+
+			<h2>Loading State</h2>
+			<Paragraph>
+				Click any button in this section to put it into its loading state — the label and icon are replaced by a
+				spinner, and clicks are ignored until it clears. Each one resets itself after 2.5 seconds.
+			</Paragraph>
+			<h3>Regular buttons</h3>
+			<div className={"button-development-row"}>
+				<Button text={"Primary"} buttonType={ButtonType.PRIMARY}
+						isLoading={loading["primary"]} onClick={() => runLoading("primary")}></Button>
+				<Button text={"Secondary"} buttonType={ButtonType.SECONDARY}
+						isLoading={loading["secondary"]} onClick={() => runLoading("secondary")}></Button>
+				<Button text={"Success"} buttonType={ButtonType.SUCCESS}
+						isLoading={loading["success"]} onClick={() => runLoading("success")}></Button>
+				<Button text={"Warning"} buttonType={ButtonType.WARNING}
+						isLoading={loading["warning"]} onClick={() => runLoading("warning")}></Button>
+				<Button text={"Danger"} buttonType={ButtonType.DANGER}
+						isLoading={loading["danger"]} onClick={() => runLoading("danger")}></Button>
+				<Button text={"Clear"} buttonType={ButtonType.CLEAR}
+						isLoading={loading["clear"]} onClick={() => runLoading("clear")}></Button>
+			</div>
+			<h3>Regular buttons at each size</h3>
+			<div className={"button-development-row"}>
+				<Button text={"Small"} buttonType={ButtonType.PRIMARY} size={ButtonSize.SMALL}
+						isLoading={loading["size-sm"]} onClick={() => runLoading("size-sm")}></Button>
+				<Button text={"Medium"} buttonType={ButtonType.PRIMARY} size={ButtonSize.MEDIUM}
+						isLoading={loading["size-md"]} onClick={() => runLoading("size-md")}></Button>
+				<Button text={"Large"} buttonType={ButtonType.PRIMARY} size={ButtonSize.LARGE}
+						isLoading={loading["size-lg"]} onClick={() => runLoading("size-lg")}></Button>
+			</div>
+			<h3>Regular buttons with an icon</h3>
+			<div className={"button-development-row"}>
+				<Button text={"Save"} buttonType={ButtonType.PRIMARY} icon={"ri-save-line"} iconPos={ButtonIconPos.LEFT}
+						isLoading={loading["icon-left"]} onClick={() => runLoading("icon-left")}></Button>
+				<Button text={"Upload"} buttonType={ButtonType.SECONDARY} icon={"ri-upload-2-line"} iconPos={ButtonIconPos.RIGHT}
+						isLoading={loading["icon-right"]} onClick={() => runLoading("icon-right")}></Button>
+				<Button text={"Sync"} buttonType={ButtonType.SUCCESS} icon={"ri-refresh-line"} iconPos={ButtonIconPos.LEFT}
+						isLoading={loading["icon-sync"]} onClick={() => runLoading("icon-sync")}></Button>
+				<Button text={"Delete"} buttonType={ButtonType.DANGER} icon={"ri-delete-bin-line"} iconPos={ButtonIconPos.LEFT}
+						isLoading={loading["icon-delete"]} onClick={() => runLoading("icon-delete")}></Button>
+			</div>
+			<h3>Icon only buttons</h3>
+			<div className={"button-development-row"}>
+				<ButtonIcon icon={"ri-save-line"} label={"Save"}
+							isLoading={loading["only-save"]} onClick={() => runLoading("only-save")}></ButtonIcon>
+				<ButtonIcon icon={"ri-refresh-line"} label={"Sync"}
+							isLoading={loading["only-sync"]} onClick={() => runLoading("only-sync")}></ButtonIcon>
+				<ButtonIcon icon={"ri-delete-bin-line"} label={"Delete"}
+							isLoading={loading["only-delete"]} onClick={() => runLoading("only-delete")}></ButtonIcon>
+			</div>
+			<h3>Icon only buttons at each size</h3>
+			<div className={"button-development-row"}>
+				<ButtonIcon icon={"ri-planet-fill"} label={"Small"} size={ButtonSize.SMALL}
+							isLoading={loading["only-sm"]} onClick={() => runLoading("only-sm")}></ButtonIcon>
+				<ButtonIcon icon={"ri-planet-fill"} label={"Medium"} size={ButtonSize.MEDIUM}
+							isLoading={loading["only-md"]} onClick={() => runLoading("only-md")}></ButtonIcon>
+				<ButtonIcon icon={"ri-planet-fill"} label={"Large"} size={ButtonSize.LARGE}
+							isLoading={loading["only-lg"]} onClick={() => runLoading("only-lg")}></ButtonIcon>
+			</div>
+			<h3>All at once</h3>
+			<Paragraph>Starts every button in this section together, so the spinners can be compared side by side.</Paragraph>
+			<div className={"button-development-row"}>
+				<Button text={"Run all"} buttonType={ButtonType.PRIMARY} icon={"ri-play-line"} iconPos={ButtonIconPos.LEFT}
+						onClick={() => {
+							[
+								"primary", "secondary", "success", "warning", "danger", "clear",
+								"size-sm", "size-md", "size-lg",
+								"icon-left", "icon-right", "icon-sync", "icon-delete",
+								"only-save", "only-sync", "only-delete",
+								"only-sm", "only-md", "only-lg",
+							].forEach(key => runLoading(key, 4000));
+						}}></Button>
+			</div>
+
 			<h2>Primary Button</h2>
 			<Button text={"Primary Button"} buttonType={ButtonType.PRIMARY}></Button>
 			<h2>Secondary Button</h2>

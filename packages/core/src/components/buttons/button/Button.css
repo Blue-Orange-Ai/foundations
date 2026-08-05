@@ -124,6 +124,7 @@
 
 .foundations-btn-rotate-spinner {
     display: inline-block;
+    transform-origin: center;
     animation: spin 0.4s linear infinite;
 }
 

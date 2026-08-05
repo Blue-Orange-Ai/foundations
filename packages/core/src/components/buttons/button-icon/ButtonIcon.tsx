@@ -11,6 +11,7 @@ interface Props {
 	label?: string;
 	size?: ButtonSize;
 	isDisabled?: boolean;
+	isLoading?: boolean;
 	onClick?: () => void;
 	style?: React.CSSProperties;
 	className?: string;
@@ -28,6 +29,7 @@ export const ButtonIcon: React.FC<Props> = ({
 												size = ButtonSize.MEDIUM,
 												onClick,
 												isDisabled,
+												isLoading = false,
 												style,
 												className}) => {
 
@@ -68,14 +70,14 @@ export const ButtonIcon: React.FC<Props> = ({
 	}, [className, size]);
 
 	const handleClick = () => {
-		if (!isDisabled && onClick) {
+		if (!isDisabled && !isLoading && onClick) {
 			onClick();
 		}
 	};
 
 	const setStyle = () => {
 		var st: React.CSSProperties = {
-			cursor: isDisabled ? "not-allowed" : "pointer"
+			cursor: isDisabled || isLoading ? "not-allowed" : "pointer"
 		}
 		if (style) {
 			st = {...style};
@@ -85,7 +87,10 @@ export const ButtonIcon: React.FC<Props> = ({
 
 	return (
 		<div ref={btnRef} className={classname} onClick={handleClick} style={setStyle()}>
-			<i className={icon}></i>
+			{isLoading
+				? <i className="ri-loader-4-line blue-orange-btn-icon-rotate-spinner"></i>
+				: <i className={icon}></i>
+			}
 		</div>
 	)
 }

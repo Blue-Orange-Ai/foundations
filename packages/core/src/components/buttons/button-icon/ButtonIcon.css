@@ -30,3 +30,20 @@
 .dark .blue-orange-default-btn-icon {
     border: 1px solid #3f3f42;
 }
+
+/* Own keyframes rather than Button.css's — an icon button can be rendered
+   without a Button anywhere on the page. */
+@keyframes blue-orange-btn-icon-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.blue-orange-btn-icon-rotate-spinner {
+    display: inline-block;
+    transform-origin: center;
+    animation: blue-orange-btn-icon-spin 0.4s linear infinite;
+}
