@@ -15,11 +15,14 @@ import {ModalFooterLeft} from "../../../../components/layouts/modal/modal-footer
 import {ModalFooterRight} from "../../../../components/layouts/modal/modal-footer-right/ModalFooterRight";
 import {Input} from "../../../../components/inputs/input/Input";
 import {CodeBlock} from "../../../../components/text-decorations/code-block/CodeBlock";
+import {Dropdown} from "../../../../components/inputs/dropdown/basic/Dropdown";
+import {DropdownItemIcon} from "../../../../components/inputs/dropdown/items/DropdownItemIcon/DropdownItemIcon";
+import {InputForm} from "../../../../components/inputs/form/InputForm";
 
 interface Props {
 }
 
-type OpenModal = "NONE" | "BASIC" | "FORM" | "WIDE" | "CONFIRM";
+type OpenModal = "NONE" | "BASIC" | "FORM" | "WIDE" | "CONFIRM" | "DROPDOWN";
 
 const USAGE = `const [open, setOpen] = useState(false);
 
@@ -75,6 +78,8 @@ export const ModalDevelopment: React.FC<Props> = ({}) => {
 							onClick={() => setOpen("WIDE")}></Button>
 					<Button text="Destructive confirm" buttonType={ButtonType.DANGER}
 							onClick={() => setOpen("CONFIRM")}></Button>
+					<Button text="With dropdowns" buttonType={ButtonType.SECONDARY}
+							onClick={() => setOpen("DROPDOWN")}></Button>
 				</div>
 			</div>
 
@@ -135,6 +140,33 @@ export const ModalDevelopment: React.FC<Props> = ({}) => {
 				<ModalFooter>
 					<ModalFooterRight>
 						<Button text="Done" buttonType={ButtonType.PRIMARY} onClick={close}></Button>
+					</ModalFooterRight>
+				</ModalFooter>
+			</Modal>
+
+			{/* A dropdown positions its popup off viewport coordinates, so the card must not become the
+			    containing block for the popup's `position: fixed` — see Modal.css. */}
+			<Modal open={open === "DROPDOWN"} width={600} minWidth={600} onClose={close}>
+				<ModalHeader label="Add Member" onClose={close}></ModalHeader>
+				<ModalBody>
+					<InputForm paddingBottom={40}>
+						<Dropdown label={"Member Type"}>
+							<DropdownItemIcon src={"ri-shield-star-fill"} label={"Group"} value={"GROUP"}></DropdownItemIcon>
+							<DropdownItemIcon src={"ri-pencil-fill"} label={"User"} value={"USER"} selected={true}></DropdownItemIcon>
+						</Dropdown>
+						<Dropdown label={"Permission"}>
+							<DropdownItemIcon src={"ri-shield-star-fill"} label={"Owner"} value={"OWNER"}></DropdownItemIcon>
+							<DropdownItemIcon src={"ri-pencil-fill"} label={"Edit"} value={"EDIT"}></DropdownItemIcon>
+							<DropdownItemIcon src={"ri-eye-fill"} label={"Read"} value={"READ"} selected={true}></DropdownItemIcon>
+						</Dropdown>
+					</InputForm>
+				</ModalBody>
+				<ModalFooter>
+					<ModalFooterLeft>
+						<Button text="Cancel" buttonType={ButtonType.CLEAR} onClick={close}></Button>
+					</ModalFooterLeft>
+					<ModalFooterRight>
+						<Button text="Save" buttonType={ButtonType.PRIMARY} onClick={close}></Button>
 					</ModalFooterRight>
 				</ModalFooter>
 			</Modal>
