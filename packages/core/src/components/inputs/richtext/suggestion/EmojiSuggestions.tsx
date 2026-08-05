@@ -2,6 +2,7 @@ import {ReactRenderer} from "@tiptap/react";
 import tippy from "tippy.js";
 import UnicodeEmoji, {EmojiObj} from "../../emoji/data/UnicodeEmoji";
 import {EmojiList} from "../emojilist/EmojiList";
+import {TOOLTIP_Z_INDEX} from "../../../utils/ZIndex";
 
 export const fetchEmojiItems = (query: string): EmojiObj[] => {
     try {
@@ -36,7 +37,8 @@ export const renderEmojiSuggestions = (props: any, fetchEmojiItems: (query: stri
                 showOnCreate: true,
                 interactive: true,
                 trigger: 'manual',
-                theme: "blue-orange-rich-text-editor-mention-tippy"
+                theme: "blue-orange-rich-text-editor-mention-tippy",
+                zIndex: TOOLTIP_Z_INDEX
             });
         },
         onUpdate: async (props: any) => {

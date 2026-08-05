@@ -6,6 +6,7 @@ import {ErrorAnimation} from "../utils/erroranimation/ErrorAnimation";
 import {TippyHTMLElement} from "../../interfaces/AppInterfaces";
 import {ButtonIconPos, ButtonSize, ButtonType} from "../button/Button";
 import {Dropdown} from "../../inputs/dropdown/basic/Dropdown";
+import {TOOLTIP_Z_INDEX} from "../../utils/ZIndex";
 
 
 interface Props {
@@ -164,6 +165,7 @@ export const ButtonDropdown: React.FC<Props> = ({
 		if (current && tooltip) {
 			tippy(current, {
 				content: tooltip,
+				zIndex: TOOLTIP_Z_INDEX
 			});
 			return () => {
 				const tippyInstance = current._tippy;

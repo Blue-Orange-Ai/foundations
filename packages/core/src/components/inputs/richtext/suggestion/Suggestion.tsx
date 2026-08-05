@@ -2,6 +2,7 @@ import {ReactRenderer} from "@tiptap/react";
 import {MentionList} from "../mentionlist/MentionList";
 import tippy from 'tippy.js'
 import {MentionItem} from "../default/RichText";
+import {TOOLTIP_Z_INDEX} from "../../../utils/ZIndex";
 import passport from "../../../config/BlueOrangePassportConfig";
 import {PublicUser, User, UserSearchPublicResult, UserSearchResult} from "@blue-orange-ai/foundations-clients";
 
@@ -58,7 +59,8 @@ export const renderSuggestions = (props: any, fetchMentionItems: (query: string)
                 showOnCreate: true,
                 interactive: true,
                 trigger: 'manual',
-                theme: "blue-orange-rich-text-editor-mention-tippy"
+                theme: "blue-orange-rich-text-editor-mention-tippy",
+                zIndex: TOOLTIP_Z_INDEX
             });
         },
         onUpdate: async (props: any) => {

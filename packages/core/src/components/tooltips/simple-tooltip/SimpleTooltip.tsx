@@ -3,6 +3,7 @@ import React, {useEffect, useRef} from "react";
 import './SimpleTooltip.css'
 import {TippyHTMLElement} from "../../interfaces/AppInterfaces";
 import tippy from "tippy.js";
+import {TOOLTIP_Z_INDEX} from "../../utils/ZIndex";
 
 interface Props {
 	children: React.ReactNode,
@@ -19,7 +20,7 @@ export const SimpleTooltip: React.FC<Props> = ({children, label}) => {
 			if (current) {
 				tippy(current, {
 					content: label,
-					zIndex: 999999999999999
+					zIndex: TOOLTIP_Z_INDEX
 				});
 
 				return () => {

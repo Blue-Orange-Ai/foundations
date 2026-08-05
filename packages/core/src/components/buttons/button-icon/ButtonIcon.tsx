@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import tippy from "tippy.js";
 import {TippyHTMLElement} from "../../interfaces/AppInterfaces";
 import {ButtonSize} from "../button/Button";
+import {TOOLTIP_Z_INDEX} from "../../utils/ZIndex";
 
 import './ButtonIcon.css'
 
@@ -49,7 +50,7 @@ export const ButtonIcon: React.FC<Props> = ({
 			if (current) {
 				tippy(current, {
 					content: label,
-					zIndex: 99999999999999,
+					zIndex: TOOLTIP_Z_INDEX,
 				});
 
 				return () => {

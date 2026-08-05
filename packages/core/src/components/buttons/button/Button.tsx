@@ -4,6 +4,7 @@ import './Button.css';
 import {SuccessAnimation} from "../utils/successanimation/SuccessAnimation";
 import {ErrorAnimation} from "../utils/erroranimation/ErrorAnimation";
 import {TippyHTMLElement} from "../../interfaces/AppInterfaces";
+import {TOOLTIP_Z_INDEX} from "../../utils/ZIndex";
 
 export enum ButtonType {
 	PRIMARY,
@@ -164,6 +165,7 @@ export const Button: React.FC<Props> = ({
 		if (current && tooltip) {
 			tippy(current, {
 				content: tooltip,
+				zIndex: TOOLTIP_Z_INDEX
 			});
 			return () => {
 				const tippyInstance = current._tippy;

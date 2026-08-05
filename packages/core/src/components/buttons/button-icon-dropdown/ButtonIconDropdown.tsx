@@ -3,6 +3,7 @@ import tippy from "tippy.js";
 import {TippyHTMLElement} from "../../interfaces/AppInterfaces";
 import {ButtonSize} from "../button/Button";
 import {Dropdown} from "../../inputs/dropdown/basic/Dropdown";
+import {TOOLTIP_Z_INDEX} from "../../utils/ZIndex";
 
 import './ButtonIconDropdown.css';
 
@@ -79,7 +80,7 @@ export const ButtonIconDropdown: React.FC<Props> = ({
 		if (current && label) {
 			tippy(current, {
 				content: label,
-				zIndex: 99999999999999,
+				zIndex: TOOLTIP_Z_INDEX,
 			});
 			return () => {
 				const tippyInstance = current._tippy;

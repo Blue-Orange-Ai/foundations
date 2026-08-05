@@ -56,9 +56,14 @@
     transition: opacity 0.2s ease-out, transform 0.2s ease-out;
 }
 
+/* `transform: none` rather than the identity `scale(1) translateY(0)`: any transform other than
+   none makes the card the containing block for `position: fixed` descendants, which re-bases the
+   viewport coordinates a dropdown window positions itself with off the card instead of the page.
+   It still animates — a transform interpolates to none as the identity matrix. Drawer.css does
+   the same for the same reason. */
 .blue-orange-modal-window-open .blue-orange-modal-card {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

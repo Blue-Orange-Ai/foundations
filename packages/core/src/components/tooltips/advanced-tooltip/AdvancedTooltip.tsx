@@ -2,6 +2,7 @@ import React, {useEffect, useRef} from "react";
 
 import './AdvancedTooltip.css'
 import tippy, {Instance} from "tippy.js";
+import {TOOLTIP_Z_INDEX} from "../../utils/ZIndex";
 
 import {createRoot, Root} from "react-dom/client";
 
@@ -40,7 +41,7 @@ export const AdvancedTooltip: React.FC<Props> = ({children, tooltipComponent, tr
 			let root: Root | null = null;
 
 			const instance = tippy(current, {
-				zIndex: 999999999999999,
+				zIndex: TOOLTIP_Z_INDEX,
 				theme: "light",
 				interactive: true, // Allow interaction with tooltip content if needed
 				appendTo: "parent", // Ensure proper arrow positioning
