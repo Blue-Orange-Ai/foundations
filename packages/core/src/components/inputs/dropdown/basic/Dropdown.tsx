@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useLayoutEffect, useRef, useState} from "react";
 import './Dropdown.css'
 import {DropdownItemObj, DropdownItemType} from "../../../interfaces/AppInterfaces";
 import {DropdownItem} from "../items/DropdownItem/DropdownItem";
@@ -26,6 +26,8 @@ interface Props {
 	onSelection?: (item: DropdownItemObj) => void,
 	onItemsSelected?: (items: Array<DropdownItemObj>) => void,
 	onUpdate?: (items: Array<DropdownItemObj>) => void,
+	/** Called whenever the popup opens or closes. */
+	onVisibilityChange?: (visible: boolean) => void,
 	filter?: boolean,
 	label?:string,
 	/** Registers the input with a surrounding FormGroup under this key. */
@@ -51,6 +53,7 @@ export const Dropdown: React.FC<Props> = ({
 													onSelection,
 													onItemsSelected,
 													onUpdate,
+													onVisibilityChange,
 													filter=false,
 												    label,
 												    name,
@@ -133,6 +136,12 @@ export const Dropdown: React.FC<Props> = ({
 			dropdownOpenedRef.current = true;
 		} else if (dropdownOpenedRef.current) {
 			handleBlurValidation(selectedValue);
+		}
+	}, [visible]);
+
+	useEffect(() => {
+		if (onVisibilityChange) {
+			onVisibilityChange(visible);
 		}
 	}, [visible]);
 
@@ -307,12 +316,31 @@ export const Dropdown: React.FC<Props> = ({
 
 	}
 
+	// A popup wider than its input (e.g. contextWidth="max-content") can run off the
+	// right of the viewport, so it is pulled back on once its rendered width is known.
+	const [clampedLeft, setClampedLeft] = useState<number | undefined>(undefined);
+
+	useLayoutEffect(() => {
+		if (!visible) {
+			setClampedLeft(undefined);
+			return;
+		}
+		const rect = dropdownRef.current?.getBoundingClientRect();
+		if (!rect) {
+			return;
+		}
+		const overflow = rect.right - (window.innerWidth - 10);
+		if (overflow > 0) {
+			setClampedLeft(Math.max(10, rect.left - overflow));
+		}
+	}, [visible, queryItems.length]);
+
 	var dropdownWindowStyle: React.CSSProperties = {
 		display: visibleRef ? "flex" : "none",
 		flexDirection: "column",
 		width: contextWidth == undefined ? generateFullWidth() : contextWidth,
 		maxHeight: contextMaxHeight == undefined ? "200px" : contextMaxHeight,
-		left: calculateLeftPosition(),
+		left: clampedLeft == undefined ? calculateLeftPosition() : clampedLeft,
 		bottom: isPosAbove() ? getClientBottom() + getClientHeight() + 10 + "px" : "unset",
 		top: !isPosAbove() ? getClientTop() + getClientHeight() + 10 + "px" : "unset",
 	}

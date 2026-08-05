@@ -76,6 +76,19 @@ export const ButtonDropdown: React.FC<Props> = ({
 		}
 	};
 
+	// An open popup sits right where the tooltip would, so the tooltip is suppressed
+	// while it is open rather than left to cover a row of options.
+	const handleVisibilityChange = (visible: boolean) => {
+		const tippyInstance = (btnRef.current as TippyHTMLElement | null)?._tippy;
+		if (tippyInstance) {
+			if (visible) {
+				tippyInstance.disable();
+			} else {
+				tippyInstance.enable();
+			}
+		}
+	};
+
 	const sizeClass = sizeClassName[size] ? " " + sizeClassName[size] : "";
 
 	const generateDefaultStyle = () => {
@@ -169,6 +182,7 @@ export const ButtonDropdown: React.FC<Props> = ({
 					filter={filter}
 					contextWidth={contextWidth}
 					allowMultipleSelection={allowMultiple}
+					onVisibilityChange={handleVisibilityChange}
 					onSelection={(item) => handleSelection(item.reference)}>
 					{children}
 				</Dropdown>

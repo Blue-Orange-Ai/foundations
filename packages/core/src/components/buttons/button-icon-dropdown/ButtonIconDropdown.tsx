@@ -13,6 +13,8 @@ interface Props {
 	size?: ButtonSize;
 	filter?: boolean;
 	allowMultiple?: boolean;
+	/** Width of the dropdown popup. Defaults to "max-content" so it sizes to the option text, not the icon button. */
+	contextWidth?: number | string;
 	onSelection?: (reference: string) => void;
 	isDisabled?: boolean;
 	style?: React.CSSProperties;
@@ -32,6 +34,7 @@ export const ButtonIconDropdown: React.FC<Props> = ({
 														size = ButtonSize.MEDIUM,
 														filter,
 														allowMultiple,
+														contextWidth = "max-content",
 														onSelection,
 														isDisabled = false,
 														style = {},
@@ -42,6 +45,19 @@ export const ButtonIconDropdown: React.FC<Props> = ({
 	const handleSelection = (reference: string) => {
 		if (!isDisabled && onSelection) {
 			onSelection(reference);
+		}
+	};
+
+	// An open popup sits right where the tooltip would, so the tooltip is suppressed
+	// while it is open rather than left to cover a row of options.
+	const handleVisibilityChange = (visible: boolean) => {
+		const tippyInstance = (btnRef.current as TippyHTMLElement | null)?._tippy;
+		if (tippyInstance) {
+			if (visible) {
+				tippyInstance.disable();
+			} else {
+				tippyInstance.enable();
+			}
 		}
 	};
 
@@ -80,7 +96,9 @@ export const ButtonIconDropdown: React.FC<Props> = ({
 				<Dropdown
 					style={{width: "100%", height: "100%", opacity: 0}}
 					filter={filter}
+					contextWidth={contextWidth}
 					allowMultipleSelection={allowMultiple}
+					onVisibilityChange={handleVisibilityChange}
 					disabled={isDisabled}
 					onSelection={(item) => handleSelection(item.reference)}>
 					{children}

@@ -16,6 +16,12 @@
     height: 100%;
 }
 
+/* The button is only as wide as its icon, so the popup sizes to its own content
+   instead — this keeps it readable when the options are short. */
+.blue-orange-btn-icon-dropdown .blue-orange-dropdown-window {
+    min-width: 140px;
+}
+
 /* Size variants */
 .blue-orange-btn-icon-dropdown-sm {
     height: 28px;
