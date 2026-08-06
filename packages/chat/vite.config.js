@@ -27,7 +27,7 @@ export default defineConfig({
             entry: resolve(__dirname, "src/vite-entry.tsx"),
             name: "chat",
             formats: ["es", "umd"],
-            fileName: (format) => `index.${format}.js`,
+            fileName: (format) => (format === "es" ? "index.mjs" : "index.umd.js"),
         },
         rollupOptions: {
             external: ["react", "react-dom", "react/jsx-runtime", "react-dom/client", "@blue-orange-ai/foundations-core", "@blue-orange-ai/foundations-clients"],

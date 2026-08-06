@@ -1,14 +1,9 @@
 node_modules/
-/packages/core/dist/
-/packages/blocks/dist/
-/packages/calendar/dist/
-/packages/timeline/dist/
+
+# Build output. Globbed rather than listed per package so a new package never
+# ends up with a stale dist/ committed and published in place of a real build.
+/packages/*/dist/
 /packages/clients/lib/
-/packages/block-editor/dist/
-/packages/map/dist/
-/packages/graph/dist/
-/packages/code-editors/dist/
-/packages/llm-client/dist/
 
 # OS files
 .DS_Store
