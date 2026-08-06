@@ -1,0 +1,79 @@
+.blue-orange-blocks-skin-tones {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.blue-orange-blocks-skin-tone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 74px;
+    padding: 10px 4px;
+    margin: 0;
+    font: inherit;
+    color: var(--blue-orange-light-appearance-option-color, black);
+    background-color: var(--blue-orange-light-appearance-option-background-color, transparent);
+    border: 1px solid var(--blue-orange-light-appearance-option-border-color, #e0e1e2);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s ease-out, box-shadow 0.15s ease-out;
+}
+
+.dark .blue-orange-blocks-skin-tone {
+    color: var(--blue-orange-dark-appearance-option-color, white);
+    background-color: var(--blue-orange-dark-appearance-option-background-color, transparent);
+    border: 1px solid var(--blue-orange-dark-appearance-option-border-color, #3f3f42);
+}
+
+.blue-orange-blocks-skin-tone:hover {
+    border-color: var(--blue-orange-light-appearance-option-hover-border-color, #b6b6b6);
+}
+
+.dark .blue-orange-blocks-skin-tone:hover {
+    border-color: var(--blue-orange-dark-appearance-option-hover-border-color, #5a5a5e);
+}
+
+.blue-orange-blocks-skin-tone-selected,
+.blue-orange-blocks-skin-tone-selected:hover {
+    border-color: var(--blue-orange-light-appearance-option-selected-border-color, dodgerblue);
+    box-shadow: 0 0 0 1px var(--blue-orange-light-appearance-option-selected-border-color, dodgerblue);
+}
+
+.dark .blue-orange-blocks-skin-tone-selected,
+.dark .blue-orange-blocks-skin-tone-selected:hover {
+    border-color: var(--blue-orange-dark-appearance-option-selected-border-color, dodgerblue);
+    box-shadow: 0 0 0 1px var(--blue-orange-dark-appearance-option-selected-border-color, dodgerblue);
+}
+
+.blue-orange-blocks-skin-tone:focus-visible {
+    outline: 2px solid var(--blue-orange-light-appearance-option-selected-border-color, dodgerblue);
+    outline-offset: 2px;
+}
+
+.dark .blue-orange-blocks-skin-tone:focus-visible {
+    outline: 2px solid var(--blue-orange-dark-appearance-option-selected-border-color, dodgerblue);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .blue-orange-blocks-skin-tone {
+        transition: none;
+    }
+}
+
+.blue-orange-blocks-skin-tone-sample {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.blue-orange-blocks-skin-tone-label {
+    font-size: 0.65rem;
+    text-align: center;
+    color: var(--blue-orange-light-appearance-option-muted-color, #71717a);
+}
+
+.dark .blue-orange-blocks-skin-tone-label {
+    color: var(--blue-orange-dark-appearance-option-muted-color, #a1a1aa);
+}

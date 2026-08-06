@@ -1,0 +1,181 @@
+/* The var() fallbacks let the block render correctly in an app that has not
+   copied the blocks variables into its own :root — supplying them still wins. */
+
+.blue-orange-blocks-theme-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    width: 100%;
+}
+
+@media (max-width: 620px) {
+    .blue-orange-blocks-theme-options {
+        grid-template-columns: 1fr;
+    }
+}
+
+.blue-orange-blocks-theme-option {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    margin: 0;
+    text-align: left;
+    font: inherit;
+    color: var(--blue-orange-light-appearance-option-color, black);
+    background-color: var(--blue-orange-light-appearance-option-background-color, transparent);
+    border: 1px solid var(--blue-orange-light-appearance-option-border-color, #e0e1e2);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s ease-out, box-shadow 0.15s ease-out;
+}
+
+.dark .blue-orange-blocks-theme-option {
+    color: var(--blue-orange-dark-appearance-option-color, white);
+    background-color: var(--blue-orange-dark-appearance-option-background-color, transparent);
+    border: 1px solid var(--blue-orange-dark-appearance-option-border-color, #3f3f42);
+}
+
+.blue-orange-blocks-theme-option:hover {
+    border-color: var(--blue-orange-light-appearance-option-hover-border-color, #b6b6b6);
+}
+
+.dark .blue-orange-blocks-theme-option:hover {
+    border-color: var(--blue-orange-dark-appearance-option-hover-border-color, #5a5a5e);
+}
+
+.blue-orange-blocks-theme-option-selected,
+.blue-orange-blocks-theme-option-selected:hover {
+    border-color: var(--blue-orange-light-appearance-option-selected-border-color, dodgerblue);
+    box-shadow: 0 0 0 1px var(--blue-orange-light-appearance-option-selected-border-color, dodgerblue);
+}
+
+.dark .blue-orange-blocks-theme-option-selected,
+.dark .blue-orange-blocks-theme-option-selected:hover {
+    border-color: var(--blue-orange-dark-appearance-option-selected-border-color, dodgerblue);
+    box-shadow: 0 0 0 1px var(--blue-orange-dark-appearance-option-selected-border-color, dodgerblue);
+}
+
+.blue-orange-blocks-theme-option:focus-visible {
+    outline: 2px solid var(--blue-orange-light-appearance-option-selected-border-color, dodgerblue);
+    outline-offset: 2px;
+}
+
+.dark .blue-orange-blocks-theme-option:focus-visible {
+    outline: 2px solid var(--blue-orange-dark-appearance-option-selected-border-color, dodgerblue);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .blue-orange-blocks-theme-option {
+        transition: none;
+    }
+}
+
+/* The miniature window each tile previews its theme with. */
+
+.blue-orange-blocks-theme-preview {
+    display: flex;
+    flex-direction: row;
+    height: 64px;
+    width: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+}
+
+.blue-orange-blocks-theme-preview-sidebar {
+    width: 26%;
+    height: 100%;
+}
+
+.blue-orange-blocks-theme-preview-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    flex-grow: 1;
+    padding: 0 10px;
+}
+
+.blue-orange-blocks-theme-preview-line {
+    display: block;
+    height: 5px;
+    width: 85%;
+    border-radius: 3px;
+}
+
+.blue-orange-blocks-theme-preview-line-short {
+    width: 55%;
+}
+
+/* Each tile previews a fixed theme regardless of the theme in force, so the
+   three read as a comparison — hence the literal colours rather than variables. */
+
+.blue-orange-blocks-theme-option-light .blue-orange-blocks-theme-preview {
+    background-color: #ffffff;
+    border-color: #e0e1e2;
+}
+
+.blue-orange-blocks-theme-option-light .blue-orange-blocks-theme-preview-sidebar {
+    background-color: #f1f1f3;
+}
+
+.blue-orange-blocks-theme-option-light .blue-orange-blocks-theme-preview-line {
+    background-color: #d4d4d8;
+}
+
+.blue-orange-blocks-theme-option-dark .blue-orange-blocks-theme-preview {
+    background-color: #1e1e1e;
+    border-color: #3f3f42;
+}
+
+.blue-orange-blocks-theme-option-dark .blue-orange-blocks-theme-preview-sidebar {
+    background-color: #2a2a2c;
+}
+
+.blue-orange-blocks-theme-option-dark .blue-orange-blocks-theme-preview-line {
+    background-color: #4a4a50;
+}
+
+/* Split down the diagonal, with neutral greys over the top so the furniture
+   stays legible on both halves. */
+.blue-orange-blocks-theme-option-system .blue-orange-blocks-theme-preview {
+    background: linear-gradient(110deg, #ffffff 0 50%, #1e1e1e 50% 100%);
+    border-color: #b6b6b6;
+}
+
+.blue-orange-blocks-theme-option-system .blue-orange-blocks-theme-preview-sidebar {
+    background-color: rgba(128, 128, 128, 0.28);
+}
+
+.blue-orange-blocks-theme-option-system .blue-orange-blocks-theme-preview-line {
+    background-color: rgba(128, 128, 128, 0.6);
+}
+
+.blue-orange-blocks-theme-option-label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.blue-orange-blocks-theme-option-check {
+    margin-left: auto;
+    color: var(--blue-orange-light-appearance-option-selected-border-color, dodgerblue);
+}
+
+.dark .blue-orange-blocks-theme-option-check {
+    color: var(--blue-orange-dark-appearance-option-selected-border-color, dodgerblue);
+}
+
+.blue-orange-blocks-theme-option-description {
+    font-size: 0.75rem;
+    color: var(--blue-orange-light-appearance-option-muted-color, #71717a);
+}
+
+.dark .blue-orange-blocks-theme-option-description {
+    color: var(--blue-orange-dark-appearance-option-muted-color, #a1a1aa);
+}

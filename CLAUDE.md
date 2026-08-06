@@ -41,6 +41,7 @@ All packages live under `packages/`. There is no root-level source code.
 
 **UI Component packages** (built with Vite, output ESM + UMD):
 - **core** — The main component library: accordion, alerts, avatar, breadcrumbs, buttons, charts, comments, context menus, dropdowns, emoji, file system, inputs, layouts (modal, drawer, sidebar, tabs, pages), loading, media, metrics, rules, search, tables, text decorations, tooltips
+- **blocks** — Whole views assembled from core components (e.g. the Appearance settings page). Depends on core
 - **block-editor** — Block-based editor (depends on core, uses primitives-block-editor)
 - **graph** — Graph visualization (uses ELK layout, depends on primitives-graph)
 - **map** — Map components (depends on primitives-map)
@@ -58,6 +59,7 @@ All packages live under `packages/`. There is no root-level source code.
 ### Dependency graph (internal)
 
 `core` is the base UI package. `clients` is the base utility package. Higher-level packages depend on one or both:
+- `blocks` → `core`
 - `block-editor` → `core`
 - `llm-client` → `core`
 - `llm-graph` → `core`, `graph`
