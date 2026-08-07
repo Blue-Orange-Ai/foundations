@@ -41,57 +41,57 @@ export class Utilities {
         return parentElement.outerHTML;
     }
 
-    public static getNodeTitle(nodeHtml: string) {
+    public static getNodeTitle(nodeHtml: string): string {
         var tempDiv = document.createElement("div");
         tempDiv.innerHTML = nodeHtml;
         var titleElement = tempDiv.querySelector(".blue-orange-pipeline-editor-node-body-title") as HTMLElement;
-        return titleElement ? titleElement.innerText : null;
+        return titleElement ? titleElement.innerText : "";
     }
 
-    public static getNodeDescription(nodeHtml: string) {
+    public static getNodeDescription(nodeHtml: string): string {
         var tempDiv = document.createElement("div");
         tempDiv.innerHTML = nodeHtml;
         var descriptionElement = tempDiv.querySelector(".blue-orange-pipeline-editor-node-body-description") as HTMLElement;
-        return descriptionElement ? descriptionElement.innerText : null;
+        return descriptionElement ? descriptionElement.innerText : "";
     }
 
-    public static getNodeIcon(nodeHtml: string) {
+    public static getNodeIcon(nodeHtml: string): string {
         var tempDiv = document.createElement("div");
         tempDiv.innerHTML = nodeHtml;
         var iconElement = tempDiv.querySelector(".blue-orange-pipeline-editor-node-icon") as HTMLElement;
-        return iconElement ? iconElement.innerHTML : null;
+        return iconElement ? iconElement.innerHTML : "";
     }
 
-    public static getNodeIconColor(nodeHtml: string) {
+    public static getNodeIconColor(nodeHtml: string): string {
         var tempDiv = document.createElement("div");
         tempDiv.innerHTML = nodeHtml;
         var nodeElement = tempDiv.querySelector(".blue-orange-pipeline-editor-node") as HTMLElement;
         try {
-            return nodeElement.getAttribute("icon-color");
+            return nodeElement.getAttribute("icon-color") ?? "";
         } catch (e) {
-            return null;
+            return "";
         }
     }
 
-    public static getNodeIconBackgroundColor(nodeHtml: string) {
+    public static getNodeIconBackgroundColor(nodeHtml: string): string {
         var tempDiv = document.createElement("div");
         tempDiv.innerHTML = nodeHtml;
         var nodeElement = tempDiv.querySelector(".blue-orange-pipeline-editor-node") as HTMLElement;
         try {
-            return nodeElement.getAttribute("icon-background");
+            return nodeElement.getAttribute("icon-background") ?? "";
         } catch (e) {
-            return null;
+            return "";
         }
     }
 
-    public static getNodeFontColor(nodeHtml: string) {
+    public static getNodeFontColor(nodeHtml: string): string {
         var tempDiv = document.createElement("div");
         tempDiv.innerHTML = nodeHtml;
         var nodeElement = tempDiv.querySelector(".blue-orange-pipeline-editor-node") as HTMLElement;
         try {
-            return nodeElement.getAttribute("font-color");
+            return nodeElement.getAttribute("font-color") ?? "";
         } catch (e) {
-            return null;
+            return "";
         }
     }
 

@@ -84,7 +84,7 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 					marginRight: 0,
 					marginBottom: 0,
 					marginTop: 0,
-					action: (graph) => {
+					action: (graph: any) => {
 						graph.centre()
 					}
 				},
@@ -97,7 +97,7 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 					marginRight: 0,
 					marginBottom: 0,
 					marginTop: 0,
-					action: (graph) => {
+					action: (graph: any) => {
 						graph.setNodeCreationState(true)
 					}
 				},
@@ -110,7 +110,7 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 					marginRight: 0,
 					marginBottom: 0,
 					marginTop: 0,
-					action: (graph) => {
+					action: (graph: any) => {
 						graph.arrange("elk", "layered", "down", 100)
 						graph.centre()
 					}
@@ -124,7 +124,7 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 					marginRight: 0,
 					marginBottom: 0,
 					marginTop: 0,
-					action: (graph) => {
+					action: (graph: any) => {
 						graph.arrange("elk", "layered", "right", 100)
 						graph.centre()
 					}
@@ -138,7 +138,7 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 					marginRight: 0,
 					marginBottom: 0,
 					marginTop: 0,
-					action: (graph) => {
+					action: (graph: any) => {
 						graph.arrange("elk", "radial", "right", 100)
 						graph.centre()
 					}
@@ -152,7 +152,7 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 					marginRight: 0,
 					marginBottom: 0,
 					marginTop: 0,
-					action: (graph) => {
+					action: (graph: any) => {
 						graph.scale -= graph.stepChange;
 						graph.setTransform();
 					}
@@ -166,7 +166,7 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 					marginRight: 0,
 					marginBottom: 0,
 					marginTop: 0,
-					action: (graph) => {
+					action: (graph: any) => {
 						graph.scale += graph.stepChange;
 						graph.setTransform();
 					}
@@ -180,7 +180,7 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 					marginRight: 0,
 					marginBottom: 0,
 					marginTop: 0,
-					action: (graph) => {
+					action: (graph: any) => {
 						graph.alignNodes("horizontal");
 					}
 				},
@@ -193,7 +193,7 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 					marginRight: 0,
 					marginBottom: 0,
 					marginTop: 0,
-					action: (graph) => {
+					action: (graph: any) => {
 						graph.alignNodes("vertical");
 					}
 				},
@@ -206,7 +206,7 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 					marginRight: 0,
 					marginBottom: 0,
 					marginTop: 0,
-					action: (graph) => {
+					action: (graph: any) => {
 						graph.alignNodes("left");
 					}
 				},
@@ -219,7 +219,7 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 					marginRight: 0,
 					marginBottom: 0,
 					marginTop: 0,
-					action: (graph) => {
+					action: (graph: any) => {
 						graph.alignNodes("right");
 					}
 				},
@@ -232,7 +232,7 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 					marginRight: 0,
 					marginBottom: 0,
 					marginTop: 0,
-					action: (graph) => {
+					action: (graph: any) => {
 						graph.alignNodes("top");
 					}
 				},
@@ -245,7 +245,7 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 					marginRight: 0,
 					marginBottom: 0,
 					marginTop: 0,
-					action: (graph) => {
+					action: (graph: any) => {
 						graph.alignNodes("bottom");
 					}
 				}
@@ -257,9 +257,9 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 
 	const [editLinkModal, setEditLinkModal] = useState<boolean>(false)
 
-	const [focusNode, setFocusNode] = useState<GraphNode>(undefined)
+	const [focusNode, setFocusNode] = useState<GraphNode | undefined>(undefined)
 
-	const [focusEdge, setFocusEdge] = useState<GraphEdge>(undefined)
+	const [focusEdge, setFocusEdge] = useState<GraphEdge | undefined>(undefined)
 
 	const focusNodeDeletableState = useRef<boolean>(true)
 
@@ -298,7 +298,7 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 	}
 
 	const createFocusNode = () => {
-		if (graphInstance.current) {
+		if (graphInstance.current && focusNode) {
 			graphInstance.current.createNode(
 				focusNode.id,
 				focusNode.x,
@@ -319,18 +319,20 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 	}
 
 	const updateFocusNode = () => {
-		graphInstance.current.updateNode(
-			focusNode.id,
-			focusNode.border,
-			focusNode.borderSelected,
-			focusNode.borderRadius,
-			focusNode.backgroundColour,
-			focusNode.width,
-			focusNode.height,
-			focusNode.html,
-			focusNode.movable,
-			focusNodeDeletableState.current
-		)
+		if (graphInstance.current && focusNode) {
+			graphInstance.current.updateNode(
+				focusNode.id,
+				focusNode.border,
+				focusNode.borderSelected,
+				focusNode.borderRadius,
+				focusNode.backgroundColour,
+				focusNode.width,
+				focusNode.height,
+				focusNode.html,
+				focusNode.movable,
+				focusNodeDeletableState.current
+			)
+		}
 		setCreateNodeState(undefined)
 	}
 
@@ -355,7 +357,7 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 	const updateNodeClick = (node: GraphNode) => {
 		focusNodeDeletableState.current = node.deletable;
 		setFocusNode(node);
-		graphInstance.current.updateNode(
+		graphInstance.current?.updateNode(
 			node.id,
 			node.border,
 			node.borderSelected,
@@ -379,15 +381,18 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 	}
 
 	const closeNodeUpdate = () => {
-		if (createNodeState == "NODE_CREATED") {
-			graphInstance.current.deleteNode(focusNode);
+		if (createNodeState == "NODE_CREATED" && focusNode) {
+			graphInstance.current?.deleteNode(focusNode);
 		}
 		setCreateNodeState(undefined)
 	}
 
 	const openLinkEditModal = (edge: GraphEdge) => {
 		const edgeId = edge.id.replace("-edge-base", "");
-		const edgeObj = graphInstance.current.findEdge(edgeId);
+		const edgeObj = graphInstance.current?.findEdge(edgeId);
+		if (!edgeObj) {
+			return;
+		}
 		focusEdgeLabelState.current = edgeObj.label;
 		setFocusEdge(edgeObj)
 		setEditLinkModal(true)
@@ -398,14 +403,16 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 	}
 
 	const updateEdge = () => {
-		if (focusEdge.labelBackground == "") {
-			focusEdge.labelBackground = "white"
-		}
-		if (focusEdgeLabelState.current == focusEdge.label) {
-			graphInstance.current.updateEdge(focusEdge)
-		} else {
-			graphInstance.current.deleteEdge(focusEdge);
-			graphInstance.current.createEdge(focusEdge);
+		if (graphInstance.current && focusEdge) {
+			if (focusEdge.labelBackground == "") {
+				focusEdge.labelBackground = "white"
+			}
+			if (focusEdgeLabelState.current == focusEdge.label) {
+				graphInstance.current.updateEdge(focusEdge)
+			} else {
+				graphInstance.current.deleteEdge(focusEdge);
+				graphInstance.current.createEdge(focusEdge);
+			}
 		}
 
 		setEditLinkModal(false)
@@ -422,7 +429,7 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 				edgeRightClick={(edge: GraphEdge, clickEvent: any) => openLinkEditModal(edge)}
 				nodeRightClick={(node: GraphNode, clickEvent: any) => updateNodeClick(node)}
 			></BlueOrangeGraphWrapper>
-			{editLinkModal &&
+			{editLinkModal && focusEdge &&
 				<Drawer position={DrawerPosition.BOTTOM} height={"calc(100vh - 48px)"}>
 					<DrawerHeader label={"Edit Link"} onClose={closeLinkEditModal}></DrawerHeader>
 					<DrawerBody>
@@ -437,7 +444,7 @@ export const PipelineEditor: React.FC<Props> = ({}) => {
 					</DrawerFooter>
 				</Drawer>
 			}
-			{createNodeState &&
+			{createNodeState && focusNode &&
 				<PipelineNodeCreation
 					node={focusNode}
 					onNodeChange={setFocusNode}

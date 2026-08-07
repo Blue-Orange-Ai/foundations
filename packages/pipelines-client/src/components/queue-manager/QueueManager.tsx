@@ -44,8 +44,8 @@ export const QueueManager: React.FC<Props> = ({}) => {
 						<TBody>
 							<Row>
 								<PrimaryCell text={"Name of the Queue"} secondaryText={"Secondary Text"}></PrimaryCell>
-								<Cell><Description><TimeDisplay targetDate={new Date()} timeFormat={"12hr"} dateFormat={"dd/mm/yyyy"}></TimeDisplay></Description></Cell>
-								<Cell><Description><TimeDisplay targetDate={new Date()} timeFormat={"12hr"} dateFormat={"dd/mm/yyyy"}></TimeDisplay></Description></Cell>
+								<Cell><Description><TimeDisplay targetDate={new Date()} timeFormat={"12hr"} dateFormat={"dd/mm/yy"}></TimeDisplay></Description></Cell>
+								<Cell><Description><TimeDisplay targetDate={new Date()} timeFormat={"12hr"} dateFormat={"dd/mm/yy"}></TimeDisplay></Description></Cell>
 							</Row>
 						</TBody>
 					</Table>

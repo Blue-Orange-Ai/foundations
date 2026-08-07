@@ -15,8 +15,8 @@ interface Props {
 	iconColor?: string,
 	iconBackground?: string,
 	borderRadius?: string,
-	height?: string,
-	width?: string,
+	height?: string | number,
+	width?: string | number,
 	border?: string,
 }
 

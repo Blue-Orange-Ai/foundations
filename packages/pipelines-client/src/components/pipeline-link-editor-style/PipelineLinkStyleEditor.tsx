@@ -115,7 +115,7 @@ export const PipelineLinkStyleEditor: React.FC<Props> = ({edge, labelWhitelist, 
 					<Dropdown onSelection={(item: DropdownItemObj) => handleLabelTxtChange(item.reference)}>
 						{labelWhitelist.map((item, index) => (
 							<DropdownItemText
-								key={item.value + "-" + index}
+								key={item + "-" + index}
 								label={item}
 								value={item}
 								selected={labelTxt == item}></DropdownItemText>
