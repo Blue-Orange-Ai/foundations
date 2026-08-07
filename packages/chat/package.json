@@ -1,14 +1,14 @@
 {
   "name": "@blue-orange-ai/foundations-chat",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
   "author": "Blue Orange AI",
   "private": false,
   "dependencies": {
-    "@blue-orange-ai/foundations-clients": "^0.4.0",
-    "@blue-orange-ai/foundations-core": "^0.4.0",
+    "@blue-orange-ai/foundations-clients": "^0.4.1",
+    "@blue-orange-ai/foundations-core": "^0.4.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
