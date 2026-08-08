@@ -307,6 +307,7 @@ export * from './components/text-decorations/json-object-text/JsonObjectText';
 export * from './components/text-decorations/number-text/NumberText';
 export * from './components/text-decorations/number-units/NumberUnits';
 export * from './components/text-decorations/properties-display/PropertiesDisplay';
+export * from './components/text-decorations/property-histogram/PropertyHistogram';
 export * from './components/text-decorations/copyable-text/CopyableText';
 export * from './components/text-decorations/kbd/Kbd';
 export * from './components/text-decorations/kbd/kbd-group/KbdGroup';

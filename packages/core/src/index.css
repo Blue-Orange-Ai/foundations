@@ -421,6 +421,11 @@
   --blue-orange-light-pagination-border-color: #e0e1e2;
   --blue-orange-dark-pagination-border-color: #3f3f42;
 
+  --blue-orange-light-property-histogram-track-color: #e4e4e7;
+  --blue-orange-dark-property-histogram-track-color: #3f3f42;
+  --blue-orange-light-property-histogram-bar-color: black;
+  --blue-orange-dark-property-histogram-bar-color: white;
+
   --blue-orange-light-separator-color: #e0e1e2;
   --blue-orange-dark-separator-color: #3f3f42;
   --blue-orange-light-separator-label-color: #71717a;
