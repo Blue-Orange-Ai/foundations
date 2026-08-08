@@ -14,10 +14,11 @@ import type {
 	BlockSpec,
 	BlueOrangeDocument,
 	BlueOrangeDocumentOptions,
-	BlueOrangeFileUploadHandler,
 	DiffViewer,
 	DiffViewerOptions
 } from "@blue-orange-ai/primitives-block-editor";
+// Declared locally rather than imported from primitives — see BlueOrangeFileUpload.ts.
+import type {BlueOrangeFileUploadHandler} from "./BlueOrangeFileUpload";
 import {
 	Drawer,
 	DrawerBody,
@@ -41,6 +42,14 @@ import {v4 as uuidv4} from "uuid";
 type MarkdownCapableEditor = {
 	toMarkdown: () => string,
 	fromMarkdown: (markdown: string) => void,
+}
+
+// `fileUploadHandler` is accepted by the editor at runtime but is absent from
+// the published BlueOrangeDocumentOptions type, so we add it here. Omit-then-add
+// (rather than a plain intersection) keeps this working once primitives declares
+// the option itself; if its signature then differs from ours, the build says so.
+type BlueOrangeEditorOptions = Omit<BlueOrangeDocumentOptions, "fileUploadHandler"> & {
+	fileUploadHandler?: BlueOrangeFileUploadHandler,
 }
 
 interface CommentState {
@@ -330,7 +339,7 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 	useEffect(() => {
 		const current = editorRef.current as HTMLElement;
 		if (blueOrangeEditorRef.current == null) {
-			const editorOptions: BlueOrangeDocumentOptions = {
+			const editorOptions: BlueOrangeEditorOptions = {
 				...userOptions,
 				comments: enableComments,
 				template: template,
