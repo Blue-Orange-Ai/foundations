@@ -71,6 +71,7 @@ import {ParagraphDevelopment} from "../components/text-decorations/paragraph/Par
 import {PercentageDevelopment} from "../components/text-decorations/percentage/PercentageDevelopment";
 import {CopyableTextDevelopment} from "../components/text-decorations/copyable-text/CopyableTextDevelopment";
 import {PropertiesDisplayDevelopment} from "../components/text-decorations/properties-display/PropertiesDisplayDevelopment";
+import {PropertyHistogramDevelopment} from "../components/text-decorations/property-histogram/PropertyHistogramDevelopment";
 import {RenderHtmlDevelopment} from "../components/text-decorations/render-html/RenderHtmlDevelopment";
 import {TagDevelopment} from "../components/text-decorations/tag/TagDevelopment";
 import {TelephoneTextDevelopment} from "../components/text-decorations/telephone-text/TelephoneTextDevelopment";
@@ -1103,6 +1104,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/text-decoration-properties-display")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
+							label={"Property Histogram"}
+							active={component == "text-decoration-property-histogram"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-bar-chart-grouped-fill"></i>}
+							onClick={() => navigate("/text-decoration-property-histogram")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
 							label={"Render HTML"}
 							active={component == "text-decoration-render-html"}
 							focused={false}
@@ -1221,6 +1231,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "text-decoration-percentage" && <PercentageDevelopment></PercentageDevelopment>}
 			{component == "text-decoration-copyable-text" && <CopyableTextDevelopment></CopyableTextDevelopment>}
 			{component == "text-decoration-properties-display" && <PropertiesDisplayDevelopment></PropertiesDisplayDevelopment>}
+			{component == "text-decoration-property-histogram" && <PropertyHistogramDevelopment></PropertyHistogramDevelopment>}
 			{component == "text-decoration-render-html" && <RenderHtmlDevelopment></RenderHtmlDevelopment>}
 			{component == "text-decoration-tag" && <TagDevelopment></TagDevelopment>}
 			{component == "text-decoration-telephone" && <TelephoneTextDevelopment></TelephoneTextDevelopment>}

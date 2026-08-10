@@ -38,6 +38,13 @@ export enum TableFieldSortState {
 	UNSORTED="UNSORTED",
 }
 
+/** How a NUMBER column renders: the digits as they are (default), locale-formatted, or as an amount of money. */
+export enum NumberCellStyle {
+	PLAIN="PLAIN",
+	PRETTY="PRETTY",
+	CURRENCY="CURRENCY",
+}
+
 export interface TableField {
 	label: string,
     apiName: string,
@@ -47,7 +54,15 @@ export interface TableField {
 	filterable: boolean,
 	statistics: boolean,
 	multipleValues?: boolean,
-    dropDownItems?: IContextMenuItem[]
+    dropDownItems?: IContextMenuItem[],
+	/** Rendering style for a NUMBER column. Defaults to PLAIN. */
+	numberStyle?: NumberCellStyle,
+	/** ISO currency code for CURRENCY columns and NUMBER columns styled as CURRENCY. Defaults to AUD. */
+	currency?: string,
+	/** Moment format for DATE columns, e.g. "DD MMM YYYY". Defaults to ISO. */
+	dateFormat?: string,
+	/** Secondary line under the column label. Defaults to the field type; pass "" to hide it. */
+	description?: string,
 }
 
 export type DataTableCellClickPosition = {
@@ -80,7 +95,14 @@ interface Props {
 	onCellClick?: (colIdx: number, rowIdx: number, position: DataTableCellClickPosition) => void,
 	onCellRightClick?: (colIdx: number, rowIdx: number, position: DataTableCellClickPosition) => void,
 	onHeaderDropdownSelected?: (item: IContextMenuItem) => void,
-	onAddAsFilter?: (field: TableField, values: string[], fieldType: TableFieldType) => void
+	onAddAsFilter?: (field: TableField, values: string[], fieldType: TableFieldType) => void,
+	/**
+	 * Replaces the whole header body — label, description and anything else. Takes precedence over
+	 * `TableField.description`. Sorting arrows, the resize handle and the header dropdown stay with
+	 * the table. Reuse `blue-orange-data-table-header-cell-group`, `-primary-text` and `-column-type`
+	 * to keep the default look while swapping out one part of it.
+	 */
+	renderColumnHeader?: (field: TableField, colIdx: number) => React.ReactNode
 }
 
 export const DataTable: React.FC<Props> = ({
@@ -107,7 +129,8 @@ export const DataTable: React.FC<Props> = ({
 												onCellClick,
 												onCellRightClick,
 												onHeaderDropdownSelected,
-												onAddAsFilter}) => {
+												onAddAsFilter,
+												renderColumnHeader}) => {
 
 	const clampWidth = (width: number): number => {
 		const next = Math.max(minColumnWidth, width);
@@ -1109,6 +1132,20 @@ export const DataTable: React.FC<Props> = ({
 		return style;
 	}
 
+	// The header body is the app's to own: a render prop replaces it outright, otherwise the column
+	// describes itself through `description`, falling back to the field type as before.
+	const renderHeaderContent = (field: TableField, colIdx: number): React.ReactNode => {
+		if (renderColumnHeader) {
+			return renderColumnHeader(field, colIdx);
+		}
+		return (
+			<div className="blue-orange-data-table-header-cell-group">
+				<span className="blue-orange-data-table-header-cell-primary-text">{field.label}</span>
+				<span className="blue-orange-data-table-header-cell-column-type">{field.description ?? field.type.toString()}</span>
+			</div>
+		);
+	}
+
 	const containerClassName = [
 		"blue-orange-tables-data-table",
 		freezeHeader ? "blue-orange-tables-data-table-freeze-header" : null,
@@ -1175,11 +1212,7 @@ export const DataTable: React.FC<Props> = ({
 													onHeaderDropdownSelected(item);
 												}
 											}}>
-											<div className="blue-orange-data-table-header-cell-group">
-									        <span className="blue-orange-data-table-header-cell-primary-text">{item.label}</span>
-											<span
-												className="blue-orange-data-table-header-cell-column-type">{item.type.toString()}</span>
-										</div>
+											{renderHeaderContent(item, index)}
 										</HeaderCell>
 									}
 								</React.Fragment>
@@ -1263,21 +1296,29 @@ export const DataTable: React.FC<Props> = ({
 																								  multipleValues={item.multipleValues}
 																								  tdProps={tdProps}></TextDataCell>
 																								}
-																						{item.type == TableFieldType.NUMBER &&
+																						{item.type == TableFieldType.NUMBER && item.numberStyle == NumberCellStyle.CURRENCY &&
+																						<CurrencyDataCell style={{...cellStyle}}
+																						  amount={cellDisplayValue} currency={item.currency ?? "AUD"}
+																						  multipleValues={item.multipleValues}
+																						  tdProps={tdProps}></CurrencyDataCell>
+																						}
+																						{item.type == TableFieldType.NUMBER && item.numberStyle != NumberCellStyle.CURRENCY &&
 																						<NumberDataCell style={{...cellStyle}}
 																						  value={cellDisplayValue}
+																						  pretty={item.numberStyle == NumberCellStyle.PRETTY}
 																						  multipleValues={item.multipleValues}
 																						  tdProps={tdProps}></NumberDataCell>
 																						}
 																						{item.type == TableFieldType.DATE &&
 																						<DateDataCell style={{...cellStyle}}
 																							date={cellDisplayValue}
+																							dateformat={item.dateFormat}
 																							multipleValues={item.multipleValues}
 																							tdProps={tdProps}></DateDataCell>
 																						}
 																						{item.type == TableFieldType.CURRENCY &&
 																						<CurrencyDataCell style={{...cellStyle}}
-																						  amount={cellDisplayValue} currency={"AUD"}
+																						  amount={cellDisplayValue} currency={item.currency ?? "AUD"}
 																						  multipleValues={item.multipleValues}
 																						  tdProps={tdProps}></CurrencyDataCell>
 																						}

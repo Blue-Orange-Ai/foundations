@@ -1,0 +1,44 @@
+.blue-orange-property-histogram-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+}
+
+.blue-orange-property-histogram-item-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.blue-orange-property-histogram-item-histogram-cont {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    height: 12px;
+    width: 100px;
+    background: var(--blue-orange-light-property-histogram-track-color);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.dark .blue-orange-property-histogram-item-histogram-cont {
+    background: var(--blue-orange-dark-property-histogram-track-color);
+}
+
+.blue-orange-property-histogram-item-histogram-percentage {
+    height: 100%;
+    background: var(--blue-orange-light-property-histogram-bar-color);
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.dark .blue-orange-property-histogram-item-histogram-percentage {
+    background: var(--blue-orange-dark-property-histogram-bar-color);
+}
