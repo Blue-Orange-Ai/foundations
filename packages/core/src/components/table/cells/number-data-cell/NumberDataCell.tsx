@@ -11,6 +11,8 @@ interface Props {
 	value: any,
 	multipleValues?: boolean,
 	decimalPlaces?: number,
+	/** Locale-formats the number (thousands separators). Off by default: the cell shows the digits as they are. */
+	pretty?: boolean,
 	alignment?: CellAlignment,
 	onClick?: () => void,
     dropdownItems?: Array<IContextMenuItem>,
@@ -22,6 +24,7 @@ export const NumberDataCell: React.FC<Props> = ({
 								  value,
 								  multipleValues=false,
 								  decimalPlaces,
+								  pretty=false,
 								  alignment=CellAlignment.CENTER,
                                           dropdownItems,
                                           onDropdownSelected,
@@ -29,17 +32,24 @@ export const NumberDataCell: React.FC<Props> = ({
 								  tdProps,
 								  onClick}) => {
 
+	const formatScalar = (v: number): string => {
+		if (pretty) {
+			return new Intl.NumberFormat("en-AU", typeof decimalPlaces === "number"
+				? {minimumFractionDigits: decimalPlaces, maximumFractionDigits: decimalPlaces}
+				: {}).format(v);
+		}
+		if (typeof decimalPlaces === "number") {
+			return v.toFixed(decimalPlaces);
+		}
+		return v.toString();
+	}
+
 	const getDisplayValue = () => {
 		if (multipleValues && Array.isArray(value)) {
 			return value
 				.map((v) => (typeof v === "number" ? v : Number(v)))
 				.filter((v) => !Number.isNaN(v))
-				.map((v) => {
-					if (typeof decimalPlaces === "number") {
-						return v.toFixed(decimalPlaces);
-					}
-					return v.toString();
-				})
+				.map((v) => formatScalar(v))
 				.join(", ");
 		}
 		if (value === null || value === undefined) {
@@ -53,6 +63,19 @@ export const NumberDataCell: React.FC<Props> = ({
 			return "";
 		}
 		return asNumber;
+	}
+
+	// Arrays arrive pre-formatted as a joined string; a scalar is formatted here,
+	// through NumberText when pretty so both paths share the same locale rules.
+	const renderValue = (): React.ReactNode => {
+		const display = getDisplayValue();
+		if (typeof display === "string") {
+			return display;
+		}
+		if (pretty) {
+			return <NumberText value={display} decimalPlaces={decimalPlaces}></NumberText>;
+		}
+		return formatScalar(display);
 	}
 
 	const getTextAlignment = () => {
@@ -93,21 +116,21 @@ export const NumberDataCell: React.FC<Props> = ({
                     {alignment == CellAlignment.CENTER &&
                         <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
                             <CenteredDiv>
-															{typeof getDisplayValue() === "string" ? getDisplayValue() : <NumberText value={getDisplayValue() as number} decimalPlaces={decimalPlaces}></NumberText>}
+															{renderValue()}
                             </CenteredDiv>
                         </ContextMenu>
                     }
                     {alignment == CellAlignment.RIGHT &&
                         <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
                             <RightAlignedDiv>
-															{typeof getDisplayValue() === "string" ? getDisplayValue() : <NumberText value={getDisplayValue() as number} decimalPlaces={decimalPlaces}></NumberText>}
+															{renderValue()}
                             </RightAlignedDiv>
                         </ContextMenu>
                     }
                     {alignment == CellAlignment.LEFT &&
                         <ContextMenu maxHeight={200} items={dropdownItems} onClick={onDropdownSelected} rightClick={true}>
                             <>
-															{typeof getDisplayValue() === "string" ? getDisplayValue() : <NumberText value={getDisplayValue() as number} decimalPlaces={decimalPlaces}></NumberText>}
+															{renderValue()}
                             </>
                         </ContextMenu>
                     }
@@ -121,17 +144,17 @@ export const NumberDataCell: React.FC<Props> = ({
                     style={{...cellAlignment, ...style}}>
                     {alignment == CellAlignment.CENTER &&
                         <CenteredDiv>
-															{typeof getDisplayValue() === "string" ? getDisplayValue() : <NumberText value={getDisplayValue() as number} decimalPlaces={decimalPlaces}></NumberText>}
+															{renderValue()}
                         </CenteredDiv>
                     }
                     {alignment == CellAlignment.RIGHT &&
                         <RightAlignedDiv>
-															{typeof getDisplayValue() === "string" ? getDisplayValue() : <NumberText value={getDisplayValue() as number} decimalPlaces={decimalPlaces}></NumberText>}
+															{renderValue()}
                         </RightAlignedDiv>
                     }
                     {alignment == CellAlignment.LEFT &&
                         <>
-															{typeof getDisplayValue() === "string" ? getDisplayValue() : <NumberText value={getDisplayValue() as number} decimalPlaces={decimalPlaces}></NumberText>}
+															{renderValue()}
                         </>
                     }
                 </td>

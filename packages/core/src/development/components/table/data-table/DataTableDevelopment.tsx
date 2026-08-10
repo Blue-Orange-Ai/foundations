@@ -7,6 +7,7 @@ import {Checkbox} from "../../../../components/inputs/checkbox/Checkbox";
 import {
 	DataTable,
 	DataTableCellClickPosition,
+	NumberCellStyle,
 	TableField,
 	TableFieldSortState,
 	TableFieldType
@@ -77,6 +78,7 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 	const [freezeRowNumbers, setFreezeRowNumbers] = useState<boolean>(true);
 	const [enableInfiniteScroll, setEnableInfiniteScroll] = useState<boolean>(true);
 	const [showLoadingRow, setShowLoadingRow] = useState<boolean>(false);
+	const [customColumnHeaders, setCustomColumnHeaders] = useState<boolean>(false);
 	const [endReachedCount, setEndReachedCount] = useState<number>(0);
 	const [lastSelection, setLastSelection] = useState<Array<{rowIndex: number; colIndex: number}>>([]);
 	const [lastRowSelection, setLastRowSelection] = useState<Array<number>>([]);
@@ -85,15 +87,19 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 
 	const displaySchema: Array<Omit<TableField, "apiName">> = [
 		{
+			// Describes itself rather than showing the field type under the label.
 			label: "Test String",
 			type: TableFieldType.STRING,
+			description: "Free text, as typed",
 			sortable: true,
 			filterable: false,
 			statistics: false,
 			sortState: TableFieldSortState.UNSORTED
 		},
 		{
+			// An empty description drops the second line entirely.
 			label: "Test String (Multiple)",
+			description: "",
 			type: TableFieldType.STRING,
 			multipleValues: true,
 			sortable: true,
@@ -102,6 +108,7 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 			sortState: TableFieldSortState.UNSORTED
 		},
 		{
+			// No numberStyle: renders the digits as they are — the default.
 			label: "Test Number",
 			type: TableFieldType.NUMBER,
 			sortable: true,
@@ -110,8 +117,10 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 			sortState: TableFieldSortState.UNSORTED
 		},
 		{
+			// Opted into locale formatting (thousands separators) via the schema.
 			label: "Test Number (Multiple)",
 			type: TableFieldType.NUMBER,
+			numberStyle: NumberCellStyle.PRETTY,
 			multipleValues: true,
 			sortable: true,
 			filterable: false,
@@ -119,8 +128,10 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 			sortState: TableFieldSortState.UNSORTED
 		},
 		{
+			// Rendering style set in the schema rather than ISO default.
 			label: "Test Date",
 			type: TableFieldType.DATE,
+			dateFormat: "DD MMM YYYY HH:mm",
 			sortable: true,
 			filterable: false,
 			statistics: false,
@@ -138,6 +149,7 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 		{
 			label: "Test Currency",
 			type: TableFieldType.CURRENCY,
+			currency: "USD",
 			sortable: true,
 			filterable: false,
 			statistics: false,
@@ -320,6 +332,10 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 				<Checkbox checked={freezeRowNumbers} onCheckboxChange={setFreezeRowNumbers}></Checkbox>
 				<span style={{marginLeft: 8}}>Freeze row numbers</span>
 			</div>
+			<div style={{marginBottom: 12}}>
+				<Checkbox checked={customColumnHeaders} onCheckboxChange={setCustomColumnHeaders}></Checkbox>
+				<span style={{marginLeft: 8}}>Custom column headers (renderColumnHeader)</span>
+			</div>
 			<div style={{marginBottom: 12, fontSize: 12, fontFamily: "monospace"}}>
 				End reached count: {endReachedCount}
 			</div>
@@ -358,7 +374,18 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 					onCellSelection={(selection) => setLastSelection(selection)}
 					onRowSelectable={(selection) => setLastRowSelection(selection)}
 					onCellClick={(cellIdx, rowIdx, position) => setLastClickedCell({cellIdx, rowIdx, position})}
-					onCellRightClick={(cellIdx, rowIdx, position) => setLastRightClickedCell({cellIdx, rowIdx, position})}></DataTable>
+					onCellRightClick={(cellIdx, rowIdx, position) => setLastRightClickedCell({cellIdx, rowIdx, position})}
+					renderColumnHeader={customColumnHeaders
+						? (field, colIdx) => (
+							<div className="blue-orange-data-table-header-cell-group">
+								<span className="blue-orange-data-table-header-cell-primary-text">
+									<i className="ri-price-tag-3-line" style={{marginRight: 4}}></i>
+									{field.label.toUpperCase()}
+								</span>
+								<span className="blue-orange-data-table-header-cell-column-type">column {colIdx + 1}</span>
+							</div>
+						)
+						: undefined}></DataTable>
 			</div>
 		</PaddedPage>
 	)

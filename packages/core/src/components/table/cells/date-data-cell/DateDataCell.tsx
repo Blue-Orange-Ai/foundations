@@ -1,4 +1,5 @@
 import React from "react";
+import moment from "moment";
 
 import './DateDataCell.css'
 import {CellAlignment} from "../../../interfaces/AppInterfaces";
@@ -45,7 +46,9 @@ export const DateDataCell: React.FC<Props> = ({
 			return date
 				.map((d) => toDate(d))
 				.filter((d) => d)
-				.map((d) => (d as Date).toLocaleDateString())
+				// The same format the single-date path renders with, so a column's
+				// dateformat means one thing whether the cell holds one date or many.
+				.map((d) => (dateformat ? moment(d as Date).format(dateformat) : (d as Date).toLocaleDateString()))
 				.join(", ");
 		}
 		return null;
