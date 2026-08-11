@@ -71,6 +71,33 @@ export type DataTableCellClickPosition = {
 	cellRect: DOMRect;
 }
 
+/**
+ * Marker the table stamps onto its own context menu items so it can tell them apart from
+ * items supplied through `contextMenuItems`. Anything without it is handed to
+ * `onContextMenuItemClick` untouched.
+ */
+const DATA_TABLE_MENU_ACTION = "__blueOrangeDataTableAction";
+
+/** Everything known about the cell that was right clicked, passed to the context menu callbacks. */
+export type DataTableContextMenuContext = {
+	/** Row index of the right clicked cell, or -1 when the click was on a header cell. */
+	rowIdx: number,
+	/** Column index of the right clicked cell, in the table's current (possibly reordered) column order. */
+	colIdx: number,
+	/** True when the click was on a header cell rather than a data cell. */
+	isHeader: boolean,
+	/** The field the column renders, or undefined if the column index is out of range. */
+	field?: TableField,
+	/** The record the row renders, or undefined for header cells. */
+	row?: SearchRecord,
+	/** The serialised value of the right clicked cell, or undefined for header cells. */
+	cellValue?: string,
+	/** Indices of every currently selected row. */
+	selectedRows: Array<number>,
+	/** Every currently selected cell. */
+	selectedCells: Array<{rowIndex: number; colIndex: number}>,
+}
+
 interface Props {
 	schema: Array<TableField>,
     data: Array<SearchRecord>,
@@ -96,6 +123,21 @@ interface Props {
 	onCellRightClick?: (colIdx: number, rowIdx: number, position: DataTableCellClickPosition) => void,
 	onHeaderDropdownSelected?: (item: IContextMenuItem) => void,
 	onAddAsFilter?: (field: TableField, values: string[], fieldType: TableFieldType) => void,
+	/**
+	 * Extra items appended to the cell context menu, separated from the built in ones by a divider.
+	 * Pass a function to vary the items per cell — return an empty array to add nothing for that cell.
+	 * It runs on every right click and on every render while the menu is open, so keep it side effect
+	 * free. Items may nest one or more levels via `IContextMenuType.GROUP` children.
+	 * Combine with `hideDefaultContextMenuItems` for a fully custom menu.
+	 */
+	contextMenuItems?: Array<IContextMenuItem> | ((context: DataTableContextMenuContext) => Array<IContextMenuItem> | undefined),
+	/** Drops the table's own copy/filter items so only `contextMenuItems` are shown. Defaults to false. */
+	hideDefaultContextMenuItems?: boolean,
+	/**
+	 * Fired when an item from `contextMenuItems` is clicked, with the context of the cell the menu was
+	 * opened on. The table's own items are handled internally and never reach this callback.
+	 */
+	onContextMenuItemClick?: (item: IContextMenuItem, context: DataTableContextMenuContext) => void,
 	/**
 	 * Replaces the whole header body — label, description and anything else. Takes precedence over
 	 * `TableField.description`. Sorting arrows, the resize handle and the header dropdown stay with
@@ -130,6 +172,9 @@ export const DataTable: React.FC<Props> = ({
 												onCellRightClick,
 												onHeaderDropdownSelected,
 												onAddAsFilter,
+												contextMenuItems,
+												hideDefaultContextMenuItems=false,
+												onContextMenuItemClick,
 												renderColumnHeader}) => {
 
 	const clampWidth = (width: number): number => {
@@ -546,54 +591,111 @@ export const DataTable: React.FC<Props> = ({
 		}
 	};
 
-	const getContextMenuItems = (rowIdx: number, colIdx: number): IContextMenuItem[] => {
+	const buildContextMenuContext = (rowIdx: number, colIdx: number): DataTableContextMenuContext => {
+		const isHeader = rowIdx < 0;
+		const field = orderedSchema[colIdx];
+		const row = (!isHeader && rowIdx < data.length) ? data[rowIdx] : undefined;
+		return {
+			rowIdx,
+			colIdx,
+			isHeader,
+			field,
+			row,
+			cellValue: (row && field) ? getCellValue(row, field, colIdx) : undefined,
+			selectedRows: getSelectedRows(),
+			selectedCells: getSelectedCells(),
+		};
+	};
+
+	const getDefaultContextMenuItems = (context: DataTableContextMenuContext): IContextMenuItem[] => {
 		const items: IContextMenuItem[] = [];
-		const selectedRowIndices = getSelectedRows();
-		const hasMultipleRowsSelected = selectedRowIndices.length > 1;
+		const {rowIdx, colIdx, isHeader} = context;
+		const hasMultipleRowsSelected = context.selectedRows.length > 1;
 
-		items.push({
-			label: 'Copy Cell Value',
-			type: IContextMenuType.CONTENT,
-			value: { action: 'copyCellValue', rowIdx, colIdx }
-		});
+		if (!isHeader) {
+			items.push({
+				label: 'Copy Cell Value',
+				type: IContextMenuType.CONTENT,
+				value: { [DATA_TABLE_MENU_ACTION]: 'copyCellValue', rowIdx, colIdx }
+			});
 
-		items.push({
-			label: 'Copy Row Data',
-			type: IContextMenuType.CONTENT,
-			value: { action: 'copyRowData', rowIdx }
-		});
+			items.push({
+				label: 'Copy Row Data',
+				type: IContextMenuType.CONTENT,
+				value: { [DATA_TABLE_MENU_ACTION]: 'copyRowData', rowIdx }
+			});
+		}
 
 		if (hasMultipleRowsSelected) {
 			items.push({
 				label: 'Copy Column Values (Selected Rows)',
 				type: IContextMenuType.CONTENT,
-				value: { action: 'copyColumnValues', colIdx }
+				value: { [DATA_TABLE_MENU_ACTION]: 'copyColumnValues', colIdx }
 			});
 
 			items.push({
 				label: 'Copy All Selected Data',
 				type: IContextMenuType.CONTENT,
-				value: { action: 'copyAllSelectedData' }
+				value: { [DATA_TABLE_MENU_ACTION]: 'copyAllSelectedData' }
 			});
 		}
 
-		if (onAddAsFilter) {
+		if (onAddAsFilter && !isHeader) {
 			items.push({
 				label: 'Add as Filter',
 				type: IContextMenuType.CONTENT,
-				value: { action: 'addAsFilter', rowIdx, colIdx }
+				value: { [DATA_TABLE_MENU_ACTION]: 'addAsFilter', rowIdx, colIdx }
 			});
 		}
 
 		return items;
 	};
 
+	const getCustomContextMenuItems = (context: DataTableContextMenuContext): IContextMenuItem[] => {
+		if (!contextMenuItems) {
+			return [];
+		}
+		if (typeof contextMenuItems !== "function") {
+			return contextMenuItems;
+		}
+		try {
+			return contextMenuItems(context) ?? [];
+		} catch (err) {
+			console.error('Failed to build custom context menu items:', err);
+			return [];
+		}
+	};
+
+	const getContextMenuItems = (rowIdx: number, colIdx: number): IContextMenuItem[] => {
+		const context = buildContextMenuContext(rowIdx, colIdx);
+		const defaultItems = hideDefaultContextMenuItems ? [] : getDefaultContextMenuItems(context);
+		const customItems = getCustomContextMenuItems(context);
+
+		if (defaultItems.length === 0) {
+			return customItems;
+		}
+		if (customItems.length === 0) {
+			return defaultItems;
+		}
+		return [
+			...defaultItems,
+			{label: '', type: IContextMenuType.SEPARATOR},
+			...customItems,
+		];
+	};
+
 	const handleContextMenuItemClick = (item: IContextMenuItem) => {
-		if (!item.value || !item.value.action) {
+		const action = item.value ? item.value[DATA_TABLE_MENU_ACTION] : undefined;
+
+		if (!action) {
+			if (onContextMenuItemClick && contextMenu) {
+				onContextMenuItemClick(item, buildContextMenuContext(contextMenu.rowIdx, contextMenu.colIdx));
+			}
+			setContextMenu(null);
 			return;
 		}
 
-		switch (item.value.action) {
+		switch (action) {
 			case 'copyCellValue':
 				copyCellValue(item.value.rowIdx, item.value.colIdx);
 				break;
@@ -700,14 +802,17 @@ export const DataTable: React.FC<Props> = ({
 			return;
 		}
 		e.preventDefault();
-		
-		setContextMenu({
-			visible: true,
-			x: e.clientX,
-			y: e.clientY,
-			rowIdx,
-			colIdx
-		});
+
+		// An empty menu would render as a stray empty panel, so only open when there is something in it.
+		if (getContextMenuItems(rowIdx, colIdx).length > 0) {
+			setContextMenu({
+				visible: true,
+				x: e.clientX,
+				y: e.clientY,
+				rowIdx,
+				colIdx
+			});
+		}
 
 		if (onCellRightClick) {
 			onCellRightClick(colIdx, rowIdx, getEventPosition(e));
@@ -1199,7 +1304,7 @@ export const DataTable: React.FC<Props> = ({
 											style={getColumnStyle(index)}
 											tdProps={{
 												onClick: handleCellClick(index, -1),
-												onContextMenu: onCellRightClick ? handleCellRightClick(index, -1) : undefined,
+												onContextMenu: (onCellRightClick || contextMenuItems) ? handleCellRightClick(index, -1) : undefined,
 											}}
 											cellRef={setHeaderCellRef(index)}
 											onMouseDown={beginReorder(index)}

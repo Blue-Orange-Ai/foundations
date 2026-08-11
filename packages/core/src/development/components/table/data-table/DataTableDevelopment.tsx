@@ -12,6 +12,7 @@ import {
 	TableFieldSortState,
 	TableFieldType
 } from "../../../../components/table/data-table/DataTable";
+import {IContextMenuType} from "../../../../components/contextmenu/contextmenu/ContextMenu";
 import {BaseData, BaseDataType, SearchRecord} from "@blue-orange-ai/foundations-clients";
 
 interface Props {
@@ -84,6 +85,9 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 	const [lastRowSelection, setLastRowSelection] = useState<Array<number>>([]);
 	const [lastClickedCell, setLastClickedCell] = useState<{cellIdx: number; rowIdx: number; position: DataTableCellClickPosition} | null>(null);
 	const [lastRightClickedCell, setLastRightClickedCell] = useState<{cellIdx: number; rowIdx: number; position: DataTableCellClickPosition} | null>(null);
+	const [customContextMenu, setCustomContextMenu] = useState<boolean>(false);
+	const [hideDefaultContextMenuItems, setHideDefaultContextMenuItems] = useState<boolean>(false);
+	const [lastCustomMenuAction, setLastCustomMenuAction] = useState<string>("");
 
 	const displaySchema: Array<Omit<TableField, "apiName">> = [
 		{
@@ -336,8 +340,19 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 				<Checkbox checked={customColumnHeaders} onCheckboxChange={setCustomColumnHeaders}></Checkbox>
 				<span style={{marginLeft: 8}}>Custom column headers (renderColumnHeader)</span>
 			</div>
+			<div style={{marginBottom: 12}}>
+				<Checkbox checked={customContextMenu} onCheckboxChange={setCustomContextMenu}></Checkbox>
+				<span style={{marginLeft: 8}}>Custom context menu items (contextMenuItems)</span>
+			</div>
+			<div style={{marginBottom: 12}}>
+				<Checkbox checked={hideDefaultContextMenuItems} onCheckboxChange={setHideDefaultContextMenuItems}></Checkbox>
+				<span style={{marginLeft: 8}}>Hide default context menu items</span>
+			</div>
 			<div style={{marginBottom: 12, fontSize: 12, fontFamily: "monospace"}}>
 				End reached count: {endReachedCount}
+			</div>
+			<div style={{marginBottom: 12, fontSize: 12, fontFamily: "monospace"}}>
+				Last custom menu action: {lastCustomMenuAction || "-"}
 			</div>
 			<div style={{marginBottom: 12, fontSize: 12, fontFamily: "monospace"}}>
 				Rows: {data.length} {showLoadingRow ? "(loading...)" : ""}
@@ -375,6 +390,45 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 					onRowSelectable={(selection) => setLastRowSelection(selection)}
 					onCellClick={(cellIdx, rowIdx, position) => setLastClickedCell({cellIdx, rowIdx, position})}
 					onCellRightClick={(cellIdx, rowIdx, position) => setLastRightClickedCell({cellIdx, rowIdx, position})}
+					hideDefaultContextMenuItems={hideDefaultContextMenuItems}
+					contextMenuItems={customContextMenu
+						? (context) => {
+							if (context.isHeader) {
+								return [{
+									label: `Hide "${context.field?.label}"`,
+									icon: "ri-eye-off-line",
+									type: IContextMenuType.CONTENT,
+									value: {action: "hideColumn", colIdx: context.colIdx}
+								}];
+							}
+							return [
+								{
+									label: "Open record",
+									icon: "ri-external-link-line",
+									type: IContextMenuType.CONTENT,
+									value: {action: "openRecord", rowIdx: context.rowIdx}
+								},
+								{
+									label: "Share",
+									icon: "ri-share-line",
+									type: IContextMenuType.GROUP,
+									children: [
+										{label: "Email", type: IContextMenuType.CONTENT, value: {action: "shareEmail"}},
+										{label: "Slack", type: IContextMenuType.CONTENT, value: {action: "shareSlack"}},
+									]
+								},
+								{
+									label: `Delete ${context.selectedRows.length > 1 ? `${context.selectedRows.length} rows` : "row"}`,
+									icon: "ri-delete-bin-line",
+									type: IContextMenuType.CONTENT,
+									value: {action: "delete", rowIdx: context.rowIdx}
+								},
+							];
+						}
+						: undefined}
+					onContextMenuItemClick={(item, context) => {
+						setLastCustomMenuAction(`${item.value?.action} @ row ${context.rowIdx}, col ${context.colIdx} (${context.cellValue ?? "header"})`);
+					}}
 					renderColumnHeader={customColumnHeaders
 						? (field, colIdx) => (
 							<div className="blue-orange-data-table-header-cell-group">
