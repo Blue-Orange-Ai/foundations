@@ -23,10 +23,15 @@ export type {
 	BlueOrangeDocumentOptionsPlugin,
 	BlueOrangeDocumentPlugin,
 	BlueOrangeDocumentAction,
-	BlueOrangeFileUploadHandler,
-	BlueOrangeFileUploadResult,
 	BlockSpec,
 } from "@blue-orange-ai/primitives-block-editor";
+
+// File upload — declared in this package rather than re-exported from
+// primitives, which does not publish these types. See BlueOrangeFileUpload.ts.
+export type {
+	BlueOrangeFileUploadHandler,
+	BlueOrangeFileUploadResult,
+} from "./components/block-editor/BlueOrangeFileUpload";
 
 // Toolbar / slash / inline-context / text-listener configuration
 export type {

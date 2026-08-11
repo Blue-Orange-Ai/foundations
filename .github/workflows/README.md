@@ -11,7 +11,7 @@ GitHub Packages.
 |---|---|---|
 | `ci.yml` | push / PR to `main` | `lerna run build` + `lerna run test` |
 | `versioning.yml` | push to `main`, or manual | Bumps the version, commits, tags `vX.Y.Z`, opens `release/vX.Y.Z`, publishes a GitHub Release |
-| `release-publish.yml` | GitHub Release created, or manual | Builds the tag and publishes all packages to GitHub Packages |
+| `release-publish.yml` | GitHub Release published, or manual | Builds the tag and publishes all packages to GitHub Packages |
 | `maintenance-release.yml` | push to `release/**` or `hotfix/**` | Cuts the next patch *within that version line* and releases it |
 | `hotfix-from-tag.yml` | manual | Opens a maintenance branch at any existing tag |
 | `dirty-build.yml` | push with `[dirty]`, or manual | Publishes a throwaway prerelease off a feature branch |
@@ -189,6 +189,11 @@ push step.
 - `lerna publish from-package` skips versions already on the registry, so
   re-running `release-publish.yml` against a tag is safe when a publish
   half-failed.
+- `release-publish.yml` listens for the release `published` event, not `created`.
+  `softprops/action-gh-release` saves the Release as a draft before finalising it,
+  and GitHub starts no workflow runs for draft release events — with `created` the
+  publish never fired at all, which is how v0.4.1 and v0.4.2 came to be tagged and
+  released without ever reaching the registry.
 - `versioning.yml` and `maintenance-release.yml` run Lerna through
   `npx lerna@8.1.9` (pinned to the root devDependency) instead of installing the
   whole workspace just to rewrite version numbers. Bump the pin alongside the

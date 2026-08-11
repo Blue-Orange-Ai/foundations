@@ -7,8 +7,14 @@ name: Release — publish all packages
 # already on the registry, so re-runs are safe).
 
 on:
+  # `published`, not `created`. softprops/action-gh-release creates the Release as
+  # a draft and then finalises it, and GitHub does not start workflow runs for
+  # draft release events — so `created` fired against the draft and this workflow
+  # never ran at all. v0.4.1 and v0.4.2 were both tagged and released without ever
+  # reaching the registry because of it. `published` is the event the finalise step
+  # raises, and it is also what a Release published by hand from the UI raises.
   release:
-    types: [created]
+    types: [published]
   workflow_dispatch:
     inputs:
       tag:
