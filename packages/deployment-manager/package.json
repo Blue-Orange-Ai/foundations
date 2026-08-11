@@ -1,13 +1,13 @@
 {
   "name": "@blue-orange-ai/foundations-deployment-manager",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
   "author": "Blue Orange AI",
   "private": false,
   "dependencies": {
-    "@blue-orange-ai/foundations-core": "^0.4.3",
+    "@blue-orange-ai/foundations-core": "^0.4.4",
     "monaco-editor": "^0.48.0",
     "remixicon": "^3.5.0",
     "tippy.js": "^6.3.7",
