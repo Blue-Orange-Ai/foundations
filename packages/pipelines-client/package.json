@@ -1,14 +1,14 @@
 {
   "name": "@blue-orange-ai/foundations-pipelines-client",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
   "author": "Blue Orange AI",
   "private": false,
   "dependencies": {
-    "@blue-orange-ai/foundations-core": "^0.4.5",
-    "@blue-orange-ai/foundations-graph": "^0.4.5",
+    "@blue-orange-ai/foundations-core": "^0.4.6",
+    "@blue-orange-ai/foundations-graph": "^0.4.6",
     "@blue-orange-ai/primitives-graph": "^0.47.0",
     "elkjs": "^0.10.0",
     "monaco-editor": "^0.48.0",
