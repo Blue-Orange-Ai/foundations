@@ -118,3 +118,16 @@ export interface IChatNavItem {
     badge?: React.ReactNode;
     onClick?: () => void;
 }
+
+/**
+ * A consumer supplied page (e.g. "Statistics", "News") that is listed in the
+ * sidebar and rendered in the main content area when selected.
+ */
+export interface IChatCustomPage {
+    id: string;
+    label: string;
+    icon: string;
+    badge?: React.ReactNode;
+    page: React.ReactNode;
+    onClick?: () => void;
+}

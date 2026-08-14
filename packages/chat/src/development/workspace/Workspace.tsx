@@ -15,6 +15,7 @@ import {
     IChatConversation,
     IChatConversationSettings,
     IChatNavItem,
+    IChatCustomPage,
     IChatBookmark,
     IUserSettings,
     ChatConversationType,
@@ -66,7 +67,7 @@ export const Workspace: React.FC = () => {
         {
             id: 'threads',
             label: 'Threads',
-            icon: 'ri-chat-thread-line',
+            icon: 'ri-discuss-line',
             onClick: () => {
                 setActiveNavItemId('threads');
                 setActiveConversation(undefined);
@@ -80,6 +81,34 @@ export const Workspace: React.FC = () => {
                 setActiveNavItemId('mentions');
                 setActiveConversation(undefined);
             }
+        },
+    ], []);
+
+    // -- Custom pages (consumer supplied modules listed in the sidebar) --
+
+    const customPages: IChatCustomPage[] = useMemo(() => [
+        {
+            id: 'statistics',
+            label: 'Statistics',
+            icon: 'ri-bar-chart-2-line',
+            page: (
+                <div className="chat-dev-custom-page">
+                    <h2>Statistics</h2>
+                    <p>Tracking module specific to this chat workspace.</p>
+                </div>
+            )
+        },
+        {
+            id: 'news',
+            label: 'News',
+            icon: 'ri-newspaper-line',
+            badge: <span className="chat-dev-custom-page-badge">3</span>,
+            page: (
+                <div className="chat-dev-custom-page">
+                    <h2>News</h2>
+                    <p>Company announcements and updates.</p>
+                </div>
+            )
         },
     ], []);
 
@@ -613,6 +642,7 @@ export const Workspace: React.FC = () => {
                 workspaceName="Blue Orange AI"
                 navItems={navItems}
                 activeNavItemId={activeNavItemId}
+                customPages={customPages}
                 sidebarState={sidebarState}
                 onSidebarStateChange={handleSidebarStateChange}
                 onConversationClick={handleConversationClick}

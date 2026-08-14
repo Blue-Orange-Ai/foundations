@@ -1,8 +1,17 @@
 .blue-orange-chat-layout-app {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     height: 100vh;
     width: 100%;
+    overflow: hidden;
+}
+
+.blue-orange-chat-layout-main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
     overflow: hidden;
 }
 
@@ -31,6 +40,15 @@
 
 .dark .blue-orange-chat-layout-center {
     background-color: #1a1d21;
+}
+
+/* Consumer supplied custom page */
+.blue-orange-chat-layout-custom-page {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
 }
 
 .blue-orange-chat-layout-conversation-header {

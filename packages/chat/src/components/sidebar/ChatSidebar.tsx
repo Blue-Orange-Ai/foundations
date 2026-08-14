@@ -24,6 +24,8 @@ interface ChatSidebarProps {
     header: React.ReactNode;
     footer: React.ReactNode;
     navItems?: React.ReactNode;
+    /** Consumer supplied entries rendered between the nav items and the conversation groups */
+    customItems?: React.ReactNode;
     children: React.ReactNode;
     state: SideBarState;
     onStateChange?: (state: SideBarState) => void;
@@ -33,6 +35,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
     header,
     footer,
     navItems,
+    customItems,
     children,
     state,
     onStateChange
@@ -63,6 +66,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                             </div>
                         )}
                         {navItems}
+                        {customItems}
                         {children}
                     </SideBarBody>
                     <SideBarFooter>

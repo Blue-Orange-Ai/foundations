@@ -3,3 +3,23 @@
     height: 100vh;
     overflow: hidden;
 }
+
+.chat-dev-custom-page {
+    padding: 20px;
+    color: #1d1c1d;
+}
+
+.chat-dev-custom-page-badge {
+    font-size: 11px;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    text-align: center;
+    line-height: 18px;
+    padding: 0 5px;
+    background-color: #e74c3c;
+    color: #ffffff;
+    font-weight: 600;
+    box-sizing: border-box;
+    display: inline-block;
+}

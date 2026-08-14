@@ -7,6 +7,7 @@ export { ChatSidebarHeader } from './components/sidebar/header/ChatSidebarHeader
 export { ChatSidebarItem } from './components/sidebar/item/ChatSidebarItem';
 export { ChatSidebarGroup } from './components/sidebar/group/ChatSidebarGroup';
 export { ChatSidebarFooter } from './components/sidebar/footer/ChatSidebarFooter';
+export { ChatSidebarCustomPages } from './components/sidebar/custom-pages/ChatSidebarCustomPages';
 
 // Chat Window
 export * from './components/chat-window/ChatWindow';

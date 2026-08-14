@@ -19,6 +19,7 @@ import {
     IChatConversation,
     IChatConversationSettings,
     IChatNavItem,
+    IChatCustomPage,
     IChatBookmark,
     IUserSettings,
     ChatConversationType,
@@ -28,6 +29,7 @@ import {
 import { ChatSidebar } from '../sidebar/ChatSidebar';
 import { ChatSidebarHeader } from '../sidebar/header/ChatSidebarHeader';
 import { ChatSidebarGroup } from '../sidebar/group/ChatSidebarGroup';
+import { ChatSidebarCustomPages } from '../sidebar/custom-pages/ChatSidebarCustomPages';
 import { ChatSidebarFooter } from '../sidebar/footer/ChatSidebarFooter';
 import { ChatWindow } from '../chat-window/ChatWindow';
 import { ChatMessage } from '../chat-window/message/ChatMessage';
@@ -60,6 +62,11 @@ interface ChatLayoutProps {
     workspaceMedia?: Media;
     navItems?: IChatNavItem[];
     activeNavItemId?: string;
+    /** Consumer supplied pages listed as top level sidebar items and rendered in the content area when selected */
+    customPages?: IChatCustomPage[];
+    /** Controls which custom page is open. Leave unset to let the layout track it internally */
+    activeCustomPageId?: string;
+    onCustomPageClick?: (page: IChatCustomPage) => void;
     sidebarState?: SideBarState;
     onSidebarStateChange?: (state: SideBarState) => void;
     onConversationClick?: (conversation: IChatConversation) => void;
@@ -132,6 +139,9 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     workspaceMedia,
     navItems = [],
     activeNavItemId,
+    customPages = [],
+    activeCustomPageId,
+    onCustomPageClick,
     sidebarState = SideBarState.OPEN,
     onSidebarStateChange,
     onConversationClick,
@@ -191,18 +201,34 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     const [showUserSettingsView, setShowUserSettingsView] = useState(false);
     const [showNewChatView, setShowNewChatView] = useState(false);
     const [newChannelMode, setNewChannelMode] = useState<null | { userCreated: boolean }>(null);
+    const [internalCustomPageId, setInternalCustomPageId] = useState<string | undefined>();
+
+    const openCustomPageId = activeCustomPageId ?? internalCustomPageId;
+    const activeCustomPage = customPages.find((p) => p.id === openCustomPageId);
 
     useEffect(() => {
         setShowBookmarksView(false);
         setShowSettingsView(false);
         setShowNewChatView(false);
         setNewChannelMode(null);
+        setInternalCustomPageId(undefined);
     }, [activeConversation?.id]);
+
+    const handleCustomPageClick = useCallback((page: IChatCustomPage) => {
+        setShowBookmarksView(false);
+        setShowSettingsView(false);
+        setShowUserSettingsView(false);
+        setShowNewChatView(false);
+        setNewChannelMode(null);
+        setInternalCustomPageId(page.id);
+        onCustomPageClick?.(page);
+    }, [onCustomPageClick]);
 
     const handleSidebarSettingsClick = useCallback(() => {
         setShowBookmarksView(false);
         setShowSettingsView(false);
         setShowNewChatView(false);
+        setInternalCustomPageId(undefined);
         setShowUserSettingsView(true);
         onSettingsClick?.();
     }, [onSettingsClick]);
@@ -212,6 +238,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
         setShowSettingsView(false);
         setShowUserSettingsView(false);
         setNewChannelMode(null);
+        setInternalCustomPageId(undefined);
         setShowNewChatView(true);
         onNewChat?.();
     }, [onNewChat]);
@@ -277,6 +304,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
             setShowSettingsView(false);
             setShowUserSettingsView(false);
             setShowNewChatView(false);
+            setInternalCustomPageId(undefined);
             setNewChannelMode({ userCreated: item.value === 'create-channel' });
             return;
         }
@@ -394,6 +422,16 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
         return elements;
     };
 
+    const handleNavItemClick = useCallback((item: IChatNavItem) => {
+        setInternalCustomPageId(undefined);
+        item.onClick?.();
+    }, []);
+
+    const handleConversationClick = useCallback((conversation: IChatConversation) => {
+        setInternalCustomPageId(undefined);
+        onConversationClick?.(conversation);
+    }, [onConversationClick]);
+
     const renderNavItems = () => {
         if (navItems.length === 0) return null;
 
@@ -404,11 +442,11 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                         key={item.id}
                         label={item.label}
                         sortable={false}
-                        active={activeNavItemId === item.id}
+                        active={!activeCustomPage && activeNavItemId === item.id}
                         focused={false}
                         icon={<i className={item.icon} />}
                         badge={item.badge}
-                        onClick={item.onClick}
+                        onClick={() => handleNavItemClick(item)}
                     />
                 ))}
             </>
@@ -438,6 +476,15 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                 />
             }
             navItems={renderNavItems()}
+            customItems={
+                customPages.length > 0 ? (
+                    <ChatSidebarCustomPages
+                        pages={customPages}
+                        activePageId={activeCustomPage?.id}
+                        onPageClick={handleCustomPageClick}
+                    />
+                ) : undefined
+            }
         >
             {groups.map((group) => (
                 <ChatSidebarGroup
@@ -446,8 +493,8 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                     conversations={group.conversations}
                     collapsed={group.collapsed}
                     icon={group.icon}
-                    activeConversationId={activeConversation?.id}
-                    onConversationClick={onConversationClick}
+                    activeConversationId={activeCustomPage ? undefined : activeConversation?.id}
+                    onConversationClick={handleConversationClick}
                     onConversationContextMenu={onConversationContextMenu}
                     onToggle={onGroupToggle ? () => onGroupToggle(group.label) : undefined}
                     onCreateNew={onGroupCreateNew ? () => onGroupCreateNew(group.label) : undefined}
@@ -462,7 +509,11 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
 
     const renderCenter = () => (
         <div className="blue-orange-chat-layout-center">
-            {activeNavItemId === 'all-unreads' && !newChannelMode && !showNewChatView && !showUserSettingsView && !showSettingsView && !showBookmarksView ? (
+            {activeCustomPage ? (
+                <div className="blue-orange-chat-layout-custom-page">
+                    {activeCustomPage.page}
+                </div>
+            ) : activeNavItemId === 'all-unreads' && !newChannelMode && !showNewChatView && !showUserSettingsView && !showSettingsView && !showBookmarksView ? (
                 <AllUnreadsView
                     unreadMessages={unreadMessages}
                     messagesByConversation={messagesByConversation}
@@ -622,39 +673,41 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
 
     return (
         <div className="blue-orange-chat-layout-app">
-            <ChatHeaderBar
-                canUndo={canUndo}
-                canRedo={canRedo}
-                onUndo={handleUndo}
-                onRedo={handleRedo}
-                onSearch={onHeaderSearch}
-                suggestionGroups={headerSearchSuggestions}
-                onSuggestionSelect={onHeaderSuggestionSelect}
-                onHelpClick={onHelpClick}
-                onLogoutClick={onLogoutClick}
-            />
-            <div className="blue-orange-chat-layout-container">
             {renderSidebar()}
-            {hasRightPanel ? (
-                <VerticalSplitPage splitDirection={SplitDirectionVerticalPage.RIGHT} defaultWidth={562}>
-                    <SplitPageMajor>
-                        {renderCenter()}
-                    </SplitPageMajor>
-                    <SplitPageMinor>
-                        {renderRightPanel()}
-                    </SplitPageMinor>
-                </VerticalSplitPage>
-            ) : (
-                renderCenter()
-            )}
-            {showMembersModal && activeConversation && (
-                <ChatMembersModal
-                    members={activeConversation.members}
-                    onClose={() => setShowMembersModal(false)}
-                    onMemberClick={onAvatarClick}
-                    showRoles={activeConversation.type === ChatConversationType.CHANNEL}
+            <div className="blue-orange-chat-layout-main">
+                <ChatHeaderBar
+                    canUndo={canUndo}
+                    canRedo={canRedo}
+                    onUndo={handleUndo}
+                    onRedo={handleRedo}
+                    onSearch={onHeaderSearch}
+                    suggestionGroups={headerSearchSuggestions}
+                    onSuggestionSelect={onHeaderSuggestionSelect}
+                    onHelpClick={onHelpClick}
+                    onLogoutClick={onLogoutClick}
                 />
-            )}
+                <div className="blue-orange-chat-layout-container">
+                {hasRightPanel ? (
+                    <VerticalSplitPage splitDirection={SplitDirectionVerticalPage.RIGHT} defaultWidth={562}>
+                        <SplitPageMajor>
+                            {renderCenter()}
+                        </SplitPageMajor>
+                        <SplitPageMinor>
+                            {renderRightPanel()}
+                        </SplitPageMinor>
+                    </VerticalSplitPage>
+                ) : (
+                    renderCenter()
+                )}
+                {showMembersModal && activeConversation && (
+                    <ChatMembersModal
+                        members={activeConversation.members}
+                        onClose={() => setShowMembersModal(false)}
+                        onMemberClick={onAvatarClick}
+                        showRoles={activeConversation.type === ChatConversationType.CHANNEL}
+                    />
+                )}
+                </div>
             </div>
         </div>
     );
