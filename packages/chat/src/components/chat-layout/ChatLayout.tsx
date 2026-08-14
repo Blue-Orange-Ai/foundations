@@ -642,7 +642,11 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
         </div>
     );
 
-    const hasRightPanel = !!detailUser || !!threadParentMessage;
+    // Settings views take over the full content area: suppress the right panel
+    // (thread / user detail) while one is open. The panel state itself lives in
+    // the parent and is untouched, so the panel reappears when settings closes.
+    const hasRightPanel =
+        (!!detailUser || !!threadParentMessage) && !showSettingsView && !showUserSettingsView;
 
     const renderRightPanel = () => {
         if (detailUser && onCloseUserDetail) {

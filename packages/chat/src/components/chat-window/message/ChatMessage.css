@@ -1,9 +1,14 @@
 .blue-orange-chat-message {
     display: flex;
     flex-direction: row;
-    padding: 4px 20px;
+    padding: 2px 20px;
     position: relative;
     transition: background-color 0.1s ease;
+}
+
+.blue-orange-chat-message-group-start {
+    margin-top: 12px;
+    padding-top: 4px;
 }
 
 .blue-orange-chat-message:hover {
@@ -25,6 +30,7 @@
     display: flex;
     align-items: baseline;
     gap: 8px;
+    margin-bottom: 2px;
 }
 
 .blue-orange-chat-message-sender {
@@ -47,13 +53,8 @@
 }
 
 /* Consecutive message */
-.blue-orange-chat-message-consecutive {
-    padding: 2px 20px;
-    position: relative;
-}
-
 .blue-orange-chat-message-consecutive .blue-orange-chat-message-body {
-    margin-left: 48px;
+    margin-left: 50px;
 }
 
 .blue-orange-chat-message-consecutive-timestamp {
@@ -314,4 +315,12 @@
 .blue-orange-chat-message-content p {
     margin-top: 8px;
     margin-bottom: 8px;
+}
+
+.blue-orange-chat-message-content p:first-child {
+    margin-top: 0;
+}
+
+.blue-orange-chat-message-content p:last-child {
+    margin-bottom: 0;
 }

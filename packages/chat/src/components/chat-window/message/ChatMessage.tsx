@@ -357,7 +357,7 @@ export const ChatMessage: React.FC<Props> = ({
     }
 
     return (
-        <div className="blue-orange-chat-message" data-message-id={message.id}>
+        <div className="blue-orange-chat-message blue-orange-chat-message-group-start" data-message-id={message.id}>
             {renderToolbar()}
             <div className="blue-orange-chat-message-avatar" onClick={handleAvatarClick}>
                 <Avatar user={message.sender.user} height={36} width={36} />

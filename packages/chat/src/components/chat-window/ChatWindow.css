@@ -29,7 +29,7 @@
 .blue-orange-chat-window-messages {
     display: flex;
     flex-direction: column;
-    padding: 16px;
+    padding: 12px 0 24px;
     flex-grow: 1;
 }
 
