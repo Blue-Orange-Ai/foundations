@@ -1,14 +1,14 @@
 {
   "name": "@blue-orange-ai/foundations-llm-graph",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
   "author": "Blue Orange AI",
   "private": false,
   "dependencies": {
-    "@blue-orange-ai/foundations-core": "^0.4.6",
-    "@blue-orange-ai/foundations-graph": "^0.4.6",
+    "@blue-orange-ai/foundations-core": "^0.4.7",
+    "@blue-orange-ai/foundations-graph": "^0.4.7",
     "@blue-orange-ai/primitives-graph": "^0.55.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
