@@ -78,8 +78,10 @@ describe("BarChart - Chart.js configuration", () => {
     it("passes axis titles", () => {
         render(<BarChart dataset={dataset} labels={labels} xLabel="Month" yLabel="Units" animationTimeout={0}/>);
         const scales = getConfig().options.scales;
-        expect(scales.x.title).toEqual({display: true, text: "Month"});
-        expect(scales.y.title).toEqual({display: true, text: "Units"});
+        // toMatchObject, not toEqual: applyChartTheme also stamps the active
+        // theme's `color` onto each axis title (see utils/ChartTheme).
+        expect(scales.x.title).toMatchObject({display: true, text: "Month"});
+        expect(scales.y.title).toMatchObject({display: true, text: "Units"});
     });
 
     it("passes labels to the chart data", () => {

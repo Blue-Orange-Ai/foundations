@@ -81,8 +81,10 @@ describe("LineChart - Chart.js configuration", () => {
     it("passes axis titles from props", () => {
         render(<LineChart dataset={dataset} xLabel="Time" yLabel="Value" animationTimeout={0}/>);
         const scales = getConfig().options.scales;
-        expect(scales.x.title).toEqual({display: true, text: "Time"});
-        expect(scales.y.title).toEqual({display: true, text: "Value"});
+        // toMatchObject, not toEqual: applyChartTheme also stamps the active
+        // theme's `color` onto each axis title (see utils/ChartTheme).
+        expect(scales.x.title).toMatchObject({display: true, text: "Time"});
+        expect(scales.y.title).toMatchObject({display: true, text: "Value"});
     });
 
     it("hides axis titles when labels are not provided", () => {
