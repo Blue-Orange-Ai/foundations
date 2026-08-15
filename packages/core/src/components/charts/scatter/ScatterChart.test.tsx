@@ -67,8 +67,10 @@ describe("ScatterChart - Chart.js configuration", () => {
     it("passes axis titles and scale types", () => {
         render(<ScatterChart dataset={dataset} xLabel="X" yLabel="Y" xScale="linear" yScale="linear" animationTimeout={0}/>);
         const scales = getConfig().options.scales;
-        expect(scales.x.title).toEqual({display: true, text: "X"});
-        expect(scales.y.title).toEqual({display: true, text: "Y"});
+        // toMatchObject, not toEqual: applyChartTheme also stamps the active
+        // theme's `color` onto each axis title (see utils/ChartTheme).
+        expect(scales.x.title).toMatchObject({display: true, text: "X"});
+        expect(scales.y.title).toMatchObject({display: true, text: "Y"});
         expect(scales.x.type).toBe("linear");
         expect(scales.y.type).toBe("linear");
     });

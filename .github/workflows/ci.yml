@@ -53,5 +53,10 @@ jobs:
       # `clients` has no test suite (its test script is the npm placeholder that
       # exits 1), and a few UI packages have no spec files yet — vitest also
       # exits 1 on an empty run, hence --passWithNoTests.
+      #
+      # --no-bail so one broken package does not cancel the rest: by default Nx
+      # stops at the first failure and reports the remainder as "Tasks not run",
+      # which hides every other break until the first is fixed. The step still
+      # exits non-zero when any package fails; it just reports them all at once.
       - name: Test all packages
-        run: npx lerna run test --ignore @blue-orange-ai/foundations-clients -- --passWithNoTests
+        run: npx lerna run test --ignore @blue-orange-ai/foundations-clients --no-bail -- --passWithNoTests

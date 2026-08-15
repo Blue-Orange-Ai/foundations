@@ -11,6 +11,13 @@ export default defineConfig({
         setupFiles: "./src/setupTests.ts",
         mockReset: true,
         css: false,
+        // monaco-editor ships only a `module` entry (no `main`, no `exports`),
+        // which Vite's node resolution cannot resolve, and the real editor needs
+        // browser APIs jsdom lacks. Swap it for a recorder in tests only — the
+        // library build still treats monaco as an external peer (see below).
+        alias: {
+            "monaco-editor": resolve(__dirname, "src/testUtils/monacoMock.ts"),
+        },
     },
     build: {
         lib: {
