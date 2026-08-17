@@ -118,6 +118,17 @@
   --blue-orange-dark-context-menu-background: #28282a;
   --blue-orange-light-context-menu-row-hover-background: #e0e1e2;
   --blue-orange-dark-context-menu-row-hover-background: #47474a;
+  --blue-orange-light-context-menu-separator-color: #e0e1e2;
+  --blue-orange-dark-context-menu-separator-color: #47474a;
+
+  /* Read by the primitives block editor to theme its popups (slash menu,
+     block context menu, bubble toolbar, floaters, pickers and modals). */
+  --blue-orange-light-page-background-color: white;
+  --blue-orange-dark-page-background-color: #1e1e1e;
+  --blue-orange-light-card-border-color: #e0e1e2;
+  --blue-orange-dark-card-border-color: #3f3f42;
+  --blue-orange-light-muted-text-color: #71717a;
+  --blue-orange-dark-muted-text-color: #a1a1aa;
 
   --blue-orange-light-input-color: black;
   --blue-orange-dark-input-color: white;
