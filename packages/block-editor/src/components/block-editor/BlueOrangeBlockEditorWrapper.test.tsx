@@ -43,7 +43,24 @@ const buildEditorMock = (element?: any, doc?: any, options?: any) => ({
 	substituteVariables: vi.fn(),
 	substituteLoops: vi.fn(),
 	applyTemplateModeToBlocks: vi.fn(),
+	// Document mode. The mock keeps real state so the wrapper's
+	// "only call setDocumentMode when it actually changed" guard is exercised.
+	documentMode: (options && options.mode) || "edit",
+	getDocumentMode: vi.fn(),
+	setDocumentMode: vi.fn(),
+	setReadOnly: vi.fn(),
+	setCommentOnly: vi.fn(),
+	isReadOnly: vi.fn(() => false),
+	isCommentOnly: vi.fn(() => false),
+	canEdit: vi.fn(() => true),
+	canComment: vi.fn(() => true),
+	effectiveBlockEditable: vi.fn(() => true),
+	applyDocumentMode: vi.fn(),
+	documentBuilder: vi.fn(() => documentBuilderStub),
 });
+
+// Stands in for the DocumentBuilder the editor hands back.
+const documentBuilderStub = {kind: "document-builder"};
 
 vi.mock("@blue-orange-ai/foundations-core", () => {
 	const ReactLib = require("react");
@@ -90,9 +107,19 @@ const fire = (el: HTMLElement, type: string, detail?: any) =>
 
 beforeEach(() => {
 	// resetMocks has already wiped implementations — reinstall them here.
-	MockBlockEditor.mockImplementation((element: any, doc: any, options: any) =>
-		buildEditorMock(element, doc, options)
-	);
+	MockBlockEditor.mockImplementation((element: any, doc: any, options: any) => {
+		const editor: any = buildEditorMock(element, doc, options);
+		editor.getDocumentMode.mockImplementation(() => editor.documentMode);
+		editor.setDocumentMode.mockImplementation((mode: string) => {
+			editor.documentMode = mode;
+		});
+		editor.isReadOnly.mockImplementation(() => editor.documentMode === "read");
+		editor.isCommentOnly.mockImplementation(() => editor.documentMode === "comment");
+		editor.canEdit.mockImplementation(() => editor.documentMode === "edit");
+		editor.canComment.mockImplementation(() => editor.documentMode !== "read");
+		editor.documentBuilder.mockImplementation(() => documentBuilderStub);
+		return editor;
+	});
 	mockSearchPublicUsers.mockResolvedValue({
 		result: [
 			{id: "user-1", username: "alice", name: "Alice"},
@@ -368,5 +395,117 @@ describe("BlueOrangeBlockEditorWrapper — inline context (mentions & emoji)", (
 			userId: "user-1",
 		});
 		expect(handleMentionAdded).toHaveBeenCalledWith("mention-1", "user-1");
+	});
+});
+
+// ===========================================================================
+
+describe("BlueOrangeBlockEditorWrapper — document mode", () => {
+
+	const renderWithRef = (props: any = {}) => {
+		const ref = React.createRef<BlueOrangeBlockEditorHandle>();
+		const utils = render(<BlueOrangeBlockEditorWrapper ref={ref} {...props}/>);
+		return {ref, ...utils};
+	};
+
+	it("defaults to edit mode", () => {
+		render(<BlueOrangeBlockEditorWrapper/>);
+		expect(latestOptions().mode).toBe("edit");
+	});
+
+	it("passes an explicit mode through at construction", () => {
+		render(<BlueOrangeBlockEditorWrapper mode="comment"/>);
+		expect(latestOptions().mode).toBe("comment");
+	});
+
+	it("maps the readOnly shorthand onto mode: read", () => {
+		render(<BlueOrangeBlockEditorWrapper readOnly/>);
+		expect(latestOptions().mode).toBe("read");
+	});
+
+	it("maps the commentOnly shorthand onto mode: comment", () => {
+		render(<BlueOrangeBlockEditorWrapper commentOnly/>);
+		expect(latestOptions().mode).toBe("comment");
+	});
+
+	it("lets an explicit mode win over the shorthands", () => {
+		render(<BlueOrangeBlockEditorWrapper mode="edit" readOnly commentOnly/>);
+		expect(latestOptions().mode).toBe("edit");
+	});
+
+	it("switches the live editor over when the mode prop changes", () => {
+		const {rerender} = render(<BlueOrangeBlockEditorWrapper/>);
+		const editor = latestEditor();
+		expect(editor.setDocumentMode).not.toHaveBeenCalled();
+
+		rerender(<BlueOrangeBlockEditorWrapper mode="read"/>);
+		expect(editor.setDocumentMode).toHaveBeenCalledWith("read");
+		// The editor is constructed once — the mode change is applied in place.
+		expect(MockBlockEditor).toHaveBeenCalledTimes(1);
+	});
+
+	it("does not re-apply a mode the editor is already in", () => {
+		const {rerender} = render(<BlueOrangeBlockEditorWrapper mode="read"/>);
+		const editor = latestEditor();
+		rerender(<BlueOrangeBlockEditorWrapper mode="read" template={false}/>);
+		expect(editor.setDocumentMode).not.toHaveBeenCalled();
+	});
+
+	it("reports mode changes through onModeChange", () => {
+		const onModeChange = vi.fn();
+		const {container} = render(<BlueOrangeBlockEditorWrapper onModeChange={onModeChange}/>);
+		fire(getEditorEl(container), "blue-orange-editor-mode-changed", {mode: "read", previousMode: "edit"});
+		expect(onModeChange).toHaveBeenCalledWith("read", "edit");
+	});
+
+	it("calls the latest onModeChange after a re-render", () => {
+		const first = vi.fn();
+		const second = vi.fn();
+		const {container, rerender} = render(<BlueOrangeBlockEditorWrapper onModeChange={first}/>);
+		rerender(<BlueOrangeBlockEditorWrapper onModeChange={second}/>);
+		fire(getEditorEl(container), "blue-orange-editor-mode-changed", {mode: "comment", previousMode: "edit"});
+		expect(first).not.toHaveBeenCalled();
+		expect(second).toHaveBeenCalledWith("comment", "edit");
+	});
+
+	it("exposes the mode API on the imperative handle", () => {
+		const {ref} = renderWithRef();
+		const editor = latestEditor();
+
+		expect(ref.current!.getDocumentMode()).toBe("edit");
+		expect(ref.current!.canEdit()).toBe(true);
+		expect(ref.current!.canComment()).toBe(true);
+		expect(ref.current!.isReadOnly()).toBe(false);
+
+		ref.current!.setReadOnly();
+		expect(editor.setReadOnly).toHaveBeenCalledWith(true);
+
+		ref.current!.setCommentOnly(false);
+		expect(editor.setCommentOnly).toHaveBeenCalledWith(false);
+
+		ref.current!.setDocumentMode("read");
+		expect(editor.setDocumentMode).toHaveBeenCalledWith("read");
+		expect(ref.current!.getDocumentMode()).toBe("read");
+		expect(ref.current!.isReadOnly()).toBe(true);
+		expect(ref.current!.canEdit()).toBe(false);
+
+		ref.current!.applyDocumentMode();
+		expect(editor.applyDocumentMode).toHaveBeenCalled();
+
+		const state = {uuid: "a"} as any;
+		expect(ref.current!.effectiveBlockEditable(state)).toBe(true);
+		expect(editor.effectiveBlockEditable).toHaveBeenCalledWith(state);
+	});
+});
+
+// ===========================================================================
+
+describe("BlueOrangeBlockEditorWrapper — document builder", () => {
+
+	it("documentBuilder returns the editor's builder", () => {
+		const ref = React.createRef<BlueOrangeBlockEditorHandle>();
+		render(<BlueOrangeBlockEditorWrapper ref={ref}/>);
+		expect(ref.current!.documentBuilder()).toEqual({kind: "document-builder"});
+		expect(latestEditor().documentBuilder).toHaveBeenCalled();
 	});
 });

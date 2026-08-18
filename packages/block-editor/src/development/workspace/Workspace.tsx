@@ -6,13 +6,26 @@ import {
 	BlueOrangeBlockEditorWrapper,
 	BlueOrangeBlockEditorHandle
 } from "../../components/block-editor/BlueOrangeBlockEditorWrapper";
-import type {BlueOrangeDocument, BlueOrangeDocumentOptions, BlockSpec} from "@blue-orange-ai/primitives-block-editor";
+import type {
+	BlueOrangeDocument,
+	BlueOrangeDocumentModeValue,
+	BlueOrangeDocumentOptions,
+	BlockSpec
+} from "@blue-orange-ai/primitives-block-editor";
 import {CollaborationSimulator} from "./collabSimulator";
 
 interface Props {
 }
 
 type ToolbarMode = "bubble" | "fixed";
+
+const MODE_CYCLE: Array<BlueOrangeDocumentModeValue> = ["edit", "comment", "read"];
+
+const MODE_LABEL: Record<BlueOrangeDocumentModeValue, string> = {
+	edit: "Edit",
+	comment: "Comment only",
+	read: "Read only",
+};
 
 const SAMPLE_MARKDOWN = `# Block Editor Demo
 
@@ -53,6 +66,8 @@ export const Workspace: React.FC<Props> = ({}) => {
 	const [templateMode, setTemplateMode] = useState<boolean>(false);
 	const [toolbarMode, setToolbarMode] = useState<ToolbarMode>("bubble");
 	const [collabRunning, setCollabRunning] = useState<boolean>(false);
+	// Document mode is a live prop, not a constructor option — no remount needed.
+	const [documentMode, setDocumentMode] = useState<BlueOrangeDocumentModeValue>("edit");
 
 	const [markdownIn, setMarkdownIn] = useState<string>(SAMPLE_MARKDOWN);
 	const [output, setOutput] = useState<string>("");
@@ -254,6 +269,45 @@ export const Workspace: React.FC<Props> = ({}) => {
 		}
 	};
 
+	// ---- Document mode --------------------------------------------------
+
+	const cycleDocumentMode = () => {
+		const next = MODE_CYCLE[(MODE_CYCLE.indexOf(documentMode) + 1) % MODE_CYCLE.length];
+		setDocumentMode(next);
+	};
+
+	const onModeChange = (mode: BlueOrangeDocumentModeValue, previousMode: BlueOrangeDocumentModeValue) => {
+		flash("Document mode: " + previousMode + " → " + mode + " (no remount).");
+	};
+
+	// ---- Document builder -----------------------------------------------
+
+	const buildSampleDocument = () => {
+		const builder = editorRef.current?.documentBuilder();
+		if (!builder) {
+			flash("Editor not ready.");
+			return;
+		}
+		builder
+			.h2("Built with DocumentBuilder")
+			.paragraph("These blocks were appended without touching the DOM.")
+			.bullets(["Fluent", "DOM-free", "Every block type"])
+			.callout("Callouts take a colour and an emoji.", {color: "blue", emoji: "💡"})
+			.code("print('hello')", {language: "python"})
+			.table([["Block", "Supported"], ["Table", "yes"], ["Equation", "yes"]], {headerRow: true})
+			.appendTo(editorRef.current!.getEditor()!);
+		flash("Appended a builder-authored section to the document.");
+	};
+
+	const showBuiltJson = () => {
+		const builder = editorRef.current?.documentBuilder();
+		if (!builder) {
+			flash("Editor not ready.");
+			return;
+		}
+		show("DocumentBuilder → JSON", JSON.stringify(builder.build(), null, 2));
+	};
+
 	const onChange = (doc: BlueOrangeDocument) => {
 		docRef.current = doc;
 	};
@@ -269,6 +323,8 @@ export const Workspace: React.FC<Props> = ({}) => {
 					enableMentions={false}
 					enableComments={false}
 					template={templateMode}
+					mode={documentMode}
+					onModeChange={onModeChange}
 					onChange={onChange}
 				/>
 			</div>
@@ -293,6 +349,25 @@ export const Workspace: React.FC<Props> = ({}) => {
 						))}
 					</div>
 					<p className="workspace-hint">Simulated peers type into blocks/cells with live collaboration cursors. Needs some content in the editor.</p>
+				</section>
+
+				<section className="workspace-section">
+					<h3>Document mode <span className="workspace-badge">new</span></h3>
+					<div className="workspace-btn-row">
+						<button onClick={cycleDocumentMode} className={documentMode === "edit" ? "" : "workspace-active"}>
+							Mode: {MODE_LABEL[documentMode]}
+						</button>
+					</div>
+					<p className="workspace-hint">Cycles Edit → Comment only → Read only. Comment only freezes the body but keeps the Comment control; Read only disables all editing. Applied in place — the editor is not remounted.</p>
+				</section>
+
+				<section className="workspace-section">
+					<h3>Document builder <span className="workspace-badge">new</span></h3>
+					<div className="workspace-btn-row">
+						<button onClick={buildSampleDocument}>Append built blocks</button>
+						<button onClick={showBuiltJson}>Builder → JSON</button>
+					</div>
+					<p className="workspace-hint">documentBuilder() hands back a builder seeded with the current document. Note it bypasses the mode gate — the mode gates user input, not the API.</p>
 				</section>
 
 				<section className="workspace-section">

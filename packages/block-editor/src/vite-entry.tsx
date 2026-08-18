@@ -1,19 +1,25 @@
-export { BlueOrangeBlockEditorWrapper } from './components/block-editor/BlueOrangeBlockEditorWrapper';
-export type { BlueOrangeBlockEditorHandle, BlueOrangeBlockEditorWrapperProps } from './components/block-editor/BlueOrangeBlockEditorWrapper';
+export { BlueOrangeBlockEditorWrapper, DocumentMode } from './components/block-editor/BlueOrangeBlockEditorWrapper';
+export type {
+	BlueOrangeBlockEditorHandle,
+	BlueOrangeBlockEditorWrapperProps,
+	BlueOrangeDocumentMode,
+} from './components/block-editor/BlueOrangeBlockEditorWrapper';
 
 // ---------------------------------------------------------------------------
 // Re-export the primitives block-editor public API so consumers of
 // @blue-orange-ai/foundations-block-editor can use the new (>= 0.56.3)
 // surface without taking a direct dependency on the primitives package.
 //
-// NOTE: the published primitives bundle only exports `BlockEditor` as a
-// runtime value. The remaining new features (markdown serialization,
-// diff/merge, templates, history, block store, …) are reached through a
-// `BlockEditor` instance — see BlueOrangeBlockEditorHandle. Everything else
-// below is therefore re-exported as a type only.
+// NOTE: the published primitives bundle rolls up from `editor.js`, so its only
+// runtime exports are `BlockEditor`, `DocumentBuilder` and `CalloutColor`. The
+// remaining features (markdown serialization, diff/merge, templates, history,
+// block store, document mode, …) are reached through a `BlockEditor` instance
+// — see BlueOrangeBlockEditorHandle. Everything else below is therefore
+// re-exported as a type only. `DocumentMode` is declared in the wrapper rather
+// than re-exported, for the same reason (see above).
 // ---------------------------------------------------------------------------
 
-export { BlockEditor } from "@blue-orange-ai/primitives-block-editor";
+export { BlockEditor, DocumentBuilder, CalloutColor } from "@blue-orange-ai/primitives-block-editor";
 
 // Document / state / options
 export type {
@@ -23,7 +29,28 @@ export type {
 	BlueOrangeDocumentOptionsPlugin,
 	BlueOrangeDocumentPlugin,
 	BlueOrangeDocumentAction,
+	BlueOrangeDocumentModeValue,
 	BlockSpec,
+} from "@blue-orange-ai/primitives-block-editor";
+
+// Document builder (primitives >= 0.56.17) — a fluent, DOM-free way to build
+// a document of any block type and push it into an editor.
+export type {
+	DocumentBuilderOptions,
+	DocumentBuilderDescriptor,
+	DocumentBuilderBlockOptions,
+	DocumentBuilderTextOptions,
+	DocumentBuilderCalloutOptions,
+	DocumentBuilderCodeOptions,
+	DocumentBuilderSavedOptions,
+	DocumentBuilderImageOptions,
+	DocumentBuilderVideoOptions,
+	DocumentBuilderFileOptions,
+	DocumentBuilderTableCell,
+	DocumentBuilderTableOptions,
+	DocumentBuilderTableInput,
+	DocumentBuilderListItem,
+	DocumentBuilderTypeSpec,
 } from "@blue-orange-ai/primitives-block-editor";
 
 // File upload — declared in this package rather than re-exported from
