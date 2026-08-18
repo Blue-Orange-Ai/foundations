@@ -1,0 +1,19 @@
+.blue-orange-json-schema-import-text .blue-orange-default-text-area {
+    min-height: 260px;
+    font-family: monospace;
+    font-size: 0.8rem;
+}
+
+.blue-orange-json-schema-import-error {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 6px;
+    margin-top: 12px;
+    color: var(--blue-orange-light-input-error-color);
+    font-size: 0.8rem;
+}
+
+.dark .blue-orange-json-schema-import-error {
+    color: var(--blue-orange-dark-input-error-color);
+}

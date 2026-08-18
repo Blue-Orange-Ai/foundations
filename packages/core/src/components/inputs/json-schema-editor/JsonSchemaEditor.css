@@ -1,0 +1,66 @@
+.blue-orange-json-schema-editor {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+}
+
+/*
+ * The rows carry their own borders, so an invalid schema is marked by tinting
+ * them rather than by boxing the whole editor.
+ */
+.blue-orange-json-schema-editor-error .blue-orange-filter-row {
+    border-color: var(--blue-orange-light-input-error-border-color);
+}
+
+.dark .blue-orange-json-schema-editor-error .blue-orange-filter-row {
+    border-color: var(--blue-orange-dark-input-error-border-color);
+}
+
+/* the label on the left, the infer link on the right */
+.blue-orange-json-schema-editor-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    margin-bottom: var(--blue-orange-light-input-label-margin-bottom);
+}
+
+.blue-orange-json-schema-editor-header .blue-orange-default-input-label-cont {
+    margin-bottom: 0;
+}
+
+.blue-orange-json-schema-editor-import-link {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    color: var(--blue-orange-light-active-border-color);
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+}
+
+.blue-orange-json-schema-editor-import-link:hover {
+    text-decoration: underline;
+}
+
+.blue-orange-json-schema-editor-import-link:focus-visible {
+    outline: 2px solid var(--blue-orange-light-active-border-color);
+    outline-offset: 2px;
+    border-radius: 3px;
+}
+
+.blue-orange-json-schema-editor-import-link-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.blue-orange-json-schema-editor-import-link-disabled:hover {
+    text-decoration: none;
+}
