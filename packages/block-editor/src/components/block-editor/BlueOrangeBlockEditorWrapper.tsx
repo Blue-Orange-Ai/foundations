@@ -8,14 +8,18 @@ import './BlueOrangeBlockEditorWrapper.css'
 import '@blue-orange-ai/primitives-block-editor/dist/css/primitives-block-editor.min.css'
 
 import {BlockEditor} from "@blue-orange-ai/primitives-block-editor";
-// The published primitives bundle only exports `BlockEditor` as a runtime
-// value; everything else below is type-only (erased at build time).
+// The published primitives bundle exports `BlockEditor`, `DocumentBuilder` and
+// `CalloutColor` as runtime values; everything else below is type-only (erased
+// at build time).
 import type {
 	BlockSpec,
 	BlueOrangeDocument,
+	BlueOrangeDocumentModeValue,
 	BlueOrangeDocumentOptions,
+	BlueOrangeDocumentState,
 	DiffViewer,
-	DiffViewerOptions
+	DiffViewerOptions,
+	DocumentBuilder
 } from "@blue-orange-ai/primitives-block-editor";
 // Declared locally rather than imported from primitives — see BlueOrangeFileUpload.ts.
 import type {BlueOrangeFileUploadHandler} from "./BlueOrangeFileUpload";
@@ -42,6 +46,44 @@ import {v4 as uuidv4} from "uuid";
 type MarkdownCapableEditor = {
 	toMarkdown: () => string,
 	fromMarkdown: (markdown: string) => void,
+}
+
+/**
+ * Document-level interaction modes (primitives >= 0.56.15).
+ *
+ * Mirrors `DocumentMode` from primitives. The published bundle rolls up from
+ * `editor.js` rather than `index.js`, so the constant is not a runtime export
+ * of the package — it is declared here rather than re-exported.
+ */
+export const DocumentMode = Object.freeze({
+	EDIT: "edit",
+	COMMENT: "comment",
+	READ: "read",
+} as const);
+
+export type BlueOrangeDocumentMode = BlueOrangeDocumentModeValue;
+
+/**
+ * Fold `mode` / `readOnly` / `commentOnly` into the single mode the editor
+ * takes. `mode` wins outright — the booleans are shorthands for hosts that
+ * only need the binary question, and primitives ignores them when `mode` is
+ * set, so the wrapper resolves them the same way.
+ */
+const resolveDocumentMode = (
+	mode?: BlueOrangeDocumentModeValue,
+	readOnly?: boolean,
+	commentOnly?: boolean
+): BlueOrangeDocumentModeValue => {
+	if (mode) {
+		return mode;
+	}
+	if (readOnly) {
+		return DocumentMode.READ;
+	}
+	if (commentOnly) {
+		return DocumentMode.COMMENT;
+	}
+	return DocumentMode.EDIT;
 }
 
 // `fileUploadHandler` is accepted by the editor at runtime but is absent from
@@ -96,6 +138,23 @@ export interface BlueOrangeBlockEditorHandle {
 	substituteVariables: (substitutions: Record<string, string>) => void,
 	substituteLoops: (loopData: Record<string, Array<Record<string, string>>>) => void,
 	applyTemplateModeToBlocks: () => void,
+	// Document mode — read-only / comment-only (primitives >= 0.56.15).
+	// A runtime stance over the whole document: it gates user input, never the
+	// programmatic API, and is not serialised into the document.
+	getDocumentMode: () => BlueOrangeDocumentModeValue,
+	setDocumentMode: (mode: BlueOrangeDocumentModeValue) => void,
+	setReadOnly: (readOnly?: boolean) => void,
+	setCommentOnly: (commentOnly?: boolean) => void,
+	isReadOnly: () => boolean,
+	isCommentOnly: () => boolean,
+	canEdit: () => boolean,
+	canComment: () => boolean,
+	effectiveBlockEditable: (state: BlueOrangeDocumentState) => boolean,
+	applyDocumentMode: () => void,
+	// Fluent document construction (primitives >= 0.56.17). The builder is
+	// seeded with the editor's current document; call applyTo/appendTo/insertInto
+	// on it to push blocks back.
+	documentBuilder: () => DocumentBuilder | null,
 }
 
 export interface BlueOrangeBlockEditorWrapperProps {
@@ -110,6 +169,21 @@ export interface BlueOrangeBlockEditorWrapperProps {
 	enableMentions?: boolean,
 	enableComments?: boolean,
 	template?: boolean,
+	/**
+	 * Document-level interaction mode (primitives >= 0.56.15). "edit" is normal
+	 * authoring, "comment" freezes the body but still allows comments to be
+	 * attached to a selection, "read" disables all editing. Changing it after
+	 * mount switches the live editor over.
+	 *
+	 * Takes precedence over `readOnly` / `commentOnly`. Note that "comment"
+	 * needs `enableComments` left on to be useful.
+	 */
+	mode?: BlueOrangeDocumentModeValue,
+	/** Shorthand for `mode="read"`. Ignored when `mode` is set. */
+	readOnly?: boolean,
+	/** Shorthand for `mode="comment"`. Ignored when `mode` is set. */
+	commentOnly?: boolean,
+	onModeChange?: (mode: BlueOrangeDocumentModeValue, previousMode: BlueOrangeDocumentModeValue) => void,
 	handleMentionAdded?: (mentionId: string, userId: string) => void,
 	onReferenceAdded?: (detail: ReferenceDetail) => void,
 	onReferenceUpdated?: (detail: ReferenceDetail) => void,
@@ -128,6 +202,10 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 	enableMentions = true,
 	enableComments = true,
 	template = false,
+	mode,
+	readOnly,
+	commentOnly,
+	onModeChange,
 	handleMentionAdded,
 	onReferenceAdded,
 	onReferenceUpdated,
@@ -139,6 +217,14 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 	const editorRef = useRef<HTMLDivElement | null>(null);
 
 	const blueOrangeEditorRef = useRef<BlockEditor | null>(null);
+
+	const resolvedMode = resolveDocumentMode(mode, readOnly, commentOnly);
+
+	// The mode-changed listener is registered once on mount, so it reads the
+	// callback through a ref to always reach the latest prop rather than the one
+	// captured at construction.
+	const onModeChangeRef = useRef(onModeChange);
+	onModeChangeRef.current = onModeChange;
 
 	const [commentWindowState, setCommentWindowState] = useState<CommentState>({
 		display: false,
@@ -334,6 +420,19 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 		substituteLoops: (loopData: Record<string, Array<Record<string, string>>>) =>
 			blueOrangeEditorRef.current?.substituteLoops(loopData),
 		applyTemplateModeToBlocks: () => blueOrangeEditorRef.current?.applyTemplateModeToBlocks(),
+		getDocumentMode: () => blueOrangeEditorRef.current?.getDocumentMode() ?? resolvedMode,
+		setDocumentMode: (documentMode: BlueOrangeDocumentModeValue) =>
+			blueOrangeEditorRef.current?.setDocumentMode(documentMode),
+		setReadOnly: (value: boolean = true) => blueOrangeEditorRef.current?.setReadOnly(value),
+		setCommentOnly: (value: boolean = true) => blueOrangeEditorRef.current?.setCommentOnly(value),
+		isReadOnly: () => blueOrangeEditorRef.current?.isReadOnly() ?? false,
+		isCommentOnly: () => blueOrangeEditorRef.current?.isCommentOnly() ?? false,
+		canEdit: () => blueOrangeEditorRef.current?.canEdit() ?? false,
+		canComment: () => blueOrangeEditorRef.current?.canComment() ?? false,
+		effectiveBlockEditable: (state: BlueOrangeDocumentState) =>
+			blueOrangeEditorRef.current?.effectiveBlockEditable(state) ?? false,
+		applyDocumentMode: () => blueOrangeEditorRef.current?.applyDocumentMode(),
+		documentBuilder: () => blueOrangeEditorRef.current?.documentBuilder() ?? null,
 	}));
 
 	useEffect(() => {
@@ -343,6 +442,7 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 				...userOptions,
 				comments: enableComments,
 				template: template,
+				mode: resolvedMode,
 			};
 
 			if (disableMediaServer) {
@@ -381,6 +481,12 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 					setCommentWindowState(state);
 				})
 			}
+
+			// Document mode changes — fired by setDocumentMode, including the calls
+			// the wrapper makes itself when the `mode` prop changes.
+			current.addEventListener("blue-orange-editor-mode-changed", (ev: any) => {
+				onModeChangeRef.current?.(ev.detail.mode, ev.detail.previousMode);
+			})
 
 			// Reference events
 			current.addEventListener("blue-orange-editor-new-reference-added", (ev: any) => {
@@ -441,6 +547,16 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 			})
 		}
 	}, []);
+
+	// Keep the live editor in step with the mode props. setDocumentMode is a
+	// no-op when the mode has not actually changed, but guarding here keeps the
+	// re-apply (and the mode-changed event) off every unrelated render.
+	useEffect(() => {
+		const editor = blueOrangeEditorRef.current;
+		if (editor != null && editor.getDocumentMode() !== resolvedMode) {
+			editor.setDocumentMode(resolvedMode);
+		}
+	}, [resolvedMode]);
 
 
 	return (
