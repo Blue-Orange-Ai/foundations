@@ -32,6 +32,7 @@ import {TimelineDevelopment} from "./components/timeline/TimelineDevelopment";
 import {WizardDevelopment} from "./components/wizard/WizardDevelopment";
 import {RuleEditorDevelopment} from "./components/rules/rule-editor/RuleEditorDevelopment";
 import {SearchQueryEditorDevelopment} from "./components/search/search-query-editor/SearchQueryEditorDevelopment";
+import {JsonSchemaEditorDevelopment} from "./components/inputs/json-schema-editor/JsonSchemaEditorDevelopment";
 
 // Every page is rendered in both themes: a component that only styles itself for
 // light mode still renders, but these at least prove no page throws in either.
@@ -68,6 +69,7 @@ const PAGES: Array<[string, React.FC<any>]> = [
 	["Wizard", WizardDevelopment],
 	["Rule Editor", RuleEditorDevelopment],
 	["Search Query Editor", SearchQueryEditorDevelopment],
+	["Json Schema Editor", JsonSchemaEditorDevelopment],
 ];
 
 describe("development pages", () => {

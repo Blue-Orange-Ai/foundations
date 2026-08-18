@@ -184,7 +184,7 @@ export const UserSettingsView: React.FC<Props> = ({ user, onSave, onClose }) => 
                         <Toggle checked={isPaused} onChange={handlePauseToggle} />
                     </div>
                     <div className="blue-orange-chat-user-settings-quiet-hours">
-                        <div className="blue-orange-chat-user-settings-quiet-hours-title">
+                        <div className="blue-orange-default-input-label-cont">
                             Default quiet hours
                         </div>
                         <div className="blue-orange-chat-user-settings-quiet-hours-row">

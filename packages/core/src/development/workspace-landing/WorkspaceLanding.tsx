@@ -90,6 +90,7 @@ import {SearchQueryEditorDevelopment} from "../components/search/search-query-ed
 import {SchemaEditorDevelopment} from "../components/search/schema-editor/SchemaEditorDevelopment";
 import {ArrayInputDevelopment} from "../components/inputs/array-input/ArrayInputDevelopment";
 import {ObjectArrayInputDevelopment} from "../components/inputs/object-array-input/ObjectArrayInputDevelopment";
+import {JsonSchemaEditorDevelopment} from "../components/inputs/json-schema-editor/JsonSchemaEditorDevelopment";
 import {
     SearchQueryEditorSmallDevelopment
 } from "../components/search/search-query-editor-small/SearchQueryEditorSmallDevelopment";
@@ -426,6 +427,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							activeStyle={activeStyle}
 							icon={<i className="ri-list-unordered"></i>}
 							onClick={() => navigate("/inputs-object-array")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Json Schema Editor"}
+							active={component == "inputs-json-schema"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-braces-line"></i>}
+							onClick={() => navigate("/inputs-json-schema")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
 							label={"Checkbox Input"}
@@ -1203,6 +1213,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "inputs-address" && <AddressInputDevelopment></AddressInputDevelopment>}
 			{component == "inputs-array" && <ArrayInputDevelopment></ArrayInputDevelopment>}
 			{component == "inputs-object-array" && <ObjectArrayInputDevelopment></ObjectArrayInputDevelopment>}
+			{component == "inputs-json-schema" && <JsonSchemaEditorDevelopment></JsonSchemaEditorDevelopment>}
 			{component == "inputs-checkbox" && <CheckboxInputDevelopment></CheckboxInputDevelopment>}
 			{component == "inputs-date" && <DateInputDevelopment></DateInputDevelopment>}
 			{component == "inputs-dropdown" && <DropdownInputDevelopment></DropdownInputDevelopment>}

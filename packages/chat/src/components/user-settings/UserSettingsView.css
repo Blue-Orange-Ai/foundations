@@ -48,7 +48,7 @@
 .blue-orange-chat-user-settings-section {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 16px;
     padding-top: 20px;
     border-top: 1px solid #e5e7eb;
 }
@@ -124,10 +124,10 @@
 .blue-orange-chat-user-settings-quiet-hours {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    padding-top: 4px;
+    gap: 16px;
     border-top: 1px dashed #e5e7eb;
     margin-top: 4px;
+    padding-top: 20px;
 }
 
 .blue-orange-chat-user-settings-quiet-hours-title {
