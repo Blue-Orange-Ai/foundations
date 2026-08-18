@@ -1,0 +1,99 @@
+.blue-orange-json-schema-field {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.blue-orange-json-schema-field-row {
+    width: 100%;
+}
+
+/*
+ * The leading cell carries the expander on a struct and the type icon on a leaf,
+ * so every row opens with a glyph and every field name starts on the same line.
+ */
+.blue-orange-filter-row .blue-orange-json-schema-field-toggle {
+    width: 30px;
+    justify-content: center;
+    padding: 0 4px;
+    font-size: 0.95rem;
+    opacity: 0.75;
+}
+
+.blue-orange-json-schema-field-leaf-icon {
+    color: var(--blue-orange-light-filter-row-muted-color);
+}
+
+.dark .blue-orange-json-schema-field-leaf-icon {
+    color: var(--blue-orange-dark-filter-row-muted-color);
+}
+
+/*
+ * The name takes whatever is left over while the type, the array flag and the
+ * delete action hold a fixed width, so those columns line up down the whole
+ * tree however deeply a row is nested.
+ */
+.blue-orange-filter-row .blue-orange-json-schema-field-key {
+    min-width: 80px;
+}
+
+.blue-orange-json-schema-field-key .blue-orange-input {
+    font-weight: 500;
+}
+
+.blue-orange-filter-row .blue-orange-json-schema-field-type {
+    width: 150px;
+}
+
+.blue-orange-json-schema-field-type .blue-orange-dropdown-selection {
+    font-weight: 600;
+    overflow: hidden;
+}
+
+.blue-orange-filter-row .blue-orange-json-schema-field-array {
+    width: 82px;
+}
+
+.blue-orange-json-schema-field-array-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    opacity: 0.75;
+}
+
+/*
+ * A struct's members are stepped in from their parent and tied back to it by the
+ * guide line, so the shape of the document is readable at a glance.
+ */
+.blue-orange-json-schema-field-children {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    margin-left: 15px;
+    padding-left: 20px;
+    border-left: 1px solid var(--blue-orange-light-filter-row-border-color);
+}
+
+.dark .blue-orange-json-schema-field-children {
+    border-left-color: var(--blue-orange-dark-filter-row-border-color);
+}
+
+.blue-orange-json-schema-field-children > .blue-orange-json-schema-field {
+    position: relative;
+}
+
+/* the elbow joining a member back onto its parent's guide line */
+.blue-orange-json-schema-field-children > .blue-orange-json-schema-field::before {
+    content: "";
+    position: absolute;
+    top: 18px;
+    left: -20px;
+    width: 14px;
+    border-top: 1px solid var(--blue-orange-light-filter-row-border-color);
+}
+
+.dark .blue-orange-json-schema-field-children > .blue-orange-json-schema-field::before {
+    border-top-color: var(--blue-orange-dark-filter-row-border-color);
+}
