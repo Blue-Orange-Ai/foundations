@@ -6,6 +6,7 @@ import {RuleGroup} from "../rule-group/RuleGroup";
 import {Paragraph} from "../../text-decorations/paragraph/Paragraph";
 import {Description} from "../../text-decorations/description/Description";
 import {GeneralHeading} from "../../text-decorations/general-heading/GeneralHeading";
+import {ButtonSize} from "../../buttons/button/Button";
 
 
 export enum IConditionType {
@@ -125,10 +126,13 @@ interface Props {
 	schema: Array<IRuleSchemaProperty>,
 	showHeader?: boolean,
 	headerEditable?: boolean,
+	/** The size of the buttons that add a condition or a group. Defaults to small. */
+	buttonSize?: ButtonSize,
 	onChange?: (rule: IRule) => void
 }
 
-export const RuleEditor: React.FC<Props> = ({rule, schema, showHeader=true, headerEditable=true, onChange}) => {
+export const RuleEditor: React.FC<Props> = ({rule, schema, showHeader=true, headerEditable=true,
+												buttonSize=ButtonSize.SMALL, onChange}) => {
 
 	const [internalRule, setInternalRule] = useState(rule);
 
@@ -159,7 +163,7 @@ export const RuleEditor: React.FC<Props> = ({rule, schema, showHeader=true, head
 				</div>
 			}
 			<RuleGroup conditions={rule.conditions} deletable={false} logic={rule.logic} schema={schema}
-					   onChange={updateRule}></RuleGroup>
+					   buttonSize={buttonSize} onChange={updateRule}></RuleGroup>
 		</div>
 	)
 }
