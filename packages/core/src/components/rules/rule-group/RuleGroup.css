@@ -1,15 +1,10 @@
-
-
-.blue-orange-rule-group-cont{
+.blue-orange-rule-group {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
     width: 100%;
-    position: relative;
 }
 
 .blue-orange-rule-group-header {
-    margin-bottom: 20px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -17,37 +12,57 @@
     width: 100%;
 }
 
-.blue-orange-rule-group-operand-selection {
+/* the toggle hugs its own words rather than filling a fixed column */
+.blue-orange-rule-group-logic {
+    max-width: 100%;
+}
+
+/*
+ * All and Any are both on show, the chosen one carried at full strength — one
+ * click swaps between them.
+ */
+.blue-orange-rule-group-logic-option {
+    font-weight: 500;
+    color: var(--blue-orange-light-filter-row-muted-color);
+}
+
+.dark .blue-orange-rule-group-logic-option {
+    color: var(--blue-orange-dark-filter-row-muted-color);
+}
+
+.blue-orange-rule-group-logic-option-selected {
+    font-weight: 600;
+    color: var(--blue-orange-light-filter-row-color);
+    background-color: var(--blue-orange-light-filter-row-hover-background-color);
+}
+
+.dark .blue-orange-rule-group-logic-option-selected {
+    color: var(--blue-orange-dark-filter-row-color);
+    background-color: var(--blue-orange-dark-filter-row-hover-background-color);
+}
+
+/*
+ * The conditions are stepped in from the line that states how they are matched
+ * and tied back to it by the guide, so a group reads as the shape of the rule.
+ */
+.blue-orange-rule-group-conditions {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+    margin-left: 15px;
+    padding-left: 20px;
+    border-left: 1px solid var(--blue-orange-light-filter-row-border-color);
 }
 
-.blue-orange-rule-group-operand-selection {
-    width: 250px;
-    color: white;
-}
-
-.blue-orange-rule-group-operand-selection .blue-orange-dropdown {
-    border: 1px solid var(--blue-orange-light-primary-btn-background-color);
-}
-
-.dark .blue-orange-rule-group-operand-selection .blue-orange-dropdown {
-    border: none !important;
-}
-
-.blue-orange-rule-group-cont-vertical-line {
-    height: 100%;
-    z-index: -1;
-    border: 1px solid var(--blue-orange-light-default-border-color);
-    position: absolute;
-    left: 15px;
+.dark .blue-orange-rule-group-conditions {
+    border-left-color: var(--blue-orange-dark-filter-row-border-color);
 }
 
 .blue-orange-rule-group-add-btns {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 20px;
+    gap: 8px;
+    margin-top: 4px;
 }
-

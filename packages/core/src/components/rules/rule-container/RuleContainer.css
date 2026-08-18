@@ -1,33 +1,56 @@
-.blue-orange-rule-group-condition-cont {
+.blue-orange-rule-condition-item {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     width: 100%;
-    margin-bottom: 20px;
+    position: relative;
 }
 
+/*
+ * The operator sits between two conditions rather than beside every one of them,
+ * so it reads as the join it is and the rows keep a single left edge.
+ */
 .blue-orange-rule-condition-operand {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-right: 20px;
+    padding: 2px 0 6px 0;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--blue-orange-light-filter-row-muted-color);
 }
 
-.blue-orange-rule-condition-operand-cont {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+.dark .blue-orange-rule-condition-operand {
+    color: var(--blue-orange-dark-filter-row-muted-color);
 }
 
-.blue-orange-rule-condition-operand-text {
-    margin-left: 4px;
+.blue-orange-rule-condition-block {
+    width: 100%;
 }
 
-.blue-orange-rule-group-condition-block {
-    flex-grow: 1;
-    border: 1px solid var(--blue-orange-light-default-border-color);
-    padding: 20px;
+/* the elbow joining a condition back onto its group's guide line */
+.blue-orange-rule-condition-item::before {
+    content: "";
+    position: absolute;
+    top: 18px;
+    left: -20px;
+    width: 14px;
+    border-top: 1px solid var(--blue-orange-light-filter-row-border-color);
 }
-.dark .blue-orange-rule-group-condition-block {
-    border: 1px solid var(--blue-orange-dark-default-border-color);
+
+.dark .blue-orange-rule-condition-item::before {
+    border-top-color: var(--blue-orange-dark-filter-row-border-color);
+}
+
+/* an operator pushes the row it introduces down past the elbow */
+.blue-orange-rule-condition-item-joined::before {
+    top: 39px;
+}
+
+/* a nested group opens on the shorter line that states how it is matched */
+.blue-orange-rule-condition-item-group::before {
+    top: 15px;
+}
+
+.blue-orange-rule-condition-item-group.blue-orange-rule-condition-item-joined::before {
+    top: 36px;
 }

@@ -1,13 +1,12 @@
 import React, {useState} from "react";
 
 import './RuleGroup.css'
-import {Dropdown} from "../../inputs/dropdown/basic/Dropdown";
-import {DropdownItemText} from "../../inputs/dropdown/items/DropdownItemText/DropdownItemText";
 import {RuleContainer} from "../rule-container/RuleContainer";
-import {Button, ButtonType} from "../../buttons/button/Button";
+import {Button, ButtonIconPos, ButtonSize, ButtonType} from "../../buttons/button/Button";
 import {ICondition, IConditionType, ILogicalOperand, IOperand, IRuleSchemaProperty} from "../rule-editor/RuleEditor";
-import {DropdownItemObj} from "../../interfaces/AppInterfaces";
-import {ButtonIcon} from "../../buttons/button-icon/ButtonIcon";
+import {FilterRow, FilterRowSize} from "../../filters/filter-row/FilterRow";
+import {FilterRowSegment} from "../../filters/filter-row-segment/FilterRowSegment";
+import {FilterRowAction} from "../../filters/filter-row-action/FilterRowAction";
 
 interface Props {
 	condition?: ICondition,
@@ -15,11 +14,14 @@ interface Props {
 	conditions?: Array<ICondition>,
 	schema: Array<IRuleSchemaProperty>,
 	logic?: ILogicalOperand,
+	/** The size of the buttons that add a condition or a group. Defaults to small. */
+	buttonSize?: ButtonSize,
 	onChange: (condition: ICondition) => void,
 	onDelete?: () => void,
 }
 
-export const RuleGroup: React.FC<Props> = ({condition, deletable=true, conditions, schema, logic, onChange, onDelete}) => {
+export const RuleGroup: React.FC<Props> = ({condition, deletable=true, conditions, schema, logic,
+											   buttonSize=ButtonSize.SMALL, onChange, onDelete}) => {
 
 	const initParentGroup = () : ICondition => {
 		if (condition) {
@@ -123,33 +125,57 @@ export const RuleGroup: React.FC<Props> = ({condition, deletable=true, condition
 		}
 	}
 
+	/*
+	 * All and Any are the only two answers, so they are both on show and a single
+	 * click swaps between them rather than a menu being opened to choose one.
+	 */
+	const logicOptionClasses = (selected: boolean): string => {
+		return selected
+			? "blue-orange-rule-group-logic-option blue-orange-rule-group-logic-option-selected"
+			: "blue-orange-rule-group-logic-option";
+	}
+
 	return (
-		<div className={"blue-orange-rule-group-cont"}>
-			<div className="blue-orange-rule-group-cont-vertical-line"></div>
+		<div className={"blue-orange-rule-group"}>
 			<div className="blue-orange-rule-group-header">
-				<div className="blue-orange-rule-group-operand-selection">
-					<Dropdown style={{backgroundColor: "#283747", paddingLeft: "10px"}} onSelection={(item: DropdownItemObj) => logicalChange(item.reference)}>
-						<DropdownItemText label={"All of the following are true"} value={"AND"}
-										  selected={internalCondition.logic == ILogicalOperand.AND}></DropdownItemText>
-						<DropdownItemText label={"Any of the following are true"} value={"OR"}
-										  selected={internalCondition.logic == ILogicalOperand.OR}></DropdownItemText>
-					</Dropdown>
-				</div>
-				{deletable && <ButtonIcon icon="ri-close-line" label={"Delete"} onClick={() => removeCondition(condition as ICondition)}></ButtonIcon>}
+				<FilterRow size={FilterRowSize.SMALL} classes="blue-orange-rule-group-logic">
+					<FilterRowSegment muted={true} label={"Match"}></FilterRowSegment>
+					<FilterRowSegment
+						label={"All"}
+						classes={logicOptionClasses(internalCondition.logic == ILogicalOperand.AND)}
+						onClick={() => logicalChange("AND")}></FilterRowSegment>
+					<FilterRowSegment
+						label={"Any"}
+						classes={logicOptionClasses(internalCondition.logic == ILogicalOperand.OR)}
+						onClick={() => logicalChange("OR")}></FilterRowSegment>
+					<FilterRowSegment muted={true} label={"of the following"}></FilterRowSegment>
+					{deletable &&
+						<FilterRowAction
+							icon="ri-close-line"
+							label={"Delete"}
+							onClick={() => removeCondition(condition as ICondition)}></FilterRowAction>
+					}
+				</FilterRow>
 			</div>
-			{internalCondition.groupConditions.map((item, index) => (
-				<RuleContainer
-					key={index + "-" + item.id}
-					condition={item}
-					schema={schema}
-					logicalOperand={internalCondition.logic}
-					onChange={(c) => updateChildCondition(index, c)}
-					onDelete={() => handleDelete(index)}
-				></RuleContainer>
-			))}
-			<div className="blue-orange-rule-group-add-btns">
-				<Button text={"Add Condition"} buttonType={ButtonType.PRIMARY} onClick={() => addCondition()}></Button>
-				<Button text={"Add Group"} buttonType={ButtonType.PRIMARY} onClick={() => addGroup()}></Button>
+			<div className="blue-orange-rule-group-conditions">
+				{internalCondition.groupConditions.map((item, index) => (
+					<RuleContainer
+						key={index + "-" + item.id}
+						condition={item}
+						schema={schema}
+						logicalOperand={internalCondition.logic}
+						showOperand={index > 0}
+						buttonSize={buttonSize}
+						onChange={(c) => updateChildCondition(index, c)}
+						onDelete={() => handleDelete(index)}
+					></RuleContainer>
+				))}
+				<div className="blue-orange-rule-group-add-btns">
+					<Button text={"Add condition"} buttonType={ButtonType.SECONDARY} size={buttonSize}
+							icon={"ri-add-line"} iconPos={ButtonIconPos.LEFT} onClick={() => addCondition()}></Button>
+					<Button text={"Add group"} buttonType={ButtonType.SECONDARY} size={buttonSize}
+							icon={"ri-node-tree"} iconPos={ButtonIconPos.LEFT} onClick={() => addGroup()}></Button>
+				</div>
 			</div>
 		</div>
 	)
