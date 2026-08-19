@@ -16,6 +16,7 @@ import type {
 	BlueOrangeDocument,
 	BlueOrangeDocumentModeValue,
 	BlueOrangeDocumentOptions,
+	BlueOrangeDocumentOptionsPlugin,
 	BlueOrangeDocumentState,
 	DiffViewer,
 	DiffViewerOptions,
@@ -23,6 +24,7 @@ import type {
 } from "@blue-orange-ai/primitives-block-editor";
 // Declared locally rather than imported from primitives — see BlueOrangeFileUpload.ts.
 import type {BlueOrangeFileUploadHandler} from "./BlueOrangeFileUpload";
+import {CHART_BLOCK_TYPE, chartPluginEntry} from "./plugins/chart-plugin";
 import {
 	Drawer,
 	DrawerBody,
@@ -90,8 +92,22 @@ const resolveDocumentMode = (
 // the published BlueOrangeDocumentOptions type, so we add it here. Omit-then-add
 // (rather than a plain intersection) keeps this working once primitives declares
 // the option itself; if its signature then differs from ours, the build says so.
-type BlueOrangeEditorOptions = Omit<BlueOrangeDocumentOptions, "fileUploadHandler"> & {
+type BlueOrangeEditorOptions = Omit<BlueOrangeDocumentOptions, "fileUploadHandler" | "additionalPlugins"> & {
 	fileUploadHandler?: BlueOrangeFileUploadHandler,
+	// Extra block types, registered alongside the built-ins rather than
+	// replacing them (primitives >= 0.56.18). Declared here for the same reason
+	// as fileUploadHandler: older published primitives typings do not have it.
+	additionalPlugins?: Array<BlueOrangeDocumentOptionsPlugin>,
+}
+
+/**
+ * Whether the running primitives build registered the chart block. Reads the
+ * editor's own plugin registry rather than a version number so it stays true
+ * whatever the host passed in `options.plugins`.
+ */
+const editorSupportsChartBlocks = (editor: BlockEditor | null): boolean => {
+	const plugins = (editor as any)?.plugins;
+	return Array.isArray(plugins) && plugins.some((entry: any) => entry?.type === CHART_BLOCK_TYPE);
 }
 
 interface CommentState {
@@ -168,6 +184,19 @@ export interface BlueOrangeBlockEditorWrapperProps {
 	fileUploadHandler?: BlueOrangeFileUploadHandler,
 	enableMentions?: boolean,
 	enableComments?: boolean,
+	/**
+	 * Registers the chart block type, which adds a "Chart" entry to the slash
+	 * menu and the block-type dropdown of both the floating and the fixed
+	 * toolbar. Charts are drawn with foundations-core's chart components and
+	 * their data comes from an uploaded CSV/XLSX file or an external data
+	 * server — see plugins/chart-plugin.
+	 *
+	 * Needs primitives >= 0.56.18 (for `additionalPlugins`); with an older
+	 * build the block type is simply not registered.
+	 */
+	enableCharts?: boolean,
+	/** Overrides the chart plugin's slash-menu label, icon or aliases. */
+	chartPluginOptions?: Partial<BlueOrangeDocumentOptionsPlugin>,
 	template?: boolean,
 	/**
 	 * Document-level interaction mode (primitives >= 0.56.15). "edit" is normal
@@ -201,6 +230,8 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 	fileUploadHandler,
 	enableMentions = true,
 	enableComments = true,
+	enableCharts = true,
+	chartPluginOptions,
 	template = false,
 	mode,
 	readOnly,
@@ -445,6 +476,19 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 				mode: resolvedMode,
 			};
 
+			// Block types the host asked for, plus the chart block. `plugins`
+			// replaces the built-ins; `additionalPlugins` sits alongside them,
+			// so registering a chart block never costs the host image, table
+			// or code blocks.
+			const additionalPlugins: Array<BlueOrangeDocumentOptionsPlugin> =
+				((userOptions as BlueOrangeEditorOptions | undefined)?.additionalPlugins ?? []).slice();
+			if (enableCharts) {
+				additionalPlugins.push(chartPluginEntry(chartPluginOptions));
+			}
+			if (additionalPlugins.length > 0) {
+				editorOptions.additionalPlugins = additionalPlugins;
+			}
+
 			if (disableMediaServer) {
 				editorOptions.mediaUri = undefined;
 			} else if (mediaUri) {
@@ -459,6 +503,16 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 				current,
 				initialDocument,
 				editorOptions);
+
+			// `additionalPlugins` is silently ignored by primitives builds older
+			// than 0.56.18, which would leave charts missing from the menus with
+			// no explanation. Say so once rather than letting it look like a bug.
+			if (enableCharts && !editorSupportsChartBlocks(blueOrangeEditorRef.current)) {
+				console.warn(
+					"[foundations-block-editor] The chart block was not registered. " +
+					"@blue-orange-ai/primitives-block-editor >= 0.56.18 is required for additionalPlugins."
+				);
+			}
 
 			// Comment events
 			if (enableComments) {

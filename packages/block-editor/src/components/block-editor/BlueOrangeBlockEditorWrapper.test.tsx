@@ -75,6 +75,38 @@ vi.mock("@blue-orange-ai/foundations-core", () => {
 		Tab: () => ReactLib.createElement("div", {"data-testid": "tab"}),
 		Tabs: passthrough("tabs"),
 		RenderHtml: ({html}: any) => ReactLib.createElement("div", {"data-testid": "render-html"}, html),
+		// Pulled in transitively by the chart block plugin, which the wrapper
+		// registers. The wrapper's own behaviour is what these tests cover, so
+		// the chart UI is stubbed rather than rendered.
+		BarChart: passthrough("bar-chart"),
+		LineChart: passthrough("line-chart"),
+		ScatterChart: passthrough("scatter-chart"),
+		ComboChart: passthrough("combo-chart"),
+		LegendPosition: {
+			TOP: 0,
+			BOTTOM: 1,
+			TOP_LEFT: 2,
+			TOP_RIGHT: 3,
+			BOTTOM_LEFT: 4,
+			BOTTOM_RIGHT: 5,
+		},
+		Button: ({text}: any) => ReactLib.createElement("button", null, text),
+		ButtonIcon: ({icon}: any) => ReactLib.createElement("button", {"data-icon": icon}),
+		ButtonType: {PRIMARY: 0, SECONDARY: 1, SUCCESS: 2, DANGER: 3, WARNING: 4, CUSTOM: 5, CLEAR: 6},
+		ButtonSize: {SMALL: "SMALL", MEDIUM: "MEDIUM", LARGE: "LARGE"},
+		ColorPicker: passthrough("color-picker"),
+		Dropdown: passthrough("dropdown"),
+		DropdownItemText: () => ReactLib.createElement("div", {"data-testid": "dropdown-item"}),
+		Input: passthrough("input"),
+		Modal: passthrough("modal"),
+		ModalBody: passthrough("modal-body"),
+		ModalFooter: passthrough("modal-footer"),
+		ModalFooterRight: passthrough("modal-footer-right"),
+		ModalHeader: ({label}: any) => ReactLib.createElement("div", {"data-testid": "modal-header"}, label),
+		Spinner: () => ReactLib.createElement("div", {"data-testid": "spinner"}),
+		SpinnerSize: {SMALL: "SMALL", MEDIUM: "MEDIUM", LARGE: "LARGE"},
+		TextArea: passthrough("textarea"),
+		Toggle: passthrough("toggle"),
 	};
 });
 
