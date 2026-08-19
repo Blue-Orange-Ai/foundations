@@ -1,0 +1,494 @@
+/* Chart block.
+ *
+ * Follows the block editor's own conventions: the same border colour and
+ * radius as the other content blocks, remixicon glyphs in a hover toolbar
+ * shaped like the built-in block tooltips, and a `.dark` override for every
+ * colour rather than a media query, matching foundations-core. */
+
+.blue-orange-chart-block-host {
+    position: relative;
+    width: 100%;
+}
+
+.blue-orange-chart-block {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 1px solid var(--blue-orange-light-default-border-color);
+    border-radius: 6px;
+    font-family: var(--blue-orange-font-family);
+    color: var(--blue-orange-light-default-text-color);
+    background-color: var(--blue-orange-light-default-card-background);
+}
+
+.dark .blue-orange-chart-block {
+    border-color: var(--blue-orange-dark-default-border-color);
+    color: var(--blue-orange-dark-default-text-color);
+    background-color: var(--blue-orange-dark-default-card-background);
+}
+
+.blue-orange-chart-block-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.blue-orange-chart-block-caption {
+    font-size: 0.8rem;
+    font-style: italic;
+    opacity: 0.7;
+    text-align: center;
+    padding-top: 8px;
+}
+
+.blue-orange-chart-block-canvas {
+    position: relative;
+    width: 100%;
+}
+
+/* Room for a top/bottom legend, which the core charts render inside the same
+   box as the canvas that fills it. See ChartBlockView. */
+.blue-orange-chart-block-canvas-legend {
+    margin-bottom: 34px;
+}
+
+/* Block toolbar — revealed on hover, like the built-in blocks' tooltips. */
+
+.blue-orange-chart-block-tools {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 120ms ease-in-out;
+    border: 1px solid var(--blue-orange-light-default-border-color);
+    background-color: var(--blue-orange-light-default-card-background);
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.dark .blue-orange-chart-block-tools {
+    border-color: var(--blue-orange-dark-default-border-color);
+    background-color: var(--blue-orange-dark-default-card-background);
+}
+
+.blue-orange-chart-block:hover .blue-orange-chart-block-tools {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.blue-orange-chart-block-tool {
+    cursor: pointer;
+    padding: 3px 6px;
+    border-radius: 3px;
+    font-size: 0.9rem;
+    line-height: 1;
+}
+
+.blue-orange-chart-block-tool:hover {
+    background-color: var(--blue-orange-light-default-border-color);
+}
+
+.dark .blue-orange-chart-block-tool:hover {
+    background-color: var(--blue-orange-dark-sidebar-body-item-hover-color);
+}
+
+.blue-orange-chart-block-tool-busy i {
+    display: inline-block;
+    animation: blue-orange-chart-spin 900ms linear infinite;
+}
+
+@keyframes blue-orange-chart-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Empty and error states */
+
+.blue-orange-chart-block-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 6px;
+    padding: 32px 16px;
+    border: 1px dashed var(--blue-orange-light-default-border-color);
+    border-radius: 6px;
+    opacity: 0.85;
+}
+
+.dark .blue-orange-chart-block-empty {
+    border-color: var(--blue-orange-dark-default-border-color);
+}
+
+.blue-orange-chart-block-empty-clickable {
+    cursor: pointer;
+}
+
+.blue-orange-chart-block-empty i {
+    font-size: 1.6rem;
+    opacity: 0.6;
+}
+
+.blue-orange-chart-block-empty-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.blue-orange-chart-block-empty-text {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    max-width: 420px;
+}
+
+.blue-orange-chart-block-error {
+    margin-top: 8px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: var(--blue-orange-light-alert-error-color);
+    background-color: var(--blue-orange-light-alert-error-background-color);
+}
+
+/* Configuration modal */
+
+.blue-orange-chart-config-preview {
+    width: 100%;
+    margin-bottom: 16px;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid var(--blue-orange-light-default-border-color);
+    border-radius: 6px;
+}
+
+.dark .blue-orange-chart-config-preview {
+    border-color: var(--blue-orange-dark-default-border-color);
+}
+
+/* The modal is portalled to the body, so it inherits no text colour from the
+   page it was opened on. Set it explicitly here — several core inputs (the
+   dropdown among them) take their text colour from the surrounding context. */
+.blue-orange-chart-config-panel,
+.blue-orange-chart-config-preview {
+    color: var(--blue-orange-light-default-text-color);
+}
+
+.dark .blue-orange-chart-config-panel,
+.dark .blue-orange-chart-config-preview {
+    color: var(--blue-orange-dark-default-text-color);
+}
+
+.blue-orange-chart-config-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 12px;
+    max-height: 38vh;
+    overflow-y: auto;
+}
+
+.blue-orange-chart-config-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.blue-orange-chart-config-section-title,
+.blue-orange-chart-config-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.6;
+}
+
+.blue-orange-chart-config-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.blue-orange-chart-config-row > * {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.blue-orange-chart-config-inline-action {
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 2px;
+}
+
+.blue-orange-chart-config-hint {
+    font-size: 0.75rem;
+    opacity: 0.65;
+    line-height: 1.4;
+}
+
+.blue-orange-chart-config-empty {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    text-align: center;
+    padding: 24px 12px;
+}
+
+.blue-orange-chart-config-notice {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    border-radius: 4px;
+    color: var(--blue-orange-light-alert-success-color);
+    background-color: var(--blue-orange-light-alert-success-background-color);
+}
+
+.blue-orange-chart-config-error {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    border-radius: 4px;
+    color: var(--blue-orange-light-alert-error-color);
+    background-color: var(--blue-orange-light-alert-error-background-color);
+}
+
+.blue-orange-chart-config-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+}
+
+.blue-orange-chart-config-code {
+    margin: 0;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    line-height: 1.45;
+    overflow-x: auto;
+    background-color: var(--blue-orange-light-sidebar-background-color);
+    border: 1px solid var(--blue-orange-light-default-border-color);
+}
+
+.dark .blue-orange-chart-config-code {
+    background-color: var(--blue-orange-dark-sidebar-background-color);
+    border-color: var(--blue-orange-dark-default-border-color);
+}
+
+.blue-orange-chart-source-switch,
+.blue-orange-chart-upload-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.blue-orange-chart-headers {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.blue-orange-chart-header-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.blue-orange-chart-header-row > *:first-child,
+.blue-orange-chart-header-row > *:nth-child(2) {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+/* Data preview table */
+
+.blue-orange-chart-preview {
+    max-height: 190px;
+    overflow: auto;
+    border: 1px solid var(--blue-orange-light-default-border-color);
+    border-radius: 4px;
+}
+
+.dark .blue-orange-chart-preview {
+    border-color: var(--blue-orange-dark-default-border-color);
+}
+
+.blue-orange-chart-preview table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.75rem;
+}
+
+.blue-orange-chart-preview th,
+.blue-orange-chart-preview td {
+    text-align: left;
+    white-space: nowrap;
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--blue-orange-light-default-border-color);
+}
+
+.dark .blue-orange-chart-preview th,
+.dark .blue-orange-chart-preview td {
+    border-bottom-color: var(--blue-orange-dark-default-border-color);
+}
+
+.blue-orange-chart-preview th {
+    position: sticky;
+    top: 0;
+    font-weight: 600;
+    background-color: var(--blue-orange-light-data-table-header-background-color);
+}
+
+.dark .blue-orange-chart-preview th {
+    background-color: var(--blue-orange-dark-data-table-header-background-color);
+}
+
+/* Chart type picker */
+
+.blue-orange-chart-kind-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+    gap: 8px;
+}
+
+/* Segmented picker, shared by the chart-type grid and the data-source switch.
+   Written here rather than with core's Button so the selected state can change
+   after mount — Button freezes its variant class in state. */
+.blue-orange-chart-kind-option,
+.blue-orange-chart-choice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.75rem;
+    color: inherit;
+    border: 1px solid var(--blue-orange-light-default-border-color);
+    border-radius: 6px;
+    background-color: transparent;
+}
+
+.blue-orange-chart-choice-inline {
+    flex-direction: row;
+    gap: 6px;
+    padding: 7px 12px;
+}
+
+.dark .blue-orange-chart-kind-option,
+.dark .blue-orange-chart-choice {
+    border-color: var(--blue-orange-dark-default-border-color);
+}
+
+.blue-orange-chart-kind-option i {
+    font-size: 1.2rem;
+}
+
+.blue-orange-chart-kind-option:hover,
+.blue-orange-chart-choice:hover {
+    background-color: var(--blue-orange-light-sidebar-body-item-hover-color);
+}
+
+.dark .blue-orange-chart-kind-option:hover,
+.dark .blue-orange-chart-choice:hover {
+    background-color: var(--blue-orange-dark-sidebar-body-item-hover-color);
+}
+
+.blue-orange-chart-kind-option-active,
+.blue-orange-chart-choice-active {
+    border-color: var(--blue-orange-light-active-border-color);
+    box-shadow: inset 0 0 0 1px var(--blue-orange-light-active-border-color);
+}
+
+.dark .blue-orange-chart-kind-option-active,
+.dark .blue-orange-chart-choice-active {
+    border-color: var(--blue-orange-dark-active-border-color);
+    box-shadow: inset 0 0 0 1px var(--blue-orange-dark-active-border-color);
+}
+
+/* Series cards */
+
+.blue-orange-chart-series-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--blue-orange-light-default-border-color);
+    border-radius: 6px;
+}
+
+.dark .blue-orange-chart-series-card {
+    border-color: var(--blue-orange-dark-default-border-color);
+}
+
+.blue-orange-chart-series-card-hidden {
+    opacity: 0.55;
+}
+
+.blue-orange-chart-series-card-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.blue-orange-chart-series-card-title {
+    flex: 1 1 auto;
+    font-size: 0.85rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.blue-orange-chart-series-card-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+}
+
+.blue-orange-chart-series-swatch {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 auto;
+    border-radius: 4px;
+    border: 2px solid transparent;
+}
+
+.blue-orange-chart-toggle-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.85rem;
+}
+
+.blue-orange-chart-add-series {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Copy/paste + HTML export fallback (see chartExport.ts) */
+
+.blue-orange-chart-block-export table {
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+
+.blue-orange-chart-block-export th,
+.blue-orange-chart-block-export td {
+    padding: 4px 8px;
+    border: 1px solid var(--blue-orange-light-default-border-color);
+}

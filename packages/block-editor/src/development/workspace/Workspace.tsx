@@ -13,6 +13,14 @@ import type {
 	BlockSpec
 } from "@blue-orange-ai/primitives-block-editor";
 import {CollaborationSimulator} from "./collabSimulator";
+import {
+	applyKind,
+	applyTable,
+	emptyChartData,
+	insertChartBlock,
+	parseCsv,
+	updateSeries,
+} from "../../components/block-editor/plugins/chart-plugin";
 
 interface Props {
 }
@@ -39,6 +47,14 @@ This is a **bold** paragraph with _italic_ and \`inline code\`.
 
 > A callout / quote line.
 `;
+
+const SAMPLE_CHART_CSV = `month,revenue,cost,region
+Jan,120400,84100,North
+Feb,138200,90300,North
+Mar,151900,96800,North
+Apr,142600,93200,South
+May,168300,101400,South
+Jun,175100,104900,South`;
 
 const TEMPLATE_HINT = `Type template fields directly into the editor, e.g.
 
@@ -208,6 +224,42 @@ export const Workspace: React.FC<Props> = ({}) => {
 		};
 		editorRef.current?.createBlock(spec);
 		flash("Inserted a new block at position " + pos + ".");
+	};
+
+	// ---- Charts ---------------------------------------------------------
+
+	const insertEmptyChart = () => {
+		const editor = editorRef.current?.getEditor();
+		if (!editor) {
+			flash("Editor not ready.");
+			return;
+		}
+		const reference = insertChartBlock(editor);
+		flash(reference
+			? "Inserted an empty chart — use its settings button to load data."
+			: "The chart block type is not registered (needs primitives >= 0.56.18).");
+	};
+
+	const insertSampleChart = () => {
+		const editor = editorRef.current?.getEditor();
+		if (!editor) {
+			flash("Editor not ready.");
+			return;
+		}
+		let chart = applyTable(emptyChartData(), parseCsv(SAMPLE_CHART_CSV), {fileName: "sample.csv"});
+		chart = applyKind(chart, "combo");
+		chart = updateSeries(chart, 0, {kind: "bar", label: "Revenue"});
+		chart = updateSeries(chart, 1, {kind: "line", label: "Cost", lineStyle: "dashed", pointRadius: 3});
+		chart = {
+			...chart,
+			title: "Revenue vs cost",
+			caption: "Parsed from an inline CSV by the chart plugin.",
+			options: {...chart.options, xLabel: "Month", yLabel: "GBP"},
+		};
+		const reference = insertChartBlock(editor, chart);
+		flash(reference
+			? "Inserted a combo chart built from a sample CSV."
+			: "The chart block type is not registered (needs primitives >= 0.56.18).");
 	};
 
 	// ---- Diff & merge ---------------------------------------------------
@@ -409,6 +461,15 @@ export const Workspace: React.FC<Props> = ({}) => {
 						<button onClick={diffAgainstSnapshot} disabled={!snapshot}>Diff vs snapshot</button>
 					</div>
 					<p className="workspace-hint">Snapshot the doc, make edits, then open the diff viewer to accept/reject/merge changes.</p>
+				</section>
+
+				<section className="workspace-section">
+					<h3>Charts <span className="workspace-badge">new</span></h3>
+					<div className="workspace-btn-row">
+						<button onClick={insertSampleChart}>Insert sample chart</button>
+						<button onClick={insertEmptyChart}>Insert empty chart</button>
+					</div>
+					<p className="workspace-hint">The chart block is a foundations plugin registered through the editor's additionalPlugins option, so "Chart" also appears in the slash menu and the block-type dropdown of both toolbars. Its settings modal takes a CSV/XLSX upload or a data server URL, and picks the chart type, columns, colours and line styles.</p>
 				</section>
 
 				<section className="workspace-section">
