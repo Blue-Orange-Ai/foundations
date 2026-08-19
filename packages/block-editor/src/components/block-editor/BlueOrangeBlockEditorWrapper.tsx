@@ -92,12 +92,8 @@ const resolveDocumentMode = (
 // the published BlueOrangeDocumentOptions type, so we add it here. Omit-then-add
 // (rather than a plain intersection) keeps this working once primitives declares
 // the option itself; if its signature then differs from ours, the build says so.
-type BlueOrangeEditorOptions = Omit<BlueOrangeDocumentOptions, "fileUploadHandler" | "additionalPlugins"> & {
+type BlueOrangeEditorOptions = Omit<BlueOrangeDocumentOptions, "fileUploadHandler"> & {
 	fileUploadHandler?: BlueOrangeFileUploadHandler,
-	// Extra block types, registered alongside the built-ins rather than
-	// replacing them (primitives >= 0.56.18). Declared here for the same reason
-	// as fileUploadHandler: older published primitives typings do not have it.
-	additionalPlugins?: Array<BlueOrangeDocumentOptionsPlugin>,
 }
 
 /**
@@ -481,7 +477,7 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 			// so registering a chart block never costs the host image, table
 			// or code blocks.
 			const additionalPlugins: Array<BlueOrangeDocumentOptionsPlugin> =
-				((userOptions as BlueOrangeEditorOptions | undefined)?.additionalPlugins ?? []).slice();
+				(userOptions?.additionalPlugins ?? []).slice();
 			if (enableCharts) {
 				additionalPlugins.push(chartPluginEntry(chartPluginOptions));
 			}

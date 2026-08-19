@@ -1,11 +1,11 @@
 // File-upload contract for the block editor.
 //
 // These types used to be imported from @blue-orange-ai/primitives-block-editor,
-// but the published version this package builds against (0.56.10, see the
-// lockfile) does not export them, nor does its `BlueOrangeDocumentOptions`
-// declare `fileUploadHandler` — so the build only succeeded on machines that
-// happened to have a newer primitives release installed locally, and failed in
-// CI where `npm ci` installs the locked version.
+// but no published version to date exports them, nor does its
+// `BlueOrangeDocumentOptions` declare `fileUploadHandler` (still true as of
+// 0.56.18) — so the build only succeeded on machines that happened to have a
+// newer primitives release installed locally, and failed in CI where
+// `npm ci` installs the locked version.
 //
 // Declaring them here decouples the wrapper from the primitives type surface:
 // the handler is passed straight through to the editor at runtime, so the
