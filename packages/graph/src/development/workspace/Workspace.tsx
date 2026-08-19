@@ -47,10 +47,10 @@ const initialNodes: Array<GraphNode> = [
 
 const initialEdges: Array<GraphEdge> = [
 	edge({id: "e1", sourceId: "ingest", targetId: "enrich", sourceAnchorPoint: "right", targetAnchorPoint: "left",
-		label: true, labelText: "stream", labelBackground: "white"}),
+		label: true, labelText: "stream"}),
 	edge({id: "e2", sourceId: "ingest", targetId: "validate", sourceAnchorPoint: "bottom", targetAnchorPoint: "top", style: "step"}),
 	edge({id: "e3", sourceId: "validate", targetId: "archive", sourceAnchorPoint: "right", targetAnchorPoint: "left",
-		label: true, labelText: "batch", labelBackground: "white", lineType: "animated"}),
+		label: true, labelText: "batch", lineType: "animated"}),
 	edge({id: "e4", sourceId: "enrich", targetId: "publish", sourceAnchorPoint: "right", targetAnchorPoint: "left"}),
 	edge({id: "e5", sourceId: "archive", targetId: "notify", sourceAnchorPoint: "right", targetAnchorPoint: "left", lineType: "dashed"}),
 	edge({id: "e6", sourceId: "publish", targetId: "notify", sourceAnchorPoint: "bottom", targetAnchorPoint: "top", style: "straight"})

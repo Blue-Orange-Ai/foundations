@@ -19,7 +19,17 @@ import {
 	Node as GraphNode
 } from "@blue-orange-ai/primitives-graph";
 
-export type ERTheme = "light" | "dark";
+import {GraphTheme, applyGraphTheme, withGraphTheme} from "../utils/GraphTheme";
+
+/**
+ * Colour theme for the diagram. "light" / "dark" pin it; "auto" (and leaving
+ * the prop off) follows the application's dark mode — the `dark` class on
+ * <body> / <html>.
+ */
+export type ERTheme = GraphTheme;
+
+/** The theme actually rendered — what the themeChanged event reports. */
+export type ERResolvedTheme = "light" | "dark";
 
 interface Props {
 	entities?: Array<EREntityInput>,
@@ -27,7 +37,10 @@ interface Props {
 	/** SQL DDL (CREATE TABLE ...) parsed into entities + relationships on mount, merged ahead of `entities` / `relationships`. */
 	sql?: string,
 	options?: EROptions,
-	/** Colour theme. Changing it after mount switches the live diagram over. */
+	/**
+	 * Colour theme. Omit it (or pass "auto") to follow the application's dark
+	 * mode. Changing it after mount switches the live diagram over.
+	 */
 	theme?: ERTheme,
 	instance?: (erDiagram: BlueOrangeERDiagram) => void,
 	entityCreated?: (entity: EREntity | null) => void,
@@ -36,7 +49,7 @@ interface Props {
 	columnClicked?: (detail: ERColumnClickDetail) => void,
 	relationshipCreated?: (relationship: ERRelationship) => void,
 	relationshipClicked?: (detail: ERRelationshipClickDetail) => void,
-	themeChanged?: (theme: ERTheme) => void,
+	themeChanged?: (theme: ERResolvedTheme) => void,
 	entityClicked?: (entity: EREntity | null, node: GraphNode, clickEvent: any) => void,
 	entityDblClick?: (entity: EREntity | null, node: GraphNode, clickEvent: any) => void,
 	entityRightClick?: (entity: EREntity | null, node: GraphNode, clickEvent: any) => void,
@@ -77,13 +90,17 @@ export const BlueOrangeERDiagramWrapper: React.FC<Props> = (props) => {
 				initialEntities = [...parsed.entities, ...entities];
 				initialRelationships = [...parsed.relationships, ...relationships];
 			}
-			const erOptions: EROptions = {
+			// An explicit light / dark theme goes through the ER-specific option
+			// (understood by every version of the component); "auto" goes through
+			// the graph-wide one, which follows the application.
+			const pinned = theme === "light" || theme === "dark" ? theme : undefined;
+			const erOptions: EROptions = withGraphTheme({
 				...(options || {}),
 				er: {
 					...((options && options.er) || {}),
-					...(theme ? { theme: theme } : {})
+					...(pinned ? { theme: pinned } : {})
 				}
-			};
+			}, pinned ? undefined : theme);
 			blueOrangeERDiagramRef.current = new BlueOrangeERDiagram(
 				current,
 				initialEntities,
@@ -131,7 +148,7 @@ export const BlueOrangeERDiagramWrapper: React.FC<Props> = (props) => {
 				}
 			})
 			current.addEventListener("blue-orange-er-theme-changed", (ev: any) => {
-				const changedTheme: ERTheme = ev.detail.theme;
+				const changedTheme: ERResolvedTheme = ev.detail.theme;
 				if (propsRef.current.themeChanged) {
 					propsRef.current.themeChanged(changedTheme);
 				}
@@ -175,10 +192,7 @@ export const BlueOrangeERDiagramWrapper: React.FC<Props> = (props) => {
 	}, []);
 
 	useEffect(() => {
-		const erDiagram = blueOrangeERDiagramRef.current;
-		if (erDiagram != null && theme && erDiagram.theme !== theme) {
-			erDiagram.setTheme(theme);
-		}
+		applyGraphTheme(blueOrangeERDiagramRef.current, theme);
 	}, [theme]);
 
 	return (

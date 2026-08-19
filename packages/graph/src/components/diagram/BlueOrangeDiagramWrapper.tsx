@@ -18,6 +18,8 @@ import {
 	Node as GraphNode
 } from "@blue-orange-ai/primitives-graph";
 
+import {GraphTheme, applyGraphTheme, withGraphTheme} from "../utils/GraphTheme";
+
 export type DiagramAlignMode = "left" | "right" | "center-h" | "top" | "bottom" | "center-v" | string;
 
 export type DiagramDistributeAxis = "horizontal" | "vertical" | string;
@@ -31,6 +33,12 @@ interface Props {
 	shapes?: Array<DiagramShapeInput>,
 	connections?: Array<DiagramConnection>,
 	options?: DiagramOptions,
+	/**
+	 * Pins the diagram to a colour theme. Omit it (or pass "auto") to follow
+	 * the application's dark mode — the `dark` class on <body> / <html>.
+	 * Changing it after mount switches the live diagram over.
+	 */
+	theme?: GraphTheme,
 	instance?: (diagram: BlueOrangeDiagram) => void,
 	/** Invoked when the image tool is placed; return / resolve a descriptor to drop an image. */
 	imageRequested?: (context: DiagramMediaContext) => DiagramImageDescriptor | Promise<DiagramImageDescriptor | null> | null | void,
@@ -62,7 +70,7 @@ interface Props {
 
 export const BlueOrangeDiagramWrapper: React.FC<Props> = (props) => {
 
-	const {shapes=[], connections=[], options, instance} = props;
+	const {shapes=[], connections=[], options, theme, instance} = props;
 
 	const diagramRef = useRef<HTMLDivElement | null>(null);
 
@@ -119,7 +127,7 @@ export const BlueOrangeDiagramWrapper: React.FC<Props> = (props) => {
 				current,
 				shapes,
 				connections,
-				diagramOptions);
+				withGraphTheme(diagramOptions, theme));
 			if (instance) {
 				instance(blueOrangeDiagramRef.current)
 			}
@@ -276,6 +284,10 @@ export const BlueOrangeDiagramWrapper: React.FC<Props> = (props) => {
 			})
 		}
 	}, []);
+
+	useEffect(() => {
+		applyGraphTheme(blueOrangeDiagramRef.current, theme);
+	}, [theme]);
 
 	return (
 		<div ref={diagramRef} className="blue-orange-diagram-parent"></div>

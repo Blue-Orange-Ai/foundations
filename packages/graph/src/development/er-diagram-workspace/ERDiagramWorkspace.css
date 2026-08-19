@@ -72,3 +72,31 @@
     font-size: 11px;
     color: #94a3b8;
 }
+
+/* Dark mode — see DevNav.css. */
+body.dark .er-diagram-workspace-display-window {
+    background-color: #1f1f21;
+}
+
+body.dark .er-diagram-workspace-sidebar {
+    border-left-color: #3f3f42;
+    background-color: #28282a;
+}
+
+body.dark .er-diagram-workspace-controls strong {
+    color: #9a9aa0;
+}
+
+body.dark .er-diagram-workspace-controls button {
+    border-color: #3f3f42;
+    background-color: #2a2a2c;
+    color: #e8e8ea;
+}
+
+body.dark .er-diagram-workspace-controls button:hover {
+    background-color: #3a3a3e;
+}
+
+body.dark .er-diagram-workspace-hints {
+    color: #8a8a90;
+}

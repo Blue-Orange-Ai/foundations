@@ -2,16 +2,29 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 
-// Hoisted so the mock factory (which vitest lifts above the imports) can use it.
-const { constructorCalls } = vi.hoisted(() => ({ constructorCalls: [] as Array<Array<any>> }));
+// Hoisted so the mock factory (which vitest lifts above the imports) can use them.
+const { constructorCalls, themeCalls } = vi.hoisted(() => ({
+	constructorCalls: [] as Array<Array<any>>,
+	themeCalls: [] as Array<string>
+}));
 
 vi.mock('@blue-orange-ai/primitives-graph', () => {
 	class BlueOrangeDiagram {
+		theme = 'light';
 		constructor(...args: Array<any>) {
 			constructorCalls.push(args);
+			// Mirrors the real component: the constructor option decides the
+			// starting theme, so a redundant setTheme is not recorded.
+			const options = args[3];
+			if (options && options.theme) this.theme = options.theme;
 		}
 		getShape(id: string) {
 			return { id: id, type: 'rectangle' };
+		}
+		setTheme(theme: string) {
+			this.theme = theme;
+			themeCalls.push(theme);
+			return this;
 		}
 	}
 	return { BlueOrangeDiagram: BlueOrangeDiagram };
@@ -33,6 +46,21 @@ describe('BlueOrangeDiagramWrapper', () => {
 		expect(createdShapes).toBe(shapes);
 		expect(createdConnections).toBe(connections);
 		expect(options.diagram.showPalette).toBe(false);
+	});
+
+	test('passes a pinned theme through to the diagram and switches it live', () => {
+		constructorCalls.length = 0;
+		themeCalls.length = 0;
+		const { rerender } = render(<BlueOrangeDiagramWrapper theme="dark" />);
+		expect(constructorCalls[0][3].theme).toBe('dark');
+		rerender(<BlueOrangeDiagramWrapper theme="light" />);
+		expect(themeCalls).toEqual(['light']);
+	});
+
+	test('leaves the theme unset so the diagram follows the application', () => {
+		constructorCalls.length = 0;
+		render(<BlueOrangeDiagramWrapper />);
+		expect(constructorCalls[0][3].theme).toBeUndefined();
 	});
 
 	test('hands the created instance back through the instance callback', () => {

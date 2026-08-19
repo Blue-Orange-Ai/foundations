@@ -106,3 +106,49 @@
 .workspace-demo-node-item-heading {
     color: #64748b;
 }
+
+/* Dark mode — see DevNav.css. */
+body.dark .workspace-display-window {
+    background-color: #1f1f21;
+}
+
+body.dark .workspace-sidebar {
+    border-left-color: #3f3f42;
+    background-color: #28282a;
+}
+
+body.dark .workspace-controls strong {
+    color: #9a9aa0;
+}
+
+body.dark .workspace-controls button {
+    border-color: #3f3f42;
+    background-color: #2a2a2c;
+    color: #e8e8ea;
+}
+
+body.dark .workspace-controls button:hover {
+    background-color: #3a3a3e;
+}
+
+body.dark .workspace-hints {
+    color: #8a8a90;
+}
+
+body.dark .workspace-demo-node {
+    background-color: #2a2a2c;
+    border-color: #3f3f42;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+body.dark .workspace-demo-node-heading {
+    color: #e8e8ea;
+}
+
+body.dark .workspace-demo-node-body {
+    color: #cbd5e1;
+}
+
+body.dark .workspace-demo-node-item-heading {
+    color: #9a9aa0;
+}

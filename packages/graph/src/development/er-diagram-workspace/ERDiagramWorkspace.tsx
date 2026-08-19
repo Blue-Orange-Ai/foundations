@@ -39,7 +39,12 @@ CREATE TABLE products (
 
 export const ERDiagramWorkspace: React.FC<Props> = ({}) => {
 
-	const [theme, setTheme] = useState<ERTheme>("light");
+	// Starts on "auto" so the diagram follows the app-wide dark-mode switch in
+	// the nav; the control below pins it, to exercise the other path.
+	const [theme, setTheme] = useState<ERTheme>("auto");
+
+	const nextTheme = (current: ERTheme): ERTheme =>
+		current === "auto" ? "light" : current === "light" ? "dark" : "auto";
 
 	const erRef = useRef<BlueOrangeERDiagram | null>(null);
 
@@ -76,8 +81,8 @@ export const ERDiagramWorkspace: React.FC<Props> = ({}) => {
 				<div className="er-diagram-workspace-sidebar">
 					<div className="er-diagram-workspace-controls">
 						<strong>Theme</strong>
-						<button onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
-							Toggle theme ({theme})
+						<button onClick={() => setTheme(nextTheme(theme))}>
+							Theme: {theme} (click to cycle)
 						</button>
 
 						<strong>Programmatic API</strong>

@@ -35,3 +35,54 @@
 .dev-nav-link-active:hover {
     background-color: #1e293b;
 }
+
+/* Dark mode. The dev app drives it exactly as a consuming app would: the
+   toggle in the nav puts a `dark` class on <body>, which the wrapped
+   primitives components read for themselves. */
+body.dark .dev-nav {
+    border-bottom-color: #3f3f42;
+    background-color: #28282a;
+}
+
+body.dark .dev-nav-title {
+    color: #9a9aa0;
+}
+
+body.dark .dev-nav-link {
+    color: #cbd5e1;
+}
+
+body.dark .dev-nav-link:hover {
+    background-color: #3a3a3e;
+}
+
+body.dark .dev-nav-link-active,
+body.dark .dev-nav-link-active:hover {
+    background-color: #e8e8ea;
+    color: #1e293b;
+}
+
+.dev-nav-theme-toggle {
+    margin-left: auto;
+    border: 1px solid #e2e8f0;
+    background-color: white;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    color: #334155;
+}
+
+.dev-nav-theme-toggle:hover {
+    background-color: #e2e8f0;
+}
+
+body.dark .dev-nav-theme-toggle {
+    border-color: #3f3f42;
+    background-color: #2a2a2c;
+    color: #e8e8ea;
+}
+
+body.dark .dev-nav-theme-toggle:hover {
+    background-color: #3a3a3e;
+}

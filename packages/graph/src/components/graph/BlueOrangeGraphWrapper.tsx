@@ -8,6 +8,10 @@ import '@blue-orange-ai/primitives-graph/dist/css/primitives-graph.min.css'
 
 import { Edge as GraphEdge, Node as GraphNode, GraphOptions } from "@blue-orange-ai/primitives-graph";
 
+import {GraphTheme, applyGraphTheme, withGraphTheme} from "../utils/GraphTheme";
+
+export type {GraphTheme};
+
 export interface GraphRelativePos {
 	x: number,
 	y: number
@@ -17,6 +21,12 @@ interface Props {
 	nodes?: Array<GraphNode>,
 	edges?: Array<GraphEdge>,
 	options?: GraphOptions,
+	/**
+	 * Pins the graph to a colour theme. Omit it (or pass "auto") to follow the
+	 * application's dark mode — the `dark` class on <body> / <html>. Changing
+	 * it after mount switches the live graph over.
+	 */
+	theme?: GraphTheme,
 	instance?: (graph: BlueOrangeGraph) => void,
 	onNodeCreationClick?: (relativePos: GraphRelativePos, scale: number) => void,
 	edgeClicked?: (edge: GraphEdge, clickEvent: any) => void,
@@ -35,6 +45,7 @@ export const BlueOrangeGraphWrapper: React.FC<Props> = ({
 															nodes=[],
 															edges=[],
 															options,
+															theme,
 															instance,
 															onNodeCreationClick,
 															edgeClicked,
@@ -59,7 +70,7 @@ export const BlueOrangeGraphWrapper: React.FC<Props> = ({
 				current,
 				nodes,
 				edges,
-				options);
+				withGraphTheme(options, theme));
 			if (instance) {
 				instance(blueOrangeGraphRef.current)
 			}
@@ -157,6 +168,10 @@ export const BlueOrangeGraphWrapper: React.FC<Props> = ({
 			})
 		}
 	}, []);
+
+	useEffect(() => {
+		applyGraphTheme(blueOrangeGraphRef.current, theme);
+	}, [theme]);
 
 
 	return (

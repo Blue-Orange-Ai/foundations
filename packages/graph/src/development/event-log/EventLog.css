@@ -62,3 +62,35 @@
     color: #334155;
     word-break: break-word;
 }
+
+/* Dark mode — see DevNav.css. */
+body.dark .event-log {
+    border-top-color: #3f3f42;
+}
+
+body.dark .event-log-header {
+    color: #9a9aa0;
+}
+
+body.dark .event-log-clear {
+    border-color: #3f3f42;
+    background-color: #2a2a2c;
+    color: #e8e8ea;
+}
+
+body.dark .event-log-clear:hover {
+    background-color: #3a3a3e;
+}
+
+body.dark .event-log-empty,
+body.dark .event-log-time {
+    color: #8a8a90;
+}
+
+body.dark .event-log-entry {
+    border-bottom-color: #3a3a3e;
+}
+
+body.dark .event-log-text {
+    color: #cbd5e1;
+}
