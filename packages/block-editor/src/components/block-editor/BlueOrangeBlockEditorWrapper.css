@@ -261,15 +261,19 @@
    dark app — restate it here in terms that work on both.
    --------------------------------------------------------------------------- */
 
-[blue-orange-comment-id] {
+/* Scoped through the editor's own class so these win over the primitives
+   stylesheet, which this file is imported before. */
+.blue-orange-block-editor-parent [blue-orange-comment-id] {
     background-color: var(--blue-orange-light-comment-highlight-color, rgba(255, 212, 0, 0.35));
     box-shadow: inset 0 -1px 0 0 var(--blue-orange-light-comment-highlight-border-color, rgba(180, 140, 0, 0.6));
     border-radius: 2px;
 }
 
-.dark [blue-orange-comment-id] {
+.dark .blue-orange-block-editor-parent [blue-orange-comment-id] {
     background-color: var(--blue-orange-dark-comment-highlight-color, rgba(255, 212, 0, 0.22));
     box-shadow: inset 0 -1px 0 0 var(--blue-orange-dark-comment-highlight-border-color, rgba(255, 212, 0, 0.55));
+    /* Primitives darkens the commented text to suit a light page; on a dark
+       one it has to stay the colour the rest of the document is. */
     color: inherit;
 }
 
