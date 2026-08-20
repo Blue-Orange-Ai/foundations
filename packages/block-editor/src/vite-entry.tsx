@@ -1,4 +1,4 @@
-export { BlueOrangeBlockEditorWrapper, DocumentMode } from './components/block-editor/BlueOrangeBlockEditorWrapper';
+export { BlueOrangeBlockEditorWrapper, CommentsLayout, DocumentMode } from './components/block-editor/BlueOrangeBlockEditorWrapper';
 
 // Chart block plugin — registered automatically by the wrapper (see
 // `enableCharts`), and exported so a host building its own editor options can
@@ -7,6 +7,7 @@ export * from './components/block-editor/plugins/chart-plugin';
 export type {
 	BlueOrangeBlockEditorHandle,
 	BlueOrangeBlockEditorWrapperProps,
+	BlueOrangeCommentsLayout,
 	BlueOrangeDocumentMode,
 } from './components/block-editor/BlueOrangeBlockEditorWrapper';
 

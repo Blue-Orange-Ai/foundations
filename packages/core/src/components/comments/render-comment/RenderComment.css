@@ -106,3 +106,53 @@
 .dark .blue-orange-comments-render-body-header-secondary {
     color: #9da5ad;
 }
+
+/* Avatar override. The components already leave the picture out unless
+   `showAvatar` is set; this also covers markup a host renders itself inside a
+   comment tree that has avatars switched off. */
+.blue-orange-comments-hide-avatar .blue-orange-comments-render-avatar-cont {
+    display: none;
+}
+
+.blue-orange-comments-hide-avatar .blue-orange-comments-render-cont-small
+.blue-orange-comments-render-body-cont {
+    padding-left: 0px;
+}
+
+/* Dark mode. `.dark` on an ancestor (the app root, or the comment tree itself
+   when the `dark` prop is set) switches these on. The rules above cover the
+   comment frame; these cover the text, which is otherwise near-black on a dark
+   panel — the reason inline comments were unreadable in a dark app. */
+.dark .blue-orange-comments-render-body {
+    background-color: var(--blue-orange-dark-comments-background-color, transparent);
+    color: var(--blue-orange-dark-comments-color, #f2f2f2);
+}
+
+.dark .blue-orange-comments-render-body-header-title {
+    color: var(--blue-orange-dark-comments-color, #f2f2f2);
+}
+
+.dark .blue-orange-comments-render-body-cont {
+    color: var(--blue-orange-dark-comments-color, #f2f2f2);
+}
+
+.dark .blue-orange-comments-render-body-cont a {
+    color: var(--blue-orange-dark-comments-link-color, #6ba8ff);
+}
+
+.dark .blue-orange-comments-render-body-cont code,
+.dark .blue-orange-comments-render-body-cont pre {
+    background-color: var(--blue-orange-dark-comments-code-background-color, #1e1e20);
+    color: var(--blue-orange-dark-comments-color, #f2f2f2);
+}
+
+.dark .blue-orange-comments-render-body-cont blockquote {
+    border-left: 3px solid var(--blue-orange-dark-default-border-color);
+    color: #9da5ad;
+}
+
+/* When the `dark` prop puts the class on the comment's own root rather than on
+   an app ancestor, the small theme's separator needs the self-selector too. */
+.dark.blue-orange-comments-render-cont-small {
+    border-bottom: 1px solid var(--blue-orange-dark-default-border-color);
+}

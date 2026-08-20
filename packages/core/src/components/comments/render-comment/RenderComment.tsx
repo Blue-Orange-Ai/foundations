@@ -6,15 +6,12 @@ import {ButtonIcon} from "../../buttons/button-icon/ButtonIcon";
 import {Badge} from "../../text-decorations/badge/Badge";
 import {RenderHtml} from "../../text-decorations/render-html/RenderHtml";
 import {ContextMenu, IContextMenuItem, IContextMenuType} from "../../contextmenu/contextmenu/ContextMenu";
-import {Comment, CommentType, Media, Sockets, User} from "@blue-orange-ai/foundations-clients";
-import blueOrangePassportConfig from "../../config/BlueOrangePassportConfig";
-import passport from "../../config/BlueOrangePassportConfig";
+import {Comment, Media, User} from "@blue-orange-ai/foundations-clients";
 import {Skeleton} from "../../loading/skeleton/Skeleton";
 import {RichTextPrompt} from "../../inputs/richtext/prompt/RichTextPrompt";
-import {v4 as uuidv4} from "uuid";
-import commentsInstance from "../../config/BlueOrangeCommentsConfig";
+import {CommentAuthor, CommentsStore} from "../comments-store/CommentsStore";
+import {commentsRootClassNames, useComments} from "../comments-store/CommentsProvider";
 import {RelativeTime} from "../../text-decorations/dates/relative-time/RelativeTime";
-import {TimeDisplay} from "../../text-decorations/dates/time/TimeDisplay";
 
 export enum RenderCommentTheme {
 	LARGE,
@@ -25,12 +22,32 @@ interface Props {
 	theme?: RenderCommentTheme,
 	comment: Comment,
 	editor?: string,
-	onEditing: (commentId: string) => void
+	/** Overrides the store from the nearest provider. */
+	store?: CommentsStore,
+	/** Shows the author's picture. Hidden unless asked for — see CommentsOptions. */
+	showAvatar?: boolean,
+	dark?: boolean,
+	onEditing: (commentId: string) => void,
+	/** Fired after this comment was edited or deleted, so lists can refresh. */
+	onChanged?: () => void
 }
 
-export const RenderComment: React.FC<Props> = ({theme=RenderCommentTheme.LARGE, comment, editor, onEditing}) => {
+export const RenderComment: React.FC<Props> = ({
+												   theme = RenderCommentTheme.LARGE,
+												   comment,
+												   editor,
+												   store,
+												   showAvatar,
+												   dark,
+												   onEditing,
+												   onChanged
+											   }) => {
 
-	const [user, setUser] = useState<User | undefined>(undefined)
+	const options = useComments({store: store, showAvatar: showAvatar, dark: dark});
+
+	const commentsStore = options.store;
+
+	const [user, setUser] = useState<CommentAuthor | undefined>(undefined)
 
 	const [tags, setTags] = useState<Array<string>>(comment.tags ?? [])
 
@@ -54,7 +71,7 @@ export const RenderComment: React.FC<Props> = ({theme=RenderCommentTheme.LARGE, 
 		if (theme == RenderCommentTheme.SMALL) {
 			className += " blue-orange-comments-render-cont-small"
 		}
-		return className;
+		return commentsRootClassNames(className, options);
 	}
 
 	const commentClassName = generateThemeClass();
@@ -81,7 +98,12 @@ export const RenderComment: React.FC<Props> = ({theme=RenderCommentTheme.LARGE, 
 	}
 
 	const getUser = () => {
-		passport.get(comment.userId)
+		if (commentsStore.getUser == undefined) {
+			setUser(undefined);
+			setLoadingUser(false);
+			return;
+		}
+		commentsStore.getUser(comment.userId)
 			.then(user => {
 				setUser(user)
 				setLoadingUser(false);
@@ -103,23 +125,33 @@ export const RenderComment: React.FC<Props> = ({theme=RenderCommentTheme.LARGE, 
 	}
 
 	const updateComment = () => {
-		commentsInstance.update(editableComment.current).then((result: Comment) => {
+		commentsStore.update(editableComment.current).then((result: Comment) => {
 			setEditState(false);
+			onChanged?.();
 		}).catch((reason => console.error(reason)))
 	}
 
 	const deleteComment = () => {
-		commentsInstance.delete(editableComment.current).then(() => {
+		commentsStore.delete(editableComment.current).then(() => {
+			onChanged?.();
 		}).catch((reason => console.error(reason)))
 	}
 
-	const isEditable = () => {
-		commentsInstance.isEditable(comment).then((state: Boolean) => {
-			setEditable(state.valueOf())
-		}).catch((reason => console.error(reason)))
-	}
-
-	isEditable();
+	// Whether this comment may be edited is a question for the store, asked
+	// once per comment rather than on every render.
+	useEffect(() => {
+		let cancelled = false;
+		commentsStore.isEditable(comment)
+			.then((state: boolean) => {
+				if (!cancelled) {
+					setEditable(state);
+				}
+			})
+			.catch((reason => console.error(reason)));
+		return () => {
+			cancelled = true;
+		};
+	}, [comment.id, commentsStore]);
 
 	useEffect(() => {
 		if (editor != comment.id) {
@@ -128,27 +160,37 @@ export const RenderComment: React.FC<Props> = ({theme=RenderCommentTheme.LARGE, 
 	}, [editor]);
 
 	useEffect(() => {
+		setTags(comment.tags ?? []);
+	}, [comment.tags]);
+
+	useEffect(() => {
 		getUser()
-	}, []);
+	}, [comment.userId, commentsStore]);
 
 
 	return (
 		<div className={commentClassName}>
-			<div className="blue-orange-comments-render-avatar-cont">
-				{!loadingUser &&
-					<Avatar user={user} height={generateThemeAvatarHeight()} width={generateThemeAvatarHeight()}></Avatar>
-				}
-				{loadingUser &&
-					<Skeleton style={{height: generateThemeAvatarHeight() + "px", width: generateThemeAvatarHeight() + "px", borderRadius: "50%"}}></Skeleton>
-				}
-
-			</div>
+			{options.showAvatar &&
+				<div className="blue-orange-comments-render-avatar-cont">
+					{!loadingUser &&
+						<Avatar user={user as User | undefined} height={generateThemeAvatarHeight()}
+								width={generateThemeAvatarHeight()}></Avatar>
+					}
+					{loadingUser &&
+						<Skeleton style={{
+							height: generateThemeAvatarHeight() + "px",
+							width: generateThemeAvatarHeight() + "px",
+							borderRadius: "50%"
+						}}></Skeleton>
+					}
+				</div>
+			}
 			<div className="blue-orange-comments-render-body">
 				<div className="blue-orange-comments-render-body-header">
 					<div className="blue-orange-comments-render-body-header-left">
 						{!loadingUser &&
 							<span
-								className="blue-orange-comments-render-body-header-title">{user == undefined ? "Unknown" : user.name}</span>
+								className="blue-orange-comments-render-body-header-title">{user == undefined || user.name == undefined || user.name == "" ? "Unknown" : user.name}</span>
 						}
 						{loadingUser &&
 							<Skeleton style={{height: "1rem", width: "100%"}}></Skeleton>

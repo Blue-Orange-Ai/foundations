@@ -1,20 +1,36 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 
 import './FloatingComments.css'
 import {RenderComment, RenderCommentTheme} from "../render-comment/RenderComment";
 import {RichTextPrompt} from "../../inputs/richtext/prompt/RichTextPrompt";
-import {Comment, CommentType, Media, Sockets} from "@blue-orange-ai/foundations-clients";
-import commentsInstance from "../../config/BlueOrangeCommentsConfig";
-import blueOrangeSocketUri from "../../config/BlueOrangeSocketsConfig";
+import {Comment, CommentType, Media} from "@blue-orange-ai/foundations-clients";
+import {CommentsStore} from "../comments-store/CommentsStore";
+import {BlueOrangeCommentsProvider, commentsRootClassNames, useComments} from "../comments-store/CommentsProvider";
 import {v4 as uuidv4} from 'uuid';
 
 interface Props {
 	topic: string,
 	referenceId?: string,
-	tags?: Array<string>
+	tags?: Array<string>,
+	/** Overrides the store from the nearest provider. */
+	store?: CommentsStore,
+	/** Shows author pictures. Hidden unless asked for — see CommentsOptions. */
+	showAvatar?: boolean,
+	dark?: boolean
 }
 
-export const FloatingComments: React.FC<Props> = ({topic, referenceId="", tags=[]}) => {
+export const FloatingComments: React.FC<Props> = ({
+													  topic,
+													  referenceId = "",
+													  tags = [],
+													  store,
+													  showAvatar,
+													  dark
+												  }) => {
+
+	const options = useComments({store: store, showAvatar: showAvatar, dark: dark});
+
+	const commentsStore = options.store;
 
 	const [comments, setComments] = useState<Array<Comment>>([])
 
@@ -24,15 +40,21 @@ export const FloatingComments: React.FC<Props> = ({topic, referenceId="", tags=[
 
 	const [editableCommentLastSent, setEditableCommentLastSent] = useState<string>("");
 
-	const getComments = () => {
-		commentsInstance.get(topic).then((results: Array<Comment>) => {
-			setComments(comments);
-		})
-	}
+	const getComments = useCallback(() => {
+		commentsStore.get(topic).then((results: Array<Comment>) => {
+			setComments(results ?? []);
+		}).catch(reason => console.error(reason))
+	}, [commentsStore, topic])
 
 	const createComment = () => {
+		const comment = editableComment.current;
+		if (comment == null || (comment.text ?? "").trim() == "") {
+			return;
+		}
 		setEditableCommentLastSent(uuidv4())
-		commentsInstance.create(editableComment.current as Comment).then((result: Comment) => {
+		editableComment.current = null;
+		commentsStore.create(comment).then((result: Comment) => {
+			getComments();
 		}).catch((reason => console.error(reason)))
 	}
 
@@ -58,54 +80,51 @@ export const FloatingComments: React.FC<Props> = ({topic, referenceId="", tags=[
 		}
 	}
 
-	const sockets = new Sockets(
-		blueOrangeSocketUri,
-		() => {
-			console.log("Socket connected")
-			sockets.subscribe('/topic/' + topic, (message: any) => {
-				const comment = JSON.parse(message.body) as Comment;
-				if (comment.type == CommentType.CREATE) {
-					setComments((prevComments) => [...(prevComments || []), comment]);
-				} else if (comment.type == CommentType.UPDATE) {
-					setComments((prevComments) =>
-						prevComments.map((c) =>
-							c.id === comment.id ? { ...c, ...comment } : c
-						)
-					);
-				} else if (comment.type == CommentType.DELETE) {
-					setComments((prevComments) =>
-						prevComments.filter((c) => c.id !== comment.id)
-					);
-				}
-			});
-		}
-	)
+	useEffect(() => {
+		getComments();
+	}, [getComments]);
 
 	useEffect(() => {
-		sockets.connect();
-		return () => {
-			sockets.disconnect();
+		if (commentsStore.subscribe == undefined) {
+			return undefined;
 		}
-		getComments();
-	}, []);
+		return commentsStore.subscribe(topic, (comment: Comment) => {
+			if (comment.type == CommentType.CREATE) {
+				setComments((prevComments) => [...(prevComments || []), comment]);
+			} else if (comment.type == CommentType.UPDATE) {
+				setComments((prevComments) =>
+					prevComments.map((c) =>
+						c.id === comment.id ? {...c, ...comment} : c
+					)
+				);
+			} else if (comment.type == CommentType.DELETE) {
+				setComments((prevComments) =>
+					prevComments.filter((c) => c.id !== comment.id)
+				);
+			}
+		});
+	}, [commentsStore, topic]);
 
 	return (
-		<div className="blue-orange-comments-floating-cont">
-			{comments.map((item, index) => (
-				<RenderComment
-					key={item.id + "-" + index}
-					theme={RenderCommentTheme.SMALL}
-					editor={editingPreviousComments}
-					onEditing={(editor) => setEditingPreviousComments(editor)}
-					comment={item}
-				></RenderComment>
-			))}
-			<RichTextPrompt
-				placeholder={"Add comment..."}
-				focus={true}
-				onChange={processChangeData}
-				onSend={createComment}
-				clearState={editableCommentLastSent}></RichTextPrompt>
-		</div>
+		<BlueOrangeCommentsProvider store={options.store} showAvatar={options.showAvatar} dark={options.dark}>
+			<div className={commentsRootClassNames("blue-orange-comments-floating-cont", options)}>
+				{comments.map((item, index) => (
+					<RenderComment
+						key={item.id + "-" + index}
+						theme={RenderCommentTheme.SMALL}
+						editor={editingPreviousComments}
+						onEditing={(editor) => setEditingPreviousComments(editor)}
+						onChanged={getComments}
+						comment={item}
+					></RenderComment>
+				))}
+				<RichTextPrompt
+					placeholder={"Add comment..."}
+					focus={true}
+					onChange={processChangeData}
+					onSend={createComment}
+					clearState={editableCommentLastSent}></RichTextPrompt>
+			</div>
+		</BlueOrangeCommentsProvider>
 	)
 }
