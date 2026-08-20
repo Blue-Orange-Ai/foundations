@@ -42,10 +42,35 @@ jobs:
             exit 1
           fi
 
+      # `npm ci` is the normal path — it installs exactly what the lockfile
+      # pins. It refuses to run at all when the lockfile has drifted from a
+      # package.json, which happens when a dependency bump is committed
+      # without re-running `npm install`; refreshing a private
+      # @blue-orange-ai/primitives-* entry needs registry credentials the
+      # author may not have locally. Rather than leaving every build red until
+      # someone with a token refreshes it, resolve the bump here with
+      # `npm install` and say so loudly. The corrected lockfile is uploaded by
+      # the next step: download it, commit it, and `npm ci` takes over again.
       - name: Install dependencies
+        id: install
         env:
           NODE_AUTH_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: npm ci
+        run: |
+          if npm ci; then
+            exit 0
+          fi
+          echo "::warning::package-lock.json is out of sync with package.json — installing with"
+          echo "::warning::'npm install' instead. Commit the package-lock.json artifact from this run."
+          npm install --no-audit --no-fund
+          echo "lockfile-refreshed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the refreshed lockfile
+        if: steps.install.outputs.lockfile-refreshed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-lock.json
+          path: package-lock.json
+          if-no-files-found: error
 
       - name: Build all packages
         run: npx lerna run build

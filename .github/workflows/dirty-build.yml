@@ -82,10 +82,21 @@ jobs:
 
       # PAT_TOKEN for the install as well as the publish: the private
       # @blue-orange-ai/primitives-* dependencies live outside this repository.
+      # `npm ci` refuses to run when the lockfile has drifted from a
+      # package.json (a dependency bump committed without re-running
+      # `npm install`). A release must not be blocked by that: fall back to
+      # `npm install`, which resolves the bump for real, and warn. CI on the
+      # pull request publishes the corrected lockfile to commit.
       - name: Install dependencies
         env:
           NODE_AUTH_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: npm ci
+        run: |
+          if npm ci; then
+            exit 0
+          fi
+          echo "::warning::package-lock.json is out of sync with package.json — installing with"
+          echo "::warning::'npm install' instead. Refresh the lockfile on main."
+          npm install --no-audit --no-fund
 
       # --exact pins the internal foundations-* dependencies to this exact
       # prerelease, so a consumer of a dirty build never resolves a sibling
