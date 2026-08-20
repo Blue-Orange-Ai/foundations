@@ -14,3 +14,8 @@
 .dark .blue-orange-comments-floating-cont {
     border: 1px solid var(--blue-orange-dark-default-border-color);
 }
+
+.dark.blue-orange-comments-floating-cont {
+    border: 1px solid var(--blue-orange-dark-default-border-color);
+    color: var(--blue-orange-dark-comments-color, #f2f2f2);
+}

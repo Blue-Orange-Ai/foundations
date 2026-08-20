@@ -130,6 +130,8 @@ export * from './components/comments/floating-comments/FloatingComments';
 export * from './components/comments/full-page-comments/FullPageComments';
 export * from './components/comments/add-comment/AddComment';
 export * from './components/comments/render-comment/RenderComment';
+export * from './components/comments/comments-store/CommentsStore';
+export * from './components/comments/comments-store/CommentsProvider';
 
 // Misc
 export * from './components/loading/loading/Loading';

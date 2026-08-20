@@ -26,6 +26,7 @@ import type {
 import type {BlueOrangeFileUploadHandler} from "./BlueOrangeFileUpload";
 import {CHART_BLOCK_TYPE, chartPluginEntry} from "./plugins/chart-plugin";
 import {
+	ButtonIcon,
 	Drawer,
 	DrawerBody,
 	DrawerHeader,
@@ -35,6 +36,8 @@ import {
 	RenderHtml,
 	Tabs
 } from "@blue-orange-ai/foundations-core";
+// Type-only: the store is passed straight through to the comment components.
+import type {CommentsStore} from "@blue-orange-ai/foundations-core";
 import UnicodeEmoji from "./data/UnicodeEmoji";
 import {PublicUser, User, UserSearchPublicResult, UserSearchResult} from "@blue-orange-ai/foundations-clients";
 import passport from "./config/BlueOrangePassportConfig";
@@ -105,6 +108,28 @@ const editorSupportsChartBlocks = (editor: BlockEditor | null): boolean => {
 	const plugins = (editor as any)?.plugins;
 	return Array.isArray(plugins) && plugins.some((entry: any) => entry?.type === CHART_BLOCK_TYPE);
 }
+
+/**
+ * Where the comment thread for the selected text appears.
+ *
+ * "drawer" slides it in over the document from the right. "split" docks it
+ * beside the document as a resizable pane, so the text stays visible (and
+ * scrollable) while a comment is being written — what a document editor
+ * generally wants.
+ *
+ * Read when the wrapper mounts: the two layouts put the editor element in
+ * different places in the tree, so switching between them remounts the editor.
+ */
+export const CommentsLayout = Object.freeze({
+	DRAWER: "drawer",
+	SPLIT: "split",
+} as const);
+
+export type BlueOrangeCommentsLayout = typeof CommentsLayout[keyof typeof CommentsLayout];
+
+const COMMENTS_PANE_MIN_WIDTH = 280;
+
+const COMMENTS_PANE_MAX_WIDTH = 720;
 
 interface CommentState {
 	display: boolean,
@@ -181,6 +206,26 @@ export interface BlueOrangeBlockEditorWrapperProps {
 	enableMentions?: boolean,
 	enableComments?: boolean,
 	/**
+	 * How the comment thread is presented — a drawer over the document
+	 * (default) or a resizable split pane docked to its right. See
+	 * CommentsLayout; the value is read when the wrapper mounts.
+	 */
+	commentsLayout?: BlueOrangeCommentsLayout,
+	/** Starting width of the split comment pane, in pixels. */
+	commentsPanelWidth?: number,
+	/**
+	 * Where the thread's comments are read from and written to. Defaults to
+	 * the hosted comments service; hosts without one (a desktop app keeping
+	 * comments inside the document file) pass their own store.
+	 */
+	commentsStore?: CommentsStore,
+	/** Shows author pictures in the thread. Hidden unless asked for. */
+	commentsShowAvatar?: boolean,
+	/** Renders the comment thread in dark mode regardless of the app theme. */
+	commentsDark?: boolean,
+	/** Fired whenever the comment panel opens or closes. */
+	onCommentsPanelChange?: (open: boolean, commentIds: Array<string>) => void,
+	/**
 	 * Registers the chart block type, which adds a "Chart" entry to the slash
 	 * menu and the block-type dropdown of both the floating and the fixed
 	 * toolbar. Charts are drawn with foundations-core's chart components and
@@ -226,6 +271,12 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 	fileUploadHandler,
 	enableMentions = true,
 	enableComments = true,
+	commentsLayout = CommentsLayout.DRAWER,
+	commentsPanelWidth = 420,
+	commentsStore,
+	commentsShowAvatar,
+	commentsDark,
+	onCommentsPanelChange,
 	enableCharts = true,
 	chartPluginOptions,
 	template = false,
@@ -287,6 +338,48 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 			commentId: [""]
 		})
 	}
+
+	// The panel open/close callback is announced from an effect rather than
+	// from each setter, so it fires once per actual change however the state
+	// was reached (a new comment, a tooltip click, closing the panel).
+	const onCommentsPanelChangeRef = useRef(onCommentsPanelChange);
+	onCommentsPanelChangeRef.current = onCommentsPanelChange;
+	const commentsPanelOpen = enableComments && commentWindowState.display;
+	useEffect(() => {
+		onCommentsPanelChangeRef.current?.(commentsPanelOpen, commentWindowState.commentId);
+	}, [commentsPanelOpen, commentWindowState.commentId]);
+
+	// Split layout only: the pane's live width, dragged by its left edge.
+	const [commentsPaneWidth, setCommentsPaneWidth] = useState<number>(commentsPanelWidth);
+
+	const commentsPaneResizing = useRef<boolean>(false);
+
+	const splitContainerRef = useRef<HTMLDivElement | null>(null);
+
+	useEffect(() => {
+		if (commentsLayout !== CommentsLayout.SPLIT) {
+			return undefined;
+		}
+		const onMouseMove = (event: MouseEvent) => {
+			if (!commentsPaneResizing.current || splitContainerRef.current == null) {
+				return;
+			}
+			const bounds = splitContainerRef.current.getBoundingClientRect();
+			const next = Math.min(
+				COMMENTS_PANE_MAX_WIDTH,
+				Math.max(COMMENTS_PANE_MIN_WIDTH, bounds.right - event.clientX));
+			setCommentsPaneWidth(next);
+		};
+		const onMouseUp = () => {
+			commentsPaneResizing.current = false;
+		};
+		document.addEventListener('mousemove', onMouseMove);
+		document.addEventListener('mouseup', onMouseUp);
+		return () => {
+			document.removeEventListener('mousemove', onMouseMove);
+			document.removeEventListener('mouseup', onMouseUp);
+		};
+	}, [commentsLayout]);
 
 	const getDisplayName = (user: User | PublicUser) => {
 		if (user.name == undefined || user.name == "") {
@@ -609,26 +702,89 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 	}, [resolvedMode]);
 
 
+	// The comment currently in view. The tab index is clamped, so a group that
+	// shrank (a comment was resolved) cannot leave the panel pointing past the
+	// end of the list.
+	const activeCommentId = commentWindowState.commentId[
+		Math.min(activeCommentPos, Math.max(0, commentWindowState.commentId.length - 1))] ?? "";
+
+	// The parts of the thread both layouts show: a tab per overlapping comment
+	// group, the commented text itself, then the thread. Only built while the
+	// panel is open — cloning the commented element walks the document.
+	const commentGroupTabs = commentsPanelOpen && commentWindowState.commentId.length > 1 &&
+		<Tabs activeTab={activeCommentPos.toString()} onClick={uuid => setActiveCommentPos(+uuid)}>
+			{commentWindowState.commentId.map((commentId, index) => (
+				<Tab key={commentId + "-" + index} uuid={index.valueOf().toString()}
+					 name={"Group " + (index + 1).valueOf()}></Tab>
+			))}
+		</Tabs>;
+
+	const commentTarget = commentsPanelOpen && (
+		<div className="blue-orange-block-editor-comment-target">
+			<RenderHtml html={cloneCommentElement(activeCommentId)}></RenderHtml>
+		</div>
+	);
+
+	const commentThread = commentsPanelOpen && (
+		<div className="blue-orange-block-editor-full-page-comments-cont">
+			<FullPageComments
+				topic={activeCommentId}
+				store={commentsStore}
+				showAvatar={commentsShowAvatar}
+				dark={commentsDark}></FullPageComments>
+		</div>
+	);
+
+	if (commentsLayout === CommentsLayout.SPLIT) {
+		return (
+			<div ref={splitContainerRef}
+				 className={"blue-orange-block-editor-split" + (commentsPanelOpen ? " blue-orange-block-editor-split-open" : "")}>
+				<div className="blue-orange-block-editor-split-main">
+					<div ref={editorRef} className="blue-orange-block-editor-parent"></div>
+				</div>
+				{commentsPanelOpen &&
+					<div className={"blue-orange-block-editor-comments-pane" + (commentsDark ? " dark" : "")}
+						 style={{width: commentsPaneWidth + "px"}}>
+						<div className="blue-orange-block-editor-comments-pane-resizer"
+							 onMouseDown={() => {
+								 commentsPaneResizing.current = true;
+							 }}></div>
+						<div className="blue-orange-block-editor-comments-pane-header">
+							<span className="blue-orange-block-editor-comments-pane-title">Comments</span>
+							<div className="blue-orange-block-editor-comments-pane-actions">
+								<ButtonIcon
+									icon={"ri-check-line"}
+									label={"Resolve comment"}
+									style={{border: "none"}}
+									onClick={() => resolveComment(activeCommentId)}></ButtonIcon>
+								<ButtonIcon
+									icon={"ri-close-line"}
+									label={"Close comments"}
+									style={{border: "none"}}
+									onClick={closeCommentWindow}></ButtonIcon>
+							</div>
+						</div>
+						{commentGroupTabs}
+						{commentTarget}
+						<div className="blue-orange-block-editor-comments-pane-body">
+							{commentThread}
+						</div>
+					</div>
+				}
+			</div>
+		)
+	}
+
 	return (
 		<>
 			<div ref={editorRef} className="blue-orange-block-editor-parent"></div>
-			{enableComments && commentWindowState.display &&
+			{commentsPanelOpen &&
 				<Drawer position={DrawerPosition.RIGHT} width={"450px"} onClose={closeCommentWindow}>
 					<DrawerHeader label={"Comments"} onClose={closeCommentWindow}></DrawerHeader>
-					{commentWindowState.commentId.length > 1 &&
-						<Tabs activeTab={activeCommentPos.toString()} onClick={uuid => setActiveCommentPos(+uuid)}>
-							{commentWindowState.commentId.map((commentId, index) => (
-								<Tab uuid={index.valueOf().toString()} name={"Group " + (index + 1).valueOf()}></Tab>
-							))}
-						</Tabs>
-					}
-					<div className="blue-orange-block-editor-comment-target">
-						<RenderHtml html={cloneCommentElement(commentWindowState.commentId[activeCommentPos])}></RenderHtml>
-					</div>
+					{commentGroupTabs}
+					{commentTarget}
 					<DrawerBody>
-						<div className="blue-orange-block-editor-full-page-comments-cont">
-							<FullPageComments topic={commentWindowState.commentId[activeCommentPos]}></FullPageComments>
-						</div>
+						{commentThread}
 					</DrawerBody>
 				</Drawer>
 			}

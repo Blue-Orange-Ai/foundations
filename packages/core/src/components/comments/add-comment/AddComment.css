@@ -31,3 +31,12 @@
 .blue-orange-comments-add-btn-group {
     margin-top: 20px;
 }
+.blue-orange-comments-hide-avatar .blue-orange-comments-add-avatar-cont {
+    display: none;
+}
+
+/* Dark mode — the heading above the comment box. The box itself is a
+   RichText, which carries its own `.dark` styling. */
+.dark .blue-orange-comments-add-body-header {
+    color: var(--blue-orange-dark-comments-color, #f2f2f2);
+}

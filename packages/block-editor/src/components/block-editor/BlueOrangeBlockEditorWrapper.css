@@ -137,3 +137,158 @@
     padding-top: 15px;
     padding-bottom: 15px;
 }
+/* ---------------------------------------------------------------------------
+   Split comment pane (commentsLayout="split")
+
+   The document keeps its own scroll on the left; the thread is docked beside
+   it and dragged wider or narrower by its left edge.
+   --------------------------------------------------------------------------- */
+
+.blue-orange-block-editor-split {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.blue-orange-block-editor-split-main {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.blue-orange-block-editor-comments-pane {
+    position: relative;
+    flex: 0 0 auto;
+    height: 100%;
+    min-width: 280px;
+    max-width: 720px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-left: 1px solid var(--blue-orange-light-default-border-color);
+    background-color: var(--blue-orange-light-comments-background-color, #ffffff);
+}
+
+.dark .blue-orange-block-editor-comments-pane,
+.blue-orange-block-editor-comments-pane.dark {
+    border-left: 1px solid var(--blue-orange-dark-default-border-color);
+    background-color: var(--blue-orange-dark-comments-background-color, #232325);
+    color: var(--blue-orange-dark-comments-color, #f2f2f2);
+}
+
+/* Drag target for resizing, sitting over the pane's left border. */
+.blue-orange-block-editor-comments-pane-resizer {
+    position: absolute;
+    top: 0;
+    left: -2px;
+    width: 5px;
+    height: 100%;
+    z-index: 1;
+}
+
+.blue-orange-block-editor-comments-pane-resizer:hover {
+    cursor: col-resize;
+    background-color: var(--blue-orange-light-active-border-color);
+}
+
+.dark .blue-orange-block-editor-comments-pane-resizer:hover,
+.blue-orange-block-editor-comments-pane.dark .blue-orange-block-editor-comments-pane-resizer:hover {
+    background-color: var(--blue-orange-dark-active-border-color);
+}
+
+.blue-orange-block-editor-comments-pane-header {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--blue-orange-light-default-border-color);
+}
+
+.dark .blue-orange-block-editor-comments-pane-header,
+.blue-orange-block-editor-comments-pane.dark .blue-orange-block-editor-comments-pane-header {
+    border-bottom: 1px solid var(--blue-orange-dark-default-border-color);
+}
+
+.blue-orange-block-editor-comments-pane-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.blue-orange-block-editor-comments-pane-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+}
+
+.blue-orange-block-editor-comments-pane-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    box-sizing: border-box;
+    padding: 0 12px 12px 12px;
+    overflow: hidden;
+}
+
+/* Inside the pane the thread owns the remaining height (the drawer version
+   reserves room for the drawer's own header instead). */
+.blue-orange-block-editor-comments-pane-body .blue-orange-block-editor-full-page-comments-cont {
+    height: 100%;
+    padding-top: 12px;
+}
+
+.blue-orange-block-editor-comments-pane .blue-orange-block-editor-comment-target {
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    padding: 12px;
+    overflow-x: auto;
+}
+
+/* ---------------------------------------------------------------------------
+   Commented text inside the document
+
+   Primitives marks commented ranges with `blue-orange-comment-id`. Its own
+   highlight is tuned for a light page, which leaves the text unreadable in a
+   dark app — restate it here in terms that work on both.
+   --------------------------------------------------------------------------- */
+
+/* Scoped through the editor's own class so these win over the primitives
+   stylesheet, which this file is imported before. */
+.blue-orange-block-editor-parent [blue-orange-comment-id] {
+    background-color: var(--blue-orange-light-comment-highlight-color, rgba(255, 212, 0, 0.35));
+    box-shadow: inset 0 -1px 0 0 var(--blue-orange-light-comment-highlight-border-color, rgba(180, 140, 0, 0.6));
+    border-radius: 2px;
+}
+
+.dark .blue-orange-block-editor-parent [blue-orange-comment-id] {
+    background-color: var(--blue-orange-dark-comment-highlight-color, rgba(255, 212, 0, 0.22));
+    box-shadow: inset 0 -1px 0 0 var(--blue-orange-dark-comment-highlight-border-color, rgba(255, 212, 0, 0.55));
+    /* Primitives darkens the commented text to suit a light page; on a dark
+       one it has to stay the colour the rest of the document is. */
+    color: inherit;
+}
+
+/* The cloned snippet shown above the thread is lifted straight out of the
+   document, so it arrives with the same highlight — keep it readable there
+   too, whatever the surrounding panel colour is. */
+.blue-orange-block-editor-comment-target [blue-orange-comment-id] {
+    color: inherit;
+}
+
+.blue-orange-block-editor-comment-target > div {
+    max-width: 100%;
+}
+
+.dark .blue-orange-block-editor-comment-floater {
+    background-color: var(--blue-orange-dark-comments-background-color, #232325);
+    color: var(--blue-orange-dark-comments-color, #f2f2f2);
+}

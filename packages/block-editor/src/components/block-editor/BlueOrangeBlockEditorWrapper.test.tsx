@@ -1,5 +1,5 @@
 import React from "react";
-import {act, render, waitFor} from "@testing-library/react";
+import {act, fireEvent, render, waitFor} from "@testing-library/react";
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -91,7 +91,7 @@ vi.mock("@blue-orange-ai/foundations-core", () => {
 			BOTTOM_RIGHT: 5,
 		},
 		Button: ({text}: any) => ReactLib.createElement("button", null, text),
-		ButtonIcon: ({icon}: any) => ReactLib.createElement("button", {"data-icon": icon}),
+		ButtonIcon: ({icon, onClick}: any) => ReactLib.createElement("button", {"data-icon": icon, onClick: onClick}),
 		ButtonType: {PRIMARY: 0, SECONDARY: 1, SUCCESS: 2, DANGER: 3, WARNING: 4, CUSTOM: 5, CLEAR: 6},
 		ButtonSize: {SMALL: "SMALL", MEDIUM: "MEDIUM", LARGE: "LARGE"},
 		ColorPicker: passthrough("color-picker"),
@@ -120,7 +120,7 @@ vi.mock("./config/BlueOrangePassportConfig", () => ({
 vi.mock("codemirror", () => ({__esModule: true, default: {}}));
 
 import {BlockEditor} from "@blue-orange-ai/primitives-block-editor";
-import {BlueOrangeBlockEditorHandle, BlueOrangeBlockEditorWrapper} from "./BlueOrangeBlockEditorWrapper";
+import {BlueOrangeBlockEditorHandle, BlueOrangeBlockEditorWrapper, CommentsLayout} from "./BlueOrangeBlockEditorWrapper";
 
 const MockBlockEditor = BlockEditor as unknown as ReturnType<typeof vi.fn>;
 
@@ -375,6 +375,76 @@ describe("BlueOrangeBlockEditorWrapper — comments", () => {
 		const {container, queryByTestId} = render(<BlueOrangeBlockEditorWrapper enableComments={false}/>);
 		fire(getEditorEl(container), "blue-orange-editor-new-comment-added", {commentUuid: "c1"});
 		expect(queryByTestId("drawer")).not.toBeInTheDocument();
+	});
+
+	it("reports the panel opening and closing", async () => {
+		const onCommentsPanelChange = vi.fn();
+		const {container} = render(
+			<BlueOrangeBlockEditorWrapper onCommentsPanelChange={onCommentsPanelChange}/>);
+
+		expect(onCommentsPanelChange).toHaveBeenLastCalledWith(false, [""]);
+
+		fire(getEditorEl(container), "blue-orange-editor-comment-tooltip-clicked", {commentIds: ["c1", "c2"]});
+
+		await waitFor(() =>
+			expect(onCommentsPanelChange).toHaveBeenLastCalledWith(true, ["c1", "c2"]));
+	});
+});
+
+// ===========================================================================
+
+describe("BlueOrangeBlockEditorWrapper — split comment layout", () => {
+
+	const splitPane = (container: HTMLElement) =>
+		container.querySelector(".blue-orange-block-editor-comments-pane");
+
+	it("docks the thread beside the document instead of in a drawer", async () => {
+		const {container, queryByTestId, findByTestId} = render(
+			<BlueOrangeBlockEditorWrapper commentsLayout={CommentsLayout.SPLIT}/>);
+
+		expect(container.querySelector(".blue-orange-block-editor-split")).toBeInTheDocument();
+		expect(splitPane(container)).not.toBeInTheDocument();
+
+		fire(getEditorEl(container), "blue-orange-editor-new-comment-added", {commentUuid: "c1"});
+
+		expect(await findByTestId("comments")).toHaveAttribute("data-topic", "c1");
+		expect(splitPane(container)).toBeInTheDocument();
+		expect(queryByTestId("drawer")).not.toBeInTheDocument();
+	});
+
+	it("keeps the editor element mounted when the pane opens", async () => {
+		const {container, findByTestId} = render(
+			<BlueOrangeBlockEditorWrapper commentsLayout={CommentsLayout.SPLIT}/>);
+		const editorElement = getEditorEl(container);
+
+		fire(getEditorEl(container), "blue-orange-editor-new-comment-added", {commentUuid: "c1"});
+		await findByTestId("comments");
+
+		// A remount would hand the BlockEditor a detached element.
+		expect(getEditorEl(container)).toBe(editorElement);
+		expect(MockBlockEditor).toHaveBeenCalledTimes(1);
+	});
+
+	it("opens the pane at the requested width", async () => {
+		const {container, findByTestId} = render(
+			<BlueOrangeBlockEditorWrapper commentsLayout={CommentsLayout.SPLIT} commentsPanelWidth={360}/>);
+		fire(getEditorEl(container), "blue-orange-editor-new-comment-added", {commentUuid: "c1"});
+		await findByTestId("comments");
+
+		expect((splitPane(container) as HTMLElement).style.width).toBe("360px");
+	});
+
+	it("resolves the comment and closes the pane from the header", async () => {
+		const {container, findByTestId} = render(
+			<BlueOrangeBlockEditorWrapper commentsLayout={CommentsLayout.SPLIT}/>);
+		fire(getEditorEl(container), "blue-orange-editor-new-comment-added", {commentUuid: "c1"});
+		await findByTestId("comments");
+
+		const resolve = container.querySelector('[data-icon="ri-check-line"]') as HTMLElement;
+		fireEvent.click(resolve);
+
+		expect(latestEditor().resolveComment).toHaveBeenCalledWith("c1");
+		await waitFor(() => expect(splitPane(container)).not.toBeInTheDocument());
 	});
 });
 

@@ -6,3 +6,9 @@
     flex-direction: column;
     gap: 20px;
 }
+/* Dark mode. The container carries `dark` itself when the `dark` prop is set,
+   so `.dark.x` (own element) and `.dark .x` (app root) both have to match. */
+.dark .blue-orange-comments-cont,
+.dark.blue-orange-comments-cont {
+    color: var(--blue-orange-dark-comments-color, #f2f2f2);
+}
