@@ -1,47 +1,41 @@
+/* A sidebar row, shaped like a shadcn menu button: a 32px pill inset 8px from
+   the rail's edge, an icon that never moves, and a label that fades out as the
+   sidebar squeezes down to the icon width.
 
+   Nothing here overrides width or padding for the collapsed state on purpose.
+   `calc(100% - 16px)` already resolves to the 32px icon square once the sidebar
+   is 48px wide, so the row shrinks as one continuous animation with the rail
+   instead of jumping to a second set of sizes. */
 
 .blue-orange-sidebar-body-item {
-    width: calc(100% - 50px);
-    margin-left: 10px;
-    padding-left: 15px;
-    padding-right: 15px;
+    box-sizing: border-box;
+    width: calc(100% - 16px);
+    margin: 0 8px 4px;
+    padding: 0 8px;
+    height: 32px;
+    min-height: 32px;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    border-radius: 6px;
     cursor: pointer;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    border-radius: 8px;
-    overflow-x: hidden;
+    overflow: hidden;
     flex-shrink: 0;
+    text-align: left;
     color: var(--blue-orange-light-sidebar-body-item-text-color);
+    transition: background-color 150ms ease, color 150ms ease;
+}
+
+.blue-orange-sidebar-body-item:last-child {
+    margin-bottom: 0;
 }
 
 .dark .blue-orange-sidebar-body-item {
     color: var(--blue-orange-dark-sidebar-body-item-text-color);
-}
-
-.blue-orange-sidebar-body-item-active {
-    background-color: var(--blue-orange-light-sidebar-body-item-hover-color);
-    opacity: 1;
-}
-
-.dark .blue-orange-sidebar-body-item-active {
-    background-color: var(--blue-orange-dark-sidebar-body-item-hover-color);
-    opacity: 1;
-}
-
-.blue-orange-sidebar-closed .blue-orange-sidebar-body-item {
-    width: 100%;
-    margin-left: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .blue-orange-sidebar-body-item:hover {
@@ -52,16 +46,24 @@
     background-color: var(--blue-orange-dark-sidebar-body-item-hover-color);
 }
 
-.blue-orange-sidebar-body-item-icon {
-    margin-right: 15px;
-    flex-shrink: 0;
+/* Selected shares hover's background and is told apart by weight, so that
+   hovering the selected row does not read as a state change. */
+.blue-orange-sidebar-body-item-active {
+    background-color: var(--blue-orange-light-sidebar-body-item-hover-color);
+    font-weight: 500;
 }
 
-.blue-orange-sidebar-closed .blue-orange-sidebar-body-item-icon {
-    margin-right: 0px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.dark .blue-orange-sidebar-body-item-active {
+    background-color: var(--blue-orange-dark-sidebar-body-item-hover-color);
+}
+
+.blue-orange-sidebar-body-item:focus-visible {
+    outline: 2px solid var(--blue-orange-light-sidebar-ring-color);
+    outline-offset: -1px;
+}
+
+.dark .blue-orange-sidebar-body-item:focus-visible {
+    outline-color: var(--blue-orange-dark-sidebar-ring-color);
 }
 
 .blue-orange-sidebar-body-item-left {
@@ -75,9 +77,21 @@
     overflow: hidden;
 }
 
-.blue-orange-sidebar-closed .blue-orange-sidebar-body-item-left {
+.blue-orange-sidebar-body-item-icon {
     display: flex;
+    align-items: center;
     justify-content: center;
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    line-height: 1;
+    margin-right: 8px;
+    flex-shrink: 0;
+    transition: margin-right var(--blue-orange-sidebar-transition, 200ms linear);
+}
+
+.blue-orange-sidebar-closed .blue-orange-sidebar-body-item-icon {
+    margin-right: 0;
 }
 
 .blue-orange-sidebar-body-item-label {
@@ -86,19 +100,34 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.blue-orange-sidebar-body-item-right {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
+    opacity: 1;
+    transition: opacity var(--blue-orange-sidebar-transition, 200ms linear);
 }
 
 .blue-orange-sidebar-closed .blue-orange-sidebar-body-item-label {
-    display: none;
+    opacity: 0;
+}
+
+/* Badges and hover actions collapse to zero width rather than being hidden, so
+   the icon stays put instead of shifting the moment they disappear. */
+.blue-orange-sidebar-body-item-right {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    min-width: 0;
+    max-width: 50%;
+    padding-left: 8px;
+    overflow: hidden;
+    opacity: 1;
+    transition: opacity var(--blue-orange-sidebar-transition, 200ms linear),
+                max-width var(--blue-orange-sidebar-transition, 200ms linear),
+                padding var(--blue-orange-sidebar-transition, 200ms linear);
 }
 
 .blue-orange-sidebar-closed .blue-orange-sidebar-body-item-right {
-    display: none;
+    max-width: 0;
+    padding-left: 0;
+    opacity: 0;
+    pointer-events: none;
 }
-

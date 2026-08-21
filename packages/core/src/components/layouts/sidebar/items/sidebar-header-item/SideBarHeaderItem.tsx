@@ -28,6 +28,8 @@ export const SideBarHeaderItem: React.FC<Props> = ({
 
 	const [closedHoverState, setClosedHoverState] = useState(false);
 
+	const collapsed = state == SideBarState.CLOSED;
+
 	const changeSideBarState = (state: SideBarState) => {
 		if (changeState) {
 			changeState(state);
@@ -35,55 +37,54 @@ export const SideBarHeaderItem: React.FC<Props> = ({
 	}
 
 	const leftHeaderItemClicked = () => {
+		// Collapsed there is no label left to click, so the header doubles as the
+		// control that reopens the sidebar — the same job the branding square
+		// does in the shadcn rail.
+		if (collapsed) {
+			changeSideBarState(SideBarState.OPEN);
+			return;
+		}
+
 		if (headerItemClicked) {
 			headerItemClicked()
 		}
 	}
 
+	// With no media there is nothing to hover over, so the expand button is the
+	// permanent occupant of the icon slot rather than a hover state.
+	const showExpandButton = collapsed && (media == undefined || closedHoverState);
+
+	// One tree for both states rather than a branch per state: swapping the
+	// markup mid-transition would leave the header jumping while the rail
+	// around it animates.
 	return (
 		<div className="blue-orange-sidebar-header-item no-select">
-			{state == SideBarState.OPEN &&
-				<div className="blue-orange-sidebar-header-item-cont">
-					<div className="blue-orange-sidebar-header-item-left-cont" onClick={leftHeaderItemClicked}>
-						{media != undefined &&
-							<div className="blue-orange-sidebar-header-item-media">
-								<RenderMedia media={(media as Media)} height={32} width={32} borderRadius={"4px"}></RenderMedia>
-							</div>
-						}
-						<div className="blue-orange-sidebar-header-item-media-body" style={labelStyle}>{label}</div>
-					</div>
-					{action &&
-						<div className="blue-orange-sidebar-header-item-action">
-							{action}
-						</div>
-					}
-				</div>
-			}
-			{state == SideBarState.CLOSED &&
-				<div className="blue-orange-sidebar-header-item-small-cont">
-					{media != undefined &&
-						<div
-							onMouseOver={() => setClosedHoverState(true)}
-							onMouseLeave={() => setClosedHoverState(false)}>
-							{closedHoverState &&
+			<div className="blue-orange-sidebar-header-item-cont">
+				<div
+					className="blue-orange-sidebar-header-item-left-cont"
+					onClick={leftHeaderItemClicked}
+					onMouseOver={() => setClosedHoverState(true)}
+					onMouseLeave={() => setClosedHoverState(false)}>
+					{(media != undefined || collapsed) &&
+						<div className="blue-orange-sidebar-header-item-media">
+							{showExpandButton &&
 								<ButtonIcon
 									icon="ri-arrow-right-double-fill"
 									onClick={() => changeSideBarState(SideBarState.OPEN)}></ButtonIcon>
 							}
-							<div style={{"display": !closedHoverState ? "unset" : "none"}}>
-								<RenderMedia media={(media as Media)} height={32} width={32} borderRadius={"4px"}></RenderMedia>
-							</div>
+							{!showExpandButton && media != undefined &&
+								<RenderMedia media={(media as Media)} height={32} width={32} borderRadius={"8px"}></RenderMedia>
+							}
 						</div>
 					}
-					{media == undefined &&
-						<div className="blue-orange-sidebar-header-item-media">
-							<ButtonIcon
-								icon="ri-arrow-right-double-fill"
-								onClick={() => changeSideBarState(SideBarState.OPEN)}></ButtonIcon>
-						</div>
-					}
+					<div className="blue-orange-sidebar-header-item-media-body" style={labelStyle}>{label}</div>
 				</div>
-			}
+				{action &&
+					<div className="blue-orange-sidebar-header-item-action">
+						{action}
+					</div>
+				}
+			</div>
 		</div>
 	)
 }

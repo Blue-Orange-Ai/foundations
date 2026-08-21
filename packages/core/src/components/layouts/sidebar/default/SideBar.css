@@ -1,38 +1,84 @@
+/* The rail is modelled on the shadcn sidebar: an open width the user can drag,
+   a fixed icon width to collapse to, and one linear 200ms transition that every
+   part of the sidebar animates on so the whole thing moves as a single piece.
+
+   Both widths live in custom properties. The open width is the one the resize
+   handle writes to inline, which is why the collapsed state has to override
+   `width` rather than the property — an inline custom property outranks any
+   class rule. */
 
 .blue-orange-sidebar {
+    --blue-orange-sidebar-open-width: 256px;
+    --blue-orange-sidebar-icon-width: 48px;
+    --blue-orange-sidebar-transition: 200ms linear;
+    --blue-orange-sidebar-inset: 8px;
+
+    position: relative;
+    box-sizing: border-box;
     height: 100vh;
-    width: 300px;
-    border-right: 1px solid var(--blue-orange-light-sidebar-border-color);
-    background-color: var(--blue-orange-light-sidebar-background-color);
+    width: var(--blue-orange-sidebar-open-width);
+    min-width: var(--blue-orange-sidebar-open-width);
+    max-width: var(--blue-orange-sidebar-open-width);
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    min-width: 250px;
-    max-width: 700px;
+    border-right: 1px solid var(--blue-orange-light-sidebar-border-color);
+    background-color: var(--blue-orange-light-sidebar-background-color);
+    color: var(--blue-orange-light-sidebar-body-item-text-color);
+    transition: width var(--blue-orange-sidebar-transition),
+                min-width var(--blue-orange-sidebar-transition),
+                max-width var(--blue-orange-sidebar-transition);
 }
 
 .dark .blue-orange-sidebar {
-    border-right: 2px solid var(--blue-orange-dark-sidebar-border-color);
+    border-right: 1px solid var(--blue-orange-dark-sidebar-border-color);
     background-color: var(--blue-orange-dark-sidebar-background-color);
+    color: var(--blue-orange-dark-sidebar-body-item-text-color);
 }
 
 .blue-orange-sidebar-closed {
-    max-width: 52px;
-    min-width: 52px;
+    width: var(--blue-orange-sidebar-icon-width);
+    min-width: var(--blue-orange-sidebar-icon-width);
+    max-width: var(--blue-orange-sidebar-icon-width);
 }
 
+/* Dragging the handle changes the width on every mouse move, so the collapse
+   transition has to be out of the way — it would otherwise chase the cursor a
+   fifth of a second behind. */
+.blue-orange-sidebar-resizing,
+.blue-orange-sidebar-resizing * {
+    transition: none !important;
+}
+
+/* Resize handle. A wide invisible hit area straddling the border, with a
+   hairline that only shows up under the cursor. */
 .blue-orange-sidebar-control {
     position: absolute;
+    top: 0;
+    right: -8px;
+    z-index: 20;
     height: 100%;
-    width: 4px;
-    right: -2px;
-}
-
-.blue-orange-sidebar-control:hover {
-    background-color: var(--blue-orange-light-sidebar-control-color);
+    width: 16px;
     cursor: col-resize;
 }
 
-.dark .blue-orange-sidebar-control:hover {
+.blue-orange-sidebar-control::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+    background-color: transparent;
+    transition: background-color 150ms ease;
+}
+
+.blue-orange-sidebar-control:hover::after {
+    background-color: var(--blue-orange-light-sidebar-control-color);
+}
+
+.dark .blue-orange-sidebar-control:hover::after {
     background-color: var(--blue-orange-dark-sidebar-control-color);
 }
 
@@ -40,48 +86,112 @@
     display: none;
 }
 
+/* Header, body and footer are only vertical padding — the horizontal inset is
+   carried by the items themselves, so that a collapsed sidebar leaves exactly
+   the icon square (48px - 2 * 8px) whichever section an item sits in. */
 .blue-orange-sidebar-header {
     width: 100%;
+    box-sizing: border-box;
+    padding: var(--blue-orange-sidebar-inset) 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 0;
 }
 
 .blue-orange-sidebar-body {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    min-height: 0;
     overflow: hidden;
 }
 
+/* Collapses to nothing rather than unmounting, so the filter slides away with
+   the sidebar instead of vanishing a frame before it. */
 .blue-orange-sidebar-body-filter {
-    padding: 8px;
-    border-bottom: 1px solid var(--blue-orange-light-sidebar-border-color);
+    box-sizing: border-box;
+    padding: 0 var(--blue-orange-sidebar-inset) var(--blue-orange-sidebar-inset);
+    flex-shrink: 0;
+    max-height: 96px;
+    opacity: 1;
+    overflow: hidden;
+    transition: max-height var(--blue-orange-sidebar-transition),
+                padding var(--blue-orange-sidebar-transition),
+                opacity var(--blue-orange-sidebar-transition);
 }
 
-.dark .blue-orange-sidebar-body-filter {
-    border-bottom: 1px solid var(--blue-orange-dark-sidebar-border-color);
+.blue-orange-sidebar-closed .blue-orange-sidebar-body-filter {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .blue-orange-sidebar-body-list {
     flex-grow: 1;
+    min-height: 0;
+    box-sizing: border-box;
+    padding: var(--blue-orange-sidebar-inset) 0;
     overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+}
+
+.blue-orange-sidebar-body-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.blue-orange-sidebar-body-list::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: var(--blue-orange-light-sidebar-border-color);
+}
+
+.dark .blue-orange-sidebar-body-list::-webkit-scrollbar-thumb {
+    background-color: var(--blue-orange-dark-sidebar-border-color);
 }
 
 .blue-orange-sidebar-body-empty {
-    padding: 10px;
+    box-sizing: border-box;
+    margin: 0 var(--blue-orange-sidebar-inset);
+    padding: 8px;
     font-size: 12px;
-    opacity: 0.7;
+    color: var(--blue-orange-light-sidebar-muted-text-color);
+}
+
+.dark .blue-orange-sidebar-body-empty {
+    color: var(--blue-orange-dark-sidebar-muted-text-color);
 }
 
 .blue-orange-sidebar-body-empty-search-state {
-    padding: 10px;
+    box-sizing: border-box;
+    margin: 0 var(--blue-orange-sidebar-inset);
+    padding: 8px;
     font-size: 12px;
-    opacity: 0.7;
+    border-radius: 6px;
+    color: var(--blue-orange-light-sidebar-muted-text-color);
     background-color: var(--blue-orange-light-sidebar-empty-search-state-background-color);
 }
 
 .dark .blue-orange-sidebar-body-empty-search-state {
+    color: var(--blue-orange-dark-sidebar-muted-text-color);
     background-color: var(--blue-orange-dark-sidebar-empty-search-state-background-color);
 }
 
 .blue-orange-sidebar-footer {
     width: 100%;
+    box-sizing: border-box;
+    padding: var(--blue-orange-sidebar-inset) 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .blue-orange-sidebar,
+    .blue-orange-sidebar * {
+        transition: none !important;
+    }
 }

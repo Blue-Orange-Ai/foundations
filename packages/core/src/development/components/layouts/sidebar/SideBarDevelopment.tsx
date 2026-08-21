@@ -68,9 +68,11 @@ export const SideBarDevelopment: React.FC<Props> = ({}) => {
 		<PaddedPage>
 			<PageHeading>Side Bar</PageHeading>
 			<Paragraph>
-				The navigation rail used by the workspace. It collapses to icons, can be dragged wider, and filters its
-				own items. Labels never wrap — anything too long for the current width is cut off with an ellipsis, so
-				try the long labels switch and then drag the sidebar's right edge.
+				The navigation rail used by the workspace. It collapses to a 48px icon rail, can be dragged wider, and
+				filters its own items. Collapsing and reopening is one continuous animation — the rows squeeze down to
+				their icons, group headings slide up under the row above, and badges close to nothing rather than
+				blinking out. Labels never wrap — anything too long for the current width is cut off with an ellipsis,
+				so try the long labels switch and then drag the sidebar's right edge.
 			</Paragraph>
 
 			<div className="sidebar-dev-controls">
@@ -150,6 +152,22 @@ export const SideBarDevelopment: React.FC<Props> = ({}) => {
 								icon={icon("ri-book-2-line")}
 								active={false}
 								focused={false}></SideBarBodyItemLink>
+
+							<SideBarBodyGroup opened={true}>
+								<SideBarBodyLabel label={label("Security", "Security and access control")}></SideBarBodyLabel>
+								<SideBarBodyItem
+									label={label("Tokens", "API tokens issued to this workspace")}
+									icon={icon("ri-key-2-line")}
+									active={active === "tokens"}
+									focused={false}
+									onClick={() => setActive("tokens")}></SideBarBodyItem>
+								<SideBarBodyItem
+									label={label("Audit log", "Audit log of every change made here")}
+									icon={icon("ri-history-line")}
+									active={active === "audit"}
+									focused={false}
+									onClick={() => setActive("audit")}></SideBarBodyItem>
+							</SideBarBodyGroup>
 						</SideBarBodyGroup>
 					</SideBarBody>
 					<SideBarFooter>

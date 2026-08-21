@@ -1,31 +1,51 @@
-
+/* Group heading. Small, muted and sentence-cased rather than the shouted
+   uppercase it used to be — in the shadcn sidebar the heading is a quiet
+   divider between menus, not a second level of emphasis. */
 
 .blue-orange-sidebar-body-label {
-    width: 100%;
     box-sizing: border-box;
-    padding-left: 15px;
-    padding-right: 15px;
+    width: calc(100% - 16px);
+    margin: 0 8px 4px;
+    padding: 0 8px;
+    height: 32px;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    height: 42px;
-    text-transform: uppercase;
-    font-weight: 700;
-    font-size: 0.8rem;
-    color: var(--blue-orange-light-sidebar-body-item-text-color)
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+    opacity: 1;
+    color: var(--blue-orange-light-sidebar-muted-text-color);
+    transition: margin-top var(--blue-orange-sidebar-transition, 200ms linear),
+                opacity var(--blue-orange-sidebar-transition, 200ms linear);
 }
 
 .dark .blue-orange-sidebar-body-label {
-    color: var(--blue-orange-dark-sidebar-body-item-text-color)
+    color: var(--blue-orange-dark-sidebar-muted-text-color);
 }
 
+/* Collapsed the heading is pulled up under the row above rather than hidden, so
+   the items below slide up into its place instead of snapping. The offset has
+   to cancel the label's own height plus its bottom margin. */
 .blue-orange-sidebar-closed .blue-orange-sidebar-body-label {
-    display: none;
+    margin-top: -36px;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .blue-orange-sidebar-body-label-icon {
-    margin-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    line-height: 1;
+    margin-right: 8px;
     flex-shrink: 0;
 }
 
@@ -49,8 +69,9 @@
 }
 
 .blue-orange-sidebar-body-label-right {
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    padding-left: 8px;
 }
-
