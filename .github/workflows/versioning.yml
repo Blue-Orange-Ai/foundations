@@ -45,15 +45,34 @@ jobs:
       # PAT_TOKEN, not GITHUB_TOKEN: pushes and releases made with GITHUB_TOKEN
       # do not trigger further workflows, which would leave release-publish.yml
       # (and every downstream package publish) waiting forever.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           ref: main
           token: ${{ secrets.PAT_TOKEN }}
 
-      - uses: actions/setup-node@v4
+      # registry-url + scope write the npm.pkg.github.com auth line into the
+      # runner's npmrc. The Lerna step below needs it: `lerna version` runs
+      # `npm install --package-lock-only` to sync the lockfile, and when the
+      # lockfile has drifted npm re-resolves against the registry — including
+      # the private @blue-orange-ai/primitives-* packages, which 401 without
+      # a token (this is what killed the v0.4.11 run).
+      - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@blue-orange-ai'
+
+      - name: Check registry credentials
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          if [ -z "$PAT_TOKEN" ]; then
+            echo "::error::secrets.PAT_TOKEN is not set. It is needed to push the release and to"
+            echo "::error::read the private @blue-orange-ai/primitives-* packages when Lerna"
+            echo "::error::re-syncs the lockfile. See .github/workflows/README.md."
+            exit 1
+          fi
 
       - name: Configure Git
         run: |
@@ -131,9 +150,17 @@ jobs:
       # Run through npx rather than `npm ci` to avoid installing the whole
       # workspace (private @blue-orange-ai/primitives-* deps included) just to
       # rewrite version numbers; the pin matches the root devDependency.
+      #
+      # NODE_AUTH_TOKEN because Lerna finishes the bump by regenerating the
+      # lockfile with npm, which may need to re-resolve the private
+      # primitives-* packages (see the setup-node comment above). A useful
+      # side effect: if the lockfile on main had drifted, the release commit
+      # carries a fully re-synced one.
       - name: Bump all packages with Lerna
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          npx --yes lerna@8.1.9 version "${{ steps.new_version.outputs.plain_version }}" \
+          npx --yes lerna@8.2.4 version "${{ steps.new_version.outputs.plain_version }}" \
             --force-publish \
             --no-push \
             --yes \
