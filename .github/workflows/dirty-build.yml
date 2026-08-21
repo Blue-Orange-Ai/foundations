@@ -40,15 +40,15 @@ jobs:
       contains(github.event.head_commit.message, '[dirty]')
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           ref: ${{ github.ref_name }}
           token: ${{ secrets.PAT_TOKEN }}
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
           cache: npm
           registry-url: 'https://npm.pkg.github.com'
           scope: '@blue-orange-ai'
@@ -82,16 +82,27 @@ jobs:
 
       # PAT_TOKEN for the install as well as the publish: the private
       # @blue-orange-ai/primitives-* dependencies live outside this repository.
+      # A dirty build is a throwaway prerelease, so a lockfile that has
+      # drifted from the manifests should not block it — fall back to a
+      # fresh resolution rather than failing the publish.
       - name: Install dependencies
         env:
           NODE_AUTH_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: npm ci
+        run: |
+          if ! npm ci; then
+            echo "::warning::npm ci failed — package-lock.json is out of sync with the package.json manifests. Falling back to npm install for this dirty build."
+            npm install --no-audit --no-fund
+          fi
 
       # --exact pins the internal foundations-* dependencies to this exact
       # prerelease, so a consumer of a dirty build never resolves a sibling
       # package to a different build. --no-git-tag-version keeps Lerna out of
       # git; the commit and tag below are made deliberately.
+      # NODE_AUTH_TOKEN because Lerna finishes the bump by regenerating the
+      # lockfile with npm, which may need the private primitives-* packages.
       - name: Set dirty version with Lerna
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           npx lerna version "${{ steps.dirty_version.outputs.version }}" \
             --force-publish \

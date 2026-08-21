@@ -43,14 +43,14 @@ jobs:
 
       # fetch-depth: 0 brings every tag along, which the dist-tag decision below
       # needs in order to tell a current release from an old-line patch.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           ref: ${{ steps.tag.outputs.tag }}
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
           cache: npm
           registry-url: 'https://npm.pkg.github.com'
           scope: '@blue-orange-ai'

@@ -17,12 +17,18 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+      # PAT_TOKEN (when present) rather than the default token so the
+      # lockfile auto-sync below can push a commit that starts a fresh CI
+      # run — pushes authored with GITHUB_TOKEN trigger no workflows.
+      - uses: actions/checkout@v5
         with:
-          node-version: '20'
+          token: ${{ secrets.PAT_TOKEN || github.token }}
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
           cache: npm
           registry-url: 'https://npm.pkg.github.com'
           scope: '@blue-orange-ai'
@@ -42,10 +48,31 @@ jobs:
             exit 1
           fi
 
-      - name: Install dependencies
+      # npm ci is strict: any drift between the package.json manifests and
+      # package-lock.json (a dependency bumped without regenerating the lock,
+      # or a lockfile regenerated without access to the private registry)
+      # aborts before a single package is built. continue-on-error keeps the
+      # job alive so the steps below can fall back, still produce the full
+      # build and test signal, and hand back a repaired lockfile — the run is
+      # failed explicitly at the end instead.
+      - name: Install dependencies (npm ci)
+        id: install
+        continue-on-error: true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: npm ci
+
+      # Fallback: resolve afresh from the manifests. If this fails too, the
+      # problem is not lockfile drift (bad credential, impossible version
+      # range, registry outage) and the job stops here with npm's real error.
+      - name: Install dependencies (npm install fallback)
+        id: fallback
+        if: steps.install.outcome == 'failure'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          echo "::warning::npm ci failed — package-lock.json does not match the package.json manifests. Falling back to npm install so the build and tests still run; the job is marked failed at the end."
+          npm install --no-audit --no-fund
 
       - name: Build all packages
         run: npx lerna run build
@@ -60,3 +87,69 @@ jobs:
       # exits non-zero when any package fails; it just reports them all at once.
       - name: Test all packages
         run: npx lerna run test --ignore @blue-orange-ai/foundations-clients --no-bail -- --passWithNoTests
+
+      # The recovery steps below run under always() so a build or test failure
+      # does not hide the repaired lockfile, and vice versa.
+      #
+      # Regenerating the lockfile needs credentials for the private
+      # primitives-* packages, which contributors and dependency bots often
+      # lack — that is usually how the drift happened in the first place. CI
+      # does have them, so hand the corrected file back: as an artifact here,
+      # and as a commit on the PR branch below.
+      - name: Upload regenerated package-lock.json
+        if: always() && steps.fallback.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: synced-package-lock
+          path: package-lock.json
+
+      # On a same-repo pull request, push the synced lockfile straight onto
+      # the PR branch: the push (authored with PAT_TOKEN) starts a fresh CI
+      # run that installs cleanly. The file is regenerated in a worktree of
+      # the PR head — not the merge ref this job checked out — so it matches
+      # the branch's own manifests exactly and a re-run produces no diff,
+      # which is what makes commit loops impossible. Fork PRs and pushes to
+      # main get the artifact above instead.
+      - name: Push synced lockfile to the PR branch
+        if: >-
+          always() && steps.fallback.outcome == 'success' &&
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PAT_TOKEN }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin "refs/heads/$HEAD_REF"
+          git worktree add "$RUNNER_TEMP/lockfile-sync" FETCH_HEAD
+          cd "$RUNNER_TEMP/lockfile-sync"
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          if git diff --quiet -- package-lock.json; then
+            echo "package-lock.json is already in sync on $HEAD_REF — nothing to push."
+          else
+            git add package-lock.json
+            git commit -m "chore(ci): sync package-lock.json with package.json"
+            git push origin "HEAD:refs/heads/$HEAD_REF"
+            echo "::notice::Pushed a synced package-lock.json to $HEAD_REF — a fresh CI run for that commit has started."
+          fi
+
+      # The run must stay red on drift even though the build and tests ran:
+      # a green check would let the stale lockfile merge and break npm ci on
+      # main and in every release workflow.
+      - name: Fail the run — lockfile out of sync
+        if: always() && steps.install.outcome == 'failure' && steps.fallback.outcome == 'success'
+        run: |
+          {
+            echo "## package-lock.json is out of sync"
+            echo
+            echo "\`npm ci\` rejected the lockfile, so this run built and tested against a fresh"
+            echo "\`npm install\` resolution instead. The corrected lockfile is available:"
+            echo
+            echo "- on a same-repo PR it was pushed to the branch automatically (see the step above);"
+            echo "- otherwise download the \`synced-package-lock\` artifact from this run and commit it,"
+            echo "  or run \`npm install\` locally with credentials for npm.pkg.github.com"
+            echo "  (see .github/workflows/README.md) and commit the result."
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::error::package-lock.json is out of sync with the package.json manifests. Build and tests ran against a fresh resolution; commit the synced lockfile (auto-pushed on same-repo PRs, otherwise the synced-package-lock artifact) to make npm ci pass."
+          exit 1

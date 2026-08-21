@@ -39,15 +39,32 @@ jobs:
     steps:
       # PAT_TOKEN so that the tag and Release created here trigger
       # release-publish.yml (GITHUB_TOKEN-authored events do not).
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           ref: ${{ github.ref_name }}
           token: ${{ secrets.PAT_TOKEN }}
 
-      - uses: actions/setup-node@v4
+      # registry-url + scope write the npm.pkg.github.com auth line into the
+      # runner's npmrc for the Lerna step below — `lerna version` regenerates
+      # the lockfile with npm, which needs the private
+      # @blue-orange-ai/primitives-* packages when the lockfile has drifted.
+      - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@blue-orange-ai'
+
+      - name: Check registry credentials
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          if [ -z "$PAT_TOKEN" ]; then
+            echo "::error::secrets.PAT_TOKEN is not set. It is needed to push the release and to"
+            echo "::error::read the private @blue-orange-ai/primitives-* packages when Lerna"
+            echo "::error::re-syncs the lockfile. See .github/workflows/README.md."
+            exit 1
+          fi
 
       - name: Configure Git
         run: |
@@ -123,9 +140,13 @@ jobs:
 
       # Same Lerna mechanics as versioning.yml: rewrites lerna.json, all 16
       # package.json files and the internal ^X.Y.Z ranges, then commits + tags.
+      # NODE_AUTH_TOKEN for the lockfile regeneration Lerna runs at the end
+      # (see the setup-node comment above).
       - name: Bump all packages with Lerna
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          npx --yes lerna@8.1.9 version "${{ steps.maintenance_version.outputs.plain_version }}" \
+          npx --yes lerna@8.2.4 version "${{ steps.maintenance_version.outputs.plain_version }}" \
             --force-publish \
             --no-push \
             --yes \
