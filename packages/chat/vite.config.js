@@ -24,6 +24,9 @@ export default defineConfig({
     },
     build: {
         lib: {
+            // Vite 6 names the emitted CSS after the package (foundations-*.css)
+            // by default; consumers import <pkg>/dist/style.css, so keep that name.
+            cssFileName: "style",
             entry: resolve(__dirname, "src/vite-entry.tsx"),
             name: "chat",
             formats: ["es", "umd"],
