@@ -1,15 +1,40 @@
-
-
+/* Top level groups sit flush — the heading already separates them, so there is
+   nothing to indent against. */
 .blue-orange-sidebar-body-group {
-    padding-left: 10px;
-    width: 100%;
     box-sizing: border-box;
+    width: 100%;
+    margin-bottom: 4px;
 }
 
-/* Collapsed the sidebar shows nothing but icons, so the group indentation is
-   dropped — it would nudge nested icons off centre, and compound with every
-   level of nesting. */
-.blue-orange-sidebar-closed .blue-orange-sidebar-body-group {
-    padding-left: 0px;
+.blue-orange-sidebar-body-group:last-child {
+    margin-bottom: 0;
+}
+
+/* A nested group is marked by a hairline rail rather than by padding alone, the
+   way the shadcn sub-menu is. Indentation on its own stops reading as nesting
+   after the second level; the rail keeps the relationship visible however deep
+   the tree goes. */
+.blue-orange-sidebar-body-group .blue-orange-sidebar-body-group {
+    width: calc(100% - 16px);
+    margin-left: 16px;
+    padding-left: 8px;
+    border-left: 1px solid var(--blue-orange-light-sidebar-border-color);
+    transition: width var(--blue-orange-sidebar-transition, 200ms linear),
+                margin-left var(--blue-orange-sidebar-transition, 200ms linear),
+                padding-left var(--blue-orange-sidebar-transition, 200ms linear),
+                border-left-color var(--blue-orange-sidebar-transition, 200ms linear);
+}
+
+.dark .blue-orange-sidebar-body-group .blue-orange-sidebar-body-group {
+    border-left-color: var(--blue-orange-dark-sidebar-border-color);
+}
+
+/* Collapsed the sidebar shows nothing but icons, so the nesting rail and its
+   indentation are dropped — they would nudge nested icons off centre, and
+   compound with every level of nesting. */
+.blue-orange-sidebar-closed .blue-orange-sidebar-body-group .blue-orange-sidebar-body-group {
     width: 100%;
+    margin-left: 0;
+    padding-left: 0;
+    border-left-color: transparent;
 }

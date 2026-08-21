@@ -125,15 +125,14 @@
     color: #cfc3cf;
 }
 
-/* Resize control */
+/* Resize control. The core control paints its hairline in ::after, so the chat
+   colour has to go on the same pseudo-element — putting it on the element would
+   flood the whole 16px hit area. */
 .blue-orange-chat-sidebar-wrapper .blue-orange-sidebar-control {
-    position: absolute;
-    top: 0;
-    right: -2px;
     z-index: 10;
 }
 
-.blue-orange-chat-sidebar-wrapper .blue-orange-sidebar-control:hover {
+.blue-orange-chat-sidebar-wrapper .blue-orange-sidebar-control:hover::after {
     background-color: #1264A3;
 }
 

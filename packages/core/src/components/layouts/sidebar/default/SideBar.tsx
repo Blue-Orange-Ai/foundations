@@ -18,6 +18,13 @@ export enum SideBarState {
 	OPEN
 }
 
+/** Narrowest and widest the open sidebar can be dragged to. */
+const MIN_OPEN_WIDTH = 250;
+const MAX_OPEN_WIDTH = 700;
+
+/** Width an open sidebar starts at when the user has never resized one. */
+const DEFAULT_OPEN_WIDTH = 256;
+
 interface Props {
 	children: React.ReactNode;
 	state: SideBarState,
@@ -183,9 +190,16 @@ export const SideBar: React.FC<Props> = ({
 		return results;
 	})();
 
-	const sidebarCookie = Cookies.get("sidebar-width");
+	const clampWidth = (value: number) => Math.max(MIN_OPEN_WIDTH, Math.min(MAX_OPEN_WIDTH, value));
 
-	const initialWidth = sidebarCookie ? +sidebarCookie : 300;
+	const sidebarCookie = Number(Cookies.get("sidebar-width"));
+
+	// A cookie written by an older build — or by hand — can hold anything, and an
+	// out of range width now lands straight on min-width/max-width rather than
+	// being clamped by the stylesheet.
+	const initialWidth = Number.isFinite(sidebarCookie) && sidebarCookie > 0
+		? clampWidth(sidebarCookie)
+		: DEFAULT_OPEN_WIDTH;
 
 	const sidebarRef = useRef<HTMLDivElement | null>(null);
 
@@ -197,51 +211,70 @@ export const SideBar: React.FC<Props> = ({
 
 	const [width, setWidth] = useState(initialWidth);
 
+	// Drives the class that switches the width transition off. Dragging retargets
+	// the width on every mouse move, and a transition would leave the edge
+	// trailing the cursor for the whole drag.
+	const [resizing, setResizing] = useState<boolean>(false);
+
 	const changeSidebarState = (state: SideBarState) => {
 		if (changeState) {
 			changeState(state);
 		}
 	}
 
-	const handleMouseDown = () => {
+	// Widths are measured from the sidebar's own left edge rather than the
+	// viewport's, so a sidebar that is not flush against the window still
+	// resizes to the width the cursor is pointing at.
+	const widthAtPointer = (ev: MouseEvent) => {
+		const left = sidebarRef.current?.getBoundingClientRect().left ?? 0;
+		return ev.clientX - left;
+	}
+
+	const handleMouseDown = (ev: MouseEvent) => {
 		if (resizable) {
+			ev.preventDefault();
 			moving.current = true;
+			setResizing(true);
 		}
 	}
 
 	const handleMouseUp = (ev: MouseEvent) => {
 		if (moving.current) {
-			const targetWidth = Math.max(250, Math.min(700, ev.x))
+			const targetWidth = clampWidth(widthAtPointer(ev))
+			setWidth(targetWidth);
 			Cookies.set("sidebar-width", targetWidth.toString());
 		}
 		moving.current = false
+		setResizing(false);
 	}
 
 	const handleMouseMove = (ev: MouseEvent) => {
-		if (moving.current && sidebarRef.current && SideBarState.OPEN) {
-			setWidth(ev.x);
+		if (!moving.current) {
+			return;
 		}
-		if (moving.current && ev.x < closeWidth && sideBarState.current == SideBarState.OPEN) {
+
+		const pointerWidth = widthAtPointer(ev);
+
+		if (sidebarRef.current) {
+			setWidth(clampWidth(pointerWidth));
+		}
+		if (pointerWidth < closeWidth && sideBarState.current == SideBarState.OPEN) {
 			changeSidebarState(SideBarState.CLOSED);
-		} else if (moving.current && ev.x > openWidth && sideBarState.current == SideBarState.CLOSED) {
-			console.log("OPEN Sidebar")
+		} else if (pointerWidth > openWidth && sideBarState.current == SideBarState.CLOSED) {
 			changeSidebarState(SideBarState.OPEN);
 		}
 	}
 
 	useEffect(() => {
-		if (sidebarControlRef.current) {
-			sidebarControlRef.current?.addEventListener('mousedown', handleMouseDown)
-		}
+		const control = sidebarControlRef.current;
 
+		control?.addEventListener('mousedown', handleMouseDown);
 		document.addEventListener('mousemove', handleMouseMove);
 		document.addEventListener('mouseup', handleMouseUp);
 		return () => {
-			if (sidebarControlRef.current) {
-				sidebarControlRef.current?.addEventListener('mousedown', handleMouseDown)
-			}
-			document.addEventListener('mousemove', handleMouseMove);
-			document.addEventListener('mouseup', handleMouseUp);
+			control?.removeEventListener('mousedown', handleMouseDown);
+			document.removeEventListener('mousemove', handleMouseMove);
+			document.removeEventListener('mouseup', handleMouseUp);
 		}
 	}, []);
 
@@ -256,15 +289,34 @@ export const SideBar: React.FC<Props> = ({
 		expandGroupsOnCollapse: expandGroupsOnCollapse
 	}), [state, expandGroupsOnCollapse]);
 
+	const classNames = ["blue-orange-sidebar"];
+
+	if (state != SideBarState.OPEN) {
+		classNames.push("blue-orange-sidebar-closed");
+	}
+
+	if (resizing) {
+		classNames.push("blue-orange-sidebar-resizing");
+	}
+
+	// The width goes out as a custom property rather than as `width` so that the
+	// collapsed rule can still take the element down to the icon rail — an
+	// inline `width` would outrank it. The icon width is left to the stylesheet
+	// for the same reason: nothing inline, so a consumer can retheme it.
+	const widthStyle = {
+		"--blue-orange-sidebar-open-width": width + "px"
+	} as React.CSSProperties;
+
 	return (
 		<SideBarContext.Provider value={sidebarContext}>
 			<div
 				ref={sidebarRef}
-				className={state == SideBarState.OPEN ? "blue-orange-sidebar" : "blue-orange-sidebar blue-orange-sidebar-closed"}
-				style={{width: width + "px"}}>
+				className={classNames.join(" ")}
+				data-state={state == SideBarState.OPEN ? "expanded" : "collapsed"}
+				style={widthStyle}>
 				<div className="blue-orange-sidebar-header">{headerItems}</div>
 				<div className="blue-orange-sidebar-body">
-					{filter && state == SideBarState.OPEN &&
+					{filter &&
 						<div className="blue-orange-sidebar-body-filter">
 							<Input
 								value={bodySearchQuery}

@@ -1,30 +1,50 @@
+/* The header row is the sidebar's tallest control — a 48px pill holding a 32px
+   media square, the same proportions as the shadcn header button. It carries no
+   divider of its own; the header's spacing is what separates it from the menu
+   below. */
 
 .blue-orange-sidebar-header-item {
-    width: 100%;
+    box-sizing: border-box;
+    width: calc(100% - 16px);
+    margin: 0 8px;
     display: flex;
     flex-direction: row;
-    height: 42px;
-    border-bottom: 1px solid var(--blue-orange-light-sidebar-header-item-border-color);
     align-items: center;
-    justify-content: center;
-    color: var(--blue-orange-light-sidebar-body-item-text-color)
+    color: var(--blue-orange-light-sidebar-body-item-text-color);
 }
 
 .dark .blue-orange-sidebar-header-item {
-    border-bottom: 1px solid var(--blue-orange-dark-sidebar-header-item-border-color);
-    color: var(--blue-orange-dark-sidebar-body-item-text-color)
+    color: var(--blue-orange-dark-sidebar-body-item-text-color);
 }
 
 .blue-orange-sidebar-header-item-cont {
-    padding-left: 15px;
-    padding-right: 15px;
-    width: 100%;
     box-sizing: border-box;
+    width: 100%;
+    height: 48px;
+    padding: 8px;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    border-radius: 8px;
+    overflow: hidden;
     cursor: pointer;
+    transition: padding var(--blue-orange-sidebar-transition, 200ms linear),
+                background-color 150ms ease;
+}
+
+.blue-orange-sidebar-header-item-cont:hover {
+    background-color: var(--blue-orange-light-sidebar-body-item-hover-color);
+}
+
+.dark .blue-orange-sidebar-header-item-cont:hover {
+    background-color: var(--blue-orange-dark-sidebar-body-item-hover-color);
+}
+
+/* Collapsed the row is exactly the icon square, so the padding has to go or the
+   32px media would not fit inside the 32px that is left of the rail. */
+.blue-orange-sidebar-closed .blue-orange-sidebar-header-item-cont {
+    padding: 0;
 }
 
 .blue-orange-sidebar-header-item-left-cont {
@@ -38,27 +58,68 @@
 }
 
 .blue-orange-sidebar-header-item-media {
-    margin-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-right: 8px;
     flex-shrink: 0;
+    transition: margin-right var(--blue-orange-sidebar-transition, 200ms linear);
 }
 
+.blue-orange-sidebar-closed .blue-orange-sidebar-header-item-media,
 .blue-orange-sidebar-header-item-small-cont .blue-orange-sidebar-header-item-media {
-    margin-right: 0px;
+    margin-right: 0;
+}
+
+/* The expand button stands in for the media in the same 32px slot, so it drops
+   its own chrome and takes the slot's size. */
+.blue-orange-sidebar-header-item-media .blue-orange-default-btn-icon {
+    width: 32px;
+    height: 32px;
+    border-color: transparent;
+    border-radius: 8px;
 }
 
 .blue-orange-sidebar-header-item-media-body {
     flex-grow: 1;
-    font-size: 1.2rem;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 500;
     min-width: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    opacity: 1;
+    transition: opacity var(--blue-orange-sidebar-transition, 200ms linear);
 }
 
+.blue-orange-sidebar-closed .blue-orange-sidebar-header-item-media-body {
+    opacity: 0;
+}
+
+/* Collapses to zero width rather than unmounting so the media square does not
+   shift sideways the instant the action disappears. */
 .blue-orange-sidebar-header-item-action {
-    margin-left: 15px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
     flex-shrink: 0;
+    min-width: 0;
+    max-width: 50%;
+    padding-left: 8px;
+    overflow: hidden;
+    opacity: 1;
+    transition: opacity var(--blue-orange-sidebar-transition, 200ms linear),
+                max-width var(--blue-orange-sidebar-transition, 200ms linear),
+                padding var(--blue-orange-sidebar-transition, 200ms linear);
+}
+
+.blue-orange-sidebar-closed .blue-orange-sidebar-header-item-action {
+    max-width: 0;
+    padding-left: 0;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .blue-orange-sidebar-header-item-small-cont {

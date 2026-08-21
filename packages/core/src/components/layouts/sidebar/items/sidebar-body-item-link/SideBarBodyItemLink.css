@@ -1,50 +1,38 @@
-
+/* Same shape as SideBarBodyItem — a link and a button in the sidebar are the
+   same control to the reader, so they share every measurement and only differ
+   in the element they render. */
 
 .blue-orange-sidebar-body-item-link {
-    width: calc(100% - 50px);
-    margin-left: 10px;
-    padding-left: 15px;
-    padding-right: 15px;
+    box-sizing: border-box;
+    width: calc(100% - 16px);
+    margin: 0 8px 4px;
+    padding: 0 8px;
+    height: 32px;
+    min-height: 32px;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    font-size: 0.8rem;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    border-radius: 6px;
     cursor: pointer;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    border-radius: 8px;
-    overflow-x: hidden;
+    overflow: hidden;
+    flex-shrink: 0;
+    text-align: left;
+    text-decoration: none;
     color: var(--blue-orange-light-sidebar-body-item-text-color);
-    opacity: 0.6;
-    text-decoration: none;  /* Remove underline */
-    color: inherit;         /* Inherit color from parent element */
     font-family: inherit;
+    transition: background-color 150ms ease, color 150ms ease;
+}
+
+.blue-orange-sidebar-body-item-link:last-child {
+    margin-bottom: 0;
 }
 
 .dark .blue-orange-sidebar-body-item-link {
     color: var(--blue-orange-dark-sidebar-body-item-text-color);
-}
-
-.blue-orange-sidebar-body-item-link-active {
-    background-color: var(--blue-orange-light-sidebar-body-item-hover-color);
-    opacity: 1;
-}
-
-.dark .blue-orange-sidebar-body-item-link-active {
-    background-color: var(--blue-orange-dark-sidebar-body-item-hover-color);
-    opacity: 1;
-}
-
-.blue-orange-sidebar-closed .blue-orange-sidebar-body-item-link {
-    width: 100%;
-    margin-left: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .blue-orange-sidebar-body-item-link:hover {
@@ -55,16 +43,22 @@
     background-color: var(--blue-orange-dark-sidebar-body-item-hover-color);
 }
 
-.blue-orange-sidebar-body-item-link-icon {
-    margin-right: 15px;
-    flex-shrink: 0;
+.blue-orange-sidebar-body-item-link-active {
+    background-color: var(--blue-orange-light-sidebar-body-item-hover-color);
+    font-weight: 500;
 }
 
-.blue-orange-sidebar-closed .blue-orange-sidebar-body-item-link-icon {
-    margin-right: 0px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.dark .blue-orange-sidebar-body-item-link-active {
+    background-color: var(--blue-orange-dark-sidebar-body-item-hover-color);
+}
+
+.blue-orange-sidebar-body-item-link:focus-visible {
+    outline: 2px solid var(--blue-orange-light-sidebar-ring-color);
+    outline-offset: -1px;
+}
+
+.dark .blue-orange-sidebar-body-item-link:focus-visible {
+    outline-color: var(--blue-orange-dark-sidebar-ring-color);
 }
 
 .blue-orange-sidebar-body-item-link-left {
@@ -78,9 +72,21 @@
     overflow: hidden;
 }
 
-.blue-orange-sidebar-closed .blue-orange-sidebar-body-item-link-left {
+.blue-orange-sidebar-body-item-link-icon {
     display: flex;
+    align-items: center;
     justify-content: center;
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    line-height: 1;
+    margin-right: 8px;
+    flex-shrink: 0;
+    transition: margin-right var(--blue-orange-sidebar-transition, 200ms linear);
+}
+
+.blue-orange-sidebar-closed .blue-orange-sidebar-body-item-link-icon {
+    margin-right: 0;
 }
 
 .blue-orange-sidebar-body-item-link-label {
@@ -89,19 +95,32 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.blue-orange-sidebar-body-item-link-right {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
+    opacity: 1;
+    transition: opacity var(--blue-orange-sidebar-transition, 200ms linear);
 }
 
 .blue-orange-sidebar-closed .blue-orange-sidebar-body-item-link-label {
-    display: none;
+    opacity: 0;
+}
+
+.blue-orange-sidebar-body-item-link-right {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    min-width: 0;
+    max-width: 50%;
+    padding-left: 8px;
+    overflow: hidden;
+    opacity: 1;
+    transition: opacity var(--blue-orange-sidebar-transition, 200ms linear),
+                max-width var(--blue-orange-sidebar-transition, 200ms linear),
+                padding var(--blue-orange-sidebar-transition, 200ms linear);
 }
 
 .blue-orange-sidebar-closed .blue-orange-sidebar-body-item-link-right {
-    display: none;
+    max-width: 0;
+    padding-left: 0;
+    opacity: 0;
+    pointer-events: none;
 }
-
