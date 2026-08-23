@@ -1,0 +1,49 @@
+.foundations-map-marker-badge {
+    position: absolute;
+    right: 0;
+    box-sizing: border-box;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+    background-color: var(--blue-orange-light-map-marker-badge-background-color, #276ef1);
+    color: var(--blue-orange-light-map-marker-badge-color, #ffffff);
+    transition: all 300ms cubic-bezier(0.2, 0.8, 0.4, 1);
+}
+
+.dark .foundations-map-marker-badge {
+    background-color: var(--blue-orange-dark-map-marker-badge-background-color, #276ef1);
+    color: var(--blue-orange-dark-map-marker-badge-color, #ffffff);
+}
+
+.foundations-map-marker-badge-x-small {
+    height: 8px;
+    width: 8px;
+    border-radius: 50%;
+}
+
+.foundations-map-marker-badge-small {
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+}
+
+.foundations-map-marker-badge-medium-text {
+    height: 20px;
+    padding: 0 8px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.foundations-map-marker-badge-medium-icon {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

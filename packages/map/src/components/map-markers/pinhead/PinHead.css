@@ -1,0 +1,83 @@
+.foundations-pin-head-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* The two colour custom properties are set by whichever `kind` class sits
+   above this element; the nested fallbacks are the `default` kind, so a pin
+   head still paints correctly when it is used on its own. */
+.foundations-pin-head {
+    display: grid;
+    align-items: center;
+    gap: 8px;
+    box-sizing: border-box;
+    white-space: nowrap;
+    background-color: var(--foundations-map-marker-background, var(--blue-orange-light-map-marker-background-color, #0a0a0a));
+    color: var(--foundations-map-marker-foreground, var(--blue-orange-light-map-marker-color, #ffffff));
+}
+
+.dark .foundations-pin-head {
+    background-color: var(--foundations-map-marker-background, var(--blue-orange-dark-map-marker-background-color, #fafafa));
+    color: var(--foundations-map-marker-foreground, var(--blue-orange-dark-map-marker-color, #0a0a0a));
+}
+
+/* A fixed head is a pill: the radius is the full height. */
+.foundations-pin-head-fixed {
+    padding: 0 12px;
+    border-radius: 9999px;
+}
+
+/* A floating head is a card that hangs off its anchor. */
+.foundations-pin-head-floating {
+    padding: 0 8px;
+}
+
+/* A head with a single icon and no label collapses to a circle. */
+.foundations-pin-head-circle {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+}
+
+.foundations-pin-head-anchor-outer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    background-color: var(--foundations-map-marker-background, var(--blue-orange-light-map-marker-background-color, #0a0a0a));
+}
+
+.dark .foundations-pin-head-anchor-outer {
+    background-color: var(--foundations-map-marker-background, var(--blue-orange-dark-map-marker-background-color, #fafafa));
+}
+
+.foundations-pin-head-anchor-inner {
+    background-color: var(--foundations-map-marker-foreground, var(--blue-orange-light-map-marker-color, #ffffff));
+}
+
+.dark .foundations-pin-head-anchor-inner {
+    background-color: var(--foundations-map-marker-foreground, var(--blue-orange-dark-map-marker-color, #0a0a0a));
+}
+
+.foundations-pin-head-round {
+    border-radius: 50%;
+}
+
+.foundations-pin-head-label-slot {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.foundations-pin-head-label {
+    /* No truncation: the head is free to grow, and a clipped label on a map
+       reads as a rendering fault rather than as a design. */
+    overflow: visible;
+}
+
+.foundations-pin-head-secondary-label {
+    opacity: 0.7;
+}

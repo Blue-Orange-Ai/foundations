@@ -1,0 +1,44 @@
+.marker-gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.marker-gallery-sample {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 6px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background-color: white;
+    overflow: hidden;
+}
+
+/* Markers are drawn at their natural size and several of them overflow their
+   own box on purpose (label enhancers, badges, anchors), so the stage gives
+   them room rather than clipping them. */
+.marker-gallery-sample-stage {
+    height: 74px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Markers whose content reaches well outside their own box get the full width. */
+.marker-gallery-sample-wide {
+    grid-column: 1 / -1;
+}
+
+.marker-gallery-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.marker-gallery-sample-name {
+    font-size: 10px;
+    color: #94a3b8;
+    text-align: center;
+}

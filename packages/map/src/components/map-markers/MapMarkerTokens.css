@@ -1,0 +1,88 @@
+/*
+ * Shared tokens for every map marker. A `kind` class resolves the pair of
+ * local custom properties that the pin head, needle and drag shadow all read,
+ * so a marker only has to pick its kind once on the root element. Passing an
+ * explicit `color` / `background` sets the same two properties inline.
+ */
+
+.foundations-map-marker-kind-default {
+    --foundations-map-marker-background: var(--blue-orange-light-map-marker-background-color, #0a0a0a);
+    --foundations-map-marker-foreground: var(--blue-orange-light-map-marker-color, #ffffff);
+}
+
+.dark .foundations-map-marker-kind-default {
+    --foundations-map-marker-background: var(--blue-orange-dark-map-marker-background-color, #fafafa);
+    --foundations-map-marker-foreground: var(--blue-orange-dark-map-marker-color, #0a0a0a);
+}
+
+.foundations-map-marker-kind-accent {
+    --foundations-map-marker-background: var(--blue-orange-light-map-marker-accent-background-color, #276ef1);
+    --foundations-map-marker-foreground: var(--blue-orange-light-map-marker-accent-color, #ffffff);
+}
+
+.dark .foundations-map-marker-kind-accent {
+    --foundations-map-marker-background: var(--blue-orange-dark-map-marker-accent-background-color, #276ef1);
+    --foundations-map-marker-foreground: var(--blue-orange-dark-map-marker-accent-color, #ffffff);
+}
+
+.foundations-map-marker-kind-negative {
+    --foundations-map-marker-background: var(--blue-orange-light-map-marker-negative-background-color, #e11900);
+    --foundations-map-marker-foreground: var(--blue-orange-light-map-marker-negative-color, #ffffff);
+}
+
+.dark .foundations-map-marker-kind-negative {
+    --foundations-map-marker-background: var(--blue-orange-dark-map-marker-negative-background-color, #e11900);
+    --foundations-map-marker-foreground: var(--blue-orange-dark-map-marker-negative-color, #ffffff);
+}
+
+.foundations-map-marker-kind-surface {
+    --foundations-map-marker-background: var(--blue-orange-light-map-marker-surface-background-color, #ffffff);
+    --foundations-map-marker-foreground: var(--blue-orange-light-map-marker-surface-color, #0a0a0a);
+}
+
+.dark .foundations-map-marker-kind-surface {
+    --foundations-map-marker-background: var(--blue-orange-dark-map-marker-surface-background-color, #28282a);
+    --foundations-map-marker-foreground: var(--blue-orange-dark-map-marker-surface-color, #ffffff);
+}
+
+/* Every marker sits on the map, so it always carries a lift shadow. */
+.foundations-map-marker-shadow {
+    box-shadow: var(--blue-orange-map-marker-shadow, 0 2px 6px rgba(0, 0, 0, 0.28));
+}
+
+/* Label typography, stepped with the pin head size. */
+.foundations-map-marker-label-small {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+}
+
+.foundations-map-marker-label-medium {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+}
+
+.foundations-map-marker-label-large {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 500;
+}
+
+/* Slot an enhancer draws into. The font size is the icon size so that icon
+   fonts scale with the pin head. */
+.foundations-map-marker-enhancer-slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--foundations-map-marker-foreground, var(--blue-orange-light-map-marker-color, #ffffff));
+}
+
+.dark .foundations-map-marker-enhancer-slot {
+    color: var(--foundations-map-marker-foreground, var(--blue-orange-dark-map-marker-color, #0a0a0a));
+}
+
+.foundations-map-marker-enhancer-slot > svg {
+    display: block;
+}
