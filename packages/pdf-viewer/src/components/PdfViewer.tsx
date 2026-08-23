@@ -18,7 +18,7 @@
  * // ref.current?.goToPage(3); ref.current?.highlightSelection();
  * ```
  */
-import React, { forwardRef, useEffect, useMemo, useState } from 'react';
+import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 
 import { usePdfiumEngine } from '@embedpdf/engines/react';
 import { EmbedPDF } from '@embedpdf/core/react';
@@ -73,6 +73,9 @@ const useResolvedTheme = (theme: PdfTheme): 'light' | 'dark' => {
 
 export const PdfViewer = forwardRef<PdfViewerApi, PdfViewerProps>((props, ref) => {
 	const config = resolveConfig(props);
+	// The root element is what gets fullscreened, so the theme class, the CSS
+	// custom properties and the whole chrome come along with it.
+	const rootRef = useRef<HTMLDivElement | null>(null);
 	const resolvedTheme = useResolvedTheme(config.theme);
 
 	const { engine, isLoading, error } = usePdfiumEngine({
@@ -109,7 +112,7 @@ export const PdfViewer = forwardRef<PdfViewerApi, PdfViewerProps>((props, ref) =
 	const rootStyle: React.CSSProperties = { height: '100%', ...props.style };
 
 	return (
-		<div className={rootClass} style={rootStyle}>
+		<div ref={rootRef} className={rootClass} style={rootStyle}>
 			{error ? (
 				<div className="blue-orange-pdf-status blue-orange-pdf-status-error">
 					<i className="ri-error-warning-line" style={{ fontSize: 32 }} />
@@ -122,7 +125,12 @@ export const PdfViewer = forwardRef<PdfViewerApi, PdfViewerProps>((props, ref) =
 				</div>
 			) : (
 				<EmbedPDF engine={engine} plugins={plugins}>
-					<PdfInner props={props} engine={engine} externalRef={ref} />
+					<PdfInner
+						props={props}
+						engine={engine}
+						externalRef={ref}
+						rootRef={rootRef}
+					/>
 				</EmbedPDF>
 			)}
 		</div>

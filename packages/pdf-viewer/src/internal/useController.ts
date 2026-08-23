@@ -28,7 +28,6 @@ import { useHistoryCapability } from '@embedpdf/plugin-history/react';
 import { useSearch } from '@embedpdf/plugin-search/react';
 import { useExportCapability } from '@embedpdf/plugin-export/react';
 import { usePrintCapability } from '@embedpdf/plugin-print/react';
-import { useFullscreen } from '@embedpdf/plugin-fullscreen/react';
 import { useDocumentManagerCapability } from '@embedpdf/plugin-document-manager/react';
 
 import type {
@@ -88,6 +87,7 @@ export interface ControllerArgs {
 	props: PdfViewerProps;
 	apiRef: Ref<PdfViewerApi>;
 	openSignatureDialog: () => void;
+	toggleFullscreen: () => void;
 }
 
 export const usePdfViewerController = ({
@@ -96,6 +96,7 @@ export const usePdfViewerController = ({
 	props,
 	apiRef,
 	openSignatureDialog,
+	toggleFullscreen,
 }: ControllerArgs) => {
 	const scroll = useScroll(documentId);
 	const zoom = useZoom(documentId);
@@ -109,7 +110,6 @@ export const usePdfViewerController = ({
 	const search = useSearch(documentId);
 	const exporter = useExportCapability();
 	const printer = usePrintCapability();
-	const fullscreen = useFullscreen();
 	const documents = useDocumentManagerCapability();
 
 	/** Latest resolved selection, kept current for the synchronous getSelection(). */
@@ -639,7 +639,7 @@ export const usePdfViewerController = ({
 			},
 
 			/* misc */
-			toggleFullscreen: () => fullscreen.provides?.toggleFullscreen(),
+			toggleFullscreen,
 			openUrl: (url, name) => {
 				documents.provides?.openDocumentUrl({
 					url,
@@ -667,7 +667,7 @@ export const usePdfViewerController = ({
 		search.provides,
 		exporter.provides,
 		printer.provides,
-		fullscreen.provides,
+		toggleFullscreen,
 		documents.provides,
 		documentId,
 		applyOrder,

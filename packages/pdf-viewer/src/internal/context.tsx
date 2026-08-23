@@ -4,6 +4,7 @@
  * (side panel + signature dialog) that several sibling components need.
  */
 import React, { createContext, useContext } from 'react';
+import type { PdfFullscreen } from './useFullscreen';
 import type {
 	PdfScrollMode,
 	PdfSidePanelTab,
@@ -109,6 +110,10 @@ export interface PdfViewerContextValue {
 	setActiveSidePanelTab: (tab: PdfSidePanelTab) => void;
 	signatureDialogOpen: boolean;
 	setSignatureDialogOpen: (open: boolean) => void;
+	/** Fullscreen control for the viewer root element. */
+	fullscreen: PdfFullscreen;
+	/** The viewer root element — portal target while fullscreen. */
+	rootRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 const PdfViewerContext = createContext<PdfViewerContextValue | null>(null);

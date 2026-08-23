@@ -17,7 +17,6 @@ import { ZoomPluginPackage } from '@embedpdf/plugin-zoom';
 import { RotatePluginPackage } from '@embedpdf/plugin-rotate';
 import { SpreadPluginPackage } from '@embedpdf/plugin-spread';
 import { PanPluginPackage } from '@embedpdf/plugin-pan';
-import { FullscreenPluginPackage } from '@embedpdf/plugin-fullscreen';
 import { DocumentManagerPluginPackage } from '@embedpdf/plugin-document-manager';
 import { SelectionPluginPackage } from '@embedpdf/plugin-selection';
 import { AnnotationPluginPackage } from '@embedpdf/plugin-annotation';
@@ -83,10 +82,6 @@ export const buildPlugins = (config: ResolvedConfig) => {
 
 	if (config.enablePan) {
 		plugins.push(createPluginRegistration(PanPluginPackage, {}));
-	}
-
-	if (config.enableFullscreen) {
-		plugins.push(createPluginRegistration(FullscreenPluginPackage, {}));
 	}
 
 	if (needsSelection) {

@@ -16,7 +16,6 @@ import { useAnnotation } from '@embedpdf/plugin-annotation/react';
 import { useHistoryCapability } from '@embedpdf/plugin-history/react';
 import { useExportCapability } from '@embedpdf/plugin-export/react';
 import { usePrintCapability } from '@embedpdf/plugin-print/react';
-import { useFullscreen } from '@embedpdf/plugin-fullscreen/react';
 
 import { usePdfViewerContext } from './context';
 import { toZoomLevel, toSpreadMode, fromSpreadMode } from './mappings';
@@ -32,6 +31,7 @@ export const PdfToolbar: React.FC = () => {
 		activeSidePanelTab,
 		setActiveSidePanelTab,
 		setSignatureDialogOpen,
+		fullscreen,
 	} = usePdfViewerContext();
 
 	const docId = documentId ?? '';
@@ -43,7 +43,6 @@ export const PdfToolbar: React.FC = () => {
 	const history = useHistoryCapability();
 	const exporter = useExportCapability();
 	const printer = usePrintCapability();
-	const fullscreen = useFullscreen();
 
 	const currentPage = scroll.state?.currentPage ?? 1;
 	const totalPages = scroll.state?.totalPages ?? 0;
@@ -368,10 +367,15 @@ export const PdfToolbar: React.FC = () => {
 					)}
 					{config.enableFullscreen && (
 						<ButtonIcon
-							icon="ri-fullscreen-line"
-							label="Fullscreen"
+							icon={
+								fullscreen.isFullscreen
+									? 'ri-fullscreen-exit-fill'
+									: 'ri-fullscreen-line'
+							}
+							label="Toggle fullscreen"
 							size={ButtonSize.SMALL}
-							onClick={() => fullscreen.provides?.toggleFullscreen()}
+							className={fullscreen.isFullscreen ? 'is-active' : ''}
+							onClick={() => fullscreen.toggle()}
 						/>
 					)}
 				</div>

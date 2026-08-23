@@ -24,6 +24,7 @@ import {
 	type PdfViewerContextValue,
 } from './context';
 import { usePdfViewerController } from './useController';
+import { usePdfFullscreen } from './useFullscreen';
 import { PdfToolbar } from './PdfToolbar';
 import { PdfSidePanel } from './PdfSidePanel';
 import { PdfDocumentView } from './PdfDocumentView';
@@ -100,13 +101,14 @@ const PdfController: React.FC<{
 	engine: PdfEngine;
 	setApi: (api: PdfViewerApi) => void;
 }> = ({ documentId, engine, setApi }) => {
-	const { props, setSignatureDialogOpen } = usePdfViewerContext();
+	const { props, setSignatureDialogOpen, fullscreen } = usePdfViewerContext();
 	usePdfViewerController({
 		documentId,
 		engine,
 		props,
 		apiRef: setApi as unknown as Ref<PdfViewerApi>,
 		openSignatureDialog: () => setSignatureDialogOpen(true),
+		toggleFullscreen: fullscreen.toggle,
 	});
 	return null;
 };
@@ -155,7 +157,9 @@ export const PdfInner: React.FC<{
 	props: PdfViewerProps;
 	engine: PdfEngine;
 	externalRef: Ref<PdfViewerApi>;
-}> = ({ props, engine, externalRef }) => {
+	/** The viewer root element — the target of the Fullscreen API. */
+	rootRef: React.MutableRefObject<HTMLDivElement | null>;
+}> = ({ props, engine, externalRef, rootRef }) => {
 	const config = useMemo(() => resolveConfig(props), [props]);
 	const { activeDocumentId } = useActiveDocument();
 	const activeDocState = useDocumentState(activeDocumentId);
@@ -166,6 +170,7 @@ export const PdfInner: React.FC<{
 		config.defaultSidePanelTab,
 	);
 	const [signatureDialogOpen, setSignatureDialogOpen] = useState(false);
+	const fullscreen = usePdfFullscreen(rootRef);
 
 	const apiRef = useRef<PdfViewerApi | null>(null);
 	const setApi = useCallback(
@@ -190,6 +195,8 @@ export const PdfInner: React.FC<{
 			setActiveSidePanelTab,
 			signatureDialogOpen,
 			setSignatureDialogOpen,
+			fullscreen,
+			rootRef,
 		}),
 		[
 			config,
@@ -199,6 +206,8 @@ export const PdfInner: React.FC<{
 			sidePanelOpen,
 			activeSidePanelTab,
 			signatureDialogOpen,
+			fullscreen,
+			rootRef,
 		],
 	);
 

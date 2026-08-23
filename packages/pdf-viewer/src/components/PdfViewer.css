@@ -36,6 +36,27 @@
 	box-sizing: border-box;
 }
 
+/* Fullscreen: the root element itself is handed to the Fullscreen API, so it
+   has to fill the screen regardless of the height it was given inline (a fixed
+   px height or a 100% of a small container both need overriding here). The
+   `:fullscreen` and `:-webkit-full-screen` rules are kept apart on purpose —
+   a browser drops the whole rule when one selector in a list is unknown. */
+.blue-orange-pdf-viewer:fullscreen {
+	width: 100vw !important;
+	height: 100vh !important;
+	max-width: none !important;
+	max-height: none !important;
+	background: var(--bo-pdf-bg);
+}
+
+.blue-orange-pdf-viewer:-webkit-full-screen {
+	width: 100vw !important;
+	height: 100vh !important;
+	max-width: none !important;
+	max-height: none !important;
+	background: var(--bo-pdf-bg);
+}
+
 /* Dark palette */
 .blue-orange-pdf-viewer.dark {
 	--bo-pdf-surface: #2b2b2e;

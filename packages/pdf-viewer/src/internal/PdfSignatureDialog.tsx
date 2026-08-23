@@ -33,7 +33,8 @@ const modes: IButtonToggleOption[] = [
 ];
 
 export const PdfSignatureDialog: React.FC = () => {
-	const { documentId, signatureDialogOpen, setSignatureDialogOpen } = usePdfViewerContext();
+	const { documentId, signatureDialogOpen, setSignatureDialogOpen, fullscreen, rootRef } =
+		usePdfViewerContext();
 	const signature = useSignatureCapability();
 
 	const [mode, setMode] = useState<'draw' | 'type'>('draw');
@@ -55,7 +56,13 @@ export const PdfSignatureDialog: React.FC = () => {
 	};
 
 	return (
-		<Modal width={520} onClose={close}>
+		// Only the fullscreen element's subtree is painted while fullscreen, so the
+		// dialog has to be portalled inside the viewer root instead of the body.
+		<Modal
+			width={520}
+			container={fullscreen.isFullscreen ? rootRef.current : undefined}
+			onClose={close}
+		>
 			<ModalHeader label="Add signature" />
 			<ModalBody>
 				<div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
