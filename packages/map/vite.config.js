@@ -23,7 +23,10 @@ export default defineConfig({
             fileName: (format) => `index.${format}.js`,
         },
         rollupOptions: {
-            external: ["react", "react-dom", "react/jsx-runtime", "react-dom/client", "@blue-orange-ai/foundations-clients"],
+            // react-dom/server is external for the same reason as react-dom/client:
+            // the marker components are serialised to HTML for the map, and bundling
+            // the server renderer would ship both its dev and production copies.
+            external: ["react", "react-dom", "react/jsx-runtime", "react-dom/client", "react-dom/server", "@blue-orange-ai/foundations-clients"],
         },
     },
     plugins: [

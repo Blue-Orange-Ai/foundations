@@ -1,0 +1,73 @@
+.foundations-map-marker-label-enhancer-container {
+    position: absolute;
+    width: 0;
+    height: 0;
+    display: flex;
+    pointer-events: none;
+}
+
+.foundations-map-marker-label-enhancer-container-top {
+    left: calc(50% + 4px);
+    bottom: 100%;
+    align-items: flex-end;
+    justify-content: center;
+    text-align: center;
+}
+
+.foundations-map-marker-label-enhancer-container-bottom {
+    left: 50%;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: center;
+}
+
+.foundations-map-marker-label-enhancer-container-right {
+    left: calc(100% + 4px);
+    top: 50%;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.foundations-map-marker-label-enhancer-container-left {
+    right: calc(100% + 4px);
+    top: 50%;
+    align-items: center;
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.foundations-map-marker-label-enhancer {
+    position: relative;
+    display: flex;
+    /* The container it sits in is zero width, so the label has to refuse to be
+       shrunk by it or every caption would wrap a word per line. */
+    flex-shrink: 0;
+    width: max-content;
+    max-width: 200px;
+    pointer-events: auto;
+    color: var(--blue-orange-light-map-marker-label-color, #0a0a0a);
+    /* Eight offset copies of the text stand in for a stroke, which keeps the
+       label legible over any tile without a background plate behind it. */
+    text-shadow:
+        -1.5px -1.5px 0 var(--blue-orange-light-map-marker-label-stroke-color, #ffffff),
+        0 -1.5px 0 var(--blue-orange-light-map-marker-label-stroke-color, #ffffff),
+        1.5px -1.5px 0 var(--blue-orange-light-map-marker-label-stroke-color, #ffffff),
+        1.5px 0 0 var(--blue-orange-light-map-marker-label-stroke-color, #ffffff),
+        1.5px 1.5px 0 var(--blue-orange-light-map-marker-label-stroke-color, #ffffff),
+        0 1.5px 0 var(--blue-orange-light-map-marker-label-stroke-color, #ffffff),
+        -1.5px 1.5px 0 var(--blue-orange-light-map-marker-label-stroke-color, #ffffff),
+        -1.5px 0 0 var(--blue-orange-light-map-marker-label-stroke-color, #ffffff);
+}
+
+.dark .foundations-map-marker-label-enhancer {
+    color: var(--blue-orange-dark-map-marker-label-color, #fafafa);
+    text-shadow:
+        -1.5px -1.5px 0 var(--blue-orange-dark-map-marker-label-stroke-color, #0a0a0a),
+        0 -1.5px 0 var(--blue-orange-dark-map-marker-label-stroke-color, #0a0a0a),
+        1.5px -1.5px 0 var(--blue-orange-dark-map-marker-label-stroke-color, #0a0a0a),
+        1.5px 0 0 var(--blue-orange-dark-map-marker-label-stroke-color, #0a0a0a),
+        1.5px 1.5px 0 var(--blue-orange-dark-map-marker-label-stroke-color, #0a0a0a),
+        0 1.5px 0 var(--blue-orange-dark-map-marker-label-stroke-color, #0a0a0a),
+        -1.5px 1.5px 0 var(--blue-orange-dark-map-marker-label-stroke-color, #0a0a0a),
+        -1.5px 0 0 var(--blue-orange-dark-map-marker-label-stroke-color, #0a0a0a);
+}

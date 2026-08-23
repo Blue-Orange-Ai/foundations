@@ -1,0 +1,40 @@
+/*
+ * Markers are handed to the map as an HTML string inside a Leaflet div icon,
+ * which has to be given a fixed size up front. A marker with a label has no
+ * fixed size, so instead of guessing one the icon is declared as zero sized and
+ * the marker is hung off that single point — the anchor mode says which part of
+ * the marker lands on it. Nothing then depends on how wide the label is.
+ */
+
+.foundations-map-marker-anchor {
+    position: relative;
+    width: 0;
+    height: 0;
+}
+
+/* Absolutely positioned inside a zero width anchor, so without this the
+   shrink-to-fit width would collapse to the marker's minimum and squeeze the
+   labels out of it. The marker is sized by its content instead. */
+.foundations-map-marker-anchor-content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: max-content;
+}
+
+/* Leaflet's default marker class carries a 2px transparent border that turns
+   blue while the marker is selected. On a zero sized icon that would be a stray
+   4px square, so it is hidden and the selection ring is drawn on the marker
+   body instead. */
+.blue-orange-default-marker:has(> .foundations-map-marker-anchor) {
+    border-color: transparent !important;
+}
+
+.blue-orange-default-marker-active > .foundations-map-marker-anchor > .foundations-map-marker-anchor-content {
+    outline: 2px solid var(--blue-orange-light-active-border-color, dodgerblue);
+    outline-offset: 3px;
+}
+
+.dark .blue-orange-default-marker-active > .foundations-map-marker-anchor > .foundations-map-marker-anchor-content {
+    outline-color: var(--blue-orange-dark-active-border-color, dodgerblue);
+}

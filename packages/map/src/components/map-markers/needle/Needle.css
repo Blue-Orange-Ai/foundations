@@ -1,0 +1,9 @@
+.foundations-map-marker-needle {
+    width: 4px;
+    flex-shrink: 0;
+    background-color: var(--foundations-map-marker-background, var(--blue-orange-light-map-marker-background-color, #0a0a0a));
+}
+
+.dark .foundations-map-marker-needle {
+    background-color: var(--foundations-map-marker-background, var(--blue-orange-dark-map-marker-background-color, #fafafa));
+}

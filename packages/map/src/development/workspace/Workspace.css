@@ -65,11 +65,6 @@
     color: #94a3b8;
 }
 
-.workspace-map-pin {
-    font-size: 28px;
-    line-height: 1;
-}
-
 .workspace-event-log {
     display: flex;
     flex-direction: column;
@@ -124,4 +119,105 @@
 .workspace-event-log-time {
     color: #94a3b8;
     flex-shrink: 0;
+}
+
+.workspace-controls label {
+    font-size: 12px;
+    color: #334155;
+}
+
+.workspace-button-row {
+    display: flex;
+    gap: 4px;
+}
+
+.workspace-button-row button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    text-align: center;
+}
+
+.workspace-button-row button:first-child {
+    flex: 2;
+}
+
+.workspace-button-active {
+    background-color: #0f172a !important;
+    border-color: #0f172a !important;
+    color: white !important;
+}
+
+.workspace-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.workspace-vehicles {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.workspace-vehicle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background-color: white;
+    font-size: 12px;
+}
+
+.workspace-vehicle-swatch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    color: white;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.workspace-vehicle-name {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.workspace-vehicle-readout {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    /* Tabular figures keep the readout from twitching as the speed changes. */
+    font-variant-numeric: tabular-nums;
+}
+
+.workspace-vehicle-detail {
+    font-size: 10px;
+    color: #94a3b8;
+}
+
+.workspace-vehicle button {
+    padding: 2px 6px;
+    flex-shrink: 0;
+}
+
+/* Rendered into the marker HTML, so it lives outside the React tree. */
+.workspace-heading-arrow {
+    display: block;
+    line-height: 1;
+}
+
+.workspace-observation-pin {
+    opacity: 0.7;
 }
