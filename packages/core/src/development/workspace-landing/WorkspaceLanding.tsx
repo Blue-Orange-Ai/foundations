@@ -107,6 +107,7 @@ import {EmptyDevelopment} from "../components/empty/EmptyDevelopment";
 import {MenubarDevelopment} from "../components/menubar/MenubarDevelopment";
 import {NavigationMenuDevelopment} from "../components/navigation-menu/NavigationMenuDevelopment";
 import {PaginationDevelopment} from "../components/pagination/PaginationDevelopment";
+import {PanelDevelopment} from "../components/panel/PanelDevelopment";
 import {SpinnerDevelopment} from "../components/loading/spinner/SpinnerDevelopment";
 import {SliderDevelopment} from "../components/inputs/slider/SliderDevelopment";
 import {OTPInputDevelopment} from "../components/inputs/otp-input/OTPInputDevelopment";
@@ -779,6 +780,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						onClick={() => navigate("/pagination")}
 					></SideBarBodyItem>
 					<SideBarBodyItem
+						label={"Panel"}
+						active={component == "panel"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-layout-right-line"></i>}
+						onClick={() => navigate("/panel")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
 						label={"Stepper"}
 						active={component == "stepper"}
 						focused={false}
@@ -1264,6 +1274,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "menubar" && <MenubarDevelopment></MenubarDevelopment>}
 			{component == "navigation-menu" && <NavigationMenuDevelopment></NavigationMenuDevelopment>}
 			{component == "pagination" && <PaginationDevelopment></PaginationDevelopment>}
+			{component == "panel" && <PanelDevelopment></PanelDevelopment>}
 			{component == "spinner" && <SpinnerDevelopment></SpinnerDevelopment>}
 			{component == "inputs-slider" && <SliderDevelopment></SliderDevelopment>}
 			{component == "inputs-otp" && <OTPInputDevelopment></OTPInputDevelopment>}

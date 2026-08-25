@@ -1,0 +1,51 @@
+.blue-orange-panel-development-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.blue-orange-panel-development-flush {
+    background-color: rgba(127, 127, 127, 0.12);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+}
+
+.blue-orange-panel-development-fill {
+    height: 240px;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+/* Stands in for the map the panel would normally be floated over. */
+.blue-orange-panel-development-map {
+    position: relative;
+    height: 300px;
+    width: 100%;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    background-color: #dfe6e2;
+    background-image:
+        linear-gradient(rgba(127, 145, 137, 0.35) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(127, 145, 137, 0.35) 1px, transparent 1px);
+    background-size: 40px 40px;
+    overflow: hidden;
+}
+
+.dark .blue-orange-panel-development-map {
+    background-color: #23282a;
+    background-image:
+        linear-gradient(rgba(127, 145, 137, 0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(127, 145, 137, 0.25) 1px, transparent 1px);
+}
+
+.blue-orange-panel-development-map-float {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+}

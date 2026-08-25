@@ -99,6 +99,9 @@ export * from './components/pagination/pagination/Pagination';
 export * from './components/pagination/pagination-link/PaginationLink';
 export * from './components/pagination/pagination-ellipsis/PaginationEllipsis';
 
+// Panel
+export * from './components/panel/Panel';
+
 // Stepper
 export * from './components/stepper/stepper/Stepper';
 export * from './components/stepper/stepper/StepperTypes';

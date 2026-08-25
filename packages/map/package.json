@@ -7,7 +7,7 @@
   "author": "Blue Orange AI",
   "private": false,
   "dependencies": {
-    "@blue-orange-ai/primitives-map": "^0.56.14",
+    "@blue-orange-ai/primitives-map": "^0.56.20",
     "remixicon": "^3.7.0",
     "tippy.js": "^6.3.7",
     "uuid": "^11.1.1"
@@ -17,6 +17,7 @@
     "react-dom": "^18.2.0 || ^19.0.0"
   },
   "devDependencies": {
+    "@blue-orange-ai/foundations-core": "^0.4.11",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",

@@ -275,6 +275,34 @@
   --blue-orange-dark-default-tag-background-color: #18181b;
   --blue-orange-light-default-tag-color: white;
   --blue-orange-dark-default-tag-color: white;
+
+  --blue-orange-light-panel-background-color: white;
+  --blue-orange-dark-panel-background-color: #28282a;
+  --blue-orange-light-panel-border-color: #e0e1e2;
+  --blue-orange-dark-panel-border-color: #3f3f42;
+  --blue-orange-light-panel-color: black;
+  --blue-orange-dark-panel-color: white;
+  --blue-orange-light-panel-header-background-color: #f4f4f5;
+  --blue-orange-dark-panel-header-background-color: #3f3f42;
+  --blue-orange-light-panel-header-color: black;
+  --blue-orange-dark-panel-header-color: white;
+  --blue-orange-light-panel-header-btn-color: #71717a;
+  --blue-orange-dark-panel-header-btn-color: #a1a1aa;
+  --blue-orange-light-panel-header-btn-hover-background-color: #e0e1e2;
+  --blue-orange-dark-panel-header-btn-hover-background-color: #52525b;
+  --blue-orange-light-panel-tab-color: #71717a;
+  --blue-orange-dark-panel-tab-color: #a1a1aa;
+  --blue-orange-light-panel-tab-hover-color: black;
+  --blue-orange-dark-panel-tab-hover-color: white;
+  --blue-orange-light-panel-tab-active-color: black;
+  --blue-orange-dark-panel-tab-active-color: white;
+  --blue-orange-light-panel-tab-indicator-color: black;
+  --blue-orange-dark-panel-tab-indicator-color: white;
+
+  /* The properties display leans on these for its labels. */
+  --blue-orange-light-text-secondary-color: #71717a;
+  --blue-orange-dark-text-secondary-color: #a1a1aa;
+
 }
 
 body {

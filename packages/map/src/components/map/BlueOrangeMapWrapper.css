@@ -3,6 +3,22 @@
     height: 100%;
 }
 
+/*
+ * selectionOutline={false}: selected objects still carry the class the map puts
+ * on them, this only takes the ring off. Both rules are needed — leaflet's own
+ * border for a plain marker, and the ring MapMarkerAnchor.css draws on the
+ * marker body for the marker components in this package. The border is left in
+ * place at full transparency so nothing shifts by the 2px it occupies.
+ */
+.blue-orange-map-no-selection-outline .blue-orange-default-marker-active {
+    border-color: transparent;
+}
+
+.blue-orange-map-no-selection-outline
+.blue-orange-default-marker-active > .foundations-map-marker-anchor > .foundations-map-marker-anchor-content {
+    outline: none;
+}
+
 .blue-orange-map-container{
     width: 80%;
     height: 80%;
