@@ -8,8 +8,25 @@
 .workspace-display-window {
     flex: 1;
     min-width: 0;
+    position: relative;
     display: flex;
     flex-direction: column;
+}
+
+/* The panel floats over the right hand edge of the map. It starts below the
+   base layer control that sits top right, and stops short of the bottom so the
+   attribution stays readable. The map's own controls sit far higher than this,
+   so they stay clickable if the panel ever reaches them. */
+.workspace-map-panel {
+    position: absolute;
+    top: 56px;
+    right: 12px;
+    bottom: 28px;
+    width: 360px;
+    max-height: 520px;
+    z-index: 900;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
 }
 
 .workspace-sidebar {

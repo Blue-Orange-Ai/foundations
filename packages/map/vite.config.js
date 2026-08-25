@@ -5,6 +5,17 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
     server: { port: 3000, open: false },
+    // The development workspace renders foundations-core, whose ESM build pulls
+    // in the CommonJS foundations-clients — pre-bundled here so its named
+    // exports resolve, the same way the other core consumers do it.
+    optimizeDeps: {
+        include: ["@blue-orange-ai/foundations-clients"],
+        // sockjs-client (via foundations-clients) references Node's `global`,
+        // which webpack used to shim and Vite does not.
+        esbuildOptions: {
+            define: { global: "globalThis" },
+        },
+    },
     test: {
         globals: true,
         environment: "jsdom",

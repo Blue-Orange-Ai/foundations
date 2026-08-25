@@ -8,9 +8,11 @@ import {
 	BlueOrangeMapMarker,
 	BlueOrangeMapObservations,
 	BlueOrangeMapOptions,
+	BlueOrangeMapSelectedObjects,
 	BlueOrangeMapShape,
 	BlueOrangeMapTrack
 } from "@blue-orange-ai/primitives-map";
+import {Panel, PanelTab, PropertiesDisplay, Property} from "@blue-orange-ai/foundations-core";
 
 import {FixedMarker} from "../../components/map-markers/fixedmarker/FixedMarker";
 import {FloatingMarker} from "../../components/map-markers/floatingmarker/FloatingMarker";
@@ -65,8 +67,7 @@ const initialMarkers: Array<BlueOrangeMapMarker> = [
 				labelEnhancerPosition="bottom"
 				badgeEnhancerSize="small"
 				badgeEnhancerContent={<i className="ri-check-line" />} />
-		),
-		popup: {display: true, html: "<strong>London HQ</strong><br/>Trafalgar Square"}
+		)
 	}),
 	createMapMarker({
 		id: "dc",
@@ -93,8 +94,7 @@ const initialMarkers: Array<BlueOrangeMapMarker> = [
 				startEnhancer={<i className="ri-flask-fill" />}
 				labelEnhancerContent="Research lab"
 				labelEnhancerPosition="right" />
-		),
-		popup: {display: true, html: "<strong>Research lab</strong><br/>South Kensington"}
+		)
 	}),
 	createMapMarker({
 		id: "eta",
@@ -140,10 +140,102 @@ const initialShapes: Array<BlueOrangeMapShape> = [
 	}
 ];
 
+// ---------------------------------------------------------------------------
+// What the panel says about a thing on the map. A real application would carry
+// this on the object it drew the marker from; the demo keeps a lookup beside
+// the scenery.
+// ---------------------------------------------------------------------------
+
+interface ObjectDetail {
+	name: string,
+	icon: string,
+	kind: string,
+	detail: string
+}
+
+const MARKER_DETAILS: {[id: string]: ObjectDetail} = {
+	hq: {name: "London HQ", icon: "ri-building-4-fill", kind: "Office", detail: "Trafalgar Square"},
+	dc: {name: "Data centre", icon: "ri-server-fill", kind: "Facility", detail: "Shoreditch, rack rows A-F"},
+	lab: {name: "Research lab", icon: "ri-flask-fill", kind: "Facility", detail: "South Kensington"},
+	eta: {name: "Depot ETA", icon: "ri-time-fill", kind: "Callout", detail: "12 minutes out"},
+	incident: {name: "Incident", icon: "ri-alarm-warning-fill", kind: "Incident", detail: "Reported 09:42, unassigned"}
+};
+
+const SHAPE_DETAILS: {[id: string]: ObjectDetail} = {
+	coverage: {name: "HQ coverage", icon: "ri-circle-line", kind: "Coverage", detail: "900 m radius around the HQ"},
+	campus: {name: "Campus boundary", icon: "ri-shape-2-line", kind: "Boundary", detail: "Shoreditch campus"},
+	fibre: {name: "Fibre route", icon: "ri-route-line", kind: "Route", detail: "HQ to the data centre"}
+};
+
+const SHAPE_ICONS: {[type: string]: string} = {
+	circle: "ri-circle-line",
+	polygon: "ri-shape-2-line",
+	rectangle: "ri-square-line",
+	line: "ri-route-line",
+	polyline: "ri-route-line",
+	arc: "ri-pie-chart-line",
+	arrow: "ri-arrow-right-up-line"
+};
+
+/** Ad-hoc objects are keyed by uuid — enough of it to tell them apart. */
+const shortId = (id: string) => (id.length > 12 ? id.slice(0, 8) : id);
+
+const coordinates = (point?: {lat: number, lng: number}) => (
+	point ? point.lat.toFixed(4) + ", " + point.lng.toFixed(4) : undefined
+);
+
+const titleCase = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+
+const markerDetail = (marker: BlueOrangeMapMarker): ObjectDetail => (
+	MARKER_DETAILS[marker.id] ?? {
+		name: "Marker " + shortId(marker.id),
+		icon: "ri-map-pin-2-line",
+		kind: "Dropped marker",
+		detail: "Added from the sidebar"
+	}
+);
+
+const shapeDetail = (shape: BlueOrangeMapShape): ObjectDetail => (
+	SHAPE_DETAILS[shape.id] ?? {
+		name: shape.tooltip ?? titleCase(shape.type) + " " + shortId(shape.id),
+		icon: SHAPE_ICONS[shape.type] ?? "ri-shape-line",
+		kind: titleCase(shape.type),
+		detail: "Drawn on the map"
+	}
+);
+
+const markerProperties = (marker: BlueOrangeMapMarker): Array<Property> => {
+	const detail = markerDetail(marker);
+	return [
+		{label: "Name", value: detail.name},
+		{label: "Type", value: detail.kind},
+		{label: "Detail", value: detail.detail},
+		{label: "Position", value: coordinates(marker.latlng), copyable: true},
+		{label: "Id", value: marker.id, copyable: true},
+		{label: "Group", value: marker.groupId}
+	];
+}
+
+const shapeProperties = (shape: BlueOrangeMapShape): Array<Property> => {
+	const detail = shapeDetail(shape);
+	return [
+		{label: "Name", value: detail.name},
+		{label: "Type", value: detail.kind},
+		{label: "Detail", value: detail.detail},
+		{label: "Centre", value: coordinates(shape.center ?? shape.base)},
+		{label: "Radius", value: shape.radius ? Math.round(shape.radius) + " m" : undefined},
+		{label: "Points", value: shape.points ? shape.points.length + " vertices" : undefined},
+		{label: "Colour", value: shape.color},
+		{label: "Id", value: shape.id, copyable: true},
+		{label: "Group", value: shape.groupId}
+	];
+}
+
+// Popups are off across the board — clicking an object opens the panel instead.
 const options: BlueOrangeMapOptions = {
 	center: [51.5104, -0.1240],
 	zoom: 13,
-	shapePopups: {enabled: true}
+	shapePopups: {enabled: false}
 };
 
 // ---------------------------------------------------------------------------
@@ -249,8 +341,20 @@ export const Workspace: React.FC<Props> = ({}) => {
 	const [speedMultiplier, setSpeedMultiplier] = useState<number>(2);
 	const [showTrackLines, setShowTrackLines] = useState<boolean>(true);
 	const [showObservationPins, setShowObservationPins] = useState<boolean>(true);
+	const [selectionOutline, setSelectionOutline] = useState<boolean>(true);
 
 	const [entries, setEntries] = useState<Array<LogEntry>>([]);
+
+	// What the map says is selected. The panel is driven off this alone, so it
+	// follows clicks, shift-clicks, the sidebar and the on-map controls alike.
+	const [selection, setSelection] = useState<BlueOrangeMapSelectedObjects>({
+		markers: [], shapes: [], tracks: []
+	});
+
+	// The tab the panel is showing. Held here rather than left to the panel so
+	// that shift-clicking a fifth thing opens the fifth thing, instead of
+	// leaving the panel on whatever was clicked first.
+	const [activeTab, setActiveTab] = useState<string>("");
 
 	// The simulation runs off refs: the interval owns the vehicle positions and
 	// the trails, and only publishes a small readout for the sidebar.
@@ -387,6 +491,198 @@ export const Workspace: React.FC<Props> = ({}) => {
 		selection.markers.length + " markers, " + selection.shapes.length + " shapes, " + selection.tracks.length + " tracks"
 	);
 
+	const emptySelection = (): BlueOrangeMapSelectedObjects => ({markers: [], shapes: [], tracks: []});
+
+	const clearSelection = () => {
+		withMap((instance) => instance.clearAllSelectedObjects());
+		setSelection(emptySelection());
+		setActiveTab("");
+		log("clearAllSelectedObjects: panel closed");
+	}
+
+	const tabUuidsOf = (objects: BlueOrangeMapSelectedObjects): Array<string> => ([
+		...objects.markers.map((marker) => "marker:" + marker.id),
+		...objects.shapes.map((shape) => "shape:" + shape.id),
+		...objects.tracks.map((track) => "track:" + track.id)
+	]);
+
+	/** Where the thing behind a tab currently is. */
+	const positionOf = (uuid: string, objects: BlueOrangeMapSelectedObjects) => {
+		const separator = uuid.indexOf(":");
+		const kind = uuid.slice(0, separator);
+		const id = uuid.slice(separator + 1);
+		if (kind === "marker") {
+			return objects.markers.find((marker) => marker.id === id)?.latlng;
+		}
+		if (kind === "track") {
+			// The live position, not the one the track was clicked at.
+			return statesRef.current[id]?.latlng ?? objects.tracks.find((track) => track.id === id)?.latlng;
+		}
+		const shape = objects.shapes.find((item) => item.id === id);
+		if (!shape) {
+			return undefined;
+		}
+		if (shape.center ?? shape.base) {
+			return shape.center ?? shape.base;
+		}
+		if (shape.points && shape.points.length > 0) {
+			return {
+				lat: shape.points.reduce((total, point) => total + point.lat, 0) / shape.points.length,
+				lng: shape.points.reduce((total, point) => total + point.lng, 0) / shape.points.length
+			};
+		}
+		return undefined;
+	}
+
+	/** How much of the map width the panel is sitting on top of. */
+	const panelWidthFraction = () => {
+		const panel = document.querySelector(".workspace-map-panel") as HTMLElement | null;
+		const mapElement = document.querySelector(".blue-orange-map-parent") as HTMLElement | null;
+		if (!panel || !mapElement || mapElement.clientWidth === 0) {
+			return 0;
+		}
+		return (panel.offsetWidth + 24) / mapElement.clientWidth;
+	}
+
+	/**
+	 * Brings the object behind the active tab into view. The map only moves when
+	 * that object is near an edge or behind the panel — panning on every change
+	 * would drag the map out from under someone shift-clicking their way through
+	 * a group. The centre is offset by half the panel so the object lands in the
+	 * middle of the map that is still visible rather than underneath it.
+	 */
+	const focusObject = (uuid: string, objects: BlueOrangeMapSelectedObjects) => {
+		withMap((instance) => {
+			const position = positionOf(uuid, objects);
+			if (!position) {
+				return;
+			}
+			const view = instance.getVisibleMapCoordinates();
+			const latSpan = view.maxLat - view.minLat;
+			const lngSpan = view.maxLng - view.minLng;
+			const covered = lngSpan * panelWidthFraction();
+			const inView = position.lat > view.minLat + latSpan * 0.15
+				&& position.lat < view.maxLat - latSpan * 0.15
+				&& position.lng > view.minLng + lngSpan * 0.1
+				&& position.lng < view.maxLng - covered - lngSpan * 0.1;
+			if (inView) {
+				return;
+			}
+			// The leaflet map behind the wrapper — panning is not on the
+			// primitives surface itself yet.
+			const leaflet = (instance as any).map;
+			if (leaflet && typeof leaflet.panTo === "function") {
+				leaflet.panTo([position.lat, position.lng + covered / 2]);
+				log("focus: panned to " + uuid);
+			}
+		});
+	}
+
+	/**
+	 * Whatever was just added to the selection is what the panel opens on — the
+	 * thing that was clicked last is the thing being asked about.
+	 *
+	 * A selection made on the map is left where it is: the object was clicked,
+	 * so it is already under the user's eye and moving the map would shift the
+	 * next target out from under them mid shift-click. A selection made from the
+	 * sidebar has no such click behind it, so that one is focused.
+	 */
+	const selectionUpdated = (next: BlueOrangeMapSelectedObjects, focus: boolean = false) => {
+		const previousUuids = tabUuidsOf(selection);
+		const nextUuids = tabUuidsOf(next);
+		const added = nextUuids.filter((uuid) => previousUuids.indexOf(uuid) < 0);
+		const uuid = added.length > 0
+			? added[added.length - 1]
+			: (nextUuids.indexOf(activeTab) >= 0 ? activeTab : (nextUuids[0] ?? ""));
+		setSelection(next);
+		setActiveTab(uuid);
+		if (uuid && focus) {
+			focusObject(uuid, next);
+		}
+	}
+
+	const tabClicked = (uuid: string) => {
+		setActiveTab(uuid);
+		focusObject(uuid, selection);
+		log("panel tab: " + uuid);
+	}
+
+	/**
+	 * Read out of the simulation rather than off the track the map handed over
+	 * when it was clicked, so a selected vehicle keeps counting up in the panel
+	 * while it drives.
+	 */
+	const trackProperties = (track: BlueOrangeMapTrack): Array<Property> => {
+		const vehicle = VEHICLES.find((item) => item.id === track.id);
+		const state = readout[track.id] ?? statesRef.current[track.id];
+		const observations = observationsRef.current[track.id] ?? [];
+		const last = observations[observations.length - 1];
+		return [
+			{label: "Vehicle", value: vehicle ? vehicle.name : track.id},
+			{label: "Type", value: vehicle ? titleCase(vehicle.markerStyle) + " track" : "Track"},
+			{label: "Detail", value: vehicle?.detail},
+			{label: "Speed", value: state ? Math.round(state.speedKph) + " km/h" : undefined},
+			{label: "Heading", value: state ? Math.round(state.heading) + "°" : undefined},
+			{label: "Position", value: coordinates(state?.latlng), copyable: true},
+			{label: "Observations", value: observations.length + " kept"},
+			{label: "Last seen", value: last ? last.timestamp.toLocaleTimeString() : undefined},
+			{label: "Id", value: track.id, copyable: true}
+		];
+	}
+
+	// Only what applies to the thing that was clicked — a circle has no vertex
+	// count and an ungrouped marker has no group, and a column of dashes reads
+	// worse than a shorter list.
+	const propertiesDisplay = (properties: Array<Property>) => (
+		<PropertiesDisplay
+			properties={properties.filter((property) => property.value !== undefined && property.value !== "")}
+			orientation="vertical"
+			labelWidth="110px" />
+	);
+
+	// One tab per selected object, in the order the map reports them.
+	const panelTabs: Array<PanelTab> = [
+		...selection.markers.map((marker) => {
+			const detail = markerDetail(marker);
+			return {
+				uuid: "marker:" + marker.id,
+				label: detail.name,
+				icon: detail.icon,
+				content: propertiesDisplay(markerProperties(marker))
+			};
+		}),
+		...selection.shapes.map((shape) => {
+			const detail = shapeDetail(shape);
+			return {
+				uuid: "shape:" + shape.id,
+				label: detail.name,
+				icon: detail.icon,
+				content: propertiesDisplay(shapeProperties(shape))
+			};
+		}),
+		...selection.tracks.map((track) => {
+			const vehicle = VEHICLES.find((item) => item.id === track.id);
+			return {
+				uuid: "track:" + track.id,
+				label: vehicle ? vehicle.name : "Track " + shortId(track.id),
+				icon: vehicle ? vehicle.icon : "ri-route-line",
+				content: propertiesDisplay(trackProperties(track))
+			};
+		})
+	];
+
+	const selectionCount = panelTabs.length;
+
+	// A single selection reads better as a titled panel than as a lone tab.
+	const activePanelTab = panelTabs.find((tab) => tab.uuid === activeTab) ?? panelTabs[0];
+
+	const singleHeader = (
+		<>
+			<i className={activePanelTab?.icon} />
+			<span>{activePanelTab?.label}</span>
+		</>
+	);
+
 	const dropMarker = (name: string, element: React.ReactElement, anchorMode: MapMarkerAnchorMode) => {
 		withMap((instance) => {
 			const id = uuidv4();
@@ -409,12 +705,37 @@ export const Workspace: React.FC<Props> = ({}) => {
 					shapes={initialShapes}
 					tracks={initialTracks}
 					options={options}
+					selectionOutline={selectionOutline}
 					instance={(instance) => setMap(instance)}
-					selectionChanged={(selection) => log("selectionChanged: " + describeSelection(selection))}
+					selectionChanged={(selection) => {
+						selectionUpdated(selection);
+						log("selectionChanged: " + describeSelection(selection));
+					}}
 					objectsCreated={(selection) => log("objectsCreated: " + describeSelection(selection))}
-					objectsDeleted={(selection) => log("objectsDeleted: " + describeSelection(selection))}
+					objectsDeleted={(selection) => {
+						setSelection(emptySelection());
+						setActiveTab("");
+						log("objectsDeleted: " + describeSelection(selection));
+					}}
 					groupCreated={(groupId) => log("groupCreated: " + groupId)}
 					groupRemoved={(groupIds) => log("groupRemoved: " + groupIds.join(", "))} />
+				{selectionCount > 0 &&
+					<div className="workspace-map-panel">
+						<Panel
+							header={selectionCount === 1 ? singleHeader : selectionCount + " selected"}
+							icon={"ri-close-line"}
+							iconLabel={"Clear selection"}
+							onIconClick={clearSelection}
+							tabs={selectionCount > 1 ? panelTabs : []}
+							activeTab={activeTab}
+							onTabClick={tabClicked}
+							width={"100%"}
+							height={"100%"}
+							padding={12}>
+							{activePanelTab?.content}
+						</Panel>
+					</div>
+				}
 			</div>
 			<div className="workspace-sidebar">
 				<div className="workspace-controls">
@@ -445,6 +766,13 @@ export const Workspace: React.FC<Props> = ({}) => {
 							onChange={(event) => setShowObservationPins(event.target.checked)} />
 						Observation pins
 					</label>
+					<label className="workspace-toggle">
+						<input
+							type="checkbox"
+							checked={selectionOutline}
+							onChange={(event) => setSelectionOutline(event.target.checked)} />
+						Selection outline
+					</label>
 
 					<div className="workspace-vehicles">
 						{VEHICLES.map((vehicle) => {
@@ -469,6 +797,9 @@ export const Workspace: React.FC<Props> = ({}) => {
 										if (track) {
 											instance.clearAllSelectedObjects([vehicle.id]);
 											instance.selectTrack(track);
+											// Selecting through the API does not raise the map's own
+											// selection event, so the panel is told directly.
+											selectionUpdated(instance.getSelectedObjects(), true);
 											log("selectTrack: " + vehicle.name);
 										}
 									})} title="Select this track"><i className="ri-focus-3-line" /></button>
@@ -546,8 +877,12 @@ export const Workspace: React.FC<Props> = ({}) => {
 						selection.tracks.forEach((t) => instance.addTrackToGroup(t.id, groupId));
 						log("createGroup -> " + groupId + " (" + count + " objects)");
 					})}>Group selection</button>
-					<button onClick={() => withMap((instance) => instance.removeSelectedObjects())}>Delete selection</button>
-					<button onClick={() => withMap((instance) => instance.clearAllSelectedObjects())}>Clear selection</button>
+					<button onClick={() => withMap((instance) => {
+						instance.removeSelectedObjects();
+						setSelection(emptySelection());
+						setActiveTab("");
+					})}>Delete selection</button>
+					<button onClick={clearSelection}>Clear selection</button>
 
 					<strong>Map</strong>
 					<button onClick={() => withMap((instance) => {
@@ -579,7 +914,9 @@ export const Workspace: React.FC<Props> = ({}) => {
 					<div className="workspace-hints">
 						<div>• Tracks step every {TICK_MS} ms; each step appends an observation and trims the trail to {TRAIL_LENGTH}</div>
 						<div>• Use the on-map controls to draw shapes, group and delete objects</div>
-						<div>• Click a marker for its popup; click shapes / tracks to select them</div>
+						<div>• Click a marker, shape or track to open the panel; shift-click for several and the panel grows a tab per selection</div>
+						<div>• The panel opens on whatever was clicked last, and the map pans to the active tab when it sits off screen or behind the panel</div>
+						<div>• Selection outline keeps the outline on a selected vehicle while it drives; turned off, nothing is outlined at all</div>
 					</div>
 				</div>
 				<div className="workspace-event-log">

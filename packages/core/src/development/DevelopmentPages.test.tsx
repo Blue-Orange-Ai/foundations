@@ -20,6 +20,7 @@ import {EmptyDevelopment} from "./components/empty/EmptyDevelopment";
 import {MenubarDevelopment} from "./components/menubar/MenubarDevelopment";
 import {NavigationMenuDevelopment} from "./components/navigation-menu/NavigationMenuDevelopment";
 import {PaginationDevelopment} from "./components/pagination/PaginationDevelopment";
+import {PanelDevelopment} from "./components/panel/PanelDevelopment";
 import {SpinnerDevelopment} from "./components/loading/spinner/SpinnerDevelopment";
 import {SliderDevelopment} from "./components/inputs/slider/SliderDevelopment";
 import {OTPInputDevelopment} from "./components/inputs/otp-input/OTPInputDevelopment";
@@ -57,6 +58,7 @@ const PAGES: Array<[string, React.FC<any>]> = [
 	["Menubar", MenubarDevelopment],
 	["Navigation Menu", NavigationMenuDevelopment],
 	["Pagination", PaginationDevelopment],
+	["Panel", PanelDevelopment],
 	["Spinner", SpinnerDevelopment],
 	["Slider", SliderDevelopment],
 	["OTP Input", OTPInputDevelopment],

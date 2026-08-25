@@ -1,0 +1,203 @@
+
+.blue-orange-foundations-panel {
+    box-sizing: border-box;
+    width: 350px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border-radius: 8px;
+    border: 1px solid var(--blue-orange-light-panel-border-color);
+    background-color: var(--blue-orange-light-panel-background-color);
+    color: var(--blue-orange-light-panel-color);
+    overflow: hidden;
+}
+
+.dark .blue-orange-foundations-panel {
+    border: 1px solid var(--blue-orange-dark-panel-border-color);
+    background-color: var(--blue-orange-dark-panel-background-color);
+    color: var(--blue-orange-dark-panel-color);
+}
+
+.blue-orange-foundations-panel-header {
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    padding: 4px 6px;
+    background-color: var(--blue-orange-light-panel-header-background-color);
+    border-bottom: 1px solid var(--blue-orange-light-panel-border-color);
+    color: var(--blue-orange-light-panel-header-color);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.dark .blue-orange-foundations-panel-header {
+    background-color: var(--blue-orange-dark-panel-header-background-color);
+    border-bottom: 1px solid var(--blue-orange-dark-panel-border-color);
+    color: var(--blue-orange-dark-panel-header-color);
+}
+
+/* min-width:0 so a long title ellipsises rather than pushing the button out of the header. */
+.blue-orange-foundations-panel-header-content {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 0 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* The header is too tight for a bordered button — flatten it to an icon that
+   fills in on hover. */
+.blue-orange-foundations-panel .blue-orange-default-btn-icon.blue-orange-foundations-panel-header-btn {
+    flex: 0 0 auto;
+    height: 26px;
+    width: 26px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background-color: transparent;
+    color: var(--blue-orange-light-panel-header-btn-color);
+    transition: background-color 0.15s ease-out, color 0.15s ease-out;
+}
+
+.dark .blue-orange-foundations-panel .blue-orange-default-btn-icon.blue-orange-foundations-panel-header-btn {
+    color: var(--blue-orange-dark-panel-header-btn-color);
+}
+
+.blue-orange-foundations-panel .blue-orange-foundations-panel-header-btn:hover {
+    background-color: var(--blue-orange-light-panel-header-btn-hover-background-color);
+    color: var(--blue-orange-light-panel-header-color);
+}
+
+.dark .blue-orange-foundations-panel .blue-orange-foundations-panel-header-btn:hover {
+    background-color: var(--blue-orange-dark-panel-header-btn-hover-background-color);
+    color: var(--blue-orange-dark-panel-header-color);
+}
+
+/* Holds the tab strip and, on a panel with no header, the action button —
+   which is pinned here rather than scrolling away with the tabs. */
+.blue-orange-foundations-panel-tab-row {
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    padding: 0 4px;
+    border-bottom: 1px solid var(--blue-orange-light-panel-border-color);
+    background-color: var(--blue-orange-light-panel-background-color);
+}
+
+.dark .blue-orange-foundations-panel-tab-row {
+    border-bottom: 1px solid var(--blue-orange-dark-panel-border-color);
+    background-color: var(--blue-orange-dark-panel-background-color);
+}
+
+/* The tabs scroll sideways — a panel is narrow and the number of selected
+   items is not something it can bound. The bar itself is hidden, the triggers
+   are still reachable by pointer drag, wheel and the arrow keys. */
+.blue-orange-foundations-panel-tabs {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.blue-orange-foundations-panel-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.blue-orange-foundations-panel-tab {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    max-width: 160px;
+    height: 32px;
+    padding: 0 10px;
+    margin-bottom: -1px;
+    border-bottom: 2px solid transparent;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    color: var(--blue-orange-light-panel-tab-color);
+    transition: color 0.15s ease-out, border-color 0.15s ease-out;
+}
+
+.dark .blue-orange-foundations-panel-tab {
+    color: var(--blue-orange-dark-panel-tab-color);
+}
+
+.blue-orange-foundations-panel-tab:hover {
+    color: var(--blue-orange-light-panel-tab-hover-color);
+}
+
+.dark .blue-orange-foundations-panel-tab:hover {
+    color: var(--blue-orange-dark-panel-tab-hover-color);
+}
+
+.blue-orange-foundations-panel-tab:focus-visible {
+    outline: 2px solid var(--blue-orange-light-panel-tab-indicator-color);
+    outline-offset: -2px;
+}
+
+.dark .blue-orange-foundations-panel-tab:focus-visible {
+    outline: 2px solid var(--blue-orange-dark-panel-tab-indicator-color);
+}
+
+.blue-orange-foundations-panel-tab-active {
+    color: var(--blue-orange-light-panel-tab-active-color);
+    border-bottom: 2px solid var(--blue-orange-light-panel-tab-indicator-color);
+}
+
+.dark .blue-orange-foundations-panel-tab-active {
+    color: var(--blue-orange-dark-panel-tab-active-color);
+    border-bottom: 2px solid var(--blue-orange-dark-panel-tab-indicator-color);
+}
+
+.blue-orange-foundations-panel-tab-disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.blue-orange-foundations-panel-tab-icon {
+    font-size: 0.9375rem;
+    line-height: 1;
+}
+
+.blue-orange-foundations-panel-tab-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.blue-orange-foundations-panel-body {
+    box-sizing: border-box;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .blue-orange-foundations-panel .blue-orange-foundations-panel-header-btn,
+    .blue-orange-foundations-panel-tab {
+        transition: none;
+    }
+}
