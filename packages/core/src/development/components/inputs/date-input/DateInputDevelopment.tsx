@@ -2,8 +2,6 @@ import React, {useState} from "react";
 
 import './DateInputDevelopment.css'
 import {SplitPageMajor} from "../../../../components/layouts/pages/split-pages/split-page-major/SplitPageMajor";
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
 import {SplitPageMinor} from "../../../../components/layouts/pages/split-pages/split-page-minor/SplitPageMinor";
 import {
 	HorizontalSplitPage
@@ -17,6 +15,96 @@ import {
 } from "../../../../components/inputs/date/datepicker/items/datecontextwindowsingle/DateContextWindowSingle";
 import {Month} from "../../../../components/inputs/date/datepicker/items/month/Month";
 import {InputValidateCallback} from "../../../../components/inputs/validation/InputValidation";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+import {validationProps} from "../../../framework/InputProps";
+
+const DATE_INPUT_PROPS: Array<PropSpec> = [
+	{
+		name: "value",
+		type: "Date",
+		control: "text",
+		value: "2026-08-25T14:30:00",
+		description: "The date in the field."
+	},
+	{
+		name: "displayFormat",
+		type: "string",
+		default: "\"ddd, MMMM Do YYYY\"",
+		control: "select",
+		options: [
+			{label: "ddd, MMMM Do YYYY", value: "ddd, MMMM Do YYYY"},
+			{label: "DD/MM/YYYY", value: "DD/MM/YYYY"},
+			{label: "YYYY-MM-DD", value: "YYYY-MM-DD"},
+			{label: "D MMM YY", value: "D MMM YY"}
+		],
+		description: "A moment format deciding how the date reads in the field."
+	},
+	{
+		name: "placeholder",
+		type: "string",
+		control: "text",
+		description: "Shown while no date has been chosen."
+	},
+	{
+		name: "label",
+		type: "string",
+		control: "text",
+		value: "Inspection date",
+		description: "The label above the field."
+	},
+	{
+		name: "showTime",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Adds a time of day to the calendar, so the value carries both."
+	},
+	{
+		name: "timePrecision",
+		type: "TimePrecision",
+		default: "TimePrecision.MINUTE",
+		defaultValue: TimePrecision.MINUTE,
+		control: "select",
+		options: [
+			{label: "Minute", value: TimePrecision.MINUTE, code: "TimePrecision.MINUTE"},
+			{label: "Second", value: TimePrecision.SECOND, code: "TimePrecision.SECOND"},
+			{label: "Millisecond", value: TimePrecision.MILLISECOND, code: "TimePrecision.MILLISECOND"}
+		],
+		description: "How far down the time goes when showTime is on."
+	},
+	{
+		name: "help",
+		type: "string",
+		control: "text",
+		description: "Puts a help icon beside the label with this text behind it."
+	},
+	{
+		name: "disabled",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Greys the field out and stops the calendar opening."
+	},
+	{
+		name: "onChange",
+		type: "(date: Date) => void",
+		description: "Fires with the date that was chosen."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the field."
+	},
+	{
+		name: "labelStyle",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the label."
+	},
+	...validationProps("Date")
+];
 
 interface Props {
 }
@@ -142,8 +230,32 @@ interface WeekObj {
 	return (
 		<HorizontalSplitPage>
 			<SplitPageMajor>
-				<PaddedPage>
-					<PageHeading>Date Picker</PageHeading>
+				<ComponentDoc
+					title="Date Input"
+					description="A date field with a calendar behind it. It can carry a time of day as well, to whatever precision the value needs, and prints the value back in whichever moment format is asked for."
+					name="DateInput"
+					previewHeight={200}
+					previewCentered={false}
+					imports={["TimePrecision"]}
+					props={DATE_INPUT_PROPS}
+					preview={values => (
+						<div style={{width: "100%", maxWidth: "420px"}}>
+							<DateInput
+								value={values.value ? new Date(values.value) : undefined}
+								label={values.label}
+								placeholder={values.placeholder}
+								displayFormat={values.displayFormat}
+								showTime={values.showTime}
+								timePrecision={values.timePrecision}
+								help={values.help}
+								disabled={values.disabled}
+								name={values.name}
+								required={values.required}
+								requiredMessage={values.requiredMessage}
+								validateOnChange={values.validateOnChange}
+								onChange={() => {}}></DateInput>
+						</div>
+					)}>
 
 					<Paragraph>
 						The date picker is a small family of components that build on each other. In most
@@ -380,7 +492,7 @@ interface WeekObj {
 						</div>
 					</div>
 
-				</PaddedPage>
+				</ComponentDoc>
 			</SplitPageMajor>
 			<SplitPageMinor>
 				<div className="workspace-output-window">

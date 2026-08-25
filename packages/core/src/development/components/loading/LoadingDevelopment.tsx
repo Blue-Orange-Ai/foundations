@@ -1,14 +1,66 @@
 import React, {useState} from "react";
 
 import './LoadingDevelopment.css'
-import {PaddedPage} from "../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../components/text-decorations/page-heading/PageHeading";
 import {FormHeading} from "../../../components/text-decorations/form-heading/FormHeading";
 import {Paragraph} from "../../../components/text-decorations/paragraph/Paragraph";
 import {Loading} from "../../../components/loading/loading/Loading";
 import {Skeleton} from "../../../components/loading/skeleton/Skeleton";
 import {Button, ButtonType} from "../../../components/buttons/button/Button";
 import {CodeBlock} from "../../../components/text-decorations/code-block/CodeBlock";
+import {ComponentDoc} from "../../framework/ComponentDoc";
+import {PropSpec} from "../../framework/PropSpec";
+
+const LOADING_PROPS: Array<PropSpec> = [
+	{
+		name: "fontSize",
+		type: "string",
+		required: true,
+		control: "select",
+		value: "2rem",
+		options: [
+			{label: "1rem", value: "1rem"},
+			{label: "1.5rem", value: "1.5rem"},
+			{label: "2rem", value: "2rem"},
+			{label: "3rem", value: "3rem"}
+		],
+		description: "The size of the spinner, as a CSS font size — the glyph is a font icon."
+	},
+	{
+		name: "color",
+		type: "string",
+		required: true,
+		control: "color",
+		value: "#7c4dff",
+		description: "The colour of the spinner."
+	}
+];
+
+const SKELETON_PROPS: Array<PropSpec> = [
+	{
+		name: "animationDuration",
+		type: "number",
+		control: "number",
+		description: "How long one pass of the shimmer takes."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the block. This is where its height and width come from."
+	},
+	{
+		name: "height",
+		type: "number",
+		control: "slider",
+		min: 8,
+		max: 48,
+		step: 2,
+		value: 14,
+		hideFromTable: true,
+		hideFromSnippet: true,
+		description: "Demo only — the height handed to each block through style."
+	}
+];
 
 interface Props {
 }
@@ -27,12 +79,31 @@ export const LoadingDevelopment: React.FC<Props> = ({}) => {
 	const [loaded, setLoaded] = useState(false);
 
 	return (
-		<PaddedPage>
-			<PageHeading>Loading</PageHeading>
-			<Paragraph>
-				Loading is a spinner sized and coloured through its props. Skeleton is a shimmering placeholder that
-				fills whatever box you give it — size it with style, and use as many as the real content will occupy.
-			</Paragraph>
+		<ComponentDoc
+			title="Loading"
+			description="Loading is a spinner sized and coloured through its props. Skeleton is a shimmering placeholder that fills whatever box it is given — size it with style, and use as many as the real content will occupy."
+			name="Loading"
+			previewHeight={140}
+			props={LOADING_PROPS}
+			preview={values => (
+				<Loading fontSize={values.fontSize} color={values.color}></Loading>
+			)}
+			siblings={[
+				{
+					name: "Skeleton",
+					description: "A shimmering block standing in for content that has not arrived. It has no size of its own, so give it one through style.",
+					props: SKELETON_PROPS,
+					previewHeight: 160,
+					previewCentered: false,
+					preview: values => (
+						<div style={{width: "100%", display: "flex", flexDirection: "column", gap: "8px"}}>
+							<Skeleton style={{height: values.height + "px", width: "60%", borderRadius: "4px"}}></Skeleton>
+							<Skeleton style={{height: values.height + "px", width: "90%", borderRadius: "4px"}}></Skeleton>
+							<Skeleton style={{height: values.height + "px", width: "75%", borderRadius: "4px"}}></Skeleton>
+						</div>
+					)
+				}
+			]}>
 
 			<div className="loading-dev-section">
 				<FormHeading label="Spinner sizes"></FormHeading>
@@ -95,6 +166,6 @@ export const LoadingDevelopment: React.FC<Props> = ({}) => {
 				<FormHeading label="Usage"></FormHeading>
 				<CodeBlock value={{code: USAGE, lang: "tsx"}}></CodeBlock>
 			</div>
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

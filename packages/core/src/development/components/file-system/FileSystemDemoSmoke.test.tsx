@@ -1,14 +1,19 @@
 import React from "react";
-import {act, render, screen, fireEvent, within} from "@testing-library/react";
+import {act, render, fireEvent, within} from "@testing-library/react";
 import {FileSystemDevelopment} from "./FileSystemDevelopment";
 
 const rowLabels = (container: HTMLElement) =>
 	Array.from(container.querySelectorAll(".blue-orange-file-system-row-content-title")).map((el) => el.textContent);
 
+// The page opens with a props playground carrying a browser of its own, so every
+// assertion here is scoped to the worked example underneath it.
+const examplesOf = (page: HTMLElement) =>
+	page.querySelector(".blue-orange-docs-examples") as HTMLElement;
+
 describe("FileSystem demo", () => {
 
 	it("renders the seeded folder, sorts columns, expands folders and navigates", () => {
-		const {container} = render(<FileSystemDevelopment/>);
+		const container = examplesOf(render(<FileSystemDevelopment/>).container);
 
 		// folders first, name ascending
 		expect(rowLabels(container).slice(0, 3)).toEqual(["Documents", "Media", "Projects"]);
@@ -28,7 +33,7 @@ describe("FileSystem demo", () => {
 
 		// back to name ascending
 		fireEvent.click(header("Name"));
-		const documentsRow = screen.getByText("Documents").closest("tr") as HTMLElement;
+		const documentsRow = within(container).getByText("Documents").closest("tr") as HTMLElement;
 		const chevron = documentsRow.querySelector(".blue-orange-default-btn-icon") as HTMLElement;
 		fireEvent.click(chevron);
 		expect(rowLabels(container)).toContain("Company Strategy.docx");
@@ -41,15 +46,15 @@ describe("FileSystem demo", () => {
 
 		// the parent directory row is the first row and walks back up a level
 		expect(rowLabels(container)[0]).toEqual("..");
-		fireEvent.doubleClick(screen.getByText(".."));
+		fireEvent.doubleClick(within(container).getByText(".."));
 		expect(rowLabels(container)).toContain("Media");
 		expect(rowLabels(container)).not.toContain("..");
 	});
 
 	it("opens a folder as the new view through a full click, click, double click sequence", () => {
-		const {container} = render(<FileSystemDevelopment/>);
+		const container = examplesOf(render(<FileSystemDevelopment/>).container);
 
-		const label = screen.getByText("Media");
+		const label = within(container).getByText("Media");
 		fireEvent.mouseDown(label);
 		fireEvent.mouseUp(label);
 		fireEvent.click(label);
@@ -68,11 +73,11 @@ describe("FileSystem demo", () => {
 	});
 
 	it("expands folders in place when the new view toggle is off", () => {
-		const {container} = render(<FileSystemDevelopment/>);
+		const container = examplesOf(render(<FileSystemDevelopment/>).container);
 
-		const toggleRow = screen.getByText("Double click opens folder as new view").parentElement as HTMLElement;
+		const toggleRow = within(container).getByText("Double click opens folder as new view").parentElement as HTMLElement;
 		fireEvent.click(toggleRow.querySelector("input") as HTMLElement);
-		fireEvent.doubleClick(screen.getByText("Media"));
+		fireEvent.doubleClick(within(container).getByText("Media"));
 
 		// still in the root folder, with the folder expanded underneath itself
 		expect(rowLabels(container)).toContain("Documents");
@@ -81,19 +86,19 @@ describe("FileSystem demo", () => {
 	});
 
 	it("selects rows and deletes them", () => {
-		const {container} = render(<FileSystemDevelopment/>);
+		const container = examplesOf(render(<FileSystemDevelopment/>).container);
 
-		const mediaRow = screen.getByText("Media").closest("tr") as HTMLElement;
+		const mediaRow = within(container).getByText("Media").closest("tr") as HTMLElement;
 		fireEvent.mouseDown(mediaRow);
 		fireEvent.click(mediaRow);
 		expect(mediaRow.classList.contains("blue-orange-file-system-row-selected-style")).toBe(true);
 
-		fireEvent.click(screen.getByText("Delete"));
+		fireEvent.click(within(container).getByText("Delete"));
 		expect(rowLabels(container)).not.toContain("Media");
 	});
 
 	it("hides a column in the body as well as the header", () => {
-		const {container} = render(<FileSystemDevelopment/>);
+		const container = examplesOf(render(<FileSystemDevelopment/>).container);
 
 		const cellsPerRow = () => (container.querySelector("tbody tr") as HTMLElement).querySelectorAll("td").length;
 		const headerCells = () => container.querySelectorAll("thead th").length;
@@ -112,10 +117,10 @@ describe("FileSystem demo", () => {
 	it("shows an inline progress bar while a simulated upload runs", () => {
 		vi.useFakeTimers();
 		try {
-			const {container} = render(<FileSystemDevelopment/>);
+			const container = examplesOf(render(<FileSystemDevelopment/>).container);
 
 			act(() => {
-				fireEvent.click(screen.getByText("Simulate upload"));
+				fireEvent.click(within(container).getByText("Simulate upload"));
 			});
 			expect(container.querySelector(".blue-orange-file-system-row-progress-bar")).not.toBeNull();
 
@@ -136,9 +141,9 @@ describe("FileSystem demo", () => {
 	});
 
 	it("creates a folder and renames it", () => {
-		const {container} = render(<FileSystemDevelopment/>);
+		const container = examplesOf(render(<FileSystemDevelopment/>).container);
 
-		fireEvent.click(screen.getByText("New folder"));
+		fireEvent.click(within(container).getByText("New folder"));
 		const input = container.querySelector(".blue-orange-file-system-row-primary input") as HTMLInputElement;
 		expect(input).not.toBeNull();
 

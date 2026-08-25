@@ -1,8 +1,6 @@
 import React, {useState} from "react";
 
 import './StepperDevelopment.css'
-import {PaddedPage} from "../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../components/text-decorations/page-heading/PageHeading";
 import {GeneralHeading} from "../../../components/text-decorations/general-heading/GeneralHeading";
 import {Description} from "../../../components/text-decorations/description/Description";
 import {Stepper} from "../../../components/stepper/stepper/Stepper";
@@ -24,6 +22,262 @@ import {ModalFooterRight} from "../../../components/layouts/modal/modal-footer-r
 import {Drawer, DrawerPosition} from "../../../components/layouts/drawer/drawer/Drawer";
 import {DrawerHeader} from "../../../components/layouts/drawer/drawer-header/DrawerHeader";
 import {DrawerBody} from "../../../components/layouts/drawer/drawer-body/DrawerBody";
+import {ComponentDoc} from "../../framework/ComponentDoc";
+import {PropSpec} from "../../framework/PropSpec";
+import {StepperIndicator} from "../../../components/stepper/stepper-indicator/StepperIndicator";
+import {StepperSeparator} from "../../../components/stepper/stepper-separator/StepperSeparator";
+
+const STEPPER_STATE_OPTIONS = [
+	{label: "Pending", value: StepperStepState.PENDING, code: "StepperStepState.PENDING"},
+	{label: "Active", value: StepperStepState.ACTIVE, code: "StepperStepState.ACTIVE"},
+	{label: "Completed", value: StepperStepState.COMPLETED, code: "StepperStepState.COMPLETED"},
+	{label: "Loading", value: StepperStepState.LOADING, code: "StepperStepState.LOADING"},
+	{label: "Error", value: StepperStepState.ERROR, code: "StepperStepState.ERROR"}
+];
+
+const STEPPER_INDICATOR_OPTIONS = [
+	{label: "Number", value: StepperIndicatorVariant.NUMBER, code: "StepperIndicatorVariant.NUMBER"},
+	{label: "Icon", value: StepperIndicatorVariant.ICON, code: "StepperIndicatorVariant.ICON"},
+	{label: "Dot", value: StepperIndicatorVariant.DOT, code: "StepperIndicatorVariant.DOT"}
+];
+
+const STEPPER_PROPS: Array<PropSpec> = [
+	{
+		name: "children",
+		type: "React.ReactNode",
+		required: true,
+		description: "The StepperStep entries, in the order they are worked through."
+	},
+	{
+		name: "activeStep",
+		type: "string",
+		control: "select",
+		value: "billing",
+		options: [
+			{label: "Details", value: "details"},
+			{label: "Billing", value: "billing"},
+			{label: "Review", value: "review"}
+		],
+		description: "The uuid of the step being worked on. Setting it moves the stepper from the outside."
+	},
+	{
+		name: "onStepChange",
+		type: "(uuid: string, index: number) => void",
+		description: "Fires with the step that was moved to, and where it sits in the run."
+	},
+	{
+		name: "orientation",
+		type: "StepperOrientation",
+		default: "StepperOrientation.HORIZONTAL",
+		defaultValue: StepperOrientation.HORIZONTAL,
+		control: "select",
+		options: [
+			{label: "Horizontal", value: StepperOrientation.HORIZONTAL, code: "StepperOrientation.HORIZONTAL"},
+			{label: "Vertical", value: StepperOrientation.VERTICAL, code: "StepperOrientation.VERTICAL"}
+		],
+		description: "Which way the run of steps goes."
+	},
+	{
+		name: "indicator",
+		type: "StepperIndicatorVariant",
+		default: "StepperIndicatorVariant.NUMBER",
+		defaultValue: StepperIndicatorVariant.NUMBER,
+		control: "select",
+		options: STEPPER_INDICATOR_OPTIONS,
+		description: "What the circle at the head of each step shows."
+	},
+	{
+		name: "size",
+		type: "StepperSize",
+		default: "StepperSize.MEDIUM",
+		defaultValue: StepperSize.MEDIUM,
+		control: "select",
+		options: [
+			{label: "Small", value: StepperSize.SMALL, code: "StepperSize.SMALL"},
+			{label: "Medium", value: StepperSize.MEDIUM, code: "StepperSize.MEDIUM"},
+			{label: "Large", value: StepperSize.LARGE, code: "StepperSize.LARGE"}
+		],
+		description: "How large the indicators and their text are."
+	},
+	{
+		name: "titlePlacement",
+		type: "StepperTitlePlacement",
+		default: "StepperTitlePlacement.INLINE",
+		defaultValue: StepperTitlePlacement.INLINE,
+		control: "select",
+		options: [
+			{label: "Inline", value: StepperTitlePlacement.INLINE, code: "StepperTitlePlacement.INLINE"},
+			{label: "Below", value: StepperTitlePlacement.BELOW, code: "StepperTitlePlacement.BELOW"},
+			{label: "Caption", value: StepperTitlePlacement.CAPTION, code: "StepperTitlePlacement.CAPTION"}
+		],
+		description: "Whether the text sits beside the indicator, underneath it, or is dropped for a caption naming only the active step. Ignored by a vertical stepper."
+	},
+	{
+		name: "formatStepCount",
+		type: "(current: number, total: number) => string",
+		default: "\"Step {current} of {total}\"",
+		description: "Builds the counter shown by the CAPTION placement."
+	},
+	{
+		name: "clickable",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Lets a step be jumped to by clicking its head."
+	},
+	{
+		name: "showPanels",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Renders the children of the active step underneath — or beside — the run."
+	},
+	{
+		name: "animatePanels",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Vertical steppers only. Keeps every panel mounted and animates the active one open as the one before it closes."
+	},
+	{
+		name: "classes",
+		type: "string",
+		default: "\"\"",
+		control: "text",
+		description: "Extra class names put on the stepper."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the stepper."
+	}
+];
+
+const STEPPER_STEP_PROPS: Array<PropSpec> = [
+	{
+		name: "uuid",
+		type: "string",
+		required: true,
+		description: "Identifies the step, and is what activeStep and onStepChange speak in."
+	},
+	{
+		name: "title",
+		type: "string",
+		required: true,
+		control: "text",
+		value: "Details",
+		description: "The step's name."
+	},
+	{
+		name: "description",
+		type: "string",
+		control: "text",
+		value: "Name and address",
+		description: "The muted line under the title."
+	},
+	{
+		name: "icon",
+		type: "string",
+		control: "text",
+		value: "ri-user-line",
+		description: "A remixicon class, shown by the ICON indicator variant."
+	},
+	{
+		name: "badge",
+		type: "string",
+		control: "text",
+		description: "A short label next to the title, such as \"Optional\"."
+	},
+	{
+		name: "state",
+		type: "StepperStepState",
+		control: "select",
+		options: STEPPER_STATE_OPTIONS,
+		description: "Pins the step to a state. Left unset it works itself out from where it sits relative to the active step."
+	},
+	{
+		name: "disabled",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Greys the step out and stops it being jumped to."
+	},
+	{
+		name: "children",
+		type: "React.ReactNode",
+		description: "The panel shown while this step is the active one."
+	}
+];
+
+const STEPPER_INDICATOR_PROPS: Array<PropSpec> = [
+	{
+		name: "state",
+		type: "StepperStepState",
+		required: true,
+		control: "select",
+		value: StepperStepState.ACTIVE,
+		options: STEPPER_STATE_OPTIONS,
+		description: "What the indicator is showing — which decides its fill and its glyph."
+	},
+	{
+		name: "number",
+		type: "number",
+		control: "number",
+		value: 2,
+		description: "The position of the step, counted from 1. Used by the NUMBER variant."
+	},
+	{
+		name: "icon",
+		type: "string",
+		control: "text",
+		value: "ri-user-line",
+		description: "A remixicon class used by the ICON variant."
+	},
+	{
+		name: "variant",
+		type: "StepperIndicatorVariant",
+		default: "StepperIndicatorVariant.NUMBER",
+		defaultValue: StepperIndicatorVariant.NUMBER,
+		control: "select",
+		options: STEPPER_INDICATOR_OPTIONS,
+		description: "Whether the circle shows the number, the icon, or a plain dot."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the indicator."
+	}
+];
+
+const STEPPER_SEPARATOR_PROPS: Array<PropSpec> = [
+	{
+		name: "completed",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Fills the line in, marking the step behind it as done."
+	},
+	{
+		name: "orientation",
+		type: "StepperOrientation",
+		default: "StepperOrientation.HORIZONTAL",
+		defaultValue: StepperOrientation.HORIZONTAL,
+		control: "select",
+		options: [
+			{label: "Horizontal", value: StepperOrientation.HORIZONTAL, code: "StepperOrientation.HORIZONTAL"},
+			{label: "Vertical", value: StepperOrientation.VERTICAL, code: "StepperOrientation.VERTICAL"}
+		],
+		description: "Which way the line runs."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the line."
+	}
+];
 
 interface Props {
 }
@@ -50,7 +304,11 @@ export const StepperDevelopment: React.FC<Props> = ({}) => {
 			activeStep={overlayStep}
 			size={StepperSize.SMALL}
 			titlePlacement={StepperTitlePlacement.CAPTION}
-			showPanels={false}></Stepper>
+			showPanels={false}>
+			<StepperStep uuid="details" title="Your details"></StepperStep>
+			<StepperStep uuid="address" title="Address"></StepperStep>
+			<StepperStep uuid="payment" title="Payment"></StepperStep>
+		</Stepper>
 	);
 
 	const overlayControls = (
@@ -78,13 +336,91 @@ export const StepperDevelopment: React.FC<Props> = ({}) => {
 	);
 
 	return (
-		<PaddedPage>
-			<PageHeading>Stepper</PageHeading>
-			<Description>
-				A step by step progress indicator. Each step works out whether it is pending, active
-				or complete from where it sits relative to the active one — loading and error states
-				can be pinned on a step directly.
-			</Description>
+		<ComponentDoc
+			title="Stepper"
+			description="A step by step progress indicator. Each step works out whether it is pending, active or complete from where it sits relative to the active one — loading and error states can be pinned on a step directly."
+			name="Stepper"
+			previewHeight={300}
+			previewCentered={false}
+			imports={["StepperStep", "StepperOrientation", "StepperIndicatorVariant", "StepperSize", "StepperTitlePlacement"]}
+			props={STEPPER_PROPS}
+			snippetChildren={() => "<StepperStep uuid={\"details\"} title={\"Details\"} description={\"Name and address\"}>\n\t<p>The details panel.</p>\n</StepperStep>\n<StepperStep uuid={\"billing\"} title={\"Billing\"} description={\"Card and plan\"}>\n\t<p>The billing panel.</p>\n</StepperStep>\n<StepperStep uuid={\"review\"} title={\"Review\"}>\n\t<p>The review panel.</p>\n</StepperStep>"}
+			preview={values => (
+				<div style={{width: "100%"}}>
+					<Stepper
+						activeStep={values.activeStep}
+						orientation={values.orientation}
+						indicator={values.indicator}
+						size={values.size}
+						titlePlacement={values.titlePlacement}
+						clickable={values.clickable}
+						showPanels={values.showPanels}
+						animatePanels={values.animatePanels}>
+						<StepperStep uuid="details" title="Details" description="Name and address" icon="ri-user-line">
+							<p>The details panel.</p>
+						</StepperStep>
+						<StepperStep uuid="billing" title="Billing" description="Card and plan" icon="ri-bank-card-line">
+							<p>The billing panel.</p>
+						</StepperStep>
+						<StepperStep uuid="review" title="Review" icon="ri-check-line">
+							<p>The review panel.</p>
+						</StepperStep>
+					</Stepper>
+				</div>
+			)}
+			siblings={[
+				{
+					name: "StepperStep",
+					description: "One step. It renders nothing itself — the Stepper reads its props and its children become the panel shown while it is active.",
+					props: STEPPER_STEP_PROPS,
+					previewHeight: 200,
+					previewCentered: false,
+					imports: ["Stepper"],
+					snippetChildren: () => "<p>The details panel.</p>",
+					preview: values => (
+						<div style={{width: "100%"}}>
+							<Stepper activeStep="details">
+								<StepperStep
+									uuid="details"
+									title={values.title}
+									description={values.description}
+									icon={values.icon}
+									badge={values.badge}
+									state={values.state}
+									disabled={values.disabled}>
+									<p>The details panel.</p>
+								</StepperStep>
+								<StepperStep uuid="billing" title="Billing"></StepperStep>
+							</Stepper>
+						</div>
+					)
+				},
+				{
+					name: "StepperIndicator",
+					description: "The circle at the head of a step, on its own. Useful for building a stepper-like head into something else.",
+					props: STEPPER_INDICATOR_PROPS,
+					previewHeight: 120,
+					preview: values => (
+						<StepperIndicator
+							state={values.state}
+							number={values.number}
+							icon={values.icon}
+							variant={values.variant}></StepperIndicator>
+					)
+				},
+				{
+					name: "StepperSeparator",
+					description: "The line between two steps. It fills in once the step behind it is done.",
+					props: STEPPER_SEPARATOR_PROPS,
+					previewHeight: 110,
+					previewCentered: false,
+					preview: values => (
+						<div style={{width: "100%"}}>
+							<StepperSeparator completed={values.completed} orientation={values.orientation}></StepperSeparator>
+						</div>
+					)
+				}
+			]}>
 
 			<GeneralHeading>Default</GeneralHeading>
 			<Stepper activeStep="address" showPanels={false}>
@@ -364,6 +700,6 @@ export const StepperDevelopment: React.FC<Props> = ({}) => {
 				<StepperStep uuid="address" title="Address"></StepperStep>
 				<StepperStep uuid="payment" title="Payment" disabled={true}></StepperStep>
 			</Stepper>
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

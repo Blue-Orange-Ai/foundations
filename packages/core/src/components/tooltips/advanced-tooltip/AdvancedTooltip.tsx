@@ -15,7 +15,8 @@ export enum ToolTipTrigger{
 
 interface Props {
 	children: React.ReactNode,
-	tooltipComponent?: string,
+	/** Rendered inside the tooltip — it is mounted as React, so any node will do. */
+	tooltipComponent?: React.ReactNode,
 	trigger?: ToolTipTrigger
 }
 

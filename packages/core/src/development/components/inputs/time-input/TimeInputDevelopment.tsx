@@ -1,12 +1,79 @@
 import React, {useState} from "react";
 
 import './TimeInputDevelopment.css'
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
 import {FormHeading} from "../../../../components/text-decorations/form-heading/FormHeading";
-import {Paragraph} from "../../../../components/text-decorations/paragraph/Paragraph";
 import {TimeInput} from "../../../../components/inputs/time/TimeInput";
 import {CodeBlock} from "../../../../components/text-decorations/code-block/CodeBlock";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+import {validationProps} from "../../../framework/InputProps";
+
+const TIME_INPUT_PROPS: Array<PropSpec> = [
+	{
+		name: "value",
+		type: "string",
+		control: "text",
+		value: "14:30",
+		description: "The time, as a 24 hour HH:mm string."
+	},
+	{
+		name: "label",
+		type: "string",
+		control: "text",
+		value: "Departure",
+		description: "The label above the field."
+	},
+	{
+		name: "help",
+		type: "string",
+		control: "text",
+		description: "Puts a help icon beside the label with this text behind it."
+	},
+	{
+		name: "isInvalid",
+		type: "boolean",
+		control: "toggle",
+		description: "Puts the field in its error state from the outside."
+	},
+	{
+		name: "disabled",
+		type: "boolean",
+		control: "toggle",
+		description: "Greys the field out and stops it taking input."
+	},
+	{
+		name: "focus",
+		type: "boolean",
+		control: "toggle",
+		description: "Takes the caret when it turns on."
+	},
+	{
+		name: "onChange",
+		type: "(value: string) => void",
+		description: "Fires with the time as it is typed."
+	},
+	{
+		name: "focusIn",
+		type: "() => void",
+		description: "Fires when the field takes the caret."
+	},
+	{
+		name: "focusOut",
+		type: "() => void",
+		description: "Fires when the field loses it."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		description: "Inline style put on the field."
+	},
+	{
+		name: "labelStyle",
+		type: "React.CSSProperties",
+		description: "Inline style put on the label."
+	},
+	...validationProps()
+];
 
 interface Props {
 }
@@ -24,12 +91,28 @@ export const TimeInputDevelopment: React.FC<Props> = ({}) => {
 	const [value, setValue] = useState<string>("09:30");
 
 	return (
-		<PaddedPage>
-			<PageHeading>Time Input</PageHeading>
-			<Paragraph>
-				A time of day field. It reports its value as a 24 hour HH:mm string through onChange, and takes part in
-				form validation the same way the other inputs do.
-			</Paragraph>
+		<ComponentDoc
+			title="Time Input"
+			description="A time of day field. It reports its value as a 24 hour HH:mm string, and takes part in a FormGroup like every other input."
+			name="TimeInput"
+			previewHeight={180}
+			previewCentered={false}
+			props={TIME_INPUT_PROPS}
+			preview={values => (
+				<div style={{width: "100%", maxWidth: "320px"}}>
+					<TimeInput
+						value={values.value}
+						label={values.label}
+						help={values.help}
+						isInvalid={values.isInvalid}
+						disabled={values.disabled}
+						name={values.name}
+						required={values.required}
+						requiredMessage={values.requiredMessage}
+						validateOnChange={values.validateOnChange}
+						onChange={() => {}}></TimeInput>
+				</div>
+			)}>
 
 			<div className="time-input-dev-section">
 				<FormHeading label="Basic"></FormHeading>
@@ -60,6 +143,6 @@ export const TimeInputDevelopment: React.FC<Props> = ({}) => {
 				<FormHeading label="Usage"></FormHeading>
 				<CodeBlock value={{code: USAGE, lang: "tsx"}}></CodeBlock>
 			</div>
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

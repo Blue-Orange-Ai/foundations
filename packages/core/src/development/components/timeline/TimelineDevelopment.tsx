@@ -1,8 +1,6 @@
 import React from "react";
 
 import './TimelineDevelopment.css'
-import {PaddedPage} from "../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../components/text-decorations/page-heading/PageHeading";
 import {GeneralHeading} from "../../../components/text-decorations/general-heading/GeneralHeading";
 import {Description} from "../../../components/text-decorations/description/Description";
 import {Timeline} from "../../../components/timeline/timeline/Timeline";
@@ -21,6 +19,146 @@ import {Card} from "../../../components/card/card/Card";
 import {CardHeader} from "../../../components/card/card-header/CardHeader";
 import {CardTitle} from "../../../components/card/card-title/CardTitle";
 import {CardDescription} from "../../../components/card/card-description/CardDescription";
+import {ComponentDoc} from "../../framework/ComponentDoc";
+import {PropSpec} from "../../framework/PropSpec";
+
+const TIMELINE_PROPS: Array<PropSpec> = [
+	{
+		name: "children",
+		type: "React.ReactNode",
+		required: true,
+		description: "The items, in the order they happened."
+	},
+	{
+		name: "orientation",
+		type: "TimelineOrientation",
+		default: "TimelineOrientation.VERTICAL",
+		defaultValue: TimelineOrientation.VERTICAL,
+		control: "select",
+		options: [
+			{label: "Vertical", value: TimelineOrientation.VERTICAL, code: "TimelineOrientation.VERTICAL"},
+			{label: "Horizontal", value: TimelineOrientation.HORIZONTAL, code: "TimelineOrientation.HORIZONTAL"}
+		],
+		description: "Which way the rail runs."
+	},
+	{
+		name: "align",
+		type: "TimelineAlign",
+		default: "TimelineAlign.START",
+		defaultValue: TimelineAlign.START,
+		control: "select",
+		options: [
+			{label: "Start", value: TimelineAlign.START, code: "TimelineAlign.START"},
+			{label: "Alternate", value: TimelineAlign.ALTERNATE, code: "TimelineAlign.ALTERNATE"}
+		],
+		description: "START keeps every item on one side of the rail; ALTERNATE puts them either side of a centred one. Vertical only."
+	},
+	{
+		name: "classes",
+		type: "string",
+		default: "\"\"",
+		control: "text",
+		description: "Extra class names put on the timeline."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the timeline."
+	}
+];
+
+const TIMELINE_ITEM_PROPS: Array<PropSpec> = [
+	{
+		name: "children",
+		type: "React.ReactNode",
+		description: "The event's time, title, description and content."
+	},
+	{
+		name: "icon",
+		type: "string",
+		control: "text",
+		value: "ri-git-commit-line",
+		description: "A remixicon class drawn inside the marker. Left off, the state picks one."
+	},
+	{
+		name: "state",
+		type: "TimelineItemState",
+		default: "TimelineItemState.DEFAULT",
+		defaultValue: TimelineItemState.DEFAULT,
+		control: "select",
+		options: [
+			{label: "Default", value: TimelineItemState.DEFAULT, code: "TimelineItemState.DEFAULT"},
+			{label: "Active", value: TimelineItemState.ACTIVE, code: "TimelineItemState.ACTIVE"},
+			{label: "Success", value: TimelineItemState.SUCCESS, code: "TimelineItemState.SUCCESS"},
+			{label: "Warning", value: TimelineItemState.WARNING, code: "TimelineItemState.WARNING"},
+			{label: "Error", value: TimelineItemState.ERROR, code: "TimelineItemState.ERROR"},
+			{label: "Loading", value: TimelineItemState.LOADING, code: "TimelineItemState.LOADING"}
+		],
+		description: "Colours the marker and picks its fallback icon."
+	},
+	{
+		name: "media",
+		type: "React.ReactNode",
+		description: "Replaces the marker entirely — an avatar, an image, anything."
+	},
+	{
+		name: "leading",
+		type: "React.ReactNode",
+		description: "Rendered on the far side of the rail: a date, a milestone, a duration."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the item."
+	}
+];
+
+const TIMELINE_TIME_PROPS: Array<PropSpec> = [
+	{
+		name: "children",
+		type: "React.ReactNode",
+		required: true,
+		control: "text",
+		value: "09:12",
+		hideFromSnippet: true,
+		description: "The timestamp as it should read."
+	},
+	{
+		name: "icon",
+		type: "string",
+		control: "text",
+		description: "A remixicon class shown before the timestamp."
+	},
+	{
+		name: "dateTime",
+		type: "string",
+		control: "text",
+		description: "The machine readable value of the underlying time element."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the timestamp."
+	}
+];
+
+const TIMELINE_SECTION_PROPS: Array<PropSpec> = [
+	{
+		name: "children",
+		type: "React.ReactNode",
+		required: true,
+		description: "The section's content."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the section."
+	}
+];
 
 interface Props {
 }
@@ -28,12 +166,94 @@ interface Props {
 export const TimelineDevelopment: React.FC<Props> = ({}) => {
 
 	return (
-		<PaddedPage>
-			<PageHeading>Timeline</PageHeading>
-			<Description>
-				A run of events joined by a rail. Each item draws its own marker and the connector to
-				the next one, so the rail stops cleanly at the final event.
-			</Description>
+		<ComponentDoc
+			title="Timeline"
+			description="A run of events joined by a rail. Each item draws its own marker and the connector to the next one, so the rail stops cleanly at the final event."
+			name="Timeline"
+			previewHeight={320}
+			previewCentered={false}
+			imports={["TimelineItem", "TimelineTime", "TimelineTitle", "TimelineDescription", "TimelineOrientation", "TimelineAlign"]}
+			props={TIMELINE_PROPS}
+			snippetChildren={() => "<TimelineItem icon={\"ri-git-commit-line\"}>\n\t<TimelineTime>09:12</TimelineTime>\n\t<TimelineTitle>Run started</TimelineTitle>\n\t<TimelineDescription>Queued behind two other runs.</TimelineDescription>\n</TimelineItem>\n<TimelineItem icon={\"ri-check-line\"} state={TimelineItemState.SUCCESS}>\n\t<TimelineTime>09:41</TimelineTime>\n\t<TimelineTitle>Run finished</TimelineTitle>\n</TimelineItem>"}
+			preview={values => (
+				<div style={{width: "100%"}}>
+					<Timeline orientation={values.orientation} align={values.align} classes={values.classes}>
+						<TimelineItem icon="ri-git-commit-line">
+							<TimelineTime>09:12</TimelineTime>
+							<TimelineTitle>Run started</TimelineTitle>
+							<TimelineDescription>Queued behind two other runs.</TimelineDescription>
+						</TimelineItem>
+						<TimelineItem icon="ri-loader-4-line" state={TimelineItemState.ACTIVE}>
+							<TimelineTime>09:26</TimelineTime>
+							<TimelineTitle>Transforming</TimelineTitle>
+							<TimelineDescription>Two of six stages complete.</TimelineDescription>
+						</TimelineItem>
+						<TimelineItem icon="ri-check-line" state={TimelineItemState.SUCCESS}>
+							<TimelineTime>09:41</TimelineTime>
+							<TimelineTitle>Run finished</TimelineTitle>
+						</TimelineItem>
+					</Timeline>
+				</div>
+			)}
+			siblings={[
+				{
+					name: "TimelineItem",
+					description: "One event. Its state colours the marker and picks the fallback icon, and `leading` puts something on the far side of the rail.",
+					props: TIMELINE_ITEM_PROPS,
+					previewHeight: 180,
+					previewCentered: false,
+					imports: ["Timeline", "TimelineTitle", "TimelineDescription"],
+					snippetChildren: () => "<TimelineTitle>Run started</TimelineTitle>\n<TimelineDescription>Queued behind two other runs.</TimelineDescription>",
+					preview: values => (
+						<div style={{width: "100%"}}>
+							<Timeline>
+								<TimelineItem icon={values.icon} state={values.state}>
+									<TimelineTitle>Run started</TimelineTitle>
+									<TimelineDescription>Queued behind two other runs.</TimelineDescription>
+								</TimelineItem>
+							</Timeline>
+						</div>
+					)
+				},
+				{
+					name: "TimelineTime",
+					description: "The timestamp of an event, rendered as a real time element so it is machine readable.",
+					props: TIMELINE_TIME_PROPS,
+					previewHeight: 110,
+					snippetChildren: values => values.children,
+					preview: values => (
+						<TimelineTime icon={values.icon} dateTime={values.dateTime}>{values.children}</TimelineTime>
+					)
+				},
+				{
+					name: "TimelineTitle",
+					description: "What happened, in the heading weight.",
+					props: TIMELINE_SECTION_PROPS,
+					previewHeight: 110,
+					snippetChildren: () => "Run started",
+					preview: () => (<TimelineTitle>Run started</TimelineTitle>)
+				},
+				{
+					name: "TimelineDescription",
+					description: "The muted line under the title.",
+					props: TIMELINE_SECTION_PROPS,
+					previewHeight: 110,
+					snippetChildren: () => "Queued behind two other runs.",
+					preview: () => (<TimelineDescription>Queued behind two other runs.</TimelineDescription>)
+				},
+				{
+					name: "TimelineContent",
+					description: "A block under the description for anything larger — a card, a table, a set of properties.",
+					props: TIMELINE_SECTION_PROPS,
+					previewHeight: 140,
+					snippetChildren: () => "<Card>…</Card>",
+					preview: () => (
+						<TimelineContent>
+							<Badge>Attached artefact</Badge>
+						</TimelineContent>
+					)
+				}
+			]}>
 
 			<GeneralHeading>Default</GeneralHeading>
 			<div className="blue-orange-timeline-development-block">
@@ -206,6 +426,6 @@ export const TimelineDevelopment: React.FC<Props> = ({}) => {
 					</TimelineItem>
 				</Timeline>
 			</div>
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

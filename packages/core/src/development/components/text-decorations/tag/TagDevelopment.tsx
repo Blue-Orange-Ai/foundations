@@ -1,11 +1,36 @@
 import React from "react";
 
 import './TagDevelopment.css'
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
 import {Tag} from "../../../../components/text-decorations/tag/Tag";
 import {GeneralHeading} from "../../../../components/text-decorations/general-heading/GeneralHeading";
-import {Description} from "../../../../components/text-decorations/description/Description";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+
+const TAG_PROPS: Array<PropSpec> = [
+	{
+		name: "children",
+		type: "ReactNode",
+		required: true,
+		control: "text",
+		value: "Operational",
+		hideFromSnippet: true,
+		description: "What the tag reads."
+	},
+	{
+		name: "backgroundColor",
+		type: "string",
+		default: "\"#18181b\"",
+		control: "color",
+		description: "The chip's fill."
+	},
+	{
+		name: "textColor",
+		type: "string",
+		default: "\"white\"",
+		control: "color",
+		description: "The colour of the text on it."
+	}
+];
 
 interface Props {
 }
@@ -13,9 +38,16 @@ interface Props {
 export const TagDevelopment: React.FC<Props> = ({}) => {
 
 	return (
-		<PaddedPage>
-			<PageHeading>Tag Text Decoration</PageHeading>
-			<Description>A tag component with customizable background and text colors.</Description>
+		<ComponentDoc
+			title="Tag"
+			description="A coloured chip for a status or a label. Unlike Badge it takes its two colours as props, so a set of states can be told apart at a glance."
+			name="Tag"
+			previewHeight={110}
+			snippetChildren={values => values.children}
+			props={TAG_PROPS}
+			preview={values => (
+				<Tag backgroundColor={values.backgroundColor} textColor={values.textColor}>{values.children}</Tag>
+			)}>
 
 			<GeneralHeading>Default Tag</GeneralHeading>
 			<Tag>Default</Tag>
@@ -43,6 +75,6 @@ export const TagDevelopment: React.FC<Props> = ({}) => {
 				<Tag backgroundColor="#fef3c7" textColor="#92400e">Yellow</Tag>
 				<Tag backgroundColor="#fee2e2" textColor="#991b1b">Red</Tag>
 			</div>
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

@@ -5,6 +5,8 @@ export interface ChartDataset {
     borderColor?: string,
     backgroundColor?: string,
     borderWidth?: number,
+    /** Dash pattern for the line, as Chart.js takes one. */
+    borderDash?: Array<number>,
     fill?: boolean | string,
     axis?: string,
     borderRadius?: number,

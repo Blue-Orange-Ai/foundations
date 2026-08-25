@@ -1,11 +1,28 @@
 import React from "react";
 
 import './FormHeadingDevelopment.css'
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
 import {FormHeading} from "../../../../components/text-decorations/form-heading/FormHeading";
 import {GeneralHeading} from "../../../../components/text-decorations/general-heading/GeneralHeading";
-import {Description} from "../../../../components/text-decorations/description/Description";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+
+const FORM_HEADING_PROPS: Array<PropSpec> = [
+	{
+		name: "label",
+		type: "string",
+		required: true,
+		control: "text",
+		value: "Email address",
+		description: "What the heading reads."
+	},
+	{
+		name: "required",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Puts an asterisk in front of the label."
+	}
+];
 
 interface Props {
 }
@@ -13,9 +30,15 @@ interface Props {
 export const FormHeadingDevelopment: React.FC<Props> = ({}) => {
 
 	return (
-		<PaddedPage>
-			<PageHeading>Form Heading Text Decoration</PageHeading>
-			<Description>A heading component for form labels with optional required indicator.</Description>
+		<ComponentDoc
+			title="Form Heading"
+			description="The label above a field or a group of fields, with the asterisk that marks it required. It is the heading the input components use themselves."
+			name="FormHeading"
+			previewHeight={110}
+			props={FORM_HEADING_PROPS}
+			preview={values => (
+				<FormHeading label={values.label} required={values.required}></FormHeading>
+			)}>
 
 			<GeneralHeading>Optional Field</GeneralHeading>
 			<FormHeading label="Username" />
@@ -30,6 +53,6 @@ export const FormHeadingDevelopment: React.FC<Props> = ({}) => {
 				<FormHeading label="Phone Number" />
 				<FormHeading label="Password" required={true} />
 			</div>
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

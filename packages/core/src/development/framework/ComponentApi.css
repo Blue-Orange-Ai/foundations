@@ -1,0 +1,83 @@
+.blue-orange-docs-api {
+    display: block;
+    margin-bottom: 32px;
+}
+
+.blue-orange-docs-subheading {
+    margin-top: 28px;
+    margin-bottom: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.blue-orange-docs-playground {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 16px;
+    width: 100%;
+    margin-top: 16px;
+}
+
+.blue-orange-docs-playground-stage {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.blue-orange-docs-playground-panel {
+    box-sizing: border-box;
+    flex: 0 0 272px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    max-height: 640px;
+    border: 1px solid var(--blue-orange-light-docs-border-color);
+    border-radius: 8px;
+    background-color: var(--blue-orange-light-docs-background-color);
+    overflow: hidden;
+}
+
+.dark .blue-orange-docs-playground-panel {
+    border-color: var(--blue-orange-dark-docs-border-color);
+    background-color: var(--blue-orange-dark-docs-background-color);
+}
+
+.blue-orange-docs-playground-panel-header {
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 8px 6px 12px;
+    border-bottom: 1px solid var(--blue-orange-light-docs-border-color);
+    background-color: var(--blue-orange-light-docs-surface-color);
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.dark .blue-orange-docs-playground-panel-header {
+    border-bottom-color: var(--blue-orange-dark-docs-border-color);
+    background-color: var(--blue-orange-dark-docs-surface-color);
+}
+
+/* The panel scrolls on its own so a long interface never stretches the demo. */
+.blue-orange-docs-playground-panel-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 12px;
+    overflow-y: auto;
+}
+
+/* Under a narrow window the controls drop below the stage rather than squeezing it. */
+@media (max-width: 1100px) {
+    .blue-orange-docs-playground {
+        flex-direction: column;
+    }
+
+    .blue-orange-docs-playground-panel {
+        flex: 0 0 auto;
+        max-height: none;
+    }
+}

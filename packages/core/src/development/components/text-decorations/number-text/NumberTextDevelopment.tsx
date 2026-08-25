@@ -1,11 +1,43 @@
 import React from "react";
 
 import './NumberTextDevelopment.css'
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
 import {NumberText} from "../../../../components/text-decorations/number-text/NumberText";
 import {GeneralHeading} from "../../../../components/text-decorations/general-heading/GeneralHeading";
-import {Description} from "../../../../components/text-decorations/description/Description";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+
+const NUMBER_LOCALE_OPTIONS = [
+	{label: "en-AU", value: "en-AU"},
+	{label: "en-US", value: "en-US"},
+	{label: "de-DE", value: "de-DE"},
+	{label: "fr-FR", value: "fr-FR"},
+	{label: "hi-IN", value: "hi-IN"}
+];
+
+const NUMBER_TEXT_PROPS: Array<PropSpec> = [
+	{
+		name: "value",
+		type: "number",
+		required: true,
+		control: "number",
+		value: 1234567.891,
+		description: "The number to print."
+	},
+	{
+		name: "decimalPlaces",
+		type: "number",
+		control: "number",
+		description: "Pins the output to this many decimal places. Left off, the locale decides."
+	},
+	{
+		name: "numberFormat",
+		type: "string",
+		default: "\"en-AU\"",
+		control: "select",
+		options: NUMBER_LOCALE_OPTIONS,
+		description: "The locale handed to Intl.NumberFormat, which decides the grouping and the decimal mark."
+	}
+];
 
 interface Props {
 }
@@ -13,9 +45,17 @@ interface Props {
 export const NumberTextDevelopment: React.FC<Props> = ({}) => {
 
 	return (
-		<PaddedPage>
-			<PageHeading>Number Text Decoration</PageHeading>
-			<Description>Formats numbers with locale-specific formatting and decimal places.</Description>
+		<ComponentDoc
+			title="Number Text"
+			description="Prints a number with the grouping the locale expects, and to a fixed number of decimal places when one is asked for."
+			name="NumberText"
+			previewHeight={110}
+			props={NUMBER_TEXT_PROPS}
+			preview={values => (
+				<span style={{fontSize: "1.5rem"}}>
+					<NumberText value={values.value} decimalPlaces={values.decimalPlaces} numberFormat={values.numberFormat}></NumberText>
+				</span>
+			)}>
 
 			<GeneralHeading>Default Format (en-AU)</GeneralHeading>
 			<p><NumberText value={1234567.89} /></p>
@@ -37,6 +77,6 @@ export const NumberTextDevelopment: React.FC<Props> = ({}) => {
 
 			<GeneralHeading>Small Decimal</GeneralHeading>
 			<p><NumberText value={0.001234} decimalPlaces={6} /></p>
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

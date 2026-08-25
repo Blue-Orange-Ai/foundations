@@ -1,8 +1,6 @@
 import React, {useState} from "react";
 
 import './WizardDevelopment.css'
-import {PaddedPage} from "../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../components/text-decorations/page-heading/PageHeading";
 import {GeneralHeading} from "../../../components/text-decorations/general-heading/GeneralHeading";
 import {Description} from "../../../components/text-decorations/description/Description";
 import {Wizard, WizardOrientation} from "../../../components/wizard/wizard/Wizard";
@@ -16,6 +14,255 @@ import {ModalHeader} from "../../../components/layouts/modal/modal-header/ModalH
 import {ModalBody} from "../../../components/layouts/modal/modal-body/ModalBody";
 import {SuccessBlockAlert} from "../../../components/alerts/in-line-block/successalert/SuccessBlockAlert";
 import {InfoBlockAlert} from "../../../components/alerts/in-line-block/infoalert/InfoBlockAlert";
+import {ComponentDoc} from "../../framework/ComponentDoc";
+import {PropSpec} from "../../framework/PropSpec";
+import {StepperIndicatorVariant, StepperStepState} from "../../../components/stepper/stepper/StepperTypes";
+
+const WIZARD_PROPS: Array<PropSpec> = [
+	{
+		name: "children",
+		type: "React.ReactNode",
+		required: true,
+		description: "The WizardStage entries, in the order they are worked through."
+	},
+	{
+		name: "activeStage",
+		type: "string",
+		control: "text",
+		description: "The uuid of the stage being worked on. Setting it moves the wizard from the outside."
+	},
+	{
+		name: "onStageChange",
+		type: "(uuid: string, index: number) => void",
+		description: "Fires with the stage that was moved to, and where it sits in the flow."
+	},
+	{
+		name: "onComplete",
+		type: "(uuid: string) => void",
+		description: "Fires when the last stage is finished."
+	},
+	{
+		name: "onCancel",
+		type: "() => void",
+		description: "Shows a cancel button in the footer when it is supplied, and fires when it is clicked."
+	},
+	{
+		name: "orientation",
+		type: "WizardOrientation",
+		default: "WizardOrientation.HORIZONTAL",
+		defaultValue: WizardOrientation.HORIZONTAL,
+		control: "select",
+		options: [
+			{label: "Horizontal", value: WizardOrientation.HORIZONTAL, code: "WizardOrientation.HORIZONTAL"},
+			{label: "Vertical", value: WizardOrientation.VERTICAL, code: "WizardOrientation.VERTICAL"}
+		],
+		description: "HORIZONTAL runs the stepper across the top with the stage under it; VERTICAL stacks the stages, each opening in place under its own step."
+	},
+	{
+		name: "animateStages",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Vertical only. Opens the stage being worked on in place and closes the one before it, rather than swapping them outright."
+	},
+	{
+		name: "showStepper",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Draws the stepper. Off, the flow is just the stage and its footer."
+	},
+	{
+		name: "stepperSize",
+		type: "StepperSize",
+		default: "StepperSize.MEDIUM",
+		defaultValue: StepperSize.MEDIUM,
+		control: "select",
+		options: [
+			{label: "Small", value: StepperSize.SMALL, code: "StepperSize.SMALL"},
+			{label: "Medium", value: StepperSize.MEDIUM, code: "StepperSize.MEDIUM"},
+			{label: "Large", value: StepperSize.LARGE, code: "StepperSize.LARGE"}
+		],
+		description: "Passed straight through to the stepper."
+	},
+	{
+		name: "stepperIndicator",
+		type: "StepperIndicatorVariant",
+		default: "StepperIndicatorVariant.NUMBER",
+		control: "select",
+		options: [
+			{label: "Number", value: StepperIndicatorVariant.NUMBER, code: "StepperIndicatorVariant.NUMBER"},
+			{label: "Icon", value: StepperIndicatorVariant.ICON, code: "StepperIndicatorVariant.ICON"},
+			{label: "Dot", value: StepperIndicatorVariant.DOT, code: "StepperIndicatorVariant.DOT"}
+		],
+		defaultValue: StepperIndicatorVariant.NUMBER,
+		description: "What the circle at the head of each stage shows."
+	},
+	{
+		name: "stepperTitlePlacement",
+		type: "StepperTitlePlacement",
+		default: "StepperTitlePlacement.INLINE",
+		defaultValue: StepperTitlePlacement.INLINE,
+		control: "select",
+		options: [
+			{label: "Inline", value: StepperTitlePlacement.INLINE, code: "StepperTitlePlacement.INLINE"},
+			{label: "Below", value: StepperTitlePlacement.BELOW, code: "StepperTitlePlacement.BELOW"},
+			{label: "Caption", value: StepperTitlePlacement.CAPTION, code: "StepperTitlePlacement.CAPTION"}
+		],
+		description: "Where the stage's text sits relative to its indicator. CAPTION is the one that fits a modal."
+	},
+	{
+		name: "allowStageNavigation",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Lets a stage that has already been reached be jumped back to from the stepper."
+	},
+	{
+		name: "showFooter",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Draws the built in back / next footer."
+	},
+	{
+		name: "footer",
+		type: "React.ReactNode",
+		description: "Replaces the built in footer, for a wizard that drives itself."
+	},
+	{
+		name: "backLabel",
+		type: "string",
+		default: "\"Back\"",
+		control: "text",
+		description: "What the back button reads."
+	},
+	{
+		name: "nextLabel",
+		type: "string",
+		default: "\"Next\"",
+		control: "text",
+		description: "What the next button reads."
+	},
+	{
+		name: "finishLabel",
+		type: "string",
+		default: "\"Finish\"",
+		control: "text",
+		description: "What the next button reads on the last stage."
+	},
+	{
+		name: "cancelLabel",
+		type: "string",
+		default: "\"Cancel\"",
+		control: "text",
+		description: "What the cancel button reads."
+	},
+	{
+		name: "nextLoading",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Shows the next button working, for instance while the stage is being saved."
+	},
+	{
+		name: "unmountInactiveStages",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Throws away the stages that are not showing instead of hiding them. Their content starts fresh each time it is reached."
+	},
+	{
+		name: "classes",
+		type: "string",
+		default: "\"\"",
+		control: "text",
+		description: "Extra class names put on the wizard."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the wizard."
+	},
+	{
+		name: "showCancel",
+		type: "boolean",
+		control: "toggle",
+		hideFromTable: true,
+		hideFromSnippet: true,
+		description: "Demo only — hands the wizard an onCancel so the cancel button appears."
+	}
+];
+
+const WIZARD_STAGE_PROPS: Array<PropSpec> = [
+	{
+		name: "uuid",
+		type: "string",
+		required: true,
+		description: "Identifies the stage, and is what activeStage and onStageChange speak in."
+	},
+	{
+		name: "title",
+		type: "string",
+		required: true,
+		control: "text",
+		value: "Details",
+		description: "The stage's name, shown on the stepper."
+	},
+	{
+		name: "description",
+		type: "string",
+		control: "text",
+		value: "Name and address",
+		description: "The muted line under the title."
+	},
+	{
+		name: "icon",
+		type: "string",
+		control: "text",
+		value: "ri-user-line",
+		description: "A remixicon class, used by the icon indicator variant."
+	},
+	{
+		name: "badge",
+		type: "string",
+		control: "text",
+		description: "A short label next to the title, such as \"Optional\"."
+	},
+	{
+		name: "enabled",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Whether the stage is part of the flow at all. Off, it is dropped from the stepper and skipped — this is how an answer earlier on adds or removes the stages that follow."
+	},
+	{
+		name: "canProceed",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Blocks the next button until the stage is happy with its answers."
+	},
+	{
+		name: "state",
+		type: "StepperStepState",
+		control: "select",
+		options: [
+			{label: "Pending", value: StepperStepState.PENDING, code: "StepperStepState.PENDING"},
+			{label: "Active", value: StepperStepState.ACTIVE, code: "StepperStepState.ACTIVE"},
+			{label: "Completed", value: StepperStepState.COMPLETED, code: "StepperStepState.COMPLETED"},
+			{label: "Loading", value: StepperStepState.LOADING, code: "StepperStepState.LOADING"},
+			{label: "Error", value: StepperStepState.ERROR, code: "StepperStepState.ERROR"}
+		],
+		description: "Pins the step to a state — leaving an error on a stage, for instance."
+	},
+	{
+		name: "children",
+		type: "React.ReactNode",
+		description: "The stage's content. It is a plain container, so anything at all can go in it."
+	}
+];
 
 interface Props {
 }
@@ -35,13 +282,76 @@ export const WizardDevelopment: React.FC<Props> = ({}) => {
 	const [modalOpen, setModalOpen] = useState(false);
 
 	return (
-		<PaddedPage>
-			<PageHeading>Wizard</PageHeading>
-			<Description>
-				A staged flow with the stepper across the top, the stage underneath and the navigation
-				at the bottom. A stage holds anything at all, and the flow can grow or shrink as it is
-				filled in.
-			</Description>
+		<ComponentDoc
+			title="Wizard"
+			description="A staged flow with the stepper across the top, the stage underneath and the navigation at the bottom. A stage holds anything at all, and the flow can grow or shrink as it is filled in — turning a stage off drops it from the stepper and skips over it."
+			name="Wizard"
+			previewHeight={380}
+			previewCentered={false}
+			imports={["WizardStage", "WizardOrientation"]}
+			props={WIZARD_PROPS}
+			snippetChildren={() => "<WizardStage uuid={\"details\"} title={\"Details\"} description={\"Name and address\"}>\n\t<Input label={\"Name\"}></Input>\n</WizardStage>\n<WizardStage uuid={\"billing\"} title={\"Billing\"} canProceed={billingValid}>\n\t<Input label={\"Card number\"}></Input>\n</WizardStage>\n<WizardStage uuid={\"review\"} title={\"Review\"}>\n\t<p>Everything looks right.</p>\n</WizardStage>"}
+			preview={values => (
+				<div style={{width: "100%"}}>
+					<Wizard
+						orientation={values.orientation}
+						animateStages={values.animateStages}
+						showStepper={values.showStepper}
+						stepperSize={values.stepperSize}
+						stepperIndicator={values.stepperIndicator}
+						stepperTitlePlacement={values.stepperTitlePlacement}
+						allowStageNavigation={values.allowStageNavigation}
+						showFooter={values.showFooter}
+						backLabel={values.backLabel}
+						nextLabel={values.nextLabel}
+						finishLabel={values.finishLabel}
+						cancelLabel={values.cancelLabel}
+						nextLoading={values.nextLoading}
+						unmountInactiveStages={values.unmountInactiveStages}
+						onCancel={values.showCancel ? () => {} : undefined}>
+						<WizardStage uuid="details" title="Details" description="Name and address" icon="ri-user-line">
+							<p>The details stage.</p>
+						</WizardStage>
+						<WizardStage uuid="billing" title="Billing" description="Card and plan" icon="ri-bank-card-line">
+							<p>The billing stage.</p>
+						</WizardStage>
+						<WizardStage uuid="review" title="Review" icon="ri-check-line">
+							<p>The review stage.</p>
+						</WizardStage>
+					</Wizard>
+				</div>
+			)}
+			siblings={[
+				{
+					name: "WizardStage",
+					description: "One stage of the flow. It renders nothing itself — the Wizard reads its props, and its children become the stage's content.",
+					props: WIZARD_STAGE_PROPS,
+					previewHeight: 300,
+					previewCentered: false,
+					imports: ["Wizard"],
+					snippetChildren: () => "<p>The details stage.</p>",
+					preview: values => (
+						<div style={{width: "100%"}}>
+							<Wizard>
+								<WizardStage
+									uuid="details"
+									title={values.title}
+									description={values.description}
+									icon={values.icon}
+									badge={values.badge}
+									enabled={values.enabled}
+									canProceed={values.canProceed}
+									state={values.state}>
+									<p>The details stage.</p>
+								</WizardStage>
+								<WizardStage uuid="review" title="Review">
+									<p>The review stage.</p>
+								</WizardStage>
+							</Wizard>
+						</div>
+					)
+				}
+			]}>
 
 			<GeneralHeading>Default</GeneralHeading>
 			<div className="blue-orange-wizard-development-block">
@@ -240,6 +550,6 @@ export const WizardDevelopment: React.FC<Props> = ({}) => {
 					</Wizard>
 				</ModalBody>
 			</Modal>
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

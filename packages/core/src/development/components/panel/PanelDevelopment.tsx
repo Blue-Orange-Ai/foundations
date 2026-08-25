@@ -1,13 +1,13 @@
 import React, {useState} from "react";
 
 import './PanelDevelopment.css'
-import {PaddedPage} from "../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../components/text-decorations/page-heading/PageHeading";
 import {GeneralHeading} from "../../../components/text-decorations/general-heading/GeneralHeading";
 import {Description} from "../../../components/text-decorations/description/Description";
 import {Panel, PanelIconPos, PanelTab} from "../../../components/panel/Panel";
 import {PropertiesDisplay, Property} from "../../../components/text-decorations/properties-display/PropertiesDisplay";
 import {Button, ButtonType} from "../../../components/buttons/button/Button";
+import {ComponentDoc} from "../../framework/ComponentDoc";
+import {PropSpec} from "../../framework/PropSpec";
 
 interface Site {
 	uuid: string,
@@ -73,6 +73,172 @@ const lorem = (
 	</div>
 );
 
+const DEMO_PANEL_PROPERTIES: Array<Property> = [
+	{label: "Name", value: "Melbourne Depot"},
+	{label: "Status", value: "Operational"},
+	{label: "Coordinates", value: "-37.8136, 144.9631"},
+	{label: "Manager", value: "Ada Lovelace"}
+];
+
+const DEMO_TABS: Array<PanelTab> = [
+	{
+		uuid: "melbourne",
+		label: "Melbourne Depot",
+		icon: "ri-map-pin-2-line",
+		content: <PropertiesDisplay properties={DEMO_PANEL_PROPERTIES} orientation="horizontal"></PropertiesDisplay>
+	},
+	{
+		uuid: "geelong",
+		label: "Geelong Yard",
+		icon: "ri-map-pin-2-line",
+		content: <div>Reduced capacity since 3 July.</div>
+	},
+	{
+		uuid: "ballarat",
+		label: "Ballarat Substation",
+		icon: "ri-flashlight-line",
+		disabled: true,
+		content: <div>Offline.</div>
+	}
+];
+
+const PANEL_TAB_INTERFACE = {
+	name: "PanelTab",
+	description: "One tab in the strip. Give it content and the panel swaps its own body; leave content off and the panel keeps rendering its children while onTabClick reports the selection.",
+	props: [
+		{name: "uuid", type: "string", required: true, description: "Identifies the tab, and is what onTabClick reports."},
+		{name: "label", type: "string", description: "What the tab reads."},
+		{name: "icon", type: "string", description: "A remixicon class shown before the label."},
+		{name: "disabled", type: "boolean", description: "Greys the tab out and stops it being selected."},
+		{name: "content", type: "React.ReactNode", description: "What the body shows while this tab is selected."}
+	] as Array<PropSpec>
+};
+
+const PANEL_PROPS: Array<PropSpec> = [
+	{
+		name: "children",
+		type: "React.ReactNode",
+		description: "The body. A tab carrying its own content takes over from this while it is selected."
+	},
+	{
+		name: "header",
+		type: "React.ReactNode",
+		control: "text",
+		value: "Melbourne Depot",
+		description: "Anything the header should hold — a string, or a node when it needs a layout of its own. Left off, there is no header bar."
+	},
+	{
+		name: "icon",
+		type: "string",
+		control: "text",
+		value: "ri-close-line",
+		description: "The remixicon class of the single header button. Left off, the header carries no action."
+	},
+	{
+		name: "iconPos",
+		type: "PanelIconPos",
+		default: "PanelIconPos.RIGHT",
+		defaultValue: PanelIconPos.RIGHT,
+		control: "select",
+		options: [
+			{label: "Right", value: PanelIconPos.RIGHT, code: "PanelIconPos.RIGHT"},
+			{label: "Left", value: PanelIconPos.LEFT, code: "PanelIconPos.LEFT"}
+		],
+		description: "Which side of the header the button sits on — a back arrow on the left, a close on the right."
+	},
+	{
+		name: "iconLabel",
+		type: "string",
+		control: "text",
+		value: "Close",
+		description: "The header button's tooltip and accessible name."
+	},
+	{
+		name: "onIconClick",
+		type: "() => void",
+		description: "Fires when the header button is clicked."
+	},
+	{
+		name: "tabs",
+		type: "Array<PanelTab>",
+		description: "One tab per selected item. A single tab still draws the strip."
+	},
+	{
+		name: "activeTab",
+		type: "string",
+		control: "text",
+		description: "The selected tab's uuid. Setting it moves the selection from the outside."
+	},
+	{
+		name: "onTabClick",
+		type: "(uuid: string) => void",
+		description: "Fires with the uuid of the tab that was clicked."
+	},
+	{
+		name: "padding",
+		type: "number | string",
+		default: "8",
+		control: "slider",
+		min: 0,
+		max: 32,
+		step: 2,
+		description: "Padding of the body. A number is taken as pixels."
+	},
+	{
+		name: "width",
+		type: "number | string",
+		default: "350",
+		control: "slider",
+		min: 240,
+		max: 640,
+		step: 10,
+		description: "Width of the panel. A number is taken as pixels."
+	},
+	{
+		name: "height",
+		type: "number | string",
+		default: "500",
+		control: "slider",
+		min: 160,
+		max: 640,
+		step: 10,
+		description: "Height of the panel. The body scrolls rather than the panel growing."
+	},
+	{
+		name: "classes",
+		type: "string",
+		default: "\"\"",
+		control: "text",
+		description: "Extra class names put on the panel."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the panel."
+	},
+	{
+		name: "headerStyle",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the header bar."
+	},
+	{
+		name: "bodyStyle",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the body."
+	},
+	{
+		name: "showTabs",
+		type: "boolean",
+		control: "toggle",
+		hideFromTable: true,
+		hideFromSnippet: true,
+		description: "Demo only — hands the panel three tabs so the strip can be seen."
+	}
+];
+
 interface Props {
 }
 
@@ -102,13 +268,30 @@ export const PanelDevelopment: React.FC<Props> = ({}) => {
 	}));
 
 	return (
-		<PaddedPage>
-			<PageHeading>Panel</PageHeading>
-			<Description>
-				The surface that opens beside an interactive component — a map marker, a table row, a
-				node on a graph — to show what was clicked. The header is a prop, the body takes any
-				children, and a tab strip appears when more than one item is selected at once.
-			</Description>
+		<ComponentDoc
+			title="Panel"
+			description="The surface that opens beside an interactive component — a map marker, a table row, a node on a graph — to show what was clicked. The header is a prop, the body takes any children, and a tab strip appears when more than one item is selected at once."
+			name="Panel"
+			previewHeight={420}
+			imports={["PanelIconPos", "PanelTab"]}
+			interfaces={[PANEL_TAB_INTERFACE]}
+			props={PANEL_PROPS}
+			snippetChildren={() => "<PropertiesDisplay properties={properties} orientation={\"horizontal\"}></PropertiesDisplay>"}
+			preview={values => (
+				<Panel
+					header={values.header}
+					icon={values.icon}
+					iconPos={values.iconPos}
+					iconLabel={values.iconLabel}
+					tabs={values.showTabs ? DEMO_TABS : undefined}
+					padding={values.padding}
+					width={values.width}
+					height={values.height}
+					classes={values.classes}
+					onIconClick={() => {}}>
+					<PropertiesDisplay properties={DEMO_PANEL_PROPERTIES} orientation="horizontal"></PropertiesDisplay>
+				</Panel>
+			)}>
 
 			<GeneralHeading>Default</GeneralHeading>
 			<Description>350 by 500 with 8px of body padding, and no header until one is given.</Description>
@@ -343,6 +526,6 @@ export const PanelDevelopment: React.FC<Props> = ({}) => {
 					</Panel>
 				</div>
 			</div>
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

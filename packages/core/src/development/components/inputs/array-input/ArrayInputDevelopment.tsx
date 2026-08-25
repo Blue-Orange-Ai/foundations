@@ -2,14 +2,105 @@ import React, {useState} from "react";
 
 import './ArrayInputDevelopment.css'
 import {SplitPageMajor} from "../../../../components/layouts/pages/split-pages/split-page-major/SplitPageMajor";
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
 import {SplitPageMinor} from "../../../../components/layouts/pages/split-pages/split-page-minor/SplitPageMinor";
 import {
 	HorizontalSplitPage
 } from "../../../../components/layouts/pages/split-pages/horizontal-split-page/HorizontalSplitPage";
 import {ArrayInput} from "../../../../components/inputs/array-input/ArrayInput";
 import {Address, Telephone} from "@blue-orange-ai/foundations-clients";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+import {validationProps} from "../../../framework/InputProps";
+
+const DEMO_ARRAY_VALUE = ["Storage", "Dispatch"];
+
+const ARRAY_INPUT_PROPS: Array<PropSpec> = [
+	{
+		name: "value",
+		type: "(string | number)[] | string[][] | Address[] | Telephone[]",
+		default: "[]",
+		description: "The list. Which of those shapes it takes follows from the variant."
+	},
+	{
+		name: "variant",
+		type: "'list' | 'tag-list' | 'textarea-list' | 'address-list' | 'phone-list'",
+		default: "'list'",
+		defaultValue: "list",
+		control: "select",
+		options: [
+			{label: "list", value: "list"},
+			{label: "tag-list", value: "tag-list"},
+			{label: "textarea-list", value: "textarea-list"},
+			{label: "address-list", value: "address-list"},
+			{label: "phone-list", value: "phone-list"}
+		],
+		description: "What each entry is edited with."
+	},
+	{
+		name: "label",
+		type: "string",
+		control: "text",
+		value: "Capabilities",
+		description: "The label above the field."
+	},
+	{
+		name: "placeholder",
+		type: "string",
+		default: "\"\"",
+		control: "text",
+		description: "Shown in an empty entry."
+	},
+	{
+		name: "isNumber",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Restricts entries to digits."
+	},
+	{
+		name: "whitelist",
+		type: "string[]",
+		description: "Values offered as suggestions by the tag-list variant."
+	},
+	{
+		name: "enforceWhitelist",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Refuses anything that is not on the whitelist."
+	},
+	{
+		name: "disabled",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Greys the field out and stops entries being added or removed."
+	},
+	{
+		name: "help",
+		type: "string",
+		control: "text",
+		description: "Puts a help icon beside the label with this text behind it."
+	},
+	{
+		name: "onChange",
+		type: "(value: ArrayInputValue) => void",
+		description: "Fires with the whole list whenever any entry changes."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the field."
+	},
+	{
+		name: "labelStyle",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the label."
+	},
+	...validationProps("ArrayInputValue")
+];
 
 interface Props {
 }
@@ -40,13 +131,35 @@ export const ArrayInputDevelopment: React.FC<Props> = ({}) => {
 	return (
 		<HorizontalSplitPage>
 			<SplitPageMajor>
-				<PaddedPage>
-					<PageHeading>Array Input Editor</PageHeading>
+				<ComponentDoc
+					title="Array Input"
+					description="A field for a list of values. The variant decides what each entry looks like — a line, a tag, a paragraph, an address or a phone number — and the whole list comes back through one onChange."
+					name="ArrayInput"
+					previewHeight={240}
+					previewCentered={false}
+					props={ARRAY_INPUT_PROPS}
+					preview={values => (
+						<div style={{width: "100%", maxWidth: "460px"}}>
+							<ArrayInput
+								value={DEMO_ARRAY_VALUE}
+								label={values.label}
+								placeholder={values.placeholder}
+								variant={values.variant}
+								isNumber={values.isNumber}
+								disabled={values.disabled}
+								help={values.help}
+								name={values.name}
+								required={values.required}
+								requiredMessage={values.requiredMessage}
+								validateOnChange={values.validateOnChange}
+								onChange={() => {}}></ArrayInput>
+						</div>
+					)}>
 					<div style={{display: "flex", flexDirection: "column", gap: "24px", maxWidth: "600px"}}>
 						<ArrayInput
 							label="Text Array (Required)"
 							value={textItems}
-							onChange={setTextItems}
+							onChange={(value) => setTextItems(value as (string | number)[])}
 							placeholder="Enter text..."
 							required={true}
 							help="This is a text array input with required flag"
@@ -54,14 +167,14 @@ export const ArrayInputDevelopment: React.FC<Props> = ({}) => {
 						<ArrayInput
 							label="Number Array"
 							value={numberItems}
-							onChange={setNumberItems}
+							onChange={(value) => setNumberItems(value as (string | number)[])}
 							placeholder="Enter number..."
 							isNumber={true}
 							help="This is a number array input"
 						/>
 						<ArrayInput
 							value={noLabelItems}
-							onChange={setNoLabelItems}
+							onChange={(value) => setNoLabelItems(value as (string | number)[])}
 							placeholder="No label input..."
 						/>
 						<ArrayInput
@@ -85,7 +198,7 @@ export const ArrayInputDevelopment: React.FC<Props> = ({}) => {
 						<ArrayInput
 							label="Textarea List"
 							value={textareaItems}
-							onChange={setTextareaItems}
+							onChange={(value) => setTextareaItems(value as (string | number)[])}
 							placeholder="Enter text..."
 							variant="textarea-list"
 							help="Each row is a textarea for longer content"
@@ -105,7 +218,7 @@ export const ArrayInputDevelopment: React.FC<Props> = ({}) => {
 							help="Each row is a phone number input"
 						/>
 					</div>
-				</PaddedPage>
+				</ComponentDoc>
 			</SplitPageMajor>
 			<SplitPageMinor>
 				<div className="workspace-output-window">

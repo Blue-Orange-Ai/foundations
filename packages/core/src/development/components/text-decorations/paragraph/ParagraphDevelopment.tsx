@@ -1,11 +1,28 @@
 import React from "react";
 
 import './ParagraphDevelopment.css'
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
 import {Paragraph} from "../../../../components/text-decorations/paragraph/Paragraph";
 import {GeneralHeading} from "../../../../components/text-decorations/general-heading/GeneralHeading";
-import {Description} from "../../../../components/text-decorations/description/Description";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+
+const PARAGRAPH_PROPS: Array<PropSpec> = [
+	{
+		name: "children",
+		type: "ReactNode",
+		required: true,
+		control: "text",
+		value: "Each depot reports its own throughput every hour. Where a report is missed the last known figure is carried forward and marked as stale.",
+		hideFromSnippet: true,
+		description: "The text, or any node that belongs in a paragraph."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the paragraph."
+	}
+];
 
 interface Props {
 }
@@ -13,9 +30,17 @@ interface Props {
 export const ParagraphDevelopment: React.FC<Props> = ({}) => {
 
 	return (
-		<PaddedPage>
-			<PageHeading>Paragraph Text Decoration</PageHeading>
-			<Description>A styled paragraph component for body text content.</Description>
+		<ComponentDoc
+			title="Paragraph"
+			description="Body text in the library's own typography. It carries the same styling as Description, and is the one to reach for in running prose rather than under a heading."
+			name="Paragraph"
+			previewHeight={120}
+			previewCentered={false}
+			snippetChildren={values => values.children}
+			props={PARAGRAPH_PROPS}
+			preview={values => (
+				<Paragraph>{values.children}</Paragraph>
+			)}>
 
 			<GeneralHeading>Default Paragraph</GeneralHeading>
 			<Paragraph>This is a default paragraph with standard styling. It provides consistent typography for body text throughout the application.</Paragraph>
@@ -32,6 +57,6 @@ export const ParagraphDevelopment: React.FC<Props> = ({}) => {
 			<Paragraph>First paragraph of content explaining the main topic.</Paragraph>
 			<Paragraph>Second paragraph providing additional details and context.</Paragraph>
 			<Paragraph>Third paragraph concluding the section with a summary.</Paragraph>
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

@@ -1,13 +1,167 @@
 import React from "react";
 
 import './MediaDevelopment.css'
-import {PaddedPage} from "../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../components/text-decorations/page-heading/PageHeading";
 import {FormHeading} from "../../../components/text-decorations/form-heading/FormHeading";
 import {Paragraph} from "../../../components/text-decorations/paragraph/Paragraph";
 import {Image} from "../../../components/media/image/Image";
 import {RenderMedia} from "../../../components/media/default/RenderMedia";
 import {CodeBlock} from "../../../components/text-decorations/code-block/CodeBlock";
+import {ComponentDoc} from "../../framework/ComponentDoc";
+import {PropSpec} from "../../framework/PropSpec";
+import {Pdf} from "../../../components/media/pdf/Pdf";
+
+const DEMO_MEDIA = {
+	uuid: "sample-media",
+	filename: "sample.svg",
+	folder: "",
+	bucketname: "",
+	location: "",
+	mediaType: "image",
+	dateCreated: new Date(),
+	url: "",
+	mediaPublic: true,
+	fragments: []
+};
+
+const FIT_OPTIONS = [
+	{label: "cover", value: "cover"},
+	{label: "contain", value: "contain"},
+	{label: "fill", value: "fill"},
+	{label: "none", value: "none"}
+];
+
+const IMAGE_PROPS: Array<PropSpec> = [
+	{
+		name: "src",
+		type: "string",
+		required: true,
+		description: "Where the picture comes from."
+	},
+	{
+		name: "alt",
+		type: "string",
+		required: true,
+		control: "text",
+		value: "Melbourne Depot",
+		description: "What the picture shows, for anyone who cannot see it."
+	},
+	{
+		name: "height",
+		type: "number",
+		control: "slider",
+		min: 40,
+		max: 320,
+		step: 10,
+		value: 120,
+		description: "Height in pixels."
+	},
+	{
+		name: "width",
+		type: "number",
+		control: "slider",
+		min: 40,
+		max: 320,
+		step: 10,
+		value: 180,
+		description: "Width in pixels."
+	},
+	{
+		name: "borderRadius",
+		type: "string",
+		control: "select",
+		options: [
+			{label: "None", value: ""},
+			{label: "4px", value: "4px"},
+			{label: "8px", value: "8px"},
+			{label: "50%", value: "50%"}
+		],
+		description: "Corner radius. 50% makes a round picture."
+	},
+	{
+		name: "fit",
+		type: "string",
+		control: "select",
+		options: FIT_OPTIONS,
+		description: "The CSS object-fit — how the picture fills the box it is given."
+	},
+	{
+		name: "shadow",
+		type: "boolean",
+		control: "toggle",
+		description: "Lifts the picture off the page with a shadow."
+	},
+	{
+		name: "loading",
+		type: "boolean",
+		control: "toggle",
+		description: "Shows a placeholder in place of the picture while it is on its way."
+	}
+];
+
+const RENDER_MEDIA_PROPS: Array<PropSpec> = [
+	{
+		name: "media",
+		type: "Media",
+		required: true,
+		description: "The media object from the service. Its type decides which renderer is used."
+	},
+	{
+		name: "height",
+		type: "number",
+		control: "slider",
+		min: 40,
+		max: 320,
+		step: 10,
+		value: 120,
+		description: "Height in pixels."
+	},
+	{
+		name: "width",
+		type: "number",
+		control: "slider",
+		min: 40,
+		max: 320,
+		step: 10,
+		value: 180,
+		description: "Width in pixels."
+	},
+	{
+		name: "borderRadius",
+		type: "string",
+		control: "select",
+		options: [
+			{label: "None", value: ""},
+			{label: "4px", value: "4px"},
+			{label: "8px", value: "8px"},
+			{label: "50%", value: "50%"}
+		],
+		description: "Corner radius."
+	},
+	{
+		name: "fit",
+		type: "string",
+		control: "select",
+		options: FIT_OPTIONS,
+		description: "The CSS object-fit."
+	},
+	{
+		name: "shadow",
+		type: "boolean",
+		control: "toggle",
+		description: "Lifts the media off the page with a shadow."
+	}
+];
+
+const PDF_PROPS: Array<PropSpec> = [
+	{
+		name: "src",
+		type: "string",
+		required: true,
+		control: "text",
+		value: "/documents/run-sheet.pdf",
+		description: "Where the document is."
+	}
+];
 
 interface Props {
 }
@@ -47,13 +201,51 @@ export const MediaDevelopment: React.FC<Props> = ({}) => {
 	} as any;
 
 	return (
-		<PaddedPage>
-			<PageHeading>Media</PageHeading>
-			<Paragraph>
-				Image renders a url with the library's sizing, fit and shadow options. RenderMedia takes a Media object
-				from the media service and picks the renderer for it. Pdf embeds a document with its own viewer — it
-				needs a real file to point at, so it is only shown as usage here.
-			</Paragraph>
+		<ComponentDoc
+			title="Media"
+			description="Image renders a url with the library's sizing, fit and shadow options. RenderMedia takes a Media object from the media service and picks the renderer for it. Pdf embeds a document with a viewer of its own."
+			name="Image"
+			previewHeight={220}
+			props={IMAGE_PROPS}
+			preview={values => (
+				<Image
+					src={SAMPLE}
+					alt={values.alt}
+					height={values.height}
+					width={values.width}
+					borderRadius={values.borderRadius}
+					fit={values.fit}
+					shadow={values.shadow}
+					loading={values.loading}></Image>
+			)}
+			siblings={[
+				{
+					name: "RenderMedia",
+					description: "Takes a Media object rather than a url, resolves it through the media service configured by BlueOrangeMediaConfig, and picks the renderer its type calls for.",
+					props: RENDER_MEDIA_PROPS,
+					previewHeight: 220,
+					preview: values => (
+						<RenderMedia
+							media={DEMO_MEDIA}
+							height={values.height}
+							width={values.width}
+							borderRadius={values.borderRadius}
+							fit={values.fit}
+							shadow={values.shadow}></RenderMedia>
+					)
+				},
+				{
+					name: "Pdf",
+					description: "Embeds a PDF with its own viewer. It needs a real document to point at, so there is nothing to render here — the usage below is the whole of it.",
+					props: PDF_PROPS,
+					previewHeight: 120,
+					preview: () => (
+						<span style={{opacity: 0.7, fontSize: "0.875rem"}}>
+							A Pdf needs a real document behind it, so it is only shown as usage.
+						</span>
+					)
+				}
+			]}>
 
 			<div className="media-dev-section">
 				<FormHeading label="Image sizes and radii"></FormHeading>
@@ -96,6 +288,6 @@ export const MediaDevelopment: React.FC<Props> = ({}) => {
 				<FormHeading label="Usage"></FormHeading>
 				<CodeBlock value={{code: USAGE, lang: "tsx"}}></CodeBlock>
 			</div>
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

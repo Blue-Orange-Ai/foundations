@@ -1,0 +1,51 @@
+.blue-orange-docs-props-table {
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.blue-orange-docs-props-name {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.blue-orange-docs-props-required {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    background-color: #F2D7D5;
+    color: #922B21;
+    vertical-align: middle;
+}
+
+.blue-orange-docs-props-type,
+.blue-orange-docs-props-default {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    /* Union types get long — let them wrap rather than stretch the column. */
+    word-break: break-word;
+    color: var(--blue-orange-light-docs-muted-color);
+}
+
+.dark .blue-orange-docs-props-type,
+.dark .blue-orange-docs-props-default {
+    color: var(--blue-orange-dark-docs-muted-color);
+}
+
+.blue-orange-docs-props-description {
+    font-size: 0.8125rem;
+    line-height: 1.55;
+}
+
+.blue-orange-docs-props-empty {
+    color: var(--blue-orange-light-docs-muted-color);
+}
+
+.dark .blue-orange-docs-props-empty {
+    color: var(--blue-orange-dark-docs-muted-color);
+}

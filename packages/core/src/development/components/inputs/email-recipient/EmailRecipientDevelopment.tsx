@@ -1,12 +1,88 @@
 import React, {useState} from "react";
 
 import './EmailRecipientDevelopment.css'
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
 import {FormHeading} from "../../../../components/text-decorations/form-heading/FormHeading";
-import {Paragraph} from "../../../../components/text-decorations/paragraph/Paragraph";
 import {EmailRecipientInput} from "../../../../components/inputs/email-recipient/EmailRecipientInput";
 import {CodeBlock} from "../../../../components/text-decorations/code-block/CodeBlock";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+import {validationProps} from "../../../framework/InputProps";
+
+const DEMO_EMAILS = ["ada@blueorange.ai"];
+
+const DEMO_EMAIL_SUGGESTIONS = ["grace@blueorange.ai", "alan@blueorange.ai", "katherine@blueorange.ai"];
+
+const EMAIL_RECIPIENT_PROPS: Array<PropSpec> = [
+	{
+		name: "initialEmails",
+		type: "string[]",
+		default: "[]",
+		description: "The addresses the field starts with."
+	},
+	{
+		name: "suggestions",
+		type: "string[]",
+		default: "[]",
+		description: "Addresses offered as the field is typed in. They are a convenience only — any well formed email can still be added."
+	},
+	{
+		name: "maxEmails",
+		type: "number",
+		default: "100000",
+		control: "slider",
+		min: 1,
+		max: 10,
+		step: 1,
+		value: 5,
+		description: "How many addresses can be added before the field stops taking them."
+	},
+	{
+		name: "placeholder",
+		type: "string",
+		default: "\"Add guests by email\"",
+		control: "text",
+		description: "Shown while the field is empty."
+	},
+	{
+		name: "label",
+		type: "string",
+		control: "text",
+		value: "Recipients",
+		description: "The label above the field."
+	},
+	{
+		name: "help",
+		type: "string",
+		control: "text",
+		description: "Puts a help icon beside the label with this text behind it."
+	},
+	{
+		name: "onChange",
+		type: "(emails: string[]) => void",
+		description: "Fires with every address in the field."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the field."
+	},
+	{
+		name: "labelStyle",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the label."
+	},
+	{
+		name: "useSuggestions",
+		type: "boolean",
+		control: "toggle",
+		hideFromTable: true,
+		hideFromSnippet: true,
+		description: "Demo only — hands the field three addresses to suggest."
+	},
+	...validationProps("string[]")
+];
 
 interface Props {
 }
@@ -34,12 +110,29 @@ export const EmailRecipientDevelopment: React.FC<Props> = ({}) => {
 	const [limited, setLimited] = useState<Array<string>>([]);
 
 	return (
-		<PaddedPage>
-			<PageHeading>Email Recipient Input</PageHeading>
-			<Paragraph>
-				Addresses are entered as pills. Anything that is not a well formed email is rejected as you type, and
-				suggestions are offered from the list you pass in — though any valid address can still be added.
-			</Paragraph>
+		<ComponentDoc
+			title="Email Recipient Input"
+			description="Addresses entered as pills. Anything that is not a well formed email is refused as it is typed, and a list of suggestions can be offered alongside — though any valid address is still accepted."
+			name="EmailRecipientInput"
+			previewHeight={200}
+			previewCentered={false}
+			props={EMAIL_RECIPIENT_PROPS}
+			preview={values => (
+				<div style={{width: "100%", maxWidth: "460px"}}>
+					<EmailRecipientInput
+						initialEmails={DEMO_EMAILS}
+						suggestions={values.useSuggestions ? DEMO_EMAIL_SUGGESTIONS : undefined}
+						maxEmails={values.maxEmails}
+						placeholder={values.placeholder}
+						label={values.label}
+						help={values.help}
+						name={values.name}
+						required={values.required}
+						requiredMessage={values.requiredMessage}
+						validateOnChange={values.validateOnChange}
+						onChange={() => {}}></EmailRecipientInput>
+				</div>
+			)}>
 
 			<div className="email-recipient-dev-section">
 				<FormHeading label="With suggestions"></FormHeading>
@@ -79,6 +172,6 @@ export const EmailRecipientDevelopment: React.FC<Props> = ({}) => {
 				<FormHeading label="Usage"></FormHeading>
 				<CodeBlock value={{code: USAGE, lang: "tsx"}}></CodeBlock>
 			</div>
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }
