@@ -1,8 +1,6 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 
 import './DataTableDevelopment.css'
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
 import {Checkbox} from "../../../../components/inputs/checkbox/Checkbox";
 import {
 	DataTable,
@@ -14,6 +12,203 @@ import {
 } from "../../../../components/table/data-table/DataTable";
 import {IContextMenuType} from "../../../../components/contextmenu/contextmenu/ContextMenu";
 import {BaseData, BaseDataType, SearchRecord} from "@blue-orange-ai/foundations-clients";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+
+const TABLE_FIELD_INTERFACE = {
+	name: "TableField",
+	description: "One column of the schema. Its type decides which cell the column is rendered with, and the rest describes what the column can do.",
+	props: [
+		{name: "label", type: "string", required: true, description: "The column heading."},
+		{name: "apiName", type: "string", required: true, description: "The key the value is read from on each record."},
+		{name: "type", type: "TableFieldType", required: true, description: "STRING, NUMBER, DATE, CURRENCY, STRUCT, GEO POINT or MARKDOWN — which cell the column uses."},
+		{name: "sortState", type: "TableFieldSortState", required: true, description: "Whether the column is sorted, and which way."},
+		{name: "sortable", type: "boolean", required: true, description: "Whether the heading offers to sort by this column."},
+		{name: "filterable", type: "boolean", required: true, description: "Whether the column offers add as filter in its menu."},
+		{name: "statistics", type: "boolean", required: true, description: "Whether the column offers its own statistics."},
+		{name: "multipleValues", type: "boolean", description: "The column holds an array per row rather than one value."},
+		{name: "dropDownItems", type: "IContextMenuItem[]", description: "Extra rows on this column's heading menu."},
+		{name: "numberStyle", type: "NumberCellStyle", default: "NumberCellStyle.PLAIN", description: "How a NUMBER column is rendered — plain digits, locale formatted, or as money."},
+		{name: "currency", type: "string", default: "\"AUD\"", description: "The ISO code for CURRENCY columns, and for NUMBER columns styled as currency."},
+		{name: "dateFormat", type: "string", description: "A moment format for DATE columns. ISO when it is left off."},
+		{name: "description", type: "string", description: "The second line under the heading. It falls back to the field type; pass an empty string to drop it."}
+	] as Array<PropSpec>
+};
+
+const DATA_TABLE_PROPS: Array<PropSpec> = [
+	{
+		name: "schema",
+		type: "Array<TableField>",
+		required: true,
+		description: "The columns, in the order they are shown."
+	},
+	{
+		name: "data",
+		type: "Array<SearchRecord>",
+		required: true,
+		description: "The rows. Each one carries a list of typed properties keyed by the schema's apiName."
+	},
+	{
+		name: "loading",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Replaces the rows with shimmering placeholders."
+	},
+	{
+		name: "loadingPlaceholderRows",
+		type: "number",
+		default: "10",
+		control: "slider",
+		min: 1,
+		max: 20,
+		step: 1,
+		description: "How many placeholder rows are drawn while loading."
+	},
+	{
+		name: "showRowNumbers",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Puts a numbered gutter down the left."
+	},
+	{
+		name: "freezeHeader",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Keeps the heading row in place as the body scrolls."
+	},
+	{
+		name: "freezeRowNumbers",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Keeps the numbered gutter in place as the table scrolls sideways."
+	},
+	{
+		name: "persistKey",
+		type: "string",
+		description: "Remembers the column widths and order under this key, so the table comes back the way it was left."
+	},
+	{
+		name: "enableInfiniteScroll",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Calls onEndReached as the bottom of the table comes into view."
+	},
+	{
+		name: "onEndReached",
+		type: "() => void",
+		description: "Fires when the table has been scrolled to the end — where the next page is fetched."
+	},
+	{
+		name: "showLoadingRow",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Draws a loading row at the foot while the next page is on its way."
+	},
+	{
+		name: "resizableColumns",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Puts a drag handle on each column's trailing edge."
+	},
+	{
+		name: "reorderableColumns",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Lets a column be dragged into a new position."
+	},
+	{
+		name: "cellsSelectable",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Lets a range of cells be selected, the way a spreadsheet does."
+	},
+	{
+		name: "rowSelectable",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Puts a checkbox on each row and reports the selection."
+	},
+	{
+		name: "minColumnWidth",
+		type: "number",
+		default: "50",
+		control: "number",
+		description: "How narrow a column can be dragged, in pixels."
+	},
+	{
+		name: "maxColumnWidth",
+		type: "number",
+		control: "number",
+		description: "How wide a column can be dragged, in pixels."
+	},
+	{
+		name: "onColumnOrderChange",
+		type: "(previousIndex: number, newIndex: number, updatedSchema: Array<TableField>) => void",
+		description: "Fires with the move that was made and the schema it produced."
+	},
+	{
+		name: "onCellSelection",
+		type: "(selection: Array<{rowIndex: number; colIndex: number}>) => void",
+		description: "Fires with every cell in the current selection."
+	},
+	{
+		name: "onRowSelectable",
+		type: "(selection: Array<number>) => void",
+		description: "Fires with the indexes of the selected rows."
+	},
+	{
+		name: "onCellClick",
+		type: "(colIdx: number, rowIdx: number, position: DataTableCellClickPosition) => void",
+		description: "Fires with the cell that was clicked and where in it the click landed."
+	},
+	{
+		name: "onCellRightClick",
+		type: "(colIdx: number, rowIdx: number, position: DataTableCellClickPosition) => void",
+		description: "The same for a right click, which is what opens the context menu."
+	},
+	{
+		name: "onHeaderDropdownSelected",
+		type: "(item: IContextMenuItem) => void",
+		description: "Fires with whichever row of a column's heading menu was picked."
+	},
+	{
+		name: "onAddAsFilter",
+		type: "(field: TableField, values: string[], fieldType: TableFieldType) => void",
+		description: "Fires when add as filter is chosen on a cell, with the field and the values to filter on."
+	},
+	{
+		name: "contextMenuItems",
+		type: "Array<IContextMenuItem> | ((context: DataTableContextMenuContext) => Array<IContextMenuItem> | undefined)",
+		description: "Extra rows appended to the cell context menu, under a divider. Pass a function to vary them per cell — it runs on every right click and on every render while the menu is open, so keep it free of side effects."
+	},
+	{
+		name: "hideDefaultContextMenuItems",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Drops the table's own copy and filter rows, leaving only the ones you supplied."
+	},
+	{
+		name: "onContextMenuItemClick",
+		type: "(item: IContextMenuItem, context: DataTableContextMenuContext) => void",
+		description: "Fires when one of your own rows is clicked, with the cell the menu was opened on. The table's own rows never reach it."
+	},
+	{
+		name: "renderColumnHeader",
+		type: "(field: TableField, colIdx: number) => React.ReactNode",
+		description: "Replaces the whole heading body. The sort arrows, the resize handle and the heading menu stay with the table."
+	}
+];
 
 interface Props {
 }
@@ -302,8 +497,35 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 	}
 
 	return (
-		<PaddedPage>
-			<PageHeading>Data Table</PageHeading>
+		<ComponentDoc
+			title="Data Table"
+			description="The dataset grid. It takes a schema of typed fields and a list of records, and renders each column with the cell its type calls for — frozen headers, resizable and reorderable columns, cell and row selection, infinite scroll, and a context menu that can be extended or replaced."
+			name="DataTable"
+			previewHeight={420}
+			previewCentered={false}
+			imports={["TableField", "TableFieldType", "TableFieldSortState"]}
+			interfaces={[TABLE_FIELD_INTERFACE]}
+			props={DATA_TABLE_PROPS}
+			preview={values => (
+				<div style={{height: "380px", overflowY: "auto", width: "100%", position: "relative"}}>
+					<DataTable
+						schema={schema}
+						data={data}
+						loading={values.loading}
+						loadingPlaceholderRows={values.loadingPlaceholderRows}
+						showRowNumbers={values.showRowNumbers}
+						freezeHeader={values.freezeHeader}
+						freezeRowNumbers={values.freezeRowNumbers}
+						showLoadingRow={values.showLoadingRow}
+						resizableColumns={values.resizableColumns}
+						reorderableColumns={values.reorderableColumns}
+						cellsSelectable={values.cellsSelectable}
+						rowSelectable={values.rowSelectable}
+						minColumnWidth={values.minColumnWidth}
+						maxColumnWidth={values.maxColumnWidth}
+						hideDefaultContextMenuItems={values.hideDefaultContextMenuItems}></DataTable>
+				</div>
+			)}>
 			<div style={{marginBottom: 12}}>
 				<Checkbox checked={resizableColumns} onCheckboxChange={setResizableColumns}></Checkbox>
 				<span style={{marginLeft: 8}}>Resizable columns</span>
@@ -441,6 +663,6 @@ export const DataTableDevelopment: React.FC<Props> = ({}) => {
 						)
 						: undefined}></DataTable>
 			</div>
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

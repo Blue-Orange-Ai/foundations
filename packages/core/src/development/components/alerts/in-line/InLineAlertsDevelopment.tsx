@@ -1,8 +1,6 @@
 import React from "react";
 
 import './InLineAlertsDevelopment.css'
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
 import {GeneralHeading} from "../../../../components/text-decorations/general-heading/GeneralHeading";
 import {Button, ButtonType} from "../../../../components/buttons/button/Button";
 import {DefaultBlockAlert} from "../../../../components/alerts/in-line-block/defaultalert/DefaultBlockAlert";
@@ -10,6 +8,65 @@ import {SuccessBlockAlert} from "../../../../components/alerts/in-line-block/suc
 import {WarningBlockAlert} from "../../../../components/alerts/in-line-block/warningalert/WarningBlockAlert";
 import {ErrorBlockAlert} from "../../../../components/alerts/in-line-block/erroralert/ErrorBlockAlert";
 import {InfoBlockAlert} from "../../../../components/alerts/in-line-block/infoalert/InfoBlockAlert";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+
+const DEFAULT_ALERT_PROPS: Array<PropSpec> = [
+	{
+		name: "icon",
+		type: "string",
+		default: "\"ri-lightbulb-fill\"",
+		control: "text",
+		description: "A remixicon class shown on the left."
+	},
+	{
+		name: "className",
+		type: "string",
+		control: "text",
+		description: "Extra class names, which is how the named alerts get their colour."
+	},
+	{
+		name: "title",
+		type: "string",
+		control: "text",
+		value: "Two sites are reporting late",
+		description: "The bold first line. Left off, the description stands on its own and is laid out for it."
+	},
+	{
+		name: "description",
+		type: "string",
+		control: "text",
+		value: "Their last known figures are being carried forward until they report again.",
+		description: "The body of the alert."
+	},
+	{
+		name: "action",
+		type: "ReactNode",
+		description: "A control pinned to the right of the alert — usually the thing that resolves it."
+	}
+];
+
+const NAMED_ALERT_PROPS: Array<PropSpec> = [
+	{
+		name: "title",
+		type: "string",
+		control: "text",
+		value: "Two sites are reporting late",
+		description: "The bold first line."
+	},
+	{
+		name: "description",
+		type: "string",
+		control: "text",
+		value: "Their last known figures are being carried forward until they report again.",
+		description: "The body of the alert."
+	},
+	{
+		name: "action",
+		type: "ReactNode",
+		description: "A control pinned to the right of the alert."
+	}
+];
 
 interface Props {
 }
@@ -17,19 +74,73 @@ interface Props {
 export const InLineAlertsDevelopment: React.FC<Props> = ({}) => {
 
 	return (
-		<PaddedPage>
-			<PageHeading>In Line Alerts</PageHeading>
+		<ComponentDoc
+			title="In Line Alerts"
+			description="A block of text set apart from the page — a note, a warning, the reason something failed. DefaultBlockAlert is the one that takes its own icon and class; the four named alerts are it with the icon and treatment already chosen."
+			name="DefaultBlockAlert"
+			previewHeight={160}
+			previewCentered={false}
+			props={DEFAULT_ALERT_PROPS}
+			preview={values => (
+				<div style={{width: "100%"}}>
+					<DefaultBlockAlert
+						icon={values.icon}
+						title={values.title}
+						description={values.description}
+						className={values.className}></DefaultBlockAlert>
+				</div>
+			)}
+			siblings={[
+				{
+					name: "InfoBlockAlert",
+					description: "The neutral note — the default treatment with the lightbulb.",
+					props: NAMED_ALERT_PROPS,
+					previewHeight: 150,
+					previewCentered: false,
+					preview: values => (
+						<div style={{width: "100%"}}>
+							<InfoBlockAlert title={values.title} description={values.description}></InfoBlockAlert>
+						</div>
+					)
+				},
+				{
+					name: "SuccessBlockAlert",
+					description: "Something worked. Green, with a tick.",
+					props: NAMED_ALERT_PROPS,
+					previewHeight: 150,
+					previewCentered: false,
+					preview: values => (
+						<div style={{width: "100%"}}>
+							<SuccessBlockAlert title={values.title} description={values.description}></SuccessBlockAlert>
+						</div>
+					)
+				},
+				{
+					name: "WarningBlockAlert",
+					description: "Something to be careful of. Amber, with the alarm glyph.",
+					props: NAMED_ALERT_PROPS,
+					previewHeight: 150,
+					previewCentered: false,
+					preview: values => (
+						<div style={{width: "100%"}}>
+							<WarningBlockAlert title={values.title} description={values.description}></WarningBlockAlert>
+						</div>
+					)
+				},
+				{
+					name: "ErrorBlockAlert",
+					description: "Something failed. Red, with the alert glyph.",
+					props: NAMED_ALERT_PROPS,
+					previewHeight: 150,
+					previewCentered: false,
+					preview: values => (
+						<div style={{width: "100%"}}>
+							<ErrorBlockAlert title={values.title} description={values.description}></ErrorBlockAlert>
+						</div>
+					)
+				}
+			]}>
 
-			<p className="blue-orange-in-line-alerts-development-intro">
-				Inline block alerts share the <strong>same internal layout and colours as the toaster</strong> —
-				an icon column, a text group (bold title + muted description) and an optional action —
-				but they sit in normal document flow: <strong>no box shadow, no floating</strong>, full
-				width. Default and info use a white background with a border equal to the text colour;
-				success, warning and error use the tinted toaster background with a darker outline equal
-				to the title colour. All five variants accept the same options: <code>title</code>,
-				<code>description</code> and <code>action</code> — and <code>title</code> is optional,
-				so any variant can be description-only.
-			</p>
 
 			{/* ── 1. Variants ───────────────────────────────────────────── */}
 			<section className="blue-orange-in-line-alerts-development-section">
@@ -110,6 +221,6 @@ export const InLineAlertsDevelopment: React.FC<Props> = ({}) => {
 					></DefaultBlockAlert>
 				</div>
 			</section>
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

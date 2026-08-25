@@ -1,11 +1,34 @@
 import React from "react";
 
 import './DotifiedTextDevelopment.css'
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
 import {DotifiedText} from "../../../../components/text-decorations/dotified-text/DotifiedText";
 import {GeneralHeading} from "../../../../components/text-decorations/general-heading/GeneralHeading";
-import {Description} from "../../../../components/text-decorations/description/Description";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+
+const DOTIFIED_TEXT_PROPS: Array<PropSpec> = [
+	{
+		name: "text",
+		type: "string",
+		required: true,
+		control: "text",
+		value: "Melbourne Distribution Centre",
+		description: "The string to render. Every space in it is replaced."
+	},
+	{
+		name: "dot",
+		type: "string",
+		default: "\"●\"",
+		control: "text",
+		description: "What each space becomes."
+	},
+	{
+		name: "maxLines",
+		type: "number",
+		control: "number",
+		description: "Clamps the text to this many lines. Left off it is not clamped at all."
+	}
+];
 
 interface Props {
 }
@@ -13,9 +36,15 @@ interface Props {
 export const DotifiedTextDevelopment: React.FC<Props> = ({}) => {
 
 	return (
-		<PaddedPage>
-			<PageHeading>Dotified Text Decoration</PageHeading>
-			<Description>Replaces spaces in text with dot characters for visual effect.</Description>
+		<ComponentDoc
+			title="Dotified Text"
+			description="Swaps every space in a string for a character of its own — a dot by default — so a value reads as one unbroken token. Useful where a space would be mistaken for the end of the value."
+			name="DotifiedText"
+			previewHeight={110}
+			props={DOTIFIED_TEXT_PROPS}
+			preview={values => (
+				<DotifiedText text={values.text} dot={values.dot} maxLines={values.maxLines}></DotifiedText>
+			)}>
 
 			<GeneralHeading>Default Dot Character</GeneralHeading>
 			<DotifiedText text="Hello World Example" />
@@ -33,6 +62,6 @@ export const DotifiedTextDevelopment: React.FC<Props> = ({}) => {
 
 			<GeneralHeading>Email-style Dotified</GeneralHeading>
 			<DotifiedText text="john doe example" dot="." />
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

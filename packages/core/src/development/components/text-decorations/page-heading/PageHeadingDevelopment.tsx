@@ -1,10 +1,29 @@
 import React from "react";
 
 import './PageHeadingDevelopment.css'
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
 import {GeneralHeading} from "../../../../components/text-decorations/general-heading/GeneralHeading";
 import {Description} from "../../../../components/text-decorations/description/Description";
+import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+
+const PAGE_HEADING_PROPS: Array<PropSpec> = [
+	{
+		name: "children",
+		type: "ReactNode",
+		required: true,
+		control: "text",
+		value: "Fleet overview",
+		hideFromSnippet: true,
+		description: "The heading text, or any node that should sit in the heading."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the h1."
+	}
+];
 
 interface Props {
 }
@@ -12,9 +31,16 @@ interface Props {
 export const PageHeadingDevelopment: React.FC<Props> = ({}) => {
 
 	return (
-		<PaddedPage>
-			<PageHeading>Page Heading Text Decoration</PageHeading>
-			<Description>A primary heading component (h1) for page titles.</Description>
+		<ComponentDoc
+			title="Page Heading"
+			description="The h1 at the top of a page. There should be one of them, and Description usually sits directly underneath it."
+			name="PageHeading"
+			previewHeight={110}
+			snippetChildren={values => values.children}
+			props={PAGE_HEADING_PROPS}
+			preview={values => (
+				<PageHeading>{values.children}</PageHeading>
+			)}>
 
 			<GeneralHeading>Examples</GeneralHeading>
 
@@ -29,6 +55,6 @@ export const PageHeadingDevelopment: React.FC<Props> = ({}) => {
 
 			<PageHeading style={{textAlign: "center"}}>Centered Page Heading</PageHeading>
 			<Description style={{textAlign: "center"}}>A centered page heading.</Description>
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

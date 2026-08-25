@@ -2,8 +2,6 @@ import React, {useState} from "react";
 
 import './RichTextDevelopment.css'
 import {SplitPageMajor} from "../../../../components/layouts/pages/split-pages/split-page-major/SplitPageMajor";
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
 import {IRule, RuleEditor} from "../../../../components/rules/rule-editor/RuleEditor";
 import {SplitPageMinor} from "../../../../components/layouts/pages/split-pages/split-page-minor/SplitPageMinor";
 import {
@@ -11,6 +9,9 @@ import {
 } from "../../../../components/layouts/pages/split-pages/horizontal-split-page/HorizontalSplitPage";
 import {RichText} from "../../../../components/inputs/richtext/default/RichText";
 import {Media} from "@blue-orange-ai/foundations-clients";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+import {validationProps} from "../../../framework/InputProps";
 
 interface RichTextState {
 	content: string,
@@ -19,10 +20,119 @@ interface RichTextState {
 	filesUploading: boolean
 }
 
+const RICH_TEXT_PROPS: Array<PropSpec> = [
+	{
+		name: "content",
+		type: "string",
+		control: "text",
+		value: "<p>The depot reports every hour.</p>",
+		description: "The starting content, as HTML."
+	},
+	{
+		name: "placeholder",
+		type: "string",
+		control: "text",
+		value: "Write a note…",
+		description: "Shown while the editor is empty."
+	},
+	{
+		name: "displayFormatting",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Shows the formatting toolbar."
+	},
+	{
+		name: "minEditorHeight",
+		type: "number",
+		default: "10",
+		control: "slider",
+		min: 10,
+		max: 200,
+		step: 10,
+		description: "A floor under the editor's height, in pixels. It grows past it as content is added."
+	},
+	{
+		name: "editorHeight",
+		type: "number",
+		control: "number",
+		description: "Pins the editor to a fixed height instead of letting it grow."
+	},
+	{
+		name: "singleLine",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Keeps the editor to one line, so enter can mean send rather than newline."
+	},
+	{
+		name: "allowMentions",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Turns @ into a people picker."
+	},
+	{
+		name: "allowEmojis",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Turns : into an emoji picker."
+	},
+	{
+		name: "focus",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Takes the caret when it turns on."
+	},
+	{
+		name: "files",
+		type: "Array<Media>",
+		default: "[]",
+		description: "Attachments the editor starts with."
+	},
+	{
+		name: "uploadPermissions",
+		type: "Array<MediaPermission>",
+		description: "Who the media service should let at anything uploaded through the editor."
+	},
+	{
+		name: "disabled",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Greys the editor out and stops it taking input."
+	},
+	{
+		name: "clearState",
+		type: "string",
+		default: "\"\"",
+		control: "text",
+		description: "Change it to a new value to empty the editor — how a form resets it after a send."
+	},
+	{
+		name: "children",
+		type: "React.ReactNode",
+		description: "Rendered inside the editor's frame, under the content — the send button usually goes here."
+	},
+	{
+		name: "onChange",
+		type: "(content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean) => void",
+		description: "Fires with the HTML, whoever was mentioned, whatever was attached, and whether an upload is still running."
+	},
+	{
+		name: "onEnter",
+		type: "() => void",
+		description: "Fires when enter is pressed — what a single line editor sends on."
+	},
+	...validationProps()
+];
+
 interface Props {
 }
 
-export const RichTextDevelopment: React.FC<Props> = ({fontSize, color}) => {
+export const RichTextDevelopment: React.FC<Props> = ({}) => {
 
 	const startingState: RichTextState = {
 		attachments: [],
@@ -52,14 +162,38 @@ export const RichTextDevelopment: React.FC<Props> = ({fontSize, color}) => {
 	return (
 		<HorizontalSplitPage>
 			<SplitPageMajor>
-				<PaddedPage>
-					<PageHeading>Rich Text Editor</PageHeading>
+				<ComponentDoc
+					title="Rich Text"
+					description="The full editor: formatting, mentions, emojis and file attachments, built on tiptap. It reports its content as HTML together with the mentions and the media that went with it, and says whether any upload is still in flight."
+					name="RichText"
+					previewHeight={280}
+					previewCentered={false}
+					props={RICH_TEXT_PROPS}
+					preview={values => (
+						<div style={{width: "100%"}}>
+							<RichText
+								content={values.content}
+								placeholder={values.placeholder}
+								displayFormatting={values.displayFormatting}
+								minEditorHeight={values.minEditorHeight}
+								editorHeight={values.editorHeight}
+								singleLine={values.singleLine}
+								allowMentions={values.allowMentions}
+								allowEmojis={values.allowEmojis}
+								disabled={values.disabled}
+								name={values.name}
+								required={values.required}
+								requiredMessage={values.requiredMessage}
+								validateOnChange={values.validateOnChange}
+								onChange={() => {}}></RichText>
+						</div>
+					)}>
 					<RichText
 						minEditorHeight={10}
 						content={richTextContent.content}
 						files={richTextContent.attachments}
 						onChange={processChangeData}></RichText>
-				</PaddedPage>
+				</ComponentDoc>
 			</SplitPageMajor>
 			<SplitPageMinor>
 				<div className="workspace-output-window">

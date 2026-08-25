@@ -1,14 +1,112 @@
 import React, {useState} from "react";
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
 import {HorizontalSplitPage} from "../../../../components/layouts/pages/split-pages/horizontal-split-page/HorizontalSplitPage";
 import {SplitPageMajor} from "../../../../components/layouts/pages/split-pages/split-page-major/SplitPageMajor";
 import {SplitPageMinor} from "../../../../components/layouts/pages/split-pages/split-page-minor/SplitPageMinor";
 import {
 	BlueOrangeSearchQuery,
-	IBlueOrangeSearchIndex
+	IBlueOrangeSearchIndex,
+	BlueOrangeSearchQueryOperand,
+	BlueOrangeSearchQueryTermType
 } from "../../../../components/search/search-query-editor/SearchQueryEditor";
 import {SearchQueryEditorSmall} from "../../../../components/search/search-query-editor-small/SearchQueryEditorSmall";
+import {SchemaPropertyType} from "@blue-orange-ai/foundations-clients";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+
+const SEARCH_QUERY_EDITOR_SMALL_PROPS: Array<PropSpec> = [
+	{
+		name: "index",
+		type: "IBlueOrangeSearchIndex",
+		required: true,
+		description: "The index being queried. Its schema decides which fields the conditions can name."
+	},
+	{
+		name: "query",
+		type: "BlueOrangeSearchQuery",
+		description: "The query being edited."
+	},
+	{
+		name: "placeholder",
+		type: "string",
+		default: "\"Click to edit search query...\"",
+		control: "text",
+		description: "What the field reads while the query is empty."
+	},
+	{
+		name: "popupMaxHeight",
+		type: "number",
+		default: "400",
+		control: "slider",
+		min: 200,
+		max: 800,
+		step: 20,
+		description: "How tall the popup gets before it scrolls."
+	},
+	{
+		name: "page",
+		type: "number",
+		default: "1",
+		control: "number",
+		description: "The page of results the query asks for."
+	},
+	{
+		name: "size",
+		type: "number",
+		default: "25",
+		control: "number",
+		description: "How many results a page holds."
+	},
+	{
+		name: "filter",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Runs the query as a filter — matching without scoring."
+	},
+	{
+		name: "minimumShouldMatch",
+		type: "number",
+		default: "1",
+		control: "number",
+		description: "How many of the optional clauses have to match."
+	},
+	{
+		name: "analyzer",
+		type: "string",
+		control: "text",
+		description: "The analyzer the text conditions are run through."
+	},
+	{
+		name: "showHeader",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Shows the bar above the conditions inside the popup."
+	},
+	{
+		name: "onChange",
+		type: "(query: BlueOrangeSearchQuery) => void",
+		description: "Fires with the whole query when it changes."
+	},
+	{
+		name: "reportChangesOnSaveOnly",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Holds the changes back until the popup is saved, which is what keeps a half built query out of the search."
+	},
+	{
+		name: "onSave",
+		type: "(query: BlueOrangeSearchQuery) => void",
+		description: "Fires when save is used."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the field."
+	}
+];
 
 interface Props {}
 
@@ -20,14 +118,14 @@ export const SearchQueryEditorSmallDevelopment: React.FC<Props> = ({}) => {
 		description: "Build a BlueOrange search Query using a schema",
 		schema: {
 			properties: [
-				{ apiName: "name", displayName: "Name", type: "TEXT" },
-				{ apiName: "status", displayName: "Status", type: "KEYWORDS" },
-				{ apiName: "createdAt", displayName: "Created At", type: "DATE" },
-				{ apiName: "age", displayName: "Age", type: "INTEGER" },
-				{ apiName: "active", displayName: "Active", type: "BOOLEAN" },
-				{ apiName: "location", displayName: "Location", type: "GEO_POINT" },
-				{ apiName: "metadata", displayName: "Metadata", type: "OBJECT" },
-				{ apiName: "embedding", displayName: "Embedding", type: "VECTOR" }
+				{ apiName: "name", displayName: "Name", type: SchemaPropertyType.TEXT },
+				{ apiName: "status", displayName: "Status", type: SchemaPropertyType.KEYWORDS },
+				{ apiName: "createdAt", displayName: "Created At", type: SchemaPropertyType.DATE },
+				{ apiName: "age", displayName: "Age", type: SchemaPropertyType.INTEGER },
+				{ apiName: "active", displayName: "Active", type: SchemaPropertyType.BOOLEAN },
+				{ apiName: "location", displayName: "Location", type: SchemaPropertyType.GEO_POINT },
+				{ apiName: "metadata", displayName: "Metadata", type: SchemaPropertyType.OBJECT },
+				{ apiName: "embedding", displayName: "Embedding", type: SchemaPropertyType.VECTOR }
 			]
 		}
 	}
@@ -42,7 +140,7 @@ export const SearchQueryEditorSmallDevelopment: React.FC<Props> = ({}) => {
 		size: 25,
 		filter: false,
 		minimumShouldMatch: 1,
-		rootCondition: { operand: "AND", components: [] }
+		rootCondition: { operand: BlueOrangeSearchQueryOperand.AND, components: [] }
 	});
 
 	const [queryStr, setQueryStr] = useState(generateQueryStr(query));
@@ -65,20 +163,20 @@ export const SearchQueryEditorSmallDevelopment: React.FC<Props> = ({}) => {
 		filter: false,
 		minimumShouldMatch: 1,
 		rootCondition: {
-			operand: "AND",
+			operand: BlueOrangeSearchQueryOperand.AND,
 			components: [
 				{
 					termCondition: {
 						field: "name",
 						query: "John Doe",
-						type: "PHRASE"
+						type: BlueOrangeSearchQueryTermType.PHRASE
 					}
 				},
 				{
 					termCondition: {
 						field: "status",
 						query: "active",
-						type: "PHRASE"
+						type: BlueOrangeSearchQueryTermType.PHRASE
 					}
 				},
 				{
@@ -103,8 +201,29 @@ export const SearchQueryEditorSmallDevelopment: React.FC<Props> = ({}) => {
 	return (
 		<HorizontalSplitPage>
 			<SplitPageMajor>
-				<PaddedPage>
-					<PageHeading>Search Query Editor Small</PageHeading>
+				<ComponentDoc
+					title="Search Query Editor Small"
+					description="The query editor collapsed to a single field. It reads back the query it holds, and opens the full builder in a popup when it is clicked — for a search bar that has to sit in a toolbar rather than take a page."
+					name="SearchQueryEditorSmall"
+					previewHeight={200}
+					previewCentered={false}
+					props={SEARCH_QUERY_EDITOR_SMALL_PROPS}
+					preview={values => (
+						<div style={{width: "100%", maxWidth: "560px"}}>
+							<SearchQueryEditorSmall
+								index={index}
+								page={values.page}
+								size={values.size}
+								filter={values.filter}
+								minimumShouldMatch={values.minimumShouldMatch}
+								analyzer={values.analyzer}
+								showHeader={values.showHeader}
+								placeholder={values.placeholder}
+								popupMaxHeight={values.popupMaxHeight}
+								reportChangesOnSaveOnly={values.reportChangesOnSaveOnly}
+								onChange={() => {}}></SearchQueryEditorSmall>
+						</div>
+					)}>
 					
 					<div style={{marginBottom: "30px"}}>
 						<h3 style={{marginBottom: "10px", fontSize: "14px", fontWeight: 600}}>Empty Query (Click to add conditions)</h3>
@@ -136,7 +255,7 @@ export const SearchQueryEditorSmallDevelopment: React.FC<Props> = ({}) => {
 							placeholder="Narrow search input..."
 						/>
 					</div>
-				</PaddedPage>
+				</ComponentDoc>
 			</SplitPageMajor>
 			<SplitPageMinor>
 				<div className="workspace-output-window">

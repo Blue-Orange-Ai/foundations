@@ -1,8 +1,6 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 
 import './FileSystemDevelopment.css'
-import {PaddedPage} from "../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../components/text-decorations/page-heading/PageHeading";
 import {
 	FileSystem,
 	IFileSystemItem,
@@ -17,9 +15,228 @@ import {BreadCrumb, Breadcrumbs} from "../../../components/breadcrumbs/Breadcrum
 import {GeneralHeading} from "../../../components/text-decorations/general-heading/GeneralHeading";
 import {SplitPageMajor} from "../../../components/layouts/pages/split-pages/split-page-major/SplitPageMajor";
 import {SplitPageMinor} from "../../../components/layouts/pages/split-pages/split-page-minor/SplitPageMinor";
+import {ComponentDoc} from "../../framework/ComponentDoc";
+import {PropSpec} from "../../framework/PropSpec";
 import {
 	HorizontalSplitPage
 } from "../../../components/layouts/pages/split-pages/horizontal-split-page/HorizontalSplitPage";
+
+const DEMO_FILE_SYSTEM_ITEMS: Array<IFileSystemItem> = [
+	{
+		reference: "run-sheets",
+		indent: 0,
+		type: IFileSystemType.FOLDER,
+		label: "Run sheets",
+		icon: "ri-folder-fill",
+		iconColor: "#f0b429",
+		showDropdown: true,
+		selected: false,
+		size: 0,
+		lastModified: new Date("2026-08-24T09:12:00"),
+		fileType: "Folder"
+	},
+	{
+		reference: "melbourne-depot.pdf",
+		indent: 0,
+		type: IFileSystemType.FILE,
+		label: "melbourne-depot.pdf",
+		icon: "ri-file-pdf-fill",
+		iconColor: "#e11d48",
+		selected: false,
+		size: 248000,
+		lastModified: new Date("2026-08-22T16:04:00"),
+		fileType: "PDF"
+	},
+	{
+		reference: "throughput.csv",
+		indent: 0,
+		type: IFileSystemType.FILE,
+		label: "throughput.csv",
+		icon: "ri-file-excel-fill",
+		iconColor: "#16a34b",
+		selected: true,
+		size: 1240000,
+		lastModified: new Date("2026-08-25T08:30:00"),
+		fileType: "CSV"
+	}
+];
+
+const FILE_SYSTEM_ITEM_INTERFACE = {
+	name: "IFileSystemItem",
+	description: "One row. Everything about how a row looks and what it can do is on the item, so the browser itself stays stateless.",
+	props: [
+		{name: "reference", type: "string", required: true, description: "Identifies the row, and is what the callbacks report."},
+		{name: "type", type: "IFileSystemType", required: true, description: "FOLDER, FILE or PARENT_DIRECTORY."},
+		{name: "label", type: "string", required: true, description: "The name shown."},
+		{name: "indent", type: "number", required: true, description: "How deep the row sits in the tree."},
+		{name: "selected", type: "boolean", required: true, description: "Whether the row is part of the selection."},
+		{name: "size", type: "number", required: true, description: "Size in bytes, formatted by the size column."},
+		{name: "lastModified", type: "Date", required: true, description: "When it last changed."},
+		{name: "fileType", type: "string", required: true, description: "What the type column reads."},
+		{name: "description", type: "string", description: "A second line under the name."},
+		{name: "icon", type: "string", description: "A remixicon class for the row."},
+		{name: "iconColor", type: "string", description: "The colour of that icon."},
+		{name: "iconSize", type: "string", description: "Its size, as a CSS length."},
+		{name: "showDropdown", type: "boolean", description: "Draws the expand chevron, for a folder that can be opened in place."},
+		{name: "dropdownOpen", type: "boolean", description: "Whether that folder is currently open."},
+		{name: "rename", type: "boolean", description: "Puts the row into its inline rename editor."},
+		{name: "rowHeight", type: "number", description: "Overrides the row's height."},
+		{name: "cut", type: "boolean", description: "Fades the row, marking it as cut."},
+		{name: "copy", type: "boolean", description: "Marks the row as copied."},
+		{name: "progress", type: "number", description: "A percentage between 0 and 100. Set it while the item uploads to show a bar inside the row."}
+	] as Array<PropSpec>
+};
+
+const FILE_SYSTEM_ROW_INTERFACE = {
+	name: "FileSystemRow",
+	description: "Renders one item. The columns follow the surrounding FileSystem unless the row overrides them.",
+	props: [
+		{name: "item", type: "IFileSystemItem", required: true, description: "The item to draw."},
+		{name: "indent", type: "number", description: "Overrides the item's own indent."},
+		{name: "indentStep", type: "number", description: "How much room one level of indent takes."},
+		{name: "contextMenuItems", type: "Array<IContextMenuItem>", description: "Rows for this item's context menu."},
+		{name: "contextMenuItemClicked", type: "(item: IContextMenuItem) => void", description: "Fires with whichever context menu row was picked."},
+		{name: "onClick", type: "(item: IFileSystemItem, ctrlKey: boolean, shiftKey: boolean) => void", description: "Fires with the row and the modifier keys, which is how the selection is worked out."},
+		{name: "onDoubleClick", type: "(item: IFileSystemItem) => void", description: "Fires on a double click — usually what opens a folder or a file."},
+		{name: "onDrop", type: "() => void", description: "Fires when a selection is dropped onto this row."},
+		{name: "onDropdownClick", type: "(item: IFileSystemItem) => void", description: "Fires when the expand chevron is clicked. Requires item.showDropdown."},
+		{name: "onRenameComplete", type: "(item: IFileSystemItem, label: string) => void", description: "Fires when the inline rename is committed. Requires item.rename."},
+		{name: "showFileSize", type: "boolean", description: "Overrides the surrounding FileSystem's size column for this row."},
+		{name: "showFileType", type: "boolean", description: "The same for the type column."},
+		{name: "showLastModified", type: "boolean", description: "The same for the modified column."},
+		{name: "style", type: "React.CSSProperties", description: "Inline style put on the row."}
+	] as Array<PropSpec>
+};
+
+const FILE_SYSTEM_PROPS: Array<PropSpec> = [
+	{
+		name: "children",
+		type: "React.ReactNode",
+		required: true,
+		description: "The rows, as FileSystemRow elements."
+	},
+	{
+		name: "showHeader",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Draws the column headings."
+	},
+	{
+		name: "showFileSize",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Shows the size column."
+	},
+	{
+		name: "showFileType",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Shows the type column."
+	},
+	{
+		name: "showLastModified",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Shows the modified column."
+	},
+	{
+		name: "orderBy",
+		type: "IFileSystemOrderBy",
+		default: "IFileSystemOrderBy.UNSELECTED",
+		defaultValue: IFileSystemOrderBy.UNSELECTED,
+		control: "select",
+		options: [
+			{label: "Unselected", value: IFileSystemOrderBy.UNSELECTED, code: "IFileSystemOrderBy.UNSELECTED"},
+			{label: "Name ascending", value: IFileSystemOrderBy.NAME_ASC, code: "IFileSystemOrderBy.NAME_ASC"},
+			{label: "Name descending", value: IFileSystemOrderBy.NAME_DESC, code: "IFileSystemOrderBy.NAME_DESC"},
+			{label: "Modified ascending", value: IFileSystemOrderBy.LAST_MOD_ASC, code: "IFileSystemOrderBy.LAST_MOD_ASC"},
+			{label: "Modified descending", value: IFileSystemOrderBy.LAST_MOD_DESC, code: "IFileSystemOrderBy.LAST_MOD_DESC"},
+			{label: "Size ascending", value: IFileSystemOrderBy.FILE_SIZE_ASC, code: "IFileSystemOrderBy.FILE_SIZE_ASC"},
+			{label: "Size descending", value: IFileSystemOrderBy.FILE_SIZE_DESC, code: "IFileSystemOrderBy.FILE_SIZE_DESC"}
+		],
+		description: "Which column the arrow is shown against, and which way. The sorting itself is yours to do."
+	},
+	{
+		name: "orderByEvent",
+		type: "(orderBy: IFileSystemOrderBy) => void",
+		description: "Supply it and the column headings become clickable, toggling between ascending and descending."
+	},
+	{
+		name: "showParentDirectory",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Puts a row above the children that navigates out of the folder being viewed. Set it while anything other than the root is on screen."
+	},
+	{
+		name: "parentDirectoryLabel",
+		type: "string",
+		default: "\"..\"",
+		control: "text",
+		description: "What that row reads."
+	},
+	{
+		name: "parentDirectoryIcon",
+		type: "string",
+		default: "\"ri-corner-left-up-line\"",
+		control: "text",
+		description: "The remixicon class on it."
+	},
+	{
+		name: "parentDirectoryEvent",
+		type: "() => void",
+		description: "Fires when that row is double clicked."
+	},
+	{
+		name: "parentDirectoryDropEvent",
+		type: "() => void",
+		description: "Fires when a selection is dragged onto it."
+	},
+	{
+		name: "onClick",
+		type: "(item: IFileSystemItem, pos: SelectedElementsPos) => void",
+		description: "Fires with the clicked row and where the pointer was."
+	},
+	{
+		name: "onRightClick",
+		type: "(items: Array<IFileSystemItem>, pos: SelectedElementsPos) => void",
+		description: "Fires with the whole selection and where the pointer was — where a context menu is opened."
+	},
+	{
+		name: "onDblClick",
+		type: "(item: IFileSystemItem) => void",
+		description: "Fires on a double click, which is what opens a folder."
+	},
+	{
+		name: "copyEvent",
+		type: "() => void",
+		description: "Fires on the copy shortcut."
+	},
+	{
+		name: "cutEvent",
+		type: "() => void",
+		description: "Fires on the cut shortcut."
+	},
+	{
+		name: "pasteEvent",
+		type: "() => void",
+		description: "Fires on the paste shortcut."
+	},
+	{
+		name: "movingEvent",
+		type: "(state: boolean) => void",
+		description: "Fires as a drag of the selection starts and finishes."
+	},
+	{
+		name: "dropEvent",
+		type: "(files: FileList) => void",
+		description: "Fires with the files dropped onto the browser from outside the page."
+	}
+];
 
 interface Props {
 }
@@ -710,8 +927,32 @@ export const FileSystemDevelopment: React.FC<Props> = ({}) => {
 	return (
 		<HorizontalSplitPage uuid="file-system-development">
 			<SplitPageMajor>
-				<PaddedPage>
-					<PageHeading>File System</PageHeading>
+				<ComponentDoc
+					title="File System"
+					description="A file browser: rows of folders and files with selection, drag and drop, cut and paste, inline renaming and sortable columns. It holds no data of its own — the rows are its children, and every gesture is reported for the application to act on."
+					name="FileSystem"
+					previewHeight={320}
+					previewCentered={false}
+					imports={["FileSystemRow", "IFileSystemItem", "IFileSystemType", "IFileSystemOrderBy"]}
+					interfaces={[FILE_SYSTEM_ITEM_INTERFACE, FILE_SYSTEM_ROW_INTERFACE]}
+					props={FILE_SYSTEM_PROPS}
+					snippetChildren={() => "{items.map(item => (\n\t<FileSystemRow key={item.reference} item={item} onClick={select}></FileSystemRow>\n))}"}
+					preview={values => (
+						<div style={{width: "100%"}}>
+							<FileSystem
+								showHeader={values.showHeader}
+								showFileSize={values.showFileSize}
+								showFileType={values.showFileType}
+								showLastModified={values.showLastModified}
+								orderBy={values.orderBy}
+								showParentDirectory={values.showParentDirectory}
+								parentDirectoryLabel={values.parentDirectoryLabel}>
+								{DEMO_FILE_SYSTEM_ITEMS.map(item => (
+									<FileSystemRow key={item.reference} item={item}></FileSystemRow>
+								))}
+							</FileSystem>
+						</div>
+					)}>
 
 					<div className="file-system-demo-toolbar">
 						<div className="file-system-demo-toolbar-row">
@@ -850,7 +1091,7 @@ export const FileSystemDevelopment: React.FC<Props> = ({}) => {
 						<li>Drag files from your desktop onto the table to upload them.</li>
 						<li>Right click a row for the context menu, ctrl/cmd + c / x / v for the clipboard.</li>
 					</ul>
-				</PaddedPage>
+				</ComponentDoc>
 			</SplitPageMajor>
 			<SplitPageMinor>
 				<div className="workspace-output-window">

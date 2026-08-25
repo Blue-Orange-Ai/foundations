@@ -1,0 +1,177 @@
+.blue-orange-docs-demo {
+    box-sizing: border-box;
+    width: 100%;
+    border: 1px solid var(--blue-orange-light-docs-border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--blue-orange-light-docs-background-color);
+}
+
+.dark .blue-orange-docs-demo {
+    border-color: var(--blue-orange-dark-docs-border-color);
+    background-color: var(--blue-orange-dark-docs-background-color);
+}
+
+.blue-orange-docs-demo-toolbar {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-bottom: 1px solid var(--blue-orange-light-docs-border-color);
+    background-color: var(--blue-orange-light-docs-surface-color);
+}
+
+.dark .blue-orange-docs-demo-toolbar {
+    border-bottom-color: var(--blue-orange-dark-docs-border-color);
+    background-color: var(--blue-orange-dark-docs-surface-color);
+}
+
+.blue-orange-docs-demo-toolbar-spacer {
+    flex: 1 1 auto;
+}
+
+.blue-orange-docs-demo-width {
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--blue-orange-light-docs-muted-color);
+    white-space: nowrap;
+}
+
+.dark .blue-orange-docs-demo-width {
+    color: var(--blue-orange-dark-docs-muted-color);
+}
+
+.blue-orange-docs-demo-stage {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    width: 100%;
+    padding: 12px;
+    /* A faint grid behind the preview so a transparent component still reads as
+       sitting on a surface, and so the viewport edge is visible while dragging. */
+    background-image:
+        linear-gradient(var(--blue-orange-light-docs-grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--blue-orange-light-docs-grid-color) 1px, transparent 1px);
+    background-size: 16px 16px;
+    overflow: hidden;
+}
+
+.dark .blue-orange-docs-demo-stage {
+    background-image:
+        linear-gradient(var(--blue-orange-dark-docs-grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--blue-orange-dark-docs-grid-color) 1px, transparent 1px);
+}
+
+.blue-orange-docs-demo-viewport {
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
+    padding: 24px;
+    border: 1px dashed var(--blue-orange-light-docs-border-color);
+    border-radius: 6px;
+    background-color: var(--blue-orange-light-docs-background-color);
+    overflow: auto;
+}
+
+.dark .blue-orange-docs-demo-viewport {
+    border-color: var(--blue-orange-dark-docs-border-color);
+    background-color: var(--blue-orange-dark-docs-background-color);
+}
+
+.blue-orange-docs-demo-viewport-centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.blue-orange-docs-demo-handle {
+    flex: 0 0 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: col-resize;
+    border-radius: 6px;
+    background-color: transparent;
+}
+
+.blue-orange-docs-demo-handle:hover,
+.blue-orange-docs-demo-handle:focus-visible,
+.blue-orange-docs-demo-handle-active {
+    background-color: var(--blue-orange-light-docs-surface-color);
+    outline: none;
+}
+
+.dark .blue-orange-docs-demo-handle:hover,
+.dark .blue-orange-docs-demo-handle:focus-visible,
+.dark .blue-orange-docs-demo-handle-active {
+    background-color: var(--blue-orange-dark-docs-surface-color);
+}
+
+.blue-orange-docs-demo-handle-grip {
+    width: 3px;
+    height: 32px;
+    border-radius: 3px;
+    background-color: var(--blue-orange-light-docs-border-color);
+}
+
+.dark .blue-orange-docs-demo-handle-grip {
+    background-color: var(--blue-orange-dark-docs-border-color);
+}
+
+.blue-orange-docs-demo-handle:hover .blue-orange-docs-demo-handle-grip,
+.blue-orange-docs-demo-handle:focus-visible .blue-orange-docs-demo-handle-grip,
+.blue-orange-docs-demo-handle-active .blue-orange-docs-demo-handle-grip {
+    background-color: var(--blue-orange-light-docs-muted-color);
+}
+
+.dark .blue-orange-docs-demo-handle:hover .blue-orange-docs-demo-handle-grip,
+.dark .blue-orange-docs-demo-handle:focus-visible .blue-orange-docs-demo-handle-grip,
+.dark .blue-orange-docs-demo-handle-active .blue-orange-docs-demo-handle-grip {
+    background-color: var(--blue-orange-dark-docs-muted-color);
+}
+
+/* Full screen. The browser paints its own black backdrop behind the element, so
+   the demo has to take the whole of it and carry its own background — and the
+   stage has to grow, since there is no longer a page height to sit inside.
+   The prefixed selector is Safari's, and has to be a rule of its own: a
+   selector list is dropped whole if any part of it is not understood. */
+.blue-orange-docs-demo:fullscreen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: none;
+    border-radius: 0;
+}
+
+.blue-orange-docs-demo:-webkit-full-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: none;
+    border-radius: 0;
+}
+
+.blue-orange-docs-demo:fullscreen .blue-orange-docs-demo-stage {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.blue-orange-docs-demo:-webkit-full-screen .blue-orange-docs-demo-stage {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+/* The inline minHeight the stage is given for a page is only a floor, so a
+   preview still fills the height once there is a screen's worth of it. */
+.blue-orange-docs-demo:fullscreen .blue-orange-docs-demo-viewport {
+    max-height: 100%;
+}
+
+.blue-orange-docs-demo:-webkit-full-screen .blue-orange-docs-demo-viewport {
+    max-height: 100%;
+}

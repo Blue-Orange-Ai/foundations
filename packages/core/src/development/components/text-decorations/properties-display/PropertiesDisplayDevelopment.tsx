@@ -1,13 +1,132 @@
 import React, {useState} from "react";
 
 import './PropertiesDisplayDevelopment.css'
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
 import {GeneralHeading} from "../../../../components/text-decorations/general-heading/GeneralHeading";
 import {Description} from "../../../../components/text-decorations/description/Description";
 import {Property, PropertiesDisplay} from "../../../../components/text-decorations/properties-display/PropertiesDisplay";
 import {Tag} from "../../../../components/text-decorations/tag/Tag";
 import {ToastLocation} from "../../../../components/alerts/toast/toastcontext/ToastContext";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+
+const DEMO_PROPERTIES: Property[] = [
+	{label: "Name", value: "Ada Lovelace"},
+	{label: "Email", value: "ada@blueorange.ai"},
+	{label: "Department", value: "Engineering"},
+	{label: "Location", value: "Melbourne, Australia"},
+	{label: "Roles", value: ["Administrator", "Editor", "Reviewer", "Auditor", "Owner"]},
+	{label: "Manager", value: undefined}
+];
+
+const PROPERTY_INTERFACE = {
+	name: "Property",
+	description: "One row in the block. The component level settings apply to every property unless the property overrides them itself.",
+	props: [
+		{name: "label", type: "string", required: true, description: "The name of the pair."},
+		{name: "value", type: "PropertyValue", required: true, description: "Text, a node, or an array of either. Undefined, null and an empty array all fall back to emptyValue."},
+		{name: "maxArrayItems", type: "number", description: "Overrides the component level maxArrayItems for this row only."},
+		{name: "copyable", type: "boolean", description: "Overrides the component level copyable for this row only."},
+		{name: "copyValue", type: "string", description: "Text placed on the clipboard instead of the rendered value. Ignored for array values."}
+	] as Array<PropSpec>
+};
+
+const PROPERTIES_DISPLAY_PROPS: Array<PropSpec> = [
+	{
+		name: "properties",
+		type: "Property[]",
+		required: true,
+		description: "The pairs to show, in the order they should be read."
+	},
+	{
+		name: "orientation",
+		type: "\"vertical\" | \"horizontal\"",
+		default: "\"vertical\"",
+		control: "select",
+		options: [
+			{label: "vertical", value: "vertical"},
+			{label: "horizontal", value: "horizontal"}
+		],
+		description: "Vertical stacks the label above the value; horizontal puts them side by side."
+	},
+	{
+		name: "columns",
+		type: "number",
+		default: "1",
+		control: "slider",
+		min: 1,
+		max: 4,
+		step: 1,
+		description: "How many properties are laid out per row."
+	},
+	{
+		name: "maxArrayItems",
+		type: "number",
+		default: "3",
+		control: "slider",
+		min: 1,
+		max: 6,
+		step: 1,
+		description: "How many items of an array value are shown before the see more button appears."
+	},
+	{
+		name: "seeMoreLabel",
+		type: "string",
+		default: "\"See more\"",
+		control: "text",
+		description: "What the see more button reads."
+	},
+	{
+		name: "onSeeMore",
+		type: "(property: Property) => void",
+		description: "Fires with the property whose see more button was clicked."
+	},
+	{
+		name: "emptyValue",
+		type: "ReactNode",
+		default: "\"-\"",
+		control: "text",
+		description: "Stands in for a value that is undefined, null or an empty array."
+	},
+	{
+		name: "labelWidth",
+		type: "string",
+		default: "\"140px\"",
+		control: "text",
+		description: "How much room the label column takes when the orientation is horizontal."
+	},
+	{
+		name: "copyable",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Makes every value copy itself on click. A single property can opt in or out with Property.copyable."
+	},
+	{
+		name: "copyToast",
+		type: "boolean | CopyToastOptions",
+		default: "false",
+		control: "toggle",
+		description: "Raises a toast when a value is copied. True takes the defaults; an object overrides them."
+	},
+	{
+		name: "copyIconOnly",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Leaves the value as plain selectable text and puts a copy icon beside it instead."
+	},
+	{
+		name: "onCopy",
+		type: "(value: string, property: Property) => void",
+		description: "Fires with what was copied and the property it came from."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the block."
+	}
+];
 
 interface Props {
 }
@@ -54,10 +173,30 @@ export const PropertiesDisplayDevelopment: React.FC<Props> = ({}) => {
 	}
 
 	return (
-		<PaddedPage>
-			<PageHeading>Properties Display</PageHeading>
-			<Description>Displays key value pairs vertically or horizontally across a configurable number of
-				columns. Array values are comma joined and truncated with a see more button.</Description>
+		<ComponentDoc
+			title="Properties Display"
+			description="A block of label and value pairs — the detail panel beside a row, a summary at the top of a page. Values can be text, nodes or arrays, and an array longer than the limit collapses behind a see more button."
+			name="PropertiesDisplay"
+			previewHeight={260}
+			previewCentered={false}
+			imports={["Property"]}
+			interfaces={[PROPERTY_INTERFACE]}
+			props={PROPERTIES_DISPLAY_PROPS}
+			preview={values => (
+				<div style={{width: "100%"}}>
+					<PropertiesDisplay
+						properties={DEMO_PROPERTIES}
+						orientation={values.orientation}
+						columns={values.columns}
+						maxArrayItems={values.maxArrayItems}
+						seeMoreLabel={values.seeMoreLabel}
+						emptyValue={values.emptyValue}
+						labelWidth={values.labelWidth}
+						copyable={values.copyable}
+						copyToast={values.copyToast}
+						copyIconOnly={values.copyIconOnly}></PropertiesDisplay>
+				</div>
+			)}>
 
 			<GeneralHeading>Vertical - Single Column</GeneralHeading>
 			<PropertiesDisplay properties={properties} onSeeMore={onSeeMore}></PropertiesDisplay>
@@ -130,6 +269,6 @@ export const PropertiesDisplayDevelopment: React.FC<Props> = ({}) => {
 			<GeneralHeading>Callback Output</GeneralHeading>
 			<div className="properties-display-development-callback">{lastSeeMore || "No see more clicked yet."}</div>
 			<div className="properties-display-development-callback">{lastCopied || "Nothing copied yet."}</div>
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

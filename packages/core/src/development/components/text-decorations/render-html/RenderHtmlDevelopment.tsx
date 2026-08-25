@@ -1,11 +1,21 @@
 import React from "react";
 
 import './RenderHtmlDevelopment.css'
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
 import {RenderHtml} from "../../../../components/text-decorations/render-html/RenderHtml";
 import {GeneralHeading} from "../../../../components/text-decorations/general-heading/GeneralHeading";
-import {Description} from "../../../../components/text-decorations/description/Description";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+
+const RENDER_HTML_PROPS: Array<PropSpec> = [
+	{
+		name: "html",
+		type: "string",
+		required: true,
+		control: "text",
+		value: "<h3>Melbourne Depot</h3><p>Operational since <strong>2019</strong>.</p>",
+		description: "The markup to insert. It goes in through dangerouslySetInnerHTML, so anything in it runs as written."
+	}
+];
 
 interface Props {
 }
@@ -32,9 +42,18 @@ export const RenderHtmlDevelopment: React.FC<Props> = ({}) => {
 	const linkHtml = '<p>Visit <a href="https://example.com" target="_blank">Example Website</a> for more info.</p>';
 
 	return (
-		<PaddedPage>
-			<PageHeading>Render HTML Text Decoration</PageHeading>
-			<Description>Renders raw HTML strings as React components. Use with caution for trusted content only.</Description>
+		<ComponentDoc
+			title="Render HTML"
+			description="Puts a string of HTML into the page as real markup. It does no sanitising of its own, so only content you already trust should be handed to it."
+			name="RenderHtml"
+			previewHeight={160}
+			previewCentered={false}
+			props={RENDER_HTML_PROPS}
+			preview={values => (
+				<div style={{width: "100%"}}>
+					<RenderHtml html={values.html}></RenderHtml>
+				</div>
+			)}>
 
 			<GeneralHeading>Simple HTML</GeneralHeading>
 			<RenderHtml html={simpleHtml} />
@@ -47,6 +66,6 @@ export const RenderHtmlDevelopment: React.FC<Props> = ({}) => {
 
 			<GeneralHeading>HTML with Links</GeneralHeading>
 			<RenderHtml html={linkHtml} />
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

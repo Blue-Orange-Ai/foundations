@@ -1,0 +1,16 @@
+:root {
+    /* Docs-only surface tokens. The neutral ramp is the one the sidebar uses so
+       the documentation reads as part of the same application. */
+    --blue-orange-light-docs-border-color: #e5e5e5;
+    --blue-orange-dark-docs-border-color: #262626;
+    --blue-orange-light-docs-background-color: #ffffff;
+    --blue-orange-dark-docs-background-color: #0a0a0a;
+    --blue-orange-light-docs-surface-color: #fafafa;
+    --blue-orange-dark-docs-surface-color: #171717;
+    --blue-orange-light-docs-muted-color: #737373;
+    --blue-orange-dark-docs-muted-color: #a1a1a1;
+    --blue-orange-light-docs-text-color: #0a0a0a;
+    --blue-orange-dark-docs-text-color: #fafafa;
+    --blue-orange-light-docs-grid-color: rgba(10, 10, 10, 0.05);
+    --blue-orange-dark-docs-grid-color: rgba(250, 250, 250, 0.05);
+}

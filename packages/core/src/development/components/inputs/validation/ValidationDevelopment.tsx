@@ -2,8 +2,6 @@ import React, {useState} from "react";
 
 import './ValidationDevelopment.css'
 import {SplitPageMajor} from "../../../../components/layouts/pages/split-pages/split-page-major/SplitPageMajor";
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
 import {SplitPageMinor} from "../../../../components/layouts/pages/split-pages/split-page-minor/SplitPageMinor";
 import {
 	HorizontalSplitPage
@@ -21,6 +19,61 @@ import {Checkbox} from "../../../../components/inputs/checkbox/Checkbox";
 import {Toggle} from "../../../../components/inputs/toggle/Toggle";
 import {InputValidateCallback, InputValidationResult} from "../../../../components/inputs/validation/InputValidation";
 import {DropdownItemObj} from "../../../../components/interfaces/AppInterfaces";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+import {InputValidationMessage} from "../../../../components/inputs/validation/InputValidationMessage";
+
+const VALIDATION_RESULT_INTERFACE = {
+	name: "InputValidationResult",
+	description: "What a validate callback resolves with. An error state blocks a FormGroup from submitting; a success state clears the field.",
+	props: [
+		{name: "state", type: "\"success\" | \"error\"", required: true, description: "Whether the value passed."},
+		{name: "message", type: "string", description: "Plain text rendered under the input."},
+		{name: "messageHtml", type: "string", description: "An html message, rendered through RenderHtml. It takes precedence over message."}
+	] as Array<PropSpec>
+};
+
+const VALIDATE_CALLBACK_INTERFACE = {
+	name: "InputValidateCallback<T>",
+	description: "The signature every input's `validate` prop takes: (value: T) => Promise<InputValidationResult>. It is async, so a check can go to the server — a name that has to be unique, say — without the input having to know that it did.",
+	props: [
+		{name: "value", type: "T", required: true, description: "Whatever the input currently holds. T is the input's own value type — a string, a boolean, an array."}
+	] as Array<PropSpec>
+};
+
+const VALIDATION_MESSAGE_PROPS: Array<PropSpec> = [
+	{
+		name: "result",
+		type: "InputValidationResult | null",
+		required: true,
+		description: "The outcome to render. Null, or a result with no message, renders nothing — so it can be left in place unconditionally."
+	},
+	{
+		name: "value",
+		type: "string",
+		control: "text",
+		value: "Me",
+		hideFromTable: true,
+		hideFromSnippet: true,
+		description: "Demo only — what the field starts with. Under three characters fails the check."
+	},
+	{
+		name: "required",
+		type: "boolean",
+		control: "toggle",
+		hideFromTable: true,
+		hideFromSnippet: true,
+		description: "Demo only — adds the required check in front of the custom one."
+	},
+	{
+		name: "validateOnChange",
+		type: "boolean",
+		control: "toggle",
+		hideFromTable: true,
+		hideFromSnippet: true,
+		description: "Demo only — runs the check on every keystroke rather than on blur."
+	}
+];
 
 interface Props {
 }
@@ -164,16 +217,29 @@ type InputValidateCallback<T = string> =
 	return (
 		<HorizontalSplitPage>
 			<SplitPageMajor>
-				<PaddedPage>
-					<PageHeading>Input Validation</PageHeading>
+				<ComponentDoc
+					title="Input Validation"
+					description="How every input in the library checks itself. Give one a `validate` callback and it runs on blur — or on every keystroke with `validateOnChange` — and renders whatever it resolves with underneath. The same callback shape is what FormField and FormGroup speak in, so a check written once works standalone and in a form."
+					name="InputValidationMessage"
+					previewHeight={200}
+					previewCentered={false}
+					imports={["InputValidationResult"]}
+					interfaces={[VALIDATION_RESULT_INTERFACE, VALIDATE_CALLBACK_INTERFACE]}
+					props={VALIDATION_MESSAGE_PROPS}
+					usage={values => "import {Input, InputValidateCallback, InputValidationResult} from \"@blue-orange-ai/foundations-core\";\n\nconst validateSiteName: InputValidateCallback<string> = async (value) => {\n\tif (value.trim().length < 3) {\n\t\treturn {state: \"error\", message: \"A site name needs at least three characters.\"};\n\t}\n\treturn {state: \"success\"};\n}\n\n<Input\n\tlabel={\"Site name\"}\n\tvalidate={validateSiteName}\n\tvalidateOnChange={" + Boolean(values.validateOnChange) + "}\n\trequired={" + Boolean(values.required) + "}></Input>"}
+					preview={values => (
+						<div style={{width: "100%", maxWidth: "420px"}}>
+							<Input
+								label="Site name"
+								value={values.value}
+								required={values.required}
+								validateOnChange={values.validateOnChange}
+								validate={async (value: string) => value.trim().length < 3
+									? {state: "error", message: "A site name needs at least three characters."}
+									: {state: "success"}}></Input>
+						</div>
+					)}>
 
-					<Paragraph>
-						Every input in the library accepts an optional asynchronous <code>validate</code> callback.
-						When supplied, the input runs it, reads the result and — when validation fails — draws a red
-						outline around the field, turns the label red and renders a message underneath. Nothing about
-						an input changes unless you pass a <code>validate</code> callback, so this is fully opt‑in and
-						backwards compatible.
-					</Paragraph>
 
 					<GeneralHeading>The <code>validate</code> prop</GeneralHeading>
 					<Paragraph>
@@ -308,7 +374,7 @@ type InputValidateCallback<T = string> =
 						</div>
 
 					</div>
-				</PaddedPage>
+				</ComponentDoc>
 			</SplitPageMajor>
 			<SplitPageMinor>
 				<div className="workspace-output-window">

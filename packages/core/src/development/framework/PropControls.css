@@ -1,0 +1,46 @@
+.blue-orange-docs-controls {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.blue-orange-docs-controls-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.blue-orange-docs-controls-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: var(--blue-orange-light-docs-text-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dark .blue-orange-docs-controls-label {
+    color: var(--blue-orange-dark-docs-text-color);
+}
+
+.blue-orange-docs-controls-required {
+    margin-left: 2px;
+    color: #922B21;
+}
+
+.blue-orange-docs-controls-input {
+    min-width: 0;
+}
+
+.blue-orange-docs-controls-empty {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--blue-orange-light-docs-muted-color);
+}
+
+.dark .blue-orange-docs-controls-empty {
+    color: var(--blue-orange-dark-docs-muted-color);
+}

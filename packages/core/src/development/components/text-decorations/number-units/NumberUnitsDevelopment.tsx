@@ -1,11 +1,56 @@
 import React from "react";
 
 import './NumberUnitsDevelopment.css'
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
 import {NumberUnits} from "../../../../components/text-decorations/number-units/NumberUnits";
 import {GeneralHeading} from "../../../../components/text-decorations/general-heading/GeneralHeading";
-import {Description} from "../../../../components/text-decorations/description/Description";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+
+const NUMBER_UNITS_PROPS: Array<PropSpec> = [
+	{
+		name: "value",
+		type: "number",
+		required: true,
+		control: "number",
+		value: 150,
+		description: "The number to print."
+	},
+	{
+		name: "unit",
+		type: "string",
+		required: true,
+		control: "select",
+		value: "kilometer",
+		options: [
+			{label: "kilometer", value: "kilometer"},
+			{label: "meter", value: "meter"},
+			{label: "liter", value: "liter"},
+			{label: "kilogram", value: "kilogram"},
+			{label: "celsius", value: "celsius"},
+			{label: "byte", value: "byte"}
+		],
+		description: "A sanctioned Intl unit identifier. Anything outside that list will throw."
+	},
+	{
+		name: "decimalPlaces",
+		type: "number",
+		control: "number",
+		description: "Pins the output to this many decimal places. Left off, the locale decides."
+	},
+	{
+		name: "numberFormat",
+		type: "string",
+		default: "\"en-AU\"",
+		control: "select",
+		options: [
+			{label: "en-AU", value: "en-AU"},
+			{label: "en-US", value: "en-US"},
+			{label: "de-DE", value: "de-DE"},
+			{label: "fr-FR", value: "fr-FR"}
+		],
+		description: "The locale handed to Intl.NumberFormat, which decides how the unit is written."
+	}
+];
 
 interface Props {
 }
@@ -13,9 +58,21 @@ interface Props {
 export const NumberUnitsDevelopment: React.FC<Props> = ({}) => {
 
 	return (
-		<PaddedPage>
-			<PageHeading>Number Units Text Decoration</PageHeading>
-			<Description>Formats numbers with units (kilometers, liters, etc.).</Description>
+		<ComponentDoc
+			title="Number Units"
+			description="A number with its unit attached, formatted the way the locale writes that unit — 150 km, 1,234.50 m, 20 °C."
+			name="NumberUnits"
+			previewHeight={110}
+			props={NUMBER_UNITS_PROPS}
+			preview={values => (
+				<span style={{fontSize: "1.5rem"}}>
+					<NumberUnits
+						value={values.value}
+						unit={values.unit}
+						decimalPlaces={values.decimalPlaces}
+						numberFormat={values.numberFormat}></NumberUnits>
+				</span>
+			)}>
 
 			<GeneralHeading>Kilometers</GeneralHeading>
 			<p><NumberUnits value={150} unit="kilometer" /></p>
@@ -40,6 +97,6 @@ export const NumberUnitsDevelopment: React.FC<Props> = ({}) => {
 
 			<GeneralHeading>Percent</GeneralHeading>
 			<p><NumberUnits value={85} unit="percent" /></p>
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

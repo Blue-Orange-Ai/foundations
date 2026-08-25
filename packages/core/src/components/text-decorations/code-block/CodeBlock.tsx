@@ -1,4 +1,4 @@
-import React, {ReactNode, useCallback, useEffect, useState} from "react";
+import React, {ReactNode, useCallback, useEffect, useRef, useState} from "react";
 
 import './CodeBlock.css'
 import {RenderHtml} from "../render-html/RenderHtml";
@@ -36,12 +36,25 @@ export const CodeBlock: React.FC<Props> = ({value, style={}}) => {
 		return observeDarkMode(() => setDarkMode(isDarkMode()));
 	}, []);
 
+	// Highlighting is asynchronous, so a block that is unmounted while shiki is
+	// still working must not try to render the result when it arrives.
+	const mounted = useRef<boolean>(true);
+
+	useEffect(() => {
+		mounted.current = true;
+		return () => {
+			mounted.current = false;
+		};
+	}, []);
+
 	const formatCode = useCallback(async (input: CodeRender, dark: boolean): Promise<void> => {
 		const formatedCode = await codeToHtml(input.code, {
 			lang: input.lang,
 			theme: input.theme ?? (dark ? "github-dark" : "github-light")
 		});
-		setHtml(formatedCode)
+		if (mounted.current) {
+			setHtml(formatedCode)
+		}
 	}, [])
 
 	const copyCode = useCallback(async (code: string): Promise<void> => {

@@ -1,19 +1,282 @@
 import React, {useEffect, useRef, useState} from "react";
 
 import './ComboChartDevelopment.css'
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
 import {LineChart} from "../../../../components/charts/line/LineChart";
 import {ComboChart} from "../../../../components/charts/combo/ComboChart";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+import {LegendPosition} from "../../../../components/charts/types/ChartTypes";
+
+const DEMO_COMBO_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+const DEMO_COMBO_DATASET: Array<any> = [
+	{
+		type: "bar",
+		label: "Runs",
+		data: [820, 932, 901, 1290, 1330, 620, 410],
+		backgroundColor: "#7c4dff",
+		borderRadius: 4
+	},
+	{
+		type: "line",
+		label: "Median duration",
+		data: [14, 16, 15, 19, 22, 12, 9],
+		borderColor: "#e11d48",
+		yAxisID: "y1"
+	}
+];
+
+const CHART_LEGEND_OPTIONS = [
+	{label: "Bottom", value: LegendPosition.BOTTOM, code: "LegendPosition.BOTTOM"},
+	{label: "Top", value: LegendPosition.TOP, code: "LegendPosition.TOP"},
+	{label: "Top left", value: LegendPosition.TOP_LEFT, code: "LegendPosition.TOP_LEFT"},
+	{label: "Top right", value: LegendPosition.TOP_RIGHT, code: "LegendPosition.TOP_RIGHT"},
+	{label: "Bottom left", value: LegendPosition.BOTTOM_LEFT, code: "LegendPosition.BOTTOM_LEFT"},
+	{label: "Bottom right", value: LegendPosition.BOTTOM_RIGHT, code: "LegendPosition.BOTTOM_RIGHT"}
+];
+
+const CHART_DATASET_INTERFACE = {
+	name: "ChartDataset",
+	description: "One series. Chart.js reads these straight through, so anything it understands about a dataset can be set here.",
+	props: [
+		{name: "label", type: "string", required: true, description: "The series name, shown in the legend and the tooltip."},
+		{name: "data", type: "Array<any>", required: true, description: "The points. Numbers against `labels`, or {x, y} objects for a scaled axis."},
+		{name: "borderColor", type: "string", description: "The line or bar outline."},
+		{name: "backgroundColor", type: "string", description: "The fill."},
+		{name: "borderWidth", type: "number", description: "How thick that outline is."},
+		{name: "fill", type: "boolean | string", description: "Whether the area under a line is filled, and to where."},
+		{name: "borderRadius", type: "number", description: "Corner radius on a bar."},
+		{name: "yAxisID", type: "string", description: "Which y axis the series is measured against, for a chart with two."}
+	] as Array<PropSpec>
+};
+
+/** The props every chart in the library shares. */
+const chartCommonProps = (): Array<PropSpec> => [
+	{
+		name: "gridLines",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Draws the grid behind the plot."
+	},
+	{
+		name: "xLabel",
+		type: "string",
+		control: "text",
+		description: "The title under the x axis."
+	},
+	{
+		name: "yLabel",
+		type: "string",
+		control: "text",
+		description: "The title beside the y axis."
+	},
+	{
+		name: "height",
+		type: "string",
+		default: "\"100%\"",
+		control: "text",
+		description: "Height of the canvas, as a CSS length."
+	},
+	{
+		name: "width",
+		type: "string",
+		default: "\"100%\"",
+		control: "text",
+		description: "Width of the canvas, as a CSS length."
+	},
+	{
+		name: "interactionType",
+		type: "string",
+		default: "\"index\"",
+		control: "select",
+		options: [
+			{label: "index", value: "index"},
+			{label: "nearest", value: "nearest"}
+		],
+		description: "`index` picks up every series at the hovered position; `nearest` picks up only the closest point."
+	},
+	{
+		name: "animationTimeout",
+		type: "number",
+		default: "2000",
+		control: "number",
+		description: "How long the entry animation runs, in milliseconds."
+	},
+	{
+		name: "legend",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Shows the legend."
+	},
+	{
+		name: "legendPosition",
+		type: "LegendPosition",
+		default: "LegendPosition.BOTTOM",
+		defaultValue: LegendPosition.BOTTOM,
+		control: "select",
+		options: CHART_LEGEND_OPTIONS,
+		description: "Where the legend sits."
+	},
+	{
+		name: "tooltip",
+		type: "TooltipConfig",
+		description: "Full control over the tooltip — its header, the per point label and value, and any extra rows under them."
+	},
+	{
+		name: "showXValueInTooltip",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Puts the x value in the tooltip header."
+	},
+	{
+		name: "xValueFormatter",
+		type: "(value: any) => string",
+		description: "Formats that x value."
+	},
+	{
+		name: "verticalLine",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Draws a crosshair down the plot at the pointer."
+	},
+	{
+		name: "verticalLineColor",
+		type: "string",
+		default: "\"red\"",
+		control: "color",
+		description: "The colour of that crosshair."
+	},
+	{
+		name: "verticalLineWidth",
+		type: "number",
+		default: "1",
+		control: "number",
+		description: "How thick it is."
+	},
+	{
+		name: "verticalLineDash",
+		type: "Array<number>",
+		description: "A dash pattern for it, as Chart.js takes one."
+	},
+	{
+		name: "onCursorMove",
+		type: "(position: CursorPosition | null) => void",
+		description: "Fires as the pointer moves over the plot — how two charts are kept in step."
+	},
+	{
+		name: "cursorValue",
+		type: "any",
+		description: "Puts the crosshair at this x value from the outside, which is the other half of that."
+	}
+];
+
+const COMBO_CHART_PROPS: Array<PropSpec> = [
+	{
+		name: "dataset",
+		type: "Array<AnyDataset>",
+		required: true,
+		description: "The series. Each one names its own `type` — bar or line — which is what makes the chart a combo."
+	},
+	{
+		name: "labels",
+		type: "Array<string>",
+		description: "The positions along the x axis."
+	},
+	{
+		name: "xScale",
+		type: "string",
+		control: "select",
+		options: [
+			{label: "Default", value: ""},
+			{label: "linear", value: "linear"},
+			{label: "time", value: "time"},
+			{label: "category", value: "category"}
+		],
+		description: "The Chart.js scale type for the x axis."
+	},
+	{
+		name: "xScaleTimeUnit",
+		type: "string",
+		default: "\"minute\"",
+		control: "text",
+		description: "The unit a time scale ticks in."
+	},
+	{
+		name: "yScale",
+		type: "string",
+		control: "select",
+		options: [
+			{label: "Default", value: ""},
+			{label: "linear", value: "linear"},
+			{label: "logarithmic", value: "logarithmic"}
+		],
+		description: "The scale type for the y axis."
+	},
+	{
+		name: "fill",
+		type: "any",
+		default: "false",
+		control: "toggle",
+		description: "Fills the area under the line datasets."
+	},
+	{
+		name: "tension",
+		type: "number",
+		default: "0.2",
+		control: "slider",
+		min: 0,
+		max: 1,
+		step: 0.1,
+		description: "How much the lines curve between points."
+	},
+	{
+		name: "stackedBars",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Stacks the bar datasets on top of each other rather than beside."
+	},
+	{
+		name: "stackedAreas",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Stacks the filled line datasets."
+	},
+	{
+		name: "stackId",
+		type: "string",
+		default: "\"default\"",
+		control: "text",
+		description: "Groups datasets into separate stacks."
+	},
+	{
+		name: "rangeSelect",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Lets a range be dragged out across the plot."
+	},
+	{
+		name: "onRangeSelected",
+		type: "(startValue: any, endValue: any) => void",
+		description: "Fires with the two ends of that range."
+	},
+	...chartCommonProps()
+];
 
 interface Props {
 }
 
 export const ComboChartDevelopment: React.FC<Props> = ({}) => {
 
-	const [dataset1, setDataset1] = useState([]);
+	const [dataset1, setDataset1] = useState<Array<any>>([]);
 
-	const [dataset2, setDataset2] = useState([]);
+	const [dataset2, setDataset2] = useState<Array<any>>([]);
 
 	const [initialised, setInitialised] = useState(false);
 
@@ -49,8 +312,38 @@ export const ComboChartDevelopment: React.FC<Props> = ({}) => {
 	}, [interval]);
 
 	return (
-		<PaddedPage>
-			<PageHeading>Combo Chart</PageHeading>
+		<ComponentDoc
+			title="Combo Chart"
+			description="Bars and lines on the same plot. Each dataset says which it is, they can be stacked into groups, and a range can be dragged out across the axis."
+			name="ComboChart"
+			previewHeight={380}
+			previewCentered={false}
+			imports={["LegendPosition"]}
+			interfaces={[CHART_DATASET_INTERFACE]}
+			props={COMBO_CHART_PROPS}
+			preview={values => (
+				<div style={{width: "100%", height: "320px"}}>
+					<ComboChart
+						dataset={DEMO_COMBO_DATASET}
+						labels={DEMO_COMBO_LABELS}
+						gridLines={values.gridLines}
+						xLabel={values.xLabel}
+						yLabel={values.yLabel}
+						height="320px"
+						tension={values.tension}
+						legend={values.legend}
+						legendPosition={values.legendPosition}
+						interactionType={values.interactionType}
+						animationTimeout={values.animationTimeout}
+						stackedBars={values.stackedBars}
+						stackedAreas={values.stackedAreas}
+						rangeSelect={values.rangeSelect}
+						showXValueInTooltip={values.showXValueInTooltip}
+						verticalLine={values.verticalLine}
+						verticalLineColor={values.verticalLineColor}
+						verticalLineWidth={values.verticalLineWidth}></ComboChart>
+				</div>
+			)}>
 			{/* Regular Combo Chart with Basic X-Value Tooltip */}
 			<div>
 				<h3>Regular Combo Chart with Basic X-Value Tooltip</h3>
@@ -352,6 +645,6 @@ export const ComboChartDevelopment: React.FC<Props> = ({}) => {
 				</p>
 			</div>
 
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

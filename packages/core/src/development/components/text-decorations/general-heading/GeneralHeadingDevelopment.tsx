@@ -1,10 +1,28 @@
 import React from "react";
 
 import './GeneralHeadingDevelopment.css'
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
 import {GeneralHeading} from "../../../../components/text-decorations/general-heading/GeneralHeading";
 import {Description} from "../../../../components/text-decorations/description/Description";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+
+const GENERAL_HEADING_PROPS: Array<PropSpec> = [
+	{
+		name: "children",
+		type: "ReactNode",
+		required: true,
+		control: "text",
+		value: "Delivery details",
+		hideFromSnippet: true,
+		description: "The heading text, or any node that should sit in the heading."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the h2."
+	}
+];
 
 interface Props {
 }
@@ -12,9 +30,16 @@ interface Props {
 export const GeneralHeadingDevelopment: React.FC<Props> = ({}) => {
 
 	return (
-		<PaddedPage>
-			<PageHeading>General Heading Text Decoration</PageHeading>
-			<Description>A secondary heading component (h2) for section titles.</Description>
+		<ComponentDoc
+			title="General Heading"
+			description="The section heading — an h2 — that breaks a page into parts. It pairs with Description underneath it, and with PageHeading above."
+			name="GeneralHeading"
+			previewHeight={110}
+			snippetChildren={values => values.children}
+			props={GENERAL_HEADING_PROPS}
+			preview={values => (
+				<GeneralHeading>{values.children}</GeneralHeading>
+			)}>
 
 			<GeneralHeading>Default General Heading</GeneralHeading>
 			<Description>This is content under the heading above.</Description>
@@ -27,6 +52,6 @@ export const GeneralHeadingDevelopment: React.FC<Props> = ({}) => {
 
 			<GeneralHeading style={{textDecoration: "underline"}}>Underlined Heading</GeneralHeading>
 			<Description>This heading has an underline decoration.</Description>
-		</PaddedPage>
+		</ComponentDoc>
 	)
 }

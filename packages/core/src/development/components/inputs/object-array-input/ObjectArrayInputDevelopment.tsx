@@ -2,13 +2,89 @@ import React, {useState} from "react";
 
 import './ObjectArrayInputDevelopment.css'
 import {SplitPageMajor} from "../../../../components/layouts/pages/split-pages/split-page-major/SplitPageMajor";
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
 import {SplitPageMinor} from "../../../../components/layouts/pages/split-pages/split-page-minor/SplitPageMinor";
 import {
 	HorizontalSplitPage
 } from "../../../../components/layouts/pages/split-pages/horizontal-split-page/HorizontalSplitPage";
 import {ObjectArrayInput, SchemaField} from "../../../../components/inputs/object-array-input/ObjectArrayInput";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+import {validationProps} from "../../../framework/InputProps";
+
+const DEMO_OBJECT_SCHEMA: SchemaField[] = [
+	{key: "name", label: "Name", type: 'input', placeholder: "Ada Lovelace"},
+	{key: "email", label: "Email", type: 'input', placeholder: "ada@blueorange.ai"}
+];
+
+const DEMO_OBJECT_ARRAY = [
+	{name: "Ada Lovelace", email: "ada@blueorange.ai"}
+];
+
+const SCHEMA_FIELD_INTERFACE = {
+	name: "SchemaField",
+	description: "One field of each entry. The schema is what decides how many inputs a row has and what each one edits.",
+	props: [
+		{name: "key", type: "string", required: true, description: "The key the value is stored under on each object."},
+		{name: "label", type: "string", required: true, description: "The label above the field."},
+		{name: "type", type: "SchemaFieldType", required: true, description: "What the field edits, which decides the input used for it."},
+		{name: "placeholder", type: "string", description: "Shown while that field is empty."},
+		{name: "whitelist", type: "string[]", description: "Values offered as suggestions for a tag field."},
+		{name: "enforceWhitelist", type: "boolean", description: "Refuses anything that is not on that whitelist."}
+	] as Array<PropSpec>
+};
+
+const OBJECT_ARRAY_INPUT_PROPS: Array<PropSpec> = [
+	{
+		name: "value",
+		type: "Record<string, any>[]",
+		default: "[]",
+		description: "The entries, each one an object keyed by the schema."
+	},
+	{
+		name: "schema",
+		type: "SchemaField[]",
+		required: true,
+		description: "The fields each entry carries."
+	},
+	{
+		name: "label",
+		type: "string",
+		control: "text",
+		value: "Contacts",
+		description: "The label above the list."
+	},
+	{
+		name: "help",
+		type: "string",
+		control: "text",
+		description: "Puts a help icon beside the label with this text behind it."
+	},
+	{
+		name: "disabled",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Greys the list out and stops entries being added or removed."
+	},
+	{
+		name: "onChange",
+		type: "(value: Record<string, any>[]) => void",
+		description: "Fires with the whole list whenever any field changes."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the list."
+	},
+	{
+		name: "labelStyle",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the label."
+	},
+	...validationProps("Record<string, any>[]")
+];
 
 interface Props {
 }
@@ -48,8 +124,30 @@ export const ObjectArrayInputDevelopment: React.FC<Props> = ({}) => {
 	return (
 		<HorizontalSplitPage>
 			<SplitPageMajor>
-				<PaddedPage>
-					<PageHeading>Object Array Input Editor</PageHeading>
+				<ComponentDoc
+					title="Object Array Input"
+					description="A list of objects rather than values — a row of fields per entry, described by a schema. Useful wherever a form has to collect several of the same thing."
+					name="ObjectArrayInput"
+					previewHeight={280}
+					previewCentered={false}
+					imports={["SchemaField"]}
+					interfaces={[SCHEMA_FIELD_INTERFACE]}
+					props={OBJECT_ARRAY_INPUT_PROPS}
+					preview={values => (
+						<div style={{width: "100%", maxWidth: "520px"}}>
+							<ObjectArrayInput
+								value={DEMO_OBJECT_ARRAY}
+								schema={DEMO_OBJECT_SCHEMA}
+								label={values.label}
+								help={values.help}
+								disabled={values.disabled}
+								name={values.name}
+								required={values.required}
+								requiredMessage={values.requiredMessage}
+								validateOnChange={values.validateOnChange}
+								onChange={() => {}}></ObjectArrayInput>
+						</div>
+					)}>
 					<div style={{display: "flex", flexDirection: "column", gap: "32px", maxWidth: "500px"}}>
 						<ObjectArrayInput
 							label="People (Required)"
@@ -67,7 +165,7 @@ export const ObjectArrayInputDevelopment: React.FC<Props> = ({}) => {
 							help="An array of product objects with whitelist for categories"
 						/>
 					</div>
-				</PaddedPage>
+				</ComponentDoc>
 			</SplitPageMajor>
 			<SplitPageMinor>
 				<div className="workspace-output-window">

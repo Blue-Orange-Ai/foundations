@@ -71,7 +71,7 @@ const PAGES: Array<[string, React.FC<any>]> = [
 	["Wizard", WizardDevelopment],
 	["Rule Editor", RuleEditorDevelopment],
 	["Search Query Editor", SearchQueryEditorDevelopment],
-	["Json Schema Editor", JsonSchemaEditorDevelopment],
+	["JSON Schema Editor", JsonSchemaEditorDevelopment],
 ];
 
 describe("development pages", () => {

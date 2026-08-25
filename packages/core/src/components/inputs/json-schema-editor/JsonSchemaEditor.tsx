@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {v4 as uuidv4} from "uuid";
 
 import './JsonSchemaEditor.css'
@@ -95,7 +95,18 @@ export const JsonSchemaEditor: React.FC<Props> = ({
 			value: fields ?? []
 		});
 
+	// The fields are only rebuilt when the value actually differs. Comparing the
+	// prop by identity alone would reset the editor on every render of a caller
+	// that builds the array inline — including one that leaves it off entirely
+	// and so gets a fresh default each time.
+	const lastValue = useRef<string | undefined>(undefined);
+
 	useEffect(() => {
+		const serialised = JSON.stringify(value);
+		if (serialised === lastValue.current) {
+			return;
+		}
+		lastValue.current = serialised;
 		setFields(withIds(value));
 	}, [value]);
 

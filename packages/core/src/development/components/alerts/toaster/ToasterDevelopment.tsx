@@ -1,14 +1,143 @@
 import React, {useContext, useRef, useState} from "react";
 
 import './ToasterDevelopment.css'
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
 import {GeneralHeading} from "../../../../components/text-decorations/general-heading/GeneralHeading";
 import {Button, ButtonType} from "../../../../components/buttons/button/Button";
 import {Modal} from "../../../../components/layouts/modal/modal/Modal";
 import {Toast, ToastContext, ToastLocation} from "../../../../components/alerts/toast/toastcontext/ToastContext";
 import {ToasterType} from "../../../../components/alerts/toast/toaster/Toaster";
 import {v4 as uuidv4} from 'uuid';
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+
+const LOCATION_NAMES: Record<number, string> = {
+	[ToastLocation.TOP_LEFT]: "TOP_LEFT",
+	[ToastLocation.TOP_RIGHT]: "TOP_RIGHT",
+	[ToastLocation.BOTTOM_LEFT]: "BOTTOM_LEFT",
+	[ToastLocation.BOTTOM_RIGHT]: "BOTTOM_RIGHT",
+	[ToastLocation.CENTRE_TOP]: "CENTRE_TOP",
+	[ToastLocation.CENTRE_BOTTOM]: "CENTRE_BOTTOM"
+};
+
+const TYPE_NAMES: Record<number, string> = {
+	[ToasterType.DEFAULT]: "DEFAULT",
+	[ToasterType.SUCCESS]: "SUCCESS",
+	[ToasterType.WARNING]: "WARNING",
+	[ToasterType.ERROR]: "ERROR"
+};
+
+const TOAST_INTERFACE = {
+	name: "Toast",
+	description: "What addToast takes. The same fields are the Toaster's own props, since the context renders one Toaster per toast it is holding.",
+	props: [
+		{name: "id", type: "string", required: true, description: "Identifies the toast, and is what updateToast and removeToast speak in."},
+		{name: "location", type: "ToastLocation", required: true, description: "Which corner it is anchored to. The entry animation follows from it."},
+		{name: "toastType", type: "ToasterType", required: true, description: "DEFAULT, SUCCESS, WARNING or ERROR."},
+		{name: "ttl", type: "number", description: "Milliseconds before it dismisses itself, shown as a progress bar. Left off, it stays until it is closed."},
+		{name: "heading", type: "string", description: "The bold first line."},
+		{name: "description", type: "string", description: "The body."},
+		{name: "icon", type: "ReactNode", description: "The glyph on the left."},
+		{name: "action", type: "ReactNode", description: "A control inside the toast."},
+		{name: "closeOnClick", type: "boolean", description: "Dismisses the toast when it is clicked anywhere."},
+		{name: "showCloseButton", type: "boolean", description: "Puts a close button on it."}
+	] as Array<PropSpec>
+};
+
+const TOAST_CONTEXT_INTERFACE = {
+	name: "ToastContext",
+	description: "The context toasts are raised through. Take it with useContext wherever a toast has to be put up.",
+	props: [
+		{name: "addToast", type: "(toast: Toast) => void", required: true, description: "Puts a toast up."},
+		{name: "updateToast", type: "(id: string, updates: ToastUpdate) => void", required: true, description: "Changes a toast that is already showing."},
+		{name: "removeToast", type: "(id: string) => void", required: true, description: "Takes a toast down."},
+		{name: "addPromiseToast", type: "(options: PromiseToastOptions) => PromiseToastHandle", required: true, description: "Puts up a toast that follows a piece of work, and hands back a handle to update or close it."}
+	] as Array<PropSpec>
+};
+
+const TOASTER_PROPS: Array<PropSpec> = [
+	{
+		name: "toastType",
+		type: "ToasterType",
+		required: true,
+		control: "select",
+		value: ToasterType.SUCCESS,
+		options: [
+			{label: "Default", value: ToasterType.DEFAULT, code: "ToasterType.DEFAULT"},
+			{label: "Success", value: ToasterType.SUCCESS, code: "ToasterType.SUCCESS"},
+			{label: "Warning", value: ToasterType.WARNING, code: "ToasterType.WARNING"},
+			{label: "Error", value: ToasterType.ERROR, code: "ToasterType.ERROR"}
+		],
+		description: "Which treatment the toast wears."
+	},
+	{
+		name: "location",
+		type: "ToastLocation",
+		required: true,
+		control: "select",
+		value: ToastLocation.TOP_RIGHT,
+		options: [
+			{label: "Top right", value: ToastLocation.TOP_RIGHT, code: "ToastLocation.TOP_RIGHT"},
+			{label: "Top left", value: ToastLocation.TOP_LEFT, code: "ToastLocation.TOP_LEFT"},
+			{label: "Centre top", value: ToastLocation.CENTRE_TOP, code: "ToastLocation.CENTRE_TOP"},
+			{label: "Bottom right", value: ToastLocation.BOTTOM_RIGHT, code: "ToastLocation.BOTTOM_RIGHT"},
+			{label: "Bottom left", value: ToastLocation.BOTTOM_LEFT, code: "ToastLocation.BOTTOM_LEFT"},
+			{label: "Centre bottom", value: ToastLocation.CENTRE_BOTTOM, code: "ToastLocation.CENTRE_BOTTOM"}
+		],
+		description: "Which corner it is anchored to. Each one has its own entry animation."
+	},
+	{
+		name: "heading",
+		type: "string",
+		control: "text",
+		value: "Run finished",
+		description: "The bold first line."
+	},
+	{
+		name: "description",
+		type: "string",
+		control: "text",
+		value: "Six of six stages completed.",
+		description: "The body."
+	},
+	{
+		name: "ttl",
+		type: "number",
+		control: "slider",
+		min: 1000,
+		max: 10000,
+		step: 500,
+		value: 4000,
+		description: "Milliseconds before it dismisses itself, shown as a progress bar. Left off, it stays until it is closed."
+	},
+	{
+		name: "icon",
+		type: "ReactNode",
+		description: "The glyph on the left."
+	},
+	{
+		name: "action",
+		type: "ReactNode",
+		description: "A control inside the toast — undo, retry, open."
+	},
+	{
+		name: "onClose",
+		type: "() => void",
+		description: "Fires when the toast is taken down."
+	},
+	{
+		name: "closeOnClick",
+		type: "boolean",
+		control: "toggle",
+		description: "Dismisses the toast when it is clicked anywhere."
+	},
+	{
+		name: "showCloseButton",
+		type: "boolean",
+		control: "toggle",
+		value: true,
+		description: "Puts a close button on it."
+	}
+];
 
 interface Props {
 }
@@ -119,16 +248,31 @@ export const ToasterDevelopment: React.FC<Props> = ({}) => {
     }
 
     return (
-        <PaddedPage>
-            <PageHeading>Toaster</PageHeading>
+        <ComponentDoc
+			title="Toaster"
+			description="A notification that appears in a corner of the window and dismisses itself. Toasts are raised through the ToastContext rather than rendered directly — addToast puts one up, addPromiseToast puts up one that follows a piece of work from pending to its result."
+			name="Toaster"
+			previewHeight={160}
+			imports={["ToasterType", "ToastLocation", "ToastContext"]}
+			interfaces={[TOAST_INTERFACE, TOAST_CONTEXT_INTERFACE]}
+			props={TOASTER_PROPS}
+			usage={values => "import {ToastContext, ToastLocation, ToasterType} from \"@blue-orange-ai/foundations-core\";\nimport {v4 as uuidv4} from \"uuid\";\n\nconst {addToast} = useContext(ToastContext);\n\naddToast({\n\tid: uuidv4(),\n\tlocation: ToastLocation." + (LOCATION_NAMES[values.location] ?? "TOP_RIGHT") + ",\n\ttoastType: ToasterType." + (TYPE_NAMES[values.toastType] ?? "DEFAULT") + ",\n\tttl: " + (values.ttl ?? 4000) + ",\n\theading: " + JSON.stringify(values.heading) + ",\n\tdescription: " + JSON.stringify(values.description) + ",\n\tcloseOnClick: " + Boolean(values.closeOnClick) + ",\n\tshowCloseButton: " + Boolean(values.showCloseButton) + "\n});"}
+			preview={values => (
+				<Button
+					text={"Raise the toast"}
+					buttonType={ButtonType.PRIMARY}
+					onClick={() => addToast({
+						id: uuidv4(),
+						location: values.location,
+						toastType: values.toastType,
+						ttl: values.ttl,
+						heading: values.heading,
+						description: values.description,
+						closeOnClick: values.closeOnClick,
+						showCloseButton: values.showCloseButton
+					})}></Button>
+			)}>
 
-            <p className="blue-orange-toaster-development-intro">
-                Toasts are transient notifications rendered through the <code>ToastContext</code> provider.
-                Trigger one with <code>addToast(...)</code> (or <code>addPromiseToast(...)</code> for
-                long-running work). Every toast is anchored to one of six screen positions, animates in
-                from the nearest edge, and renders above <strong>all</strong> other layouts — including
-                modals and drawers.
-            </p>
 
             {/* ── 1. Locations & entry animations ───────────────────────── */}
             <section className="blue-orange-toaster-development-section">
@@ -358,6 +502,6 @@ export const ToasterDevelopment: React.FC<Props> = ({}) => {
                     </div>
                 </Modal>
             )}
-        </PaddedPage>
+        </ComponentDoc>
     )
 }

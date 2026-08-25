@@ -2,8 +2,6 @@ import React, {useState} from "react";
 
 import './FormGroupDevelopment.css'
 import {SplitPageMajor} from "../../../../components/layouts/pages/split-pages/split-page-major/SplitPageMajor";
-import {PaddedPage} from "../../../../components/layouts/pages/padded-page/PaddedPage";
-import {PageHeading} from "../../../../components/text-decorations/page-heading/PageHeading";
 import {SplitPageMinor} from "../../../../components/layouts/pages/split-pages/split-page-minor/SplitPageMinor";
 import {
 	HorizontalSplitPage
@@ -19,12 +17,401 @@ import {DropdownItemText} from "../../../../components/inputs/dropdown/items/Dro
 import {TagInput} from "../../../../components/inputs/tags/simple/TagInput";
 import {Button, ButtonType} from "../../../../components/buttons/button/Button";
 import {InputValidationResult} from "../../../../components/inputs/validation/InputValidation";
-import {FormGroup} from "../../../../components/inputs/form-group/FormGroup";
+import {FormGroup, FormActionsAlignment} from "../../../../components/inputs/form-group/FormGroup";
 import {FormSection} from "../../../../components/inputs/form-group/FormSection";
 import {FormRow} from "../../../../components/inputs/form-group/FormRow";
 import {FormField} from "../../../../components/inputs/form-group/FormField";
 import {FormActions} from "../../../../components/inputs/form-group/FormActions";
 import {FormSubmitButton} from "../../../../components/inputs/form-group/FormSubmitButton";
+import {ComponentDoc} from "../../../framework/ComponentDoc";
+import {PropSpec} from "../../../framework/PropSpec";
+import {FormRowAlignment} from "../../../../components/inputs/form-group/FormRow";
+
+const FORM_GROUP_PROPS: Array<PropSpec> = [
+	{
+		name: "children",
+		type: "React.ReactNode",
+		required: true,
+		description: "The rows, sections and actions that make up the form."
+	},
+	{
+		name: "error",
+		type: "InputValidationResult | null",
+		description: "A message rendered at the foot of the form, for a failure the form cannot see itself — a rejected submission, say. Plain text and html both work."
+	},
+	{
+		name: "summaryMessage",
+		type: "string",
+		control: "text",
+		description: "Shown when one or more fields fail validation on submit."
+	},
+	{
+		name: "summaryMessageHtml",
+		type: "string",
+		description: "The html variant of that message. It takes precedence over summaryMessage."
+	},
+	{
+		name: "showSummary",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Turn off to stop the group rendering its own summary when fields fail."
+	},
+	{
+		name: "onSubmit",
+		type: "(values: Record<string, any>) => void | Promise<void>",
+		description: "Called with the values of every registered field once validation passes. Return a promise and the submit button waits on it."
+	},
+	{
+		name: "onValidationFailed",
+		type: "(errors: Array<FormFieldError>) => void",
+		description: "Called with the failing fields when a submission is blocked."
+	},
+	{
+		name: "verticalMargin",
+		type: "number",
+		default: "10",
+		control: "slider",
+		min: 0,
+		max: 40,
+		step: 2,
+		description: "Space between each row of the body."
+	},
+	{
+		name: "paddingTop",
+		type: "number",
+		default: "10",
+		control: "number",
+		description: "Space above the body."
+	},
+	{
+		name: "paddingBottom",
+		type: "number",
+		default: "10",
+		control: "number",
+		description: "Space below it."
+	},
+	{
+		name: "actionsAlignment",
+		type: "FormActionsAlignment",
+		default: "FormActionsAlignment.RIGHT",
+		defaultValue: FormActionsAlignment.RIGHT,
+		control: "select",
+		options: [
+			{label: "Right", value: FormActionsAlignment.RIGHT, code: "FormActionsAlignment.RIGHT"},
+			{label: "Left", value: FormActionsAlignment.LEFT, code: "FormActionsAlignment.LEFT"},
+			{label: "Center", value: FormActionsAlignment.CENTER, code: "FormActionsAlignment.CENTER"},
+			{label: "Space between", value: FormActionsAlignment.SPACE_BETWEEN, code: "FormActionsAlignment.SPACE_BETWEEN"}
+		],
+		description: "Where the buttons sit along the foot of the form."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the form."
+	}
+];
+
+const FORM_FIELD_PROPS: Array<PropSpec> = [
+	{
+		name: "children",
+		type: "React.ReactNode",
+		required: true,
+		description: "The input this field wraps."
+	},
+	{
+		name: "name",
+		type: "string",
+		required: true,
+		control: "text",
+		value: "name",
+		description: "The key the value is reported under in the object handed to onSubmit."
+	},
+	{
+		name: "value",
+		type: "any",
+		description: "The current value of the wrapped component, where the field cannot read it itself."
+	},
+	{
+		name: "label",
+		type: "string",
+		control: "text",
+		value: "Name",
+		description: "A readable name, used in the default required message."
+	},
+	{
+		name: "required",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Blocks submission while the value is empty."
+	},
+	{
+		name: "requiredMessage",
+		type: "string",
+		control: "text",
+		description: "Overrides that message."
+	},
+	{
+		name: "requiredMessageHtml",
+		type: "string",
+		description: "The html variant of it."
+	},
+	{
+		name: "validate",
+		type: "InputValidateCallback<any>",
+		description: "A check of your own, run after the required check passes."
+	},
+	{
+		name: "validateOnChange",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Re-runs that check on every change, not only on blur and submit."
+	},
+	{
+		name: "validateOnBlur",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Turn off to validate only on submit."
+	},
+	{
+		name: "showMessage",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Turn off where the wrapped component renders its own validation message."
+	},
+	{
+		name: "onValidation",
+		type: "(result: InputValidationResult | null) => void",
+		description: "Fires with the outcome each time the field is checked."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the field."
+	}
+];
+
+const FORM_ROW_PROPS: Array<PropSpec> = [
+	{
+		name: "children",
+		type: "React.ReactNode",
+		required: true,
+		description: "The fields in the row."
+	},
+	{
+		name: "columns",
+		type: "Array<number | string>",
+		description: "Sizes each child in turn. A number is a share of the row — 2 takes twice the space of 1 — and a string is a fixed width. Children without an entry share what is left."
+	},
+	{
+		name: "gap",
+		type: "number",
+		default: "10",
+		control: "slider",
+		min: 0,
+		max: 40,
+		step: 2,
+		description: "Horizontal space between the fields."
+	},
+	{
+		name: "minFieldWidth",
+		type: "number",
+		default: "180",
+		control: "slider",
+		min: 80,
+		max: 400,
+		step: 10,
+		description: "The narrowest a field is allowed to get before the row wraps."
+	},
+	{
+		name: "wrap",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Turn off to keep every field on one line however little room there is."
+	},
+	{
+		name: "alignment",
+		type: "FormRowAlignment",
+		default: "FormRowAlignment.TOP",
+		defaultValue: FormRowAlignment.TOP,
+		control: "select",
+		options: [
+			{label: "Top", value: FormRowAlignment.TOP, code: "FormRowAlignment.TOP"},
+			{label: "Center", value: FormRowAlignment.CENTER, code: "FormRowAlignment.CENTER"},
+			{label: "Bottom", value: FormRowAlignment.BOTTOM, code: "FormRowAlignment.BOTTOM"}
+		],
+		description: "How fields of different heights line up against each other."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the row."
+	}
+];
+
+const FORM_SECTION_PROPS: Array<PropSpec> = [
+	{
+		name: "children",
+		type: "React.ReactNode",
+		required: true,
+		description: "The rows in the section."
+	},
+	{
+		name: "label",
+		type: "string",
+		control: "text",
+		value: "Contact details",
+		description: "The heading above the section."
+	},
+	{
+		name: "description",
+		type: "string",
+		control: "text",
+		value: "How we reach the site.",
+		description: "Supporting copy under the heading."
+	},
+	{
+		name: "help",
+		type: "string",
+		control: "text",
+		description: "Puts a help icon beside the heading with this text behind it."
+	},
+	{
+		name: "verticalMargin",
+		type: "number",
+		default: "10",
+		control: "slider",
+		min: 0,
+		max: 40,
+		step: 2,
+		description: "Space between each row of the section."
+	},
+	{
+		name: "divider",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Draws a rule above the section."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the section."
+	},
+	{
+		name: "labelStyle",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the heading."
+	}
+];
+
+const FORM_SUBMIT_BUTTON_PROPS: Array<PropSpec> = [
+	{
+		name: "text",
+		type: "string",
+		required: true,
+		control: "text",
+		value: "Save",
+		description: "The button's label."
+	},
+	{
+		name: "buttonType",
+		type: "ButtonType",
+		default: "ButtonType.PRIMARY",
+		defaultValue: ButtonType.PRIMARY,
+		control: "select",
+		options: [
+			{label: "Primary", value: ButtonType.PRIMARY, code: "ButtonType.PRIMARY"},
+			{label: "Secondary", value: ButtonType.SECONDARY, code: "ButtonType.SECONDARY"},
+			{label: "Success", value: ButtonType.SUCCESS, code: "ButtonType.SUCCESS"},
+			{label: "Danger", value: ButtonType.DANGER, code: "ButtonType.DANGER"}
+		],
+		description: "Which treatment the button wears."
+	},
+	{
+		name: "size",
+		type: "ButtonSize",
+		description: "Small, medium or large."
+	},
+	{
+		name: "icon",
+		type: "string",
+		control: "text",
+		description: "A remixicon class drawn beside the label."
+	},
+	{
+		name: "iconPos",
+		type: "ButtonIconPos",
+		description: "Which side of the label it sits on."
+	},
+	{
+		name: "tooltip",
+		type: "string",
+		control: "text",
+		description: "Text shown on hover."
+	},
+	{
+		name: "classes",
+		type: "string",
+		control: "text",
+		description: "Extra class names put on the button."
+	},
+	{
+		name: "isDisabled",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Greys the button out and stops it submitting."
+	},
+	{
+		name: "isLoading",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Forces the loading state on. The button also loads by itself while the form submits."
+	},
+	{
+		name: "isSuccess",
+		type: "boolean",
+		control: "toggle",
+		description: "Shows the tick."
+	},
+	{
+		name: "isError",
+		type: "boolean",
+		control: "toggle",
+		description: "Shows the cross."
+	},
+	{
+		name: "onSubmitted",
+		type: "(result: FormGroupSubmitResult) => void",
+		description: "Called with the outcome once the submission finishes."
+	},
+	{
+		name: "style",
+		type: "React.CSSProperties",
+		description: "Inline style put on the button."
+	}
+];
+
+const FORM_ACTIONS_PROPS: Array<PropSpec> = [
+	{
+		name: "children",
+		type: "React.ReactNode",
+		required: true,
+		description: "The buttons at the foot of the form."
+	}
+];
 
 interface Props {
 }
@@ -112,15 +499,144 @@ setFormError(null);`;
 	return (
 		<HorizontalSplitPage>
 			<SplitPageMajor>
-				<PaddedPage>
-					<PageHeading>Form Group</PageHeading>
+				<ComponentDoc
+					title="Form Group"
+					description="The form itself. Fields register with it by name, it validates them all on submit, and hands their values over as one object. FormRow lays them out, FormSection groups them, and FormSubmitButton drives the submission and shows how it went."
+					name="FormGroup"
+					previewHeight={320}
+					previewCentered={false}
+					imports={["FormField", "FormRow", "FormActions", "FormSubmitButton", "FormActionsAlignment"]}
+					props={FORM_GROUP_PROPS}
+					snippetChildren={() => "<FormRow>\n\t<FormField name={\"name\"} label={\"Name\"} required={true}>\n\t\t<Input label={\"Name\"}></Input>\n\t</FormField>\n\t<FormField name={\"email\"} label={\"Email\"}>\n\t\t<Input label={\"Email\"} isEmail={true}></Input>\n\t</FormField>\n</FormRow>\n<FormActions>\n\t<FormSubmitButton text={\"Save\"}></FormSubmitButton>\n</FormActions>"}
+					preview={values => (
+						<div style={{width: "100%", maxWidth: "560px"}}>
+							<FormGroup
+								verticalMargin={values.verticalMargin}
+								paddingTop={values.paddingTop}
+								paddingBottom={values.paddingBottom}
+								actionsAlignment={values.actionsAlignment}
+								showSummary={values.showSummary}
+								summaryMessage={values.summaryMessage}
+								onSubmit={() => {}}>
+								<FormRow>
+									<FormField name="name" label="Name" required={true}>
+										<Input label="Name"></Input>
+									</FormField>
+									<FormField name="email" label="Email">
+										<Input label="Email" isEmail={true}></Input>
+									</FormField>
+								</FormRow>
+								<FormActions>
+									<FormSubmitButton text="Save"></FormSubmitButton>
+								</FormActions>
+							</FormGroup>
+						</div>
+					)}
+					siblings={[
+						{
+							name: "FormField",
+							description: "Registers one input with the form. It carries the name the value is reported under, the required check, and — unless the input renders its own — the validation message.",
+							props: FORM_FIELD_PROPS,
+							previewHeight: 200,
+							previewCentered: false,
+							imports: ["FormGroup"],
+							snippetChildren: () => "<Input label={\"Name\"}></Input>",
+							preview: values => (
+								<div style={{width: "100%", maxWidth: "460px"}}>
+									<FormGroup>
+										<FormField
+											name={values.name}
+											label={values.label}
+											required={values.required}
+											requiredMessage={values.requiredMessage}
+											validateOnChange={values.validateOnChange}
+											validateOnBlur={values.validateOnBlur}
+											showMessage={values.showMessage}>
+											<Input label={values.label}></Input>
+										</FormField>
+									</FormGroup>
+								</div>
+							)
+						},
+						{
+							name: "FormRow",
+							description: "Lays a run of fields across the form. `columns` sizes each one in turn, and the row wraps rather than squeezing a field below the width it needs.",
+							props: FORM_ROW_PROPS,
+							previewHeight: 200,
+							previewCentered: false,
+							imports: ["FormGroup", "FormField"],
+							snippetChildren: () => "<FormField name={\"name\"}>\n\t<Input label={\"Name\"}></Input>\n</FormField>\n<FormField name={\"email\"}>\n\t<Input label={\"Email\"}></Input>\n</FormField>",
+							preview: values => (
+								<div style={{width: "100%", maxWidth: "520px"}}>
+									<FormGroup>
+										<FormRow
+											gap={values.gap}
+											minFieldWidth={values.minFieldWidth}
+											wrap={values.wrap}
+											alignment={values.alignment}>
+											<FormField name="name"><Input label="Name"></Input></FormField>
+											<FormField name="email"><Input label="Email"></Input></FormField>
+										</FormRow>
+									</FormGroup>
+								</div>
+							)
+						},
+						{
+							name: "FormSection",
+							description: "A titled block of rows, with an optional rule above it — how a long form is broken into parts that read as parts.",
+							props: FORM_SECTION_PROPS,
+							previewHeight: 240,
+							previewCentered: false,
+							imports: ["FormGroup", "FormField"],
+							snippetChildren: () => "<FormField name={\"name\"}>\n\t<Input label={\"Name\"}></Input>\n</FormField>",
+							preview: values => (
+								<div style={{width: "100%", maxWidth: "520px"}}>
+									<FormGroup>
+										<FormSection
+											label={values.label}
+											description={values.description}
+											help={values.help}
+											divider={values.divider}
+											verticalMargin={values.verticalMargin}>
+											<FormField name="name"><Input label="Name"></Input></FormField>
+										</FormSection>
+									</FormGroup>
+								</div>
+							)
+						},
+						{
+							name: "FormSubmitButton",
+							description: "The button that submits the form. It loads while the submission runs and reports the outcome, so a form does not have to hold that state itself.",
+							props: FORM_SUBMIT_BUTTON_PROPS,
+							previewHeight: 160,
+							previewCentered: false,
+							imports: ["FormGroup", "FormActions"],
+							preview: values => (
+								<div style={{width: "100%", maxWidth: "460px"}}>
+									<FormGroup onSubmit={() => {}}>
+										<FormActions>
+											<FormSubmitButton
+												text={values.text}
+												buttonType={values.buttonType}
+												icon={values.icon}
+												isDisabled={values.isDisabled}
+												isLoading={values.isLoading}></FormSubmitButton>
+										</FormActions>
+									</FormGroup>
+								</div>
+							)
+						},
+						{
+							name: "FormActions",
+							description: "Marks the buttons at the foot of the form, so the group can align them together.",
+							props: FORM_ACTIONS_PROPS,
+							previewHeight: 140,
+							previewCentered: false,
+							snippetChildren: () => "<FormSubmitButton text={\"Save\"}></FormSubmitButton>",
+							preview: () => (<span style={{opacity: 0.7, fontSize: "0.875rem"}}>A wrapper the group reads — see the demo above.</span>)
+						}
+					]}>
 
-					<Paragraph>
-						<code>FormGroup</code> renders a form from its children rather than from a configuration prop,
-						in the same way the sidebar is built. You compose it out of sections and rows, drop any number
-						of buttons into the actions slot, and the group takes care of running the requirement checks
-						and validators of every input before it hands you the values.
-					</Paragraph>
 
 					<GeneralHeading>Structure</GeneralHeading>
 					<Paragraph>
@@ -290,7 +806,7 @@ setFormError(null);`;
 
 						</FormGroup>
 					</div>
-				</PaddedPage>
+				</ComponentDoc>
 			</SplitPageMajor>
 			<SplitPageMinor>
 				<div className="workspace-output-window">
