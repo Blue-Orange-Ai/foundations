@@ -1,0 +1,9 @@
+.blue-orange-option-cards-development-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.blue-orange-option-cards-development-price {
+    font-weight: 700;
+}

@@ -27,6 +27,7 @@ import {OTPInputDevelopment} from "./components/inputs/otp-input/OTPInputDevelop
 import {KbdDevelopment} from "./components/text-decorations/kbd/KbdDevelopment";
 import {SeparatorDevelopment} from "./components/layouts/separator/SeparatorDevelopment";
 import {ButtonTabsDevelopment} from "./components/layouts/button-tabs/ButtonTabsDevelopment";
+import {OptionCardsDevelopment} from "./components/inputs/option-cards/OptionCardsDevelopment";
 import {HoverCardDevelopment} from "./components/tooltips/hover-card/HoverCardDevelopment";
 import {StepperDevelopment} from "./components/stepper/StepperDevelopment";
 import {TimelineDevelopment} from "./components/timeline/TimelineDevelopment";
@@ -65,6 +66,7 @@ const PAGES: Array<[string, React.FC<any>]> = [
 	["Kbd", KbdDevelopment],
 	["Separator", SeparatorDevelopment],
 	["Button Tabs", ButtonTabsDevelopment],
+	["Option Cards", OptionCardsDevelopment],
 	["Hover Card", HoverCardDevelopment],
 	["Stepper", StepperDevelopment],
 	["Timeline", TimelineDevelopment],

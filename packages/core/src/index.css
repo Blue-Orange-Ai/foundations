@@ -356,6 +356,22 @@
   --blue-orange-light-card-color: black;
   --blue-orange-dark-card-color: white;
 
+  --blue-orange-light-option-card-background-color: white;
+  --blue-orange-dark-option-card-background-color: #28282a;
+  --blue-orange-light-option-card-border-color: #e0e1e2;
+  --blue-orange-dark-option-card-border-color: #3f3f42;
+  --blue-orange-light-option-card-color: black;
+  --blue-orange-dark-option-card-color: white;
+  --blue-orange-light-option-card-hint-color: #71717a;
+  --blue-orange-dark-option-card-hint-color: #a1a1aa;
+  --blue-orange-light-option-card-icon-color: #71717a;
+  --blue-orange-dark-option-card-icon-color: #a1a1aa;
+  /* The selected card is told apart by its border and a wash of the same accent. */
+  --blue-orange-light-option-card-active-border-color: dodgerblue;
+  --blue-orange-dark-option-card-active-border-color: dodgerblue;
+  --blue-orange-light-option-card-active-background-color: rgba(30, 144, 255, 0.08);
+  --blue-orange-dark-option-card-active-background-color: rgba(30, 144, 255, 0.16);
+
   --blue-orange-light-carousel-control-background-color: white;
   --blue-orange-dark-carousel-control-background-color: #28282a;
   --blue-orange-light-carousel-control-border-color: #e0e1e2;
