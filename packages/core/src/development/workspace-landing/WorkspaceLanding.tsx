@@ -116,6 +116,7 @@ import {OTPInputDevelopment} from "../components/inputs/otp-input/OTPInputDevelo
 import {KbdDevelopment} from "../components/text-decorations/kbd/KbdDevelopment";
 import {SeparatorDevelopment} from "../components/layouts/separator/SeparatorDevelopment";
 import {ButtonTabsDevelopment} from "../components/layouts/button-tabs/ButtonTabsDevelopment";
+import {OptionCardsDevelopment} from "../components/inputs/option-cards/OptionCardsDevelopment";
 import {HoverCardDevelopment} from "../components/tooltips/hover-card/HoverCardDevelopment";
 import {StepperDevelopment} from "../components/stepper/StepperDevelopment";
 import {TimelineDevelopment} from "../components/timeline/TimelineDevelopment";
@@ -538,6 +539,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							activeStyle={activeStyle}
 							icon={<i className="ri-keyboard-fill"></i>}
 							onClick={() => navigate("/inputs-general")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Option Cards"}
+							active={component == "inputs-option-cards"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-checkbox-multiple-blank-line"></i>}
+							onClick={() => navigate("/inputs-option-cards")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
 							label={"Phone Input"}
@@ -1229,6 +1239,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "inputs-email-recipients" && <EmailRecipientDevelopment></EmailRecipientDevelopment>}
 			{component == "inputs-color" && <ColorPickerDevelopment></ColorPickerDevelopment>}
 			{component == "inputs-icon" && <IconSelectorDevelopment></IconSelectorDevelopment>}
+			{component == "inputs-option-cards" && <OptionCardsDevelopment></OptionCardsDevelopment>}
 			{component == "inputs-rich-text" && <RichTextDevelopment></RichTextDevelopment>}
 			{component == "inputs-rich-text-prompt" && <RichTextPromptDevelopment></RichTextPromptDevelopment>}
 			{component == "comments-full-page" && <FullPageCommentsDevelopment></FullPageCommentsDevelopment>}

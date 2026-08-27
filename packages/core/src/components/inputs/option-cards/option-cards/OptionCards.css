@@ -1,0 +1,194 @@
+.blue-orange-option-cards {
+    display: grid;
+    grid-template-columns: var(--blue-orange-option-cards-template, repeat(2, minmax(0, 1fr)));
+    gap: 12px;
+    width: 100%;
+}
+
+.blue-orange-option-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 14px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--blue-orange-light-option-card-border-color);
+    background-color: var(--blue-orange-light-option-card-background-color);
+    color: var(--blue-orange-light-option-card-color);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.15s ease-out, background-color 0.15s ease-out;
+}
+
+.dark .blue-orange-option-card {
+    border: 1px solid var(--blue-orange-dark-option-card-border-color);
+    background-color: var(--blue-orange-dark-option-card-background-color);
+    color: var(--blue-orange-dark-option-card-color);
+}
+
+.blue-orange-option-card:hover:not(.blue-orange-option-card-disabled) {
+    border-color: var(--blue-orange-light-option-card-active-border-color);
+}
+
+.dark .blue-orange-option-card:hover:not(.blue-orange-option-card-disabled) {
+    border-color: var(--blue-orange-dark-option-card-active-border-color);
+}
+
+.blue-orange-option-card:focus-visible {
+    outline: 2px solid var(--blue-orange-light-active-border-color);
+    outline-offset: 1px;
+}
+
+.dark .blue-orange-option-card:focus-visible {
+    outline: 2px solid var(--blue-orange-dark-active-border-color);
+}
+
+.blue-orange-option-card-active {
+    border-color: var(--blue-orange-light-option-card-active-border-color);
+    background-color: var(--blue-orange-light-option-card-active-background-color);
+}
+
+.dark .blue-orange-option-card-active {
+    border-color: var(--blue-orange-dark-option-card-active-border-color);
+    background-color: var(--blue-orange-dark-option-card-active-background-color);
+}
+
+.blue-orange-option-card-disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* The whole group is outlined when a validate callback reports an error. */
+.blue-orange-option-cards-invalid .blue-orange-option-card {
+    border-color: var(--blue-orange-light-input-error-color);
+}
+
+.dark .blue-orange-option-cards-invalid .blue-orange-option-card {
+    border-color: var(--blue-orange-dark-input-error-color);
+}
+
+.blue-orange-option-card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--blue-orange-light-option-card-icon-color);
+}
+
+.dark .blue-orange-option-card-icon {
+    color: var(--blue-orange-dark-option-card-icon-color);
+}
+
+.blue-orange-option-card-active .blue-orange-option-card-icon {
+    color: var(--blue-orange-light-option-card-active-border-color);
+}
+
+.dark .blue-orange-option-card-active .blue-orange-option-card-icon {
+    color: var(--blue-orange-dark-option-card-active-border-color);
+}
+
+.blue-orange-option-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.blue-orange-option-card-label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.875rem;
+    font-weight: 700;
+}
+
+.blue-orange-option-card-tag {
+    padding: 1px 6px;
+    border-radius: 999px;
+    border: 1px solid var(--blue-orange-light-option-card-border-color);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--blue-orange-light-option-card-hint-color);
+}
+
+.dark .blue-orange-option-card-tag {
+    border: 1px solid var(--blue-orange-dark-option-card-border-color);
+    color: var(--blue-orange-dark-option-card-hint-color);
+}
+
+.blue-orange-option-card-hint {
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: var(--blue-orange-light-option-card-hint-color);
+}
+
+.dark .blue-orange-option-card-hint {
+    color: var(--blue-orange-dark-option-card-hint-color);
+}
+
+.blue-orange-option-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 4px;
+    font-size: 0.75rem;
+}
+
+/* The icon keeps its own line above the label. */
+.blue-orange-option-cards-icon-top .blue-orange-option-card-body {
+    width: 100%;
+}
+
+/* The icon sits beside the label, and the text keeps the rest of the row. */
+.blue-orange-option-cards-icon-left .blue-orange-option-card {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.blue-orange-option-cards-icon-left .blue-orange-option-card-icon {
+    margin-top: 1px;
+}
+
+.blue-orange-option-cards-sm .blue-orange-option-card {
+    gap: 6px;
+    padding: 10px 12px;
+}
+
+.blue-orange-option-cards-sm .blue-orange-option-card-icon {
+    font-size: 1rem;
+}
+
+.blue-orange-option-cards-sm .blue-orange-option-card-label {
+    font-size: 0.8125rem;
+}
+
+.blue-orange-option-cards-lg .blue-orange-option-card {
+    gap: 10px;
+    padding: 20px 22px;
+}
+
+.blue-orange-option-cards-lg .blue-orange-option-card-icon {
+    font-size: 1.5rem;
+}
+
+.blue-orange-option-cards-lg .blue-orange-option-card-label {
+    font-size: 1rem;
+}
+
+/* Below the fold of a narrow screen the columns are worth less than the reading width. */
+@media (max-width: 640px) {
+    .blue-orange-option-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .blue-orange-option-card {
+        transition: none;
+    }
+}
