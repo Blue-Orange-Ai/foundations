@@ -1,0 +1,10 @@
+.blue-orange-filter-pills-development-panel {
+    max-width: 420px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--blue-orange-light-default-border-color);
+}
+
+.dark .blue-orange-filter-pills-development-panel {
+    border: 1px solid var(--blue-orange-dark-default-border-color);
+}

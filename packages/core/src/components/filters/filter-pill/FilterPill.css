@@ -1,0 +1,144 @@
+.blue-orange-filter-pill {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 4px;
+    border: 1px solid var(--blue-orange-light-filter-pill-border-color);
+    background-color: var(--blue-orange-light-filter-pill-background-color);
+    color: var(--blue-orange-light-filter-pill-color);
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.15s ease-out, border-color 0.15s ease-out, color 0.15s ease-out;
+}
+
+.dark .blue-orange-filter-pill {
+    border: 1px solid var(--blue-orange-dark-filter-pill-border-color);
+    background-color: var(--blue-orange-dark-filter-pill-background-color);
+    color: var(--blue-orange-dark-filter-pill-color);
+}
+
+.blue-orange-filter-pill:hover {
+    background-color: var(--blue-orange-light-filter-pill-hover-background-color);
+    color: var(--blue-orange-light-filter-pill-hover-color);
+}
+
+.dark .blue-orange-filter-pill:hover {
+    background-color: var(--blue-orange-dark-filter-pill-hover-background-color);
+    color: var(--blue-orange-dark-filter-pill-hover-color);
+}
+
+.blue-orange-filter-pill:focus-visible {
+    outline: 2px solid var(--blue-orange-light-active-border-color);
+    outline-offset: 1px;
+}
+
+.dark .blue-orange-filter-pill:focus-visible {
+    outline: 2px solid var(--blue-orange-dark-active-border-color);
+}
+
+/* Opt back into the stadium shape — the pill and its count chip together. */
+.blue-orange-filter-pill-round {
+    border-radius: 999px;
+}
+
+/* The selected pill takes the inverse fill a selected toggle button takes. */
+.blue-orange-filter-pill-active,
+.blue-orange-filter-pill-active:hover {
+    border-color: var(--blue-orange-light-filter-pill-active-border-color);
+    background-color: var(--blue-orange-light-filter-pill-active-background-color);
+    color: var(--blue-orange-light-filter-pill-active-color);
+}
+
+.dark .blue-orange-filter-pill-active,
+.dark .blue-orange-filter-pill-active:hover {
+    border-color: var(--blue-orange-dark-filter-pill-active-border-color);
+    background-color: var(--blue-orange-dark-filter-pill-active-background-color);
+    color: var(--blue-orange-dark-filter-pill-active-color);
+}
+
+.blue-orange-filter-pill-disabled,
+.blue-orange-filter-pill-disabled:hover {
+    cursor: not-allowed;
+    opacity: 0.5;
+    background-color: var(--blue-orange-light-filter-pill-background-color);
+    color: var(--blue-orange-light-filter-pill-color);
+}
+
+.dark .blue-orange-filter-pill-disabled,
+.dark .blue-orange-filter-pill-disabled:hover {
+    background-color: var(--blue-orange-dark-filter-pill-background-color);
+    color: var(--blue-orange-dark-filter-pill-color);
+}
+
+.blue-orange-filter-pill-icon {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+/* The count is a chip inside the pill, not a second word of the label — it keeps
+   its own ground so the pills stay the same shape whatever the tallies read. Its
+   corners follow the pill's so the two shapes read as one. */
+.blue-orange-filter-pill-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 18px;
+    padding: 0 6px;
+    border-radius: 3px;
+    background-color: var(--blue-orange-light-filter-pill-count-background-color);
+    color: var(--blue-orange-light-filter-pill-count-color);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.blue-orange-filter-pill-round .blue-orange-filter-pill-count {
+    border-radius: 999px;
+}
+
+.dark .blue-orange-filter-pill-count {
+    background-color: var(--blue-orange-dark-filter-pill-count-background-color);
+    color: var(--blue-orange-dark-filter-pill-count-color);
+}
+
+.blue-orange-filter-pill-active .blue-orange-filter-pill-count {
+    background-color: var(--blue-orange-light-filter-pill-active-count-background-color);
+    color: var(--blue-orange-light-filter-pill-active-count-color);
+}
+
+.dark .blue-orange-filter-pill-active .blue-orange-filter-pill-count {
+    background-color: var(--blue-orange-dark-filter-pill-active-count-background-color);
+    color: var(--blue-orange-dark-filter-pill-active-count-color);
+}
+
+.blue-orange-filter-pills-sm .blue-orange-filter-pill {
+    height: 24px;
+    padding: 0 10px;
+    font-size: 0.75rem;
+}
+
+.blue-orange-filter-pills-sm .blue-orange-filter-pill-icon {
+    font-size: 0.875rem;
+}
+
+.blue-orange-filter-pills-sm .blue-orange-filter-pill-count {
+    min-width: 16px;
+    height: 15px;
+    padding: 0 5px;
+    font-size: 0.6875rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .blue-orange-filter-pill {
+        transition: none;
+    }
+}

@@ -28,6 +28,7 @@ import {KbdDevelopment} from "./components/text-decorations/kbd/KbdDevelopment";
 import {IconTextDevelopment} from "./components/text-decorations/icon-text/IconTextDevelopment";
 import {SeparatorDevelopment} from "./components/layouts/separator/SeparatorDevelopment";
 import {ButtonTabsDevelopment} from "./components/layouts/button-tabs/ButtonTabsDevelopment";
+import {FilterPillsDevelopment} from "./components/filters/filter-pills/FilterPillsDevelopment";
 import {OptionCardsDevelopment} from "./components/inputs/option-cards/OptionCardsDevelopment";
 import {HoverCardDevelopment} from "./components/tooltips/hover-card/HoverCardDevelopment";
 import {StepperDevelopment} from "./components/stepper/StepperDevelopment";
@@ -68,6 +69,7 @@ const PAGES: Array<[string, React.FC<any>]> = [
 	["Icon Text", IconTextDevelopment],
 	["Separator", SeparatorDevelopment],
 	["Button Tabs", ButtonTabsDevelopment],
+	["Filter Pills", FilterPillsDevelopment],
 	["Option Cards", OptionCardsDevelopment],
 	["Hover Card", HoverCardDevelopment],
 	["Stepper", StepperDevelopment],
