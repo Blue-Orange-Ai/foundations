@@ -1,0 +1,22 @@
+.blue-orange-icon-text-development-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.blue-orange-icon-text-development-inherit {
+    font-size: 1.25rem;
+}
+
+.blue-orange-icon-text-development-narrow {
+    max-width: 320px;
+}
+
+.blue-orange-icon-text-development-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #16a34b;
+}
