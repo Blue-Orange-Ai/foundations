@@ -5,6 +5,7 @@ import {Avatar} from "../../../components/avatar/avatar/Avatar";
 import {AvatarImage} from "../../../components/avatar/avatarimage/AvatarImage";
 import {AvatarEmpty} from "../../../components/avatar/avatarempty/AvatarEmpty";
 import {AvatarList} from "../../../components/avatar/avatarlist/AvatarList";
+import {User, UserState} from "@blue-orange-ai/foundations-clients";
 import {FormHeading} from "../../../components/text-decorations/form-heading/FormHeading";
 import {ComponentDoc} from "../../framework/ComponentDoc";
 import {PropSpec} from "../../framework/PropSpec";
@@ -134,7 +135,7 @@ const AVATAR_LIST_PROPS: Array<PropSpec> = [
 		min: 0,
 		max: 40,
 		step: 1,
-		description: "How many pixels each avatar sits over the one before it."
+		description: "How far each avatar sits over the one before it, as a percentage of its height."
 	},
 	{
 		name: "zIndexBase",
@@ -182,12 +183,47 @@ const AVATAR_LIST_PROPS: Array<PropSpec> = [
 interface Props {
 }
 
-const SAMPLE_FACE = "data:image/svg+xml;utf8," + encodeURIComponent(`
+const face = (colour: string) => "data:image/svg+xml;utf8," + encodeURIComponent(`
 <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">
-  <rect width="96" height="96" fill="#7c4dff"/>
+  <rect width="96" height="96" fill="${colour}"/>
   <circle cx="48" cy="38" r="16" fill="rgba(255,255,255,0.9)"/>
   <path d="M16 96 C16 68 80 68 80 96 Z" fill="rgba(255,255,255,0.9)"/>
 </svg>`);
+
+const SAMPLE_FACE = face("#7c4dff");
+
+const sampleUser = (name: string, colour: string, picture: boolean = true): User => ({
+	id: name.toLowerCase().replace(/\s+/g, "-"),
+	name: name,
+	username: name.toLowerCase().replace(/\s+/g, "."),
+	email: name.toLowerCase().replace(/\s+/g, ".") + "@example.com",
+	color: colour,
+	avatar: picture ? {uri: face(colour), mediaId: null, enabled: true} : undefined,
+	telephone: undefined,
+	address: undefined,
+	lastActive: new Date(),
+	created: new Date(),
+	state: UserState.ACTIVE,
+	forcePasswordReset: false,
+	domain: "example.com",
+	notes: "",
+	serviceUser: false,
+	defaultUser: false,
+	emailVerified: true,
+	phoneVerified: false,
+	addressVerified: false
+});
+
+const SAMPLE_USERS: Array<User> = [
+	sampleUser("Ada Lovelace", "#7c4dff"),
+	sampleUser("Grace Hopper", "#0091ea"),
+	sampleUser("Alan Turing", "#00897b"),
+	sampleUser("Katherine Johnson", "#f4511e"),
+	sampleUser("Edsger Dijkstra", "#c2185b"),
+	sampleUser("Barbara Liskov", "#5d4037", false),
+	sampleUser("Donald Knuth", "#455a64"),
+	sampleUser("Margaret Hamilton", "#f9a825")
+];
 
 export const AvatarDevelopment: React.FC<Props> = ({}) => {
 
@@ -200,7 +236,7 @@ export const AvatarDevelopment: React.FC<Props> = ({}) => {
 			props={AVATAR_PROPS}
 			preview={values => (
 				<Avatar
-					user={undefined}
+					user={SAMPLE_USERS[0]}
 					edit={values.edit}
 					height={values.height}
 					width={values.width}
@@ -235,7 +271,7 @@ export const AvatarDevelopment: React.FC<Props> = ({}) => {
 					previewHeight: 160,
 					preview: values => (
 						<AvatarList
-							users={[]}
+							users={SAMPLE_USERS}
 							height={values.height}
 							overlap={values.overlap}
 							border={values.border}
@@ -249,9 +285,9 @@ export const AvatarDevelopment: React.FC<Props> = ({}) => {
 			<FormHeading label="Avatar"></FormHeading>
 			<div className="blue-orange-avatar-development-row">
 				<Avatar user={undefined}></Avatar>
-				<Avatar user={undefined} tooltip={true}></Avatar>
-				<Avatar user={undefined} height={64} width={64}></Avatar>
-				<Avatar user={undefined} edit={true}></Avatar>
+				<Avatar user={SAMPLE_USERS[0]} tooltip={true}></Avatar>
+				<Avatar user={SAMPLE_USERS[1]} height={64} width={64}></Avatar>
+				<Avatar user={SAMPLE_USERS[2]} edit={true}></Avatar>
 			</div>
 
 			<FormHeading label="AvatarEmpty — the no picture fallback"></FormHeading>
@@ -273,7 +309,10 @@ export const AvatarDevelopment: React.FC<Props> = ({}) => {
 
 			<FormHeading label="AvatarList"></FormHeading>
 			<div className="blue-orange-avatar-development-row">
-				<AvatarList users={[]} overflowNum={3}></AvatarList>
+				<AvatarList users={SAMPLE_USERS.slice(0, 3)}></AvatarList>
+				<AvatarList users={SAMPLE_USERS} overflowNum={3}></AvatarList>
+				<AvatarList users={SAMPLE_USERS} overflowNum={5} height={32} overlap={30}></AvatarList>
+				<AvatarList users={SAMPLE_USERS.slice(0, 4)} borderRadius={"8px"}></AvatarList>
 			</div>
 		</ComponentDoc>
 	)
