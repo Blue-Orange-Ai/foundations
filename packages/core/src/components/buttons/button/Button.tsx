@@ -111,51 +111,57 @@ export const Button: React.FC<Props> = ({
 
 	const defaultStyle = generateDefaultStyle()
 
-	const loadingClassName = isDisabled || isLoading ? defaultStyle + " foundations-default-btn-disabled" : defaultStyle;
-
-	const [btnClassname, setBtnClassname] = useState(loadingClassName);
-
-
-	useEffect(() => {
-		setBtnClassname(isDisabled || isLoading ? defaultStyle + " foundations-default-btn-disabled" : defaultStyle)
-	}, [isLoading]);
+	// The class name is derived on every render, never stored.
+	//
+	// It used to live in state seeded at mount and be re-derived by an effect
+	// keyed on [isLoading] alone, so `isDisabled` never reached the DOM after the
+	// first render: a button mounted disabled kept `foundations-default-btn-disabled`
+	// (and its `cursor: not-allowed`) forever, however the prop changed, while
+	// `handleClick` read the live prop — appearance and behaviour diverged. It hit
+	// every form whose submit is gated on validity, since such a button is
+	// disabled at mount by definition and so could never visibly enable. The same
+	// staleness applied to `buttonType`, `size` and `classes`.
+	//
+	// Only the success/error *animation* genuinely needs state, because a cleared
+	// animation ends on a timer rather than on a prop change. Those two flags are
+	// what the class name reads, so what is painted and what is animated can no
+	// longer disagree.
+	const btnClassname = errorAnimation
+		? "foundations-default-btn no-select foundations-danger-btn"
+		: successAnimation
+			? "foundations-default-btn no-select foundations-success-btn"
+			: isDisabled || isLoading
+				? defaultStyle + " foundations-default-btn-disabled"
+				: defaultStyle;
 
 	useEffect(() => {
 		if (isSuccess && successClear) {
 			setSuccessAnimation(true);
-			setBtnClassname("foundations-default-btn no-select foundations-success-btn")
-			setTimeout(() => {
-				setBtnClassname(isDisabled || isLoading ? defaultStyle + " foundations-default-btn-disabled" : defaultStyle)
+			// Cleared on unmount and on the next change, so a re-fired animation
+			// cannot stack timers or land on a component that is already gone.
+			const timer = setTimeout(() => {
 				setSuccessAnimation(false);
 				if (onSuccessAnimationComplete) {
 					onSuccessAnimationComplete();
 				}
 			}, successClearAnimationTime)
-		} else if (isSuccess && !successClear) {
-			setBtnClassname("foundations-default-btn no-select foundations-success-btn")
-			setSuccessAnimation(isSuccess);
-		} else if (!isSuccess && !successClear) {
-			setBtnClassname(isDisabled || isLoading ? defaultStyle + " foundations-default-btn-disabled" : defaultStyle)
+			return () => clearTimeout(timer);
+		} else if (!successClear) {
 			setSuccessAnimation(isSuccess);
 		}
 	}, [isSuccess]);
 
 	useEffect(() => {
 		if (isError && errorClear) {
-			setBtnClassname("foundations-default-btn no-select foundations-danger-btn")
 			setErrorAnimation(true);
-			setTimeout(() => {
-				setBtnClassname(isDisabled || isLoading ? defaultStyle + " foundations-default-btn-disabled" : defaultStyle)
+			const timer = setTimeout(() => {
 				setErrorAnimation(false);
 				if (onErrorAnimationComplete) {
 					onErrorAnimationComplete();
 				}
 			}, errorClearAnimationTime)
-		} else if (isError && !errorClear) {
-			setBtnClassname("foundations-default-btn no-select foundations-danger-btn")
-			setErrorAnimation(isError);
-		} else if (!isError && !errorClear) {
-			setBtnClassname(isDisabled || isLoading ? defaultStyle + " foundations-default-btn-disabled" : defaultStyle)
+			return () => clearTimeout(timer);
+		} else if (!errorClear) {
 			setErrorAnimation(isError);
 		}
 	}, [isError]);
