@@ -324,6 +324,16 @@
   --blue-orange-light-badge-color: white;
   --blue-orange-dark-badge-color: white;
 
+  /* the compound badge is one pill in two halves — the left key half sits darker than the right value half */
+  --blue-orange-light-compound-badge-left-background-color: #18181b;
+  --blue-orange-dark-compound-badge-left-background-color: #3f3f42;
+  --blue-orange-light-compound-badge-left-color: white;
+  --blue-orange-dark-compound-badge-left-color: white;
+  --blue-orange-light-compound-badge-right-background-color: #52525b;
+  --blue-orange-dark-compound-badge-right-background-color: #5c5c60;
+  --blue-orange-light-compound-badge-right-color: white;
+  --blue-orange-dark-compound-badge-right-color: white;
+
   --blue-orange-light-default-text-color: black;
   --blue-orange-dark-default-text-color: white;
 

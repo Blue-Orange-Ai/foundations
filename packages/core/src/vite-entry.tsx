@@ -296,6 +296,7 @@ export * from './components/table/data-table/DataTable';
 
 // Text Decorations
 export * from './components/text-decorations/badge/Badge';
+export * from './components/text-decorations/compound-badge/CompoundBadge';
 export * from './components/text-decorations/code-block/CodeBlock';
 export * from './components/text-decorations/currency/Currency';
 export * from './components/text-decorations/dates/date-display/DateDisplay';
@@ -303,6 +304,7 @@ export * from './components/text-decorations/email/EmailLink';
 export * from './components/text-decorations/form-heading/FormHeading';
 export * from './components/text-decorations/page-heading/PageHeading';
 export * from './components/text-decorations/percentage/Percentage';
+export * from './components/text-decorations/compound-tag/CompoundTag';
 export * from './components/text-decorations/tag/Tag';
 export * from './components/text-decorations/telephone/TelephoneText';
 export * from './components/text-decorations/paragraph/Paragraph';
