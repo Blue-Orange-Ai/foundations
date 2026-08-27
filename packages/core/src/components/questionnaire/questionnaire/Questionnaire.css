@@ -1,0 +1,385 @@
+.blue-orange-questionnaire {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    min-height: 0;
+}
+
+/* The panel the question sits in — one question is a page of its own, not a row
+   of a form, so it gets the ground and the border a card would get. */
+.blue-orange-questionnaire-bordered {
+    padding: 20px 22px;
+    border-radius: 8px;
+    border: 1px solid var(--blue-orange-light-questionnaire-border-color);
+    background-color: var(--blue-orange-light-questionnaire-background-color);
+}
+
+.dark .blue-orange-questionnaire-bordered {
+    border: 1px solid var(--blue-orange-dark-questionnaire-border-color);
+    background-color: var(--blue-orange-dark-questionnaire-background-color);
+}
+
+.blue-orange-questionnaire:focus {
+    outline: none;
+}
+
+.blue-orange-questionnaire-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.blue-orange-questionnaire-count {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--blue-orange-light-questionnaire-count-color);
+}
+
+.dark .blue-orange-questionnaire-count {
+    color: var(--blue-orange-dark-questionnaire-count-color);
+}
+
+.blue-orange-questionnaire-bar {
+    width: 100%;
+    height: 4px;
+    border-radius: 999px;
+    overflow: hidden;
+    background-color: var(--blue-orange-light-questionnaire-track-color);
+}
+
+.dark .blue-orange-questionnaire-bar {
+    background-color: var(--blue-orange-dark-questionnaire-track-color);
+}
+
+.blue-orange-questionnaire-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background-color: var(--blue-orange-light-questionnaire-fill-color);
+    transition: width 0.25s ease-out;
+}
+
+.dark .blue-orange-questionnaire-bar-fill {
+    background-color: var(--blue-orange-dark-questionnaire-fill-color);
+}
+
+/* The question is a fieldset so the prompt names the choices to a screen
+   reader, but a fieldset's own chrome is not wanted. */
+.blue-orange-questionnaire-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.blue-orange-questionnaire-item-animated {
+    animation: blue-orange-questionnaire-in 0.2s ease-out;
+}
+
+@keyframes blue-orange-questionnaire-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.blue-orange-questionnaire-prompt {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--blue-orange-light-questionnaire-prompt-color);
+}
+
+.dark .blue-orange-questionnaire-prompt {
+    color: var(--blue-orange-dark-questionnaire-prompt-color);
+}
+
+.blue-orange-questionnaire-optional {
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--blue-orange-light-questionnaire-choice-border-color);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--blue-orange-light-questionnaire-description-color);
+}
+
+.dark .blue-orange-questionnaire-optional {
+    border: 1px solid var(--blue-orange-dark-questionnaire-choice-border-color);
+    color: var(--blue-orange-dark-questionnaire-description-color);
+}
+
+.blue-orange-questionnaire-description {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--blue-orange-light-questionnaire-description-color);
+}
+
+.dark .blue-orange-questionnaire-description {
+    color: var(--blue-orange-dark-questionnaire-description-color);
+}
+
+.blue-orange-questionnaire-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.blue-orange-questionnaire-choice {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--blue-orange-light-questionnaire-choice-border-color);
+    background-color: var(--blue-orange-light-questionnaire-choice-background-color);
+    color: var(--blue-orange-light-questionnaire-choice-color);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s ease-out, background-color 0.15s ease-out;
+}
+
+.dark .blue-orange-questionnaire-choice {
+    border: 1px solid var(--blue-orange-dark-questionnaire-choice-border-color);
+    background-color: var(--blue-orange-dark-questionnaire-choice-background-color);
+    color: var(--blue-orange-dark-questionnaire-choice-color);
+}
+
+.blue-orange-questionnaire-choice:hover:not(.blue-orange-questionnaire-choice-disabled) {
+    border-color: var(--blue-orange-light-questionnaire-choice-active-border-color);
+}
+
+.dark .blue-orange-questionnaire-choice:hover:not(.blue-orange-questionnaire-choice-disabled) {
+    border-color: var(--blue-orange-dark-questionnaire-choice-active-border-color);
+}
+
+.blue-orange-questionnaire-choice:focus-visible {
+    outline: 2px solid var(--blue-orange-light-active-border-color);
+    outline-offset: 1px;
+}
+
+.dark .blue-orange-questionnaire-choice:focus-visible {
+    outline: 2px solid var(--blue-orange-dark-active-border-color);
+}
+
+.blue-orange-questionnaire-choice-active {
+    border-color: var(--blue-orange-light-questionnaire-choice-active-border-color);
+    background-color: var(--blue-orange-light-questionnaire-choice-active-background-color);
+}
+
+.dark .blue-orange-questionnaire-choice-active {
+    border-color: var(--blue-orange-dark-questionnaire-choice-active-border-color);
+    background-color: var(--blue-orange-dark-questionnaire-choice-active-background-color);
+}
+
+.blue-orange-questionnaire-choice-disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* The radio dot, or the checkbox tick when more than one answer is allowed. The
+   mark is drawn rather than swapped in, so the row keeps its height either way. */
+.blue-orange-questionnaire-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    border-radius: 999px;
+    border: 1px solid var(--blue-orange-light-questionnaire-indicator-border-color);
+    background-color: var(--blue-orange-light-questionnaire-choice-background-color);
+    transition: border-color 0.15s ease-out, background-color 0.15s ease-out;
+}
+
+.dark .blue-orange-questionnaire-indicator {
+    border: 1px solid var(--blue-orange-dark-questionnaire-indicator-border-color);
+    background-color: var(--blue-orange-dark-questionnaire-choice-background-color);
+}
+
+.blue-orange-questionnaire-indicator-box {
+    border-radius: 4px;
+}
+
+.blue-orange-questionnaire-choice-active .blue-orange-questionnaire-indicator {
+    border-color: var(--blue-orange-light-questionnaire-choice-active-border-color);
+    background-color: var(--blue-orange-light-questionnaire-choice-active-border-color);
+}
+
+.dark .blue-orange-questionnaire-choice-active .blue-orange-questionnaire-indicator {
+    border-color: var(--blue-orange-dark-questionnaire-choice-active-border-color);
+    background-color: var(--blue-orange-dark-questionnaire-choice-active-border-color);
+}
+
+.blue-orange-questionnaire-choice-active .blue-orange-questionnaire-indicator::after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background-color: var(--blue-orange-light-questionnaire-indicator-mark-color);
+}
+
+.dark .blue-orange-questionnaire-choice-active .blue-orange-questionnaire-indicator::after {
+    background-color: var(--blue-orange-dark-questionnaire-indicator-mark-color);
+}
+
+/* A checkbox is ticked rather than filled. */
+.blue-orange-questionnaire-choice-active .blue-orange-questionnaire-indicator-box::after {
+    width: 4px;
+    height: 8px;
+    margin-top: -2px;
+    border-radius: 0;
+    border: solid var(--blue-orange-light-questionnaire-indicator-mark-color);
+    border-width: 0 2px 2px 0;
+    background-color: transparent;
+    transform: rotate(45deg);
+}
+
+.dark .blue-orange-questionnaire-choice-active .blue-orange-questionnaire-indicator-box::after {
+    border-color: var(--blue-orange-dark-questionnaire-indicator-mark-color);
+    background-color: transparent;
+}
+
+.blue-orange-questionnaire-choice-icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+    font-size: 1.125rem;
+    line-height: 1;
+    color: var(--blue-orange-light-questionnaire-description-color);
+}
+
+.dark .blue-orange-questionnaire-choice-icon {
+    color: var(--blue-orange-dark-questionnaire-description-color);
+}
+
+.blue-orange-questionnaire-choice-active .blue-orange-questionnaire-choice-icon {
+    color: var(--blue-orange-light-questionnaire-choice-active-border-color);
+}
+
+.dark .blue-orange-questionnaire-choice-active .blue-orange-questionnaire-choice-icon {
+    color: var(--blue-orange-dark-questionnaire-choice-active-border-color);
+}
+
+/* The label takes the width that is left, which keeps the key pinned right. */
+.blue-orange-questionnaire-choice-body {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.blue-orange-questionnaire-choice-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.blue-orange-questionnaire-choice-hint {
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: var(--blue-orange-light-questionnaire-description-color);
+}
+
+.dark .blue-orange-questionnaire-choice-hint {
+    color: var(--blue-orange-dark-questionnaire-description-color);
+}
+
+.blue-orange-questionnaire-choice .blue-orange-kbd {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.blue-orange-questionnaire-freeform .blue-orange-text-area-input-cont {
+    width: 100%;
+}
+
+.blue-orange-questionnaire-freeform .blue-orange-default-text-area {
+    min-height: 96px;
+}
+
+.blue-orange-questionnaire-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.blue-orange-questionnaire-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.blue-orange-questionnaire-footer-left,
+.blue-orange-questionnaire-footer-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.blue-orange-questionnaire-footer-right {
+    margin-left: auto;
+}
+
+.blue-orange-questionnaire-sm .blue-orange-questionnaire-prompt {
+    font-size: 0.875rem;
+}
+
+.blue-orange-questionnaire-sm .blue-orange-questionnaire-choice {
+    padding: 9px 11px;
+    gap: 10px;
+}
+
+.blue-orange-questionnaire-sm .blue-orange-questionnaire-choice-label {
+    font-size: 0.8125rem;
+}
+
+.blue-orange-questionnaire-lg .blue-orange-questionnaire-prompt {
+    font-size: 1.25rem;
+}
+
+.blue-orange-questionnaire-lg .blue-orange-questionnaire-description {
+    font-size: 0.875rem;
+}
+
+.blue-orange-questionnaire-lg .blue-orange-questionnaire-choice {
+    padding: 16px 18px;
+}
+
+.blue-orange-questionnaire-lg .blue-orange-questionnaire-choice-label {
+    font-size: 1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .blue-orange-questionnaire-item-animated {
+        animation: none;
+    }
+
+    .blue-orange-questionnaire-choice,
+    .blue-orange-questionnaire-indicator,
+    .blue-orange-questionnaire-bar-fill {
+        transition: none;
+    }
+}

@@ -115,6 +115,11 @@ export * from './components/stepper/stepper-separator/StepperSeparator';
 export * from './components/wizard/wizard/Wizard';
 export * from './components/wizard/wizard-stage/WizardStage';
 
+// Questionnaire
+export * from './components/questionnaire/questionnaire/Questionnaire';
+export * from './components/questionnaire/questionnaire/QuestionnaireTypes';
+export * from './components/questionnaire/questionnaire-item/QuestionnaireItem';
+
 // Timeline
 export * from './components/timeline/timeline/Timeline';
 export * from './components/timeline/timeline/TimelineContext';

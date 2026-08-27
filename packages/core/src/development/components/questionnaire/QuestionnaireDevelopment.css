@@ -1,0 +1,6 @@
+/* The reading width a question wants — a prompt that runs the width of the page
+   is harder to answer than one that sits in a column. */
+.blue-orange-questionnaire-development-stage {
+    width: 100%;
+    max-width: 560px;
+}
