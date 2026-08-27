@@ -56,6 +56,7 @@ import {ToggleInputDevelopment} from "../components/inputs/toggle-input/ToggleIn
 import {AccordionDevelopment} from "../components/accordion/AccordionDevelopment";
 import {CodeBlockDevelopment} from "../components/text-decorations/code-block/CodeBlockDevelopment";
 import {BadgeDevelopment} from "../components/text-decorations/badge/BadgeDevelopment";
+import {CompoundBadgeDevelopment} from "../components/text-decorations/compound-badge/CompoundBadgeDevelopment";
 import {CurrencyDevelopment} from "../components/text-decorations/currency/CurrencyDevelopment";
 import {DatesDevelopment} from "../components/text-decorations/dates/DatesDevelopment";
 import {DescriptionDevelopment} from "../components/text-decorations/description/DescriptionDevelopment";
@@ -73,6 +74,7 @@ import {CopyableTextDevelopment} from "../components/text-decorations/copyable-t
 import {PropertiesDisplayDevelopment} from "../components/text-decorations/properties-display/PropertiesDisplayDevelopment";
 import {PropertyHistogramDevelopment} from "../components/text-decorations/property-histogram/PropertyHistogramDevelopment";
 import {RenderHtmlDevelopment} from "../components/text-decorations/render-html/RenderHtmlDevelopment";
+import {CompoundTagDevelopment} from "../components/text-decorations/compound-tag/CompoundTagDevelopment";
 import {TagDevelopment} from "../components/text-decorations/tag/TagDevelopment";
 import {TelephoneTextDevelopment} from "../components/text-decorations/telephone-text/TelephoneTextDevelopment";
 import {TruncatedTextDevelopment} from "../components/text-decorations/truncated-text/TruncatedTextDevelopment";
@@ -971,6 +973,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/text-decoration-badge")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
+							label={"Compound Badge"}
+							active={component == "text-decoration-compound-badge"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-price-tag-2-line"></i>}
+							onClick={() => navigate("/text-decoration-compound-badge")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
 							label={"Kbd"}
 							active={component == "text-decoration-kbd"}
 							focused={false}
@@ -1142,6 +1153,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/text-decoration-render-html")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
+							label={"Compound Tag"}
+							active={component == "text-decoration-compound-tag"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-price-tag-3-line"></i>}
+							onClick={() => navigate("/text-decoration-compound-tag")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
 							label={"Tag"}
 							active={component == "text-decoration-tag"}
 							focused={false}
@@ -1236,6 +1256,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "inputs-toggle" && <ToggleInputDevelopment></ToggleInputDevelopment>}
 			{component == "accordion" && <AccordionDevelopment></AccordionDevelopment>}
 			{component == "text-decoration-badge" && <BadgeDevelopment></BadgeDevelopment>}
+			{component == "text-decoration-compound-badge" && <CompoundBadgeDevelopment></CompoundBadgeDevelopment>}
 			{component == "text-decoration-code-block" && <CodeBlockDevelopment></CodeBlockDevelopment>}
 			{component == "text-decoration-currency" && <CurrencyDevelopment></CurrencyDevelopment>}
 			{component == "text-decoration-dates" && <DatesDevelopment></DatesDevelopment>}
@@ -1254,6 +1275,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "text-decoration-properties-display" && <PropertiesDisplayDevelopment></PropertiesDisplayDevelopment>}
 			{component == "text-decoration-property-histogram" && <PropertyHistogramDevelopment></PropertyHistogramDevelopment>}
 			{component == "text-decoration-render-html" && <RenderHtmlDevelopment></RenderHtmlDevelopment>}
+			{component == "text-decoration-compound-tag" && <CompoundTagDevelopment></CompoundTagDevelopment>}
 			{component == "text-decoration-tag" && <TagDevelopment></TagDevelopment>}
 			{component == "text-decoration-telephone" && <TelephoneTextDevelopment></TelephoneTextDevelopment>}
 			{component == "text-decoration-truncated-text" && <TruncatedTextDevelopment></TruncatedTextDevelopment>}

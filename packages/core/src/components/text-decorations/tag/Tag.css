@@ -11,6 +11,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: fit-content;
+    max-width: 100%;
+}
+
+.blue-orange-tag.blue-orange-tag-round{
+    border-radius: 9999px;
+}
+
+.blue-orange-tag.blue-orange-tag-fill{
+    width: 100%;
 }
 
 .dark .blue-orange-tag{

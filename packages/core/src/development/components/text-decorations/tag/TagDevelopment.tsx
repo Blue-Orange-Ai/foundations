@@ -29,6 +29,20 @@ const TAG_PROPS: Array<PropSpec> = [
 		default: "\"white\"",
 		control: "color",
 		description: "The colour of the text on it."
+	},
+	{
+		name: "round",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Rounds both ends of the chip off completely."
+	},
+	{
+		name: "fill",
+		type: "boolean",
+		default: "false",
+		control: "toggle",
+		description: "Stretches the chip across the width it is given. Left off, it is only as wide as what is inside it."
 	}
 ];
 
@@ -46,7 +60,11 @@ export const TagDevelopment: React.FC<Props> = ({}) => {
 			snippetChildren={values => values.children}
 			props={TAG_PROPS}
 			preview={values => (
-				<Tag backgroundColor={values.backgroundColor} textColor={values.textColor}>{values.children}</Tag>
+				<Tag
+					backgroundColor={values.backgroundColor}
+					textColor={values.textColor}
+					round={values.round}
+					fill={values.fill}>{values.children}</Tag>
 			)}>
 
 			<GeneralHeading>Default Tag</GeneralHeading>
@@ -66,6 +84,19 @@ export const TagDevelopment: React.FC<Props> = ({}) => {
 				<Tag backgroundColor="#ec4899" textColor="white">Design</Tag>
 				<Tag backgroundColor="#06b6d4" textColor="white">Marketing</Tag>
 				<Tag backgroundColor="#84cc16" textColor="white">Finance</Tag>
+			</div>
+
+			<GeneralHeading>Rounded Tags</GeneralHeading>
+			<div style={{display: "flex", gap: "8px", flexWrap: "wrap"}}>
+				<Tag round={true}>Default</Tag>
+				<Tag round={true} backgroundColor="#22c55e" textColor="white">Active</Tag>
+				<Tag round={true} backgroundColor="#dbeafe" textColor="#1e40af">Blue</Tag>
+			</div>
+
+			<GeneralHeading>Filled Tags</GeneralHeading>
+			<div style={{display: "flex", flexDirection: "column", gap: "8px", width: "320px"}}>
+				<Tag fill={true}>Stretched across its container</Tag>
+				<Tag fill={true} round={true} backgroundColor="#3b82f6" textColor="white">Filled and rounded</Tag>
 			</div>
 
 			<GeneralHeading>Light Background Tags</GeneralHeading>

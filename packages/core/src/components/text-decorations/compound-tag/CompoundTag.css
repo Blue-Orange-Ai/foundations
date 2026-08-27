@@ -1,0 +1,70 @@
+
+
+.blue-orange-compound-tag{
+    display: inline-flex;
+    align-items: stretch;
+    width: fit-content;
+    max-width: 100%;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.blue-orange-compound-tag.blue-orange-compound-tag-round{
+    border-radius: 9999px;
+}
+
+.blue-orange-compound-tag.blue-orange-compound-tag-fill{
+    width: 100%;
+}
+
+.blue-orange-compound-tag.blue-orange-compound-tag-fill .blue-orange-compound-tag-right{
+    flex-grow: 1;
+}
+
+.blue-orange-compound-tag.blue-orange-compound-tag-interactive{
+    cursor: pointer;
+}
+
+.blue-orange-compound-tag.blue-orange-compound-tag-interactive:hover{
+    opacity: .85;
+}
+
+.blue-orange-compound-tag-left,
+.blue-orange-compound-tag-right{
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    min-width: 0;
+}
+
+.blue-orange-compound-tag-text{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.blue-orange-compound-tag-remove{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 6px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: inherit;
+    font-size: 16px;
+    line-height: 0;
+    cursor: pointer;
+    opacity: .7;
+}
+
+.blue-orange-compound-tag-remove:hover{
+    opacity: 1;
+}
+
+.blue-orange-compound-tag-right > .blue-orange-compound-tag-remove:only-child{
+    margin-left: 0;
+}
