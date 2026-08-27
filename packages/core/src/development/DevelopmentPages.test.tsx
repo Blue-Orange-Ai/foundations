@@ -25,6 +25,7 @@ import {SpinnerDevelopment} from "./components/loading/spinner/SpinnerDevelopmen
 import {SliderDevelopment} from "./components/inputs/slider/SliderDevelopment";
 import {OTPInputDevelopment} from "./components/inputs/otp-input/OTPInputDevelopment";
 import {KbdDevelopment} from "./components/text-decorations/kbd/KbdDevelopment";
+import {IconTextDevelopment} from "./components/text-decorations/icon-text/IconTextDevelopment";
 import {SeparatorDevelopment} from "./components/layouts/separator/SeparatorDevelopment";
 import {ButtonTabsDevelopment} from "./components/layouts/button-tabs/ButtonTabsDevelopment";
 import {OptionCardsDevelopment} from "./components/inputs/option-cards/OptionCardsDevelopment";
@@ -64,6 +65,7 @@ const PAGES: Array<[string, React.FC<any>]> = [
 	["Slider", SliderDevelopment],
 	["OTP Input", OTPInputDevelopment],
 	["Kbd", KbdDevelopment],
+	["Icon Text", IconTextDevelopment],
 	["Separator", SeparatorDevelopment],
 	["Button Tabs", ButtonTabsDevelopment],
 	["Option Cards", OptionCardsDevelopment],

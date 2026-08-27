@@ -114,6 +114,7 @@ import {SpinnerDevelopment} from "../components/loading/spinner/SpinnerDevelopme
 import {SliderDevelopment} from "../components/inputs/slider/SliderDevelopment";
 import {OTPInputDevelopment} from "../components/inputs/otp-input/OTPInputDevelopment";
 import {KbdDevelopment} from "../components/text-decorations/kbd/KbdDevelopment";
+import {IconTextDevelopment} from "../components/text-decorations/icon-text/IconTextDevelopment";
 import {SeparatorDevelopment} from "../components/layouts/separator/SeparatorDevelopment";
 import {ButtonTabsDevelopment} from "../components/layouts/button-tabs/ButtonTabsDevelopment";
 import {OptionCardsDevelopment} from "../components/inputs/option-cards/OptionCardsDevelopment";
@@ -992,6 +993,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/text-decoration-compound-badge")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
+							label={"Icon Text"}
+							active={component == "text-decoration-icon-text"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-text-block"></i>}
+							onClick={() => navigate("/text-decoration-icon-text")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
 							label={"Kbd"}
 							active={component == "text-decoration-kbd"}
 							focused={false}
@@ -1312,6 +1322,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "inputs-slider" && <SliderDevelopment></SliderDevelopment>}
 			{component == "inputs-otp" && <OTPInputDevelopment></OTPInputDevelopment>}
 			{component == "text-decoration-kbd" && <KbdDevelopment></KbdDevelopment>}
+			{component == "text-decoration-icon-text" && <IconTextDevelopment></IconTextDevelopment>}
 			{component == "layouts-separator" && <SeparatorDevelopment></SeparatorDevelopment>}
 			{component == "layouts-button-tabs" && <ButtonTabsDevelopment></ButtonTabsDevelopment>}
 			{component == "tooltips-hover-card" && <HoverCardDevelopment></HoverCardDevelopment>}

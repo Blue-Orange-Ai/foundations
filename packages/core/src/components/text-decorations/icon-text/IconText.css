@@ -1,0 +1,81 @@
+.blue-orange-icon-text {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    max-width: 100%;
+    color: inherit;
+}
+
+.blue-orange-icon-text-full-width {
+    display: flex;
+    width: 100%;
+}
+
+/* The icon takes its size from the text, so the pair keeps its proportion. */
+.blue-orange-icon-text-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1.1em;
+    line-height: 1;
+}
+
+.blue-orange-icon-text-muted-icon .blue-orange-icon-text-icon {
+    opacity: 0.6;
+}
+
+.blue-orange-icon-text-label {
+    min-width: 0;
+}
+
+.blue-orange-icon-text-bold .blue-orange-icon-text-label {
+    font-weight: 700;
+}
+
+.blue-orange-icon-text-truncated .blue-orange-icon-text-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Against text that wraps, the icon belongs on the first line. */
+.blue-orange-icon-text-align-top {
+    align-items: flex-start;
+}
+
+.blue-orange-icon-text-align-top .blue-orange-icon-text-icon {
+    margin-top: 0.1em;
+}
+
+.blue-orange-icon-text-interactive {
+    cursor: pointer;
+}
+
+.blue-orange-icon-text-interactive:hover .blue-orange-icon-text-label {
+    text-decoration: underline;
+}
+
+.blue-orange-icon-text-interactive:focus-visible {
+    outline: 2px solid var(--blue-orange-light-active-border-color);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+.dark .blue-orange-icon-text-interactive:focus-visible {
+    outline: 2px solid var(--blue-orange-dark-active-border-color);
+}
+
+.blue-orange-icon-text-sm {
+    font-size: 0.75rem;
+}
+
+.blue-orange-icon-text-md {
+    font-size: 0.875rem;
+}
+
+.blue-orange-icon-text-lg {
+    font-size: 1rem;
+}
