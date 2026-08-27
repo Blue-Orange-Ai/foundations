@@ -108,10 +108,15 @@
 }
 
 /* Collapses to nothing rather than unmounting, so the filter slides away with
-   the sidebar instead of vanishing a frame before it. */
+   the sidebar instead of vanishing a frame before it.
+
+   The 2px along the top is what the focused input's outline needs to sit in.
+   An outline is drawn outside the border box, and `overflow: hidden` clips at
+   the padding box — with a flush top the ring would be shaved off along that
+   edge while surviving on the other three, which have the inset to sit in. */
 .blue-orange-sidebar-body-filter {
     box-sizing: border-box;
-    padding: 0 var(--blue-orange-sidebar-inset) var(--blue-orange-sidebar-inset);
+    padding: 2px var(--blue-orange-sidebar-inset) var(--blue-orange-sidebar-inset);
     flex-shrink: 0;
     max-height: 96px;
     opacity: 1;
