@@ -1,13 +1,13 @@
 {
   "name": "@blue-orange-ai/foundations-pdf-viewer",
-  "version": "0.4.14",
+  "version": "0.4.15",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
   "author": "Blue Orange AI",
   "private": false,
   "dependencies": {
-    "@blue-orange-ai/foundations-core": "^0.4.14",
+    "@blue-orange-ai/foundations-core": "^0.4.15",
     "@embedpdf/core": "^2.15.0",
     "@embedpdf/engines": "^2.15.0",
     "@embedpdf/models": "^2.15.0",
