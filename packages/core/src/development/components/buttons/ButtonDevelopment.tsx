@@ -313,9 +313,9 @@ const BUTTON_DROPDOWN_PROPS: Array<PropSpec> = [
 	{
 		name: "contextWidth",
 		type: "number | string",
+		default: "\"max-content\"",
 		control: "text",
-		value: "max-content",
-		description: "Width of the popup. Left off it follows the width of the button."
+		description: "Width of the popup. It sizes to the option text rather than the button label."
 	},
 	{
 		name: "onSelection",
@@ -528,11 +528,33 @@ const BUTTON_TOGGLE_PROPS: Array<PropSpec> = [
 	}
 ];
 
+const exportSnippetChildren = (): string =>
+	"<DropdownItemHeading label={\"Download as\"} value={\"heading\"} selected={false}></DropdownItemHeading>\n"
+	+ "<DropdownItemIcon src={\"ri-file-excel-2-line\"} label={\"Spreadsheet (.xlsx)\"} value={\"xlsx\"} selected={false}></DropdownItemIcon>\n"
+	+ "<DropdownItemIcon src={\"ri-file-text-line\"} label={\"Comma separated (.csv)\"} value={\"csv\"} selected={false}></DropdownItemIcon>";
+
+/* The label of the button these hang off is "Export", so the options are the formats it exports to —
+   a menu that reads as the real thing shows the widths and the icon rows better than placeholders. */
+const exportDropdownItems = (
+	<>
+		<DropdownItemHeading label={"Download as"} value={"heading"} selected={false}></DropdownItemHeading>
+		<DropdownItemIcon src={"ri-file-excel-2-line"} label={"Spreadsheet (.xlsx)"} value={"xlsx"} selected={false}></DropdownItemIcon>
+		<DropdownItemIcon src={"ri-file-text-line"} label={"Comma separated (.csv)"} value={"csv"} selected={false}></DropdownItemIcon>
+		<DropdownItemIcon src={"ri-file-pdf-2-line"} label={"PDF document"} value={"pdf"} selected={false}></DropdownItemIcon>
+		<DropdownItemIcon src={"ri-braces-line"} label={"JSON"} value={"json"} selected={false}></DropdownItemIcon>
+		<DropdownItemHeading label={"Send to"} value={"heading-send"} selected={false}></DropdownItemHeading>
+		<DropdownItemText label={"Email a copy"} value={"email"} selected={false}></DropdownItemText>
+		<DropdownItemText label={"Copy to clipboard"} value={"clipboard"} selected={false}></DropdownItemText>
+	</>
+);
+
 const dropdownSnippetChildren = (): string =>
 	"<DropdownItemHeading label={\"Actions\"} value={\"heading\"} selected={false}></DropdownItemHeading>\n"
 	+ "<DropdownItemText label={\"Edit\"} value={\"edit\"} selected={false}></DropdownItemText>\n"
 	+ "<DropdownItemIcon src={\"ri-delete-bin-line\"} label={\"Delete\"} value={\"delete\"} selected={false}></DropdownItemIcon>";
 
+/* Deliberately a fragment: React.Children does not descend into one, so this is also the guard that
+   Dropdown still collects items wrapped in a <>. */
 const demoDropdownItems = (
 	<>
 		<DropdownItemHeading label={"Actions"} value={"heading"} selected={false}></DropdownItemHeading>
@@ -567,7 +589,7 @@ const SIBLINGS: Array<ComponentApiProps> = [
 		imports: ["DropdownItemHeading", "DropdownItemText", "DropdownItemIcon"],
 		interfaces: [DROPDOWN_ITEM_INTERFACE],
 		previewHeight: 160,
-		snippetChildren: dropdownSnippetChildren,
+		snippetChildren: exportSnippetChildren,
 		preview: values => (
 			<ButtonDropdown
 				text={values.text}
@@ -585,7 +607,7 @@ const SIBLINGS: Array<ComponentApiProps> = [
 				isError={values.isError}
 				successClear={values.successClear}
 				errorClear={values.errorClear}>
-				{demoDropdownItems}
+				{exportDropdownItems}
 			</ButtonDropdown>
 		)
 	},
@@ -836,17 +858,17 @@ export const ButtonDevelopment: React.FC<Props> = ({}) => {
 				</ButtonIconDropdown>
 			</div>
 			<div className={"button-development-row"}>
-				<ButtonDropdown text={"Primary Button"} filter={true} contextWidth={"max-content"} buttonType={ButtonType.PRIMARY}>
+				<ButtonDropdown text={"Primary Button"} filter={true} buttonType={ButtonType.PRIMARY}>
 					<DropdownItemHeading label={"Hello World"} value={"heading-1"} selected={false}></DropdownItemHeading>
 					<DropdownItemText label={"Option 1"} value={"option-1"} selected={false}></DropdownItemText>
 					<DropdownItemText label={"Option 2"} value={"option-2"} selected={true}></DropdownItemText>
 					<DropdownItemIcon src={"ri-dribbble-line"} label={"Dribble"} value={"option-3"} selected={false}></DropdownItemIcon>
 				</ButtonDropdown>
-				<ButtonDropdown text={"Small"} filter={true} contextWidth={"max-content"} buttonType={ButtonType.PRIMARY} size={ButtonSize.SMALL}>
+				<ButtonDropdown text={"Small"} filter={true} buttonType={ButtonType.PRIMARY} size={ButtonSize.SMALL}>
 					<DropdownItemText label={"Option 1"} value={"option-1"} selected={false}></DropdownItemText>
 					<DropdownItemText label={"Option 2"} value={"option-2"} selected={true}></DropdownItemText>
 				</ButtonDropdown>
-				<ButtonDropdown text={"Large"} filter={true} contextWidth={"max-content"} buttonType={ButtonType.PRIMARY} size={ButtonSize.LARGE}>
+				<ButtonDropdown text={"Large"} filter={true} buttonType={ButtonType.PRIMARY} size={ButtonSize.LARGE}>
 					<DropdownItemText label={"Option 1"} value={"option-1"} selected={false}></DropdownItemText>
 					<DropdownItemText label={"Option 2"} value={"option-2"} selected={true}></DropdownItemText>
 				</ButtonDropdown>

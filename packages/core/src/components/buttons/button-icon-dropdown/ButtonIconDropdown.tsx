@@ -98,6 +98,7 @@ export const ButtonIconDropdown: React.FC<Props> = ({
 					style={{width: "100%", height: "100%", opacity: 0}}
 					filter={filter}
 					contextWidth={contextWidth}
+					contextClassName="blue-orange-btn-icon-dropdown-window"
 					allowMultipleSelection={allowMultiple}
 					onVisibilityChange={handleVisibilityChange}
 					disabled={isDisabled}

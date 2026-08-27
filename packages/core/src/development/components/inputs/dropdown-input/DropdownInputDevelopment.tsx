@@ -73,7 +73,12 @@ const DROPDOWN_PROPS: Array<PropSpec> = [
 		name: "contextWidth",
 		type: "number | string",
 		control: "text",
-		description: "Width of the popup. Left off it follows the width of the field."
+		description: "Width of the popup. Left off it follows the width of the field. A percentage is measured against the field, not the screen."
+	},
+	{
+		name: "contextClassName",
+		type: "string",
+		description: "Extra class on the popup. The popup renders on the body, so a descendant selector off the field will not reach it."
 	},
 	{
 		name: "contextMaxHeight",

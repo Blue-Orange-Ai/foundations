@@ -17,8 +17,9 @@
 }
 
 /* The button is only as wide as its icon, so the popup sizes to its own content
-   instead — this keeps it readable when the options are short. */
-.blue-orange-btn-icon-dropdown .blue-orange-dropdown-window {
+   instead — this keeps it readable when the options are short. The popup is portalled to the body,
+   so it is reached by its own class rather than as a descendant of the button. */
+.blue-orange-btn-icon-dropdown-window {
     min-width: 140px;
 }
 

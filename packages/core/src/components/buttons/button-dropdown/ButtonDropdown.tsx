@@ -19,7 +19,7 @@ interface Props {
 	iconPos?: ButtonIconPos;
 	filter?: boolean;
 	allowMultiple?: boolean;
-	/** Width of the dropdown popup. Use e.g. "max-content" to size it to the option text instead of the button width. */
+	/** Width of the dropdown popup. Defaults to "max-content" so it sizes to the option text, not the button. */
 	contextWidth?: number | string;
 	onSelection?: (reference: string) => void;
 	onSuccessAnimationComplete?: () => void;
@@ -51,7 +51,7 @@ export const ButtonDropdown: React.FC<Props> = ({
 											iconPos,
 											filter,
 											allowMultiple,
-											contextWidth,
+											contextWidth = "max-content",
 											onSelection,
 											onSuccessAnimationComplete,
 											onErrorAnimationComplete,
@@ -183,6 +183,7 @@ export const ButtonDropdown: React.FC<Props> = ({
 					style={{width: "100%", height: "100%", opacity: 0}}
 					filter={filter}
 					contextWidth={contextWidth}
+					contextClassName="blue-orange-button-dropdown-window"
 					allowMultipleSelection={allowMultiple}
 					onVisibilityChange={handleVisibilityChange}
 					onSelection={(item) => handleSelection(item.reference)}>

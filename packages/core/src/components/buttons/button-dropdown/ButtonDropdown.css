@@ -21,6 +21,14 @@
     height: 100%;
 }
 
+/* The button is only as wide as its label, so the popup sizes to its own content instead — a short
+   button ("Small", "Add") would otherwise open a popup too narrow to read the options in. The floor
+   keeps a two word menu from opening as a sliver. The popup is portalled to the body, so it is
+   reached by its own class rather than as a descendant of the button. */
+.blue-orange-button-dropdown-window {
+    min-width: 140px;
+}
+
 .blue-orange-button-dropdown-primary-btn {
     border: 1px solid var(--blue-orange-light-primary-btn-border-color);
     background-color: var(--blue-orange-light-primary-btn-background-color);
