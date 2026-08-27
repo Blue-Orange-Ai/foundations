@@ -121,6 +121,7 @@ import {FilterPillsDevelopment} from "../components/filters/filter-pills/FilterP
 import {OptionCardsDevelopment} from "../components/inputs/option-cards/OptionCardsDevelopment";
 import {HoverCardDevelopment} from "../components/tooltips/hover-card/HoverCardDevelopment";
 import {StepperDevelopment} from "../components/stepper/StepperDevelopment";
+import {QuestionnaireDevelopment} from "../components/questionnaire/QuestionnaireDevelopment";
 import {TimelineDevelopment} from "../components/timeline/TimelineDevelopment";
 import {WizardDevelopment} from "../components/wizard/WizardDevelopment";
 
@@ -821,6 +822,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						onClick={() => navigate("/stepper")}
 					></SideBarBodyItem>
 					<SideBarBodyItem
+						label={"Questionnaire"}
+						active={component == "questionnaire"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-questionnaire-line"></i>}
+						onClick={() => navigate("/questionnaire")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
 						label={"Timeline"}
 						active={component == "timeline"}
 						focused={false}
@@ -1338,6 +1348,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "filter-pills" && <FilterPillsDevelopment></FilterPillsDevelopment>}
 			{component == "tooltips-hover-card" && <HoverCardDevelopment></HoverCardDevelopment>}
 			{component == "stepper" && <StepperDevelopment></StepperDevelopment>}
+			{component == "questionnaire" && <QuestionnaireDevelopment></QuestionnaireDevelopment>}
 			{component == "timeline" && <TimelineDevelopment></TimelineDevelopment>}
 			{component == "wizard" && <WizardDevelopment></WizardDevelopment>}
 		</SidebarPage>

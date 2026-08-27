@@ -565,6 +565,38 @@
   --blue-orange-light-filter-pill-active-count-color: white;
   --blue-orange-dark-filter-pill-active-count-color: #18181b;
 
+  /* Questionnaire — one question at a time on its own panel. The choices take
+     the same accent an option card takes when it is picked, so a survey and a
+     "what are you creating?" step read as the same kind of choice. */
+  --blue-orange-light-questionnaire-background-color: white;
+  --blue-orange-dark-questionnaire-background-color: #28282a;
+  --blue-orange-light-questionnaire-border-color: #e0e1e2;
+  --blue-orange-dark-questionnaire-border-color: #3f3f42;
+  --blue-orange-light-questionnaire-prompt-color: black;
+  --blue-orange-dark-questionnaire-prompt-color: white;
+  --blue-orange-light-questionnaire-description-color: #71717a;
+  --blue-orange-dark-questionnaire-description-color: #a1a1aa;
+  --blue-orange-light-questionnaire-count-color: #71717a;
+  --blue-orange-dark-questionnaire-count-color: #a1a1aa;
+  --blue-orange-light-questionnaire-track-color: #e4e4e7;
+  --blue-orange-dark-questionnaire-track-color: #3f3f42;
+  --blue-orange-light-questionnaire-fill-color: dodgerblue;
+  --blue-orange-dark-questionnaire-fill-color: dodgerblue;
+  --blue-orange-light-questionnaire-choice-background-color: white;
+  --blue-orange-dark-questionnaire-choice-background-color: #28282a;
+  --blue-orange-light-questionnaire-choice-border-color: #e0e1e2;
+  --blue-orange-dark-questionnaire-choice-border-color: #3f3f42;
+  --blue-orange-light-questionnaire-choice-color: black;
+  --blue-orange-dark-questionnaire-choice-color: white;
+  --blue-orange-light-questionnaire-choice-active-border-color: dodgerblue;
+  --blue-orange-dark-questionnaire-choice-active-border-color: dodgerblue;
+  --blue-orange-light-questionnaire-choice-active-background-color: rgba(30, 144, 255, 0.08);
+  --blue-orange-dark-questionnaire-choice-active-background-color: rgba(30, 144, 255, 0.16);
+  --blue-orange-light-questionnaire-indicator-border-color: #d4d4d8;
+  --blue-orange-dark-questionnaire-indicator-border-color: #52525b;
+  --blue-orange-light-questionnaire-indicator-mark-color: white;
+  --blue-orange-dark-questionnaire-indicator-mark-color: white;
+
   --blue-orange-light-stepper-indicator-background-color: white;
   --blue-orange-dark-stepper-indicator-background-color: #2a2a2c;
   --blue-orange-light-stepper-indicator-border-color: #e0e1e2;

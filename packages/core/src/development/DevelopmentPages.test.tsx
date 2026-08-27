@@ -32,6 +32,7 @@ import {FilterPillsDevelopment} from "./components/filters/filter-pills/FilterPi
 import {OptionCardsDevelopment} from "./components/inputs/option-cards/OptionCardsDevelopment";
 import {HoverCardDevelopment} from "./components/tooltips/hover-card/HoverCardDevelopment";
 import {StepperDevelopment} from "./components/stepper/StepperDevelopment";
+import {QuestionnaireDevelopment} from "./components/questionnaire/QuestionnaireDevelopment";
 import {TimelineDevelopment} from "./components/timeline/TimelineDevelopment";
 import {WizardDevelopment} from "./components/wizard/WizardDevelopment";
 import {RuleEditorDevelopment} from "./components/rules/rule-editor/RuleEditorDevelopment";
@@ -73,6 +74,7 @@ const PAGES: Array<[string, React.FC<any>]> = [
 	["Option Cards", OptionCardsDevelopment],
 	["Hover Card", HoverCardDevelopment],
 	["Stepper", StepperDevelopment],
+	["Questionnaire", QuestionnaireDevelopment],
 	["Timeline", TimelineDevelopment],
 	["Wizard", WizardDevelopment],
 	["Rule Editor", RuleEditorDevelopment],
