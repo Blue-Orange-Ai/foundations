@@ -117,6 +117,7 @@ import {KbdDevelopment} from "../components/text-decorations/kbd/KbdDevelopment"
 import {IconTextDevelopment} from "../components/text-decorations/icon-text/IconTextDevelopment";
 import {SeparatorDevelopment} from "../components/layouts/separator/SeparatorDevelopment";
 import {ButtonTabsDevelopment} from "../components/layouts/button-tabs/ButtonTabsDevelopment";
+import {FilterPillsDevelopment} from "../components/filters/filter-pills/FilterPillsDevelopment";
 import {OptionCardsDevelopment} from "../components/inputs/option-cards/OptionCardsDevelopment";
 import {HoverCardDevelopment} from "../components/tooltips/hover-card/HoverCardDevelopment";
 import {StepperDevelopment} from "../components/stepper/StepperDevelopment";
@@ -730,6 +731,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						></SideBarBodyItem>
 					</SideBarBodyGroup>
 					<SideBarBodyItem
+						label={"Filter Pills"}
+						active={component == "filter-pills"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-filter-3-line"></i>}
+						onClick={() => navigate("/filter-pills")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
 						label={"Metrics Group"}
 						active={component == "metrics-group"}
 						focused={false}
@@ -1325,6 +1335,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "text-decoration-icon-text" && <IconTextDevelopment></IconTextDevelopment>}
 			{component == "layouts-separator" && <SeparatorDevelopment></SeparatorDevelopment>}
 			{component == "layouts-button-tabs" && <ButtonTabsDevelopment></ButtonTabsDevelopment>}
+			{component == "filter-pills" && <FilterPillsDevelopment></FilterPillsDevelopment>}
 			{component == "tooltips-hover-card" && <HoverCardDevelopment></HoverCardDevelopment>}
 			{component == "stepper" && <StepperDevelopment></StepperDevelopment>}
 			{component == "timeline" && <TimelineDevelopment></TimelineDevelopment>}

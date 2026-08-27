@@ -1,0 +1,33 @@
+.blue-orange-filter-pills {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    width: fit-content;
+    max-width: 100%;
+    user-select: none;
+}
+
+.blue-orange-filter-pills-full-width {
+    width: 100%;
+}
+
+.blue-orange-filter-pills-full-width .blue-orange-filter-pill {
+    flex-grow: 1;
+}
+
+/* One line that scrolls — a set with more buckets than the header has room for. */
+.blue-orange-filter-pills-scroll {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.blue-orange-filter-pills-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.blue-orange-filter-pills-scroll .blue-orange-filter-pill {
+    flex-shrink: 0;
+}

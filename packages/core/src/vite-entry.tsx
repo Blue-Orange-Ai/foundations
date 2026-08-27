@@ -76,6 +76,8 @@ export * from './components/command/command-dialog/CommandDialog';
 export * from './components/filters/filter-row/FilterRow';
 export * from './components/filters/filter-row-segment/FilterRowSegment';
 export * from './components/filters/filter-row-action/FilterRowAction';
+export * from './components/filters/filter-pills/FilterPills';
+export * from './components/filters/filter-pill/FilterPill';
 
 // Empty
 export * from './components/empty/empty/Empty';

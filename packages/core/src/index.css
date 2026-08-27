@@ -537,6 +537,34 @@
   --blue-orange-light-filter-row-hover-background-color: #f4f4f5;
   --blue-orange-dark-filter-row-hover-background-color: #3f3f42;
 
+  /* Filter pills — the bucket filters above a list. An unselected pill is an
+     outline, the selected one takes the inverse fill a selected toggle button
+     takes, and the count rides inside the pill on its own ground. */
+  --blue-orange-light-filter-pill-background-color: transparent;
+  --blue-orange-dark-filter-pill-background-color: transparent;
+  --blue-orange-light-filter-pill-border-color: #e0e1e2;
+  --blue-orange-dark-filter-pill-border-color: #3f3f42;
+  --blue-orange-light-filter-pill-color: #71717a;
+  --blue-orange-dark-filter-pill-color: #a1a1aa;
+  --blue-orange-light-filter-pill-hover-background-color: #f4f4f5;
+  --blue-orange-dark-filter-pill-hover-background-color: #3f3f42;
+  --blue-orange-light-filter-pill-hover-color: black;
+  --blue-orange-dark-filter-pill-hover-color: white;
+  --blue-orange-light-filter-pill-active-background-color: #18181b;
+  --blue-orange-dark-filter-pill-active-background-color: white;
+  --blue-orange-light-filter-pill-active-border-color: #18181b;
+  --blue-orange-dark-filter-pill-active-border-color: white;
+  --blue-orange-light-filter-pill-active-color: white;
+  --blue-orange-dark-filter-pill-active-color: #18181b;
+  --blue-orange-light-filter-pill-count-background-color: #f4f4f5;
+  --blue-orange-dark-filter-pill-count-background-color: #3f3f42;
+  --blue-orange-light-filter-pill-count-color: #52525b;
+  --blue-orange-dark-filter-pill-count-color: #d4d4d8;
+  --blue-orange-light-filter-pill-active-count-background-color: rgba(255, 255, 255, 0.18);
+  --blue-orange-dark-filter-pill-active-count-background-color: rgba(0, 0, 0, 0.12);
+  --blue-orange-light-filter-pill-active-count-color: white;
+  --blue-orange-dark-filter-pill-active-count-color: #18181b;
+
   --blue-orange-light-stepper-indicator-background-color: white;
   --blue-orange-dark-stepper-indicator-background-color: #2a2a2c;
   --blue-orange-light-stepper-indicator-border-color: #e0e1e2;
