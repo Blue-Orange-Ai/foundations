@@ -1,13 +1,13 @@
 {
   "name": "@blue-orange-ai/foundations-timeline",
-  "version": "0.4.12",
+  "version": "0.4.13",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
   "author": "Blue Orange AI",
   "private": false,
   "dependencies": {
-    "@blue-orange-ai/foundations-core": "^0.4.12",
+    "@blue-orange-ai/foundations-core": "^0.4.13",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
