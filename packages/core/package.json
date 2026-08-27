@@ -1,6 +1,6 @@
 {
   "name": "@blue-orange-ai/foundations-core",
-  "version": "0.4.13",
+  "version": "0.4.14",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
