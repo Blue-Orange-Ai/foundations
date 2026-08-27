@@ -83,21 +83,25 @@
     width: 100%;
 }
 
+/* The popup is portalled to the body, so it stacks against the modal and drawer windows rather than
+   inside whichever card it was opened in — it has to sit above them (99999999) while staying under
+   the toast layer, which owns the top of the stack. */
 .blue-orange-dropdown-window {
     position: fixed;
     background-color: white;
     border-radius: 4px;
     overflow: auto;
-    z-index: 100000 !important;
+    z-index: 999999999 !important;
     border: 1.5px solid var(--blue-orange-light-default-border-color);
 }
 
-.dark .blue-orange-dropdown-window {
+.dark .blue-orange-dropdown-window,
+.blue-orange-dropdown-window.dark {
     position: fixed;
     background-color: black;
     border-radius: 4px;
     overflow: auto;
-    z-index: 100000 !important;
+    z-index: 999999999 !important;
     border: 1.5px solid var(--blue-orange-dark-default-border-color);
 }
 

@@ -1,4 +1,5 @@
 import React, {useEffect, useLayoutEffect, useRef, useState} from "react";
+import {createPortal} from "react-dom";
 import './Dropdown.css'
 import {DropdownItemObj, DropdownItemType} from "../../../interfaces/AppInterfaces";
 import {DropdownItem} from "../items/DropdownItem/DropdownItem";
@@ -14,6 +15,7 @@ import {DropdownItemImage} from "../items/DropdownItemImage/DropdownItemImage";
 import {DropdownItemText} from "../items/DropdownItemText/DropdownItemText";
 import {InputValidateCallback, useInputValidation} from "../../validation/InputValidation";
 import {InputValidationMessage} from "../../validation/InputValidationMessage";
+import {useOverlayTheme} from "../../../layouts/utils/useOverlayTheme";
 
 interface Props {
 	children: React.ReactNode,
@@ -21,6 +23,9 @@ interface Props {
 	disabled?: boolean,
 	contextWidth?: number | string,
 	contextMaxHeight?: number,
+	/** Extra class on the popup. The popup is portalled to the body, so a caller cannot reach
+	 * it with a descendant selector off its own wrapper. */
+	contextClassName?: string,
 	closeOnClick?: boolean,
 	allowMultipleSelection?: boolean,
 	onSelection?: (item: DropdownItemObj) => void,
@@ -48,6 +53,7 @@ export const Dropdown: React.FC<Props> = ({
 												   placeholder="No items selected...",
 												   contextWidth,
 												   contextMaxHeight,
+												   contextClassName,
 												   closeOnClick = true,
 													allowMultipleSelection = false,
 													onSelection,
@@ -68,48 +74,57 @@ export const Dropdown: React.FC<Props> = ({
 
 	const items:Array<DropdownItemObj> = []
 
-	React.Children.forEach(children, child => {
-		if (React.isValidElement(child)) {
-			if (child.type === DropdownItemHeading) {
-				items.push({
-					label: child.props.label,
-					reference: child.props.value,
-					selected: child.props.selected,
-					type: DropdownItemType.HEADING,
-					disabled: child.props.disabled,
-					heading: true
-				})
-			} else if (child.type === DropdownItemIcon) {
-				items.push({
-					label: child.props.label,
-					reference: child.props.value,
-					selected: child.props.selected,
-					type: DropdownItemType.ICON,
-					disabled: child.props.disabled,
-					icon: true,
-					src: child.props.src
-				})
-			} else if (child.type === DropdownItemImage) {
-				items.push({
-					label: child.props.label,
-					reference: child.props.value,
-					selected: child.props.selected,
-					type: DropdownItemType.IMAGE,
-					disabled: child.props.disabled,
-					image: true,
-					src: child.props.src
-				})
-			} else if (child.type === DropdownItemText) {
-				items.push({
-					label: child.props.label,
-					reference: child.props.value,
-					selected: child.props.selected,
-					type: DropdownItemType.TEXT,
-					disabled: child.props.disabled,
-				})
+	// Walks fragments rather than only the top level: React.Children does not descend into one, so
+	// items wrapped in a <> — a helper that returns a group of them, a conditional block — would
+	// match no branch below and leave the popup empty.
+	const collectItems = (nodes: React.ReactNode) => {
+		React.Children.forEach(nodes, child => {
+			if (React.isValidElement(child)) {
+				if (child.type === React.Fragment) {
+					collectItems((child.props as {children?: React.ReactNode}).children)
+				} else if (child.type === DropdownItemHeading) {
+					items.push({
+						label: child.props.label,
+						reference: child.props.value,
+						selected: child.props.selected,
+						type: DropdownItemType.HEADING,
+						disabled: child.props.disabled,
+						heading: true
+					})
+				} else if (child.type === DropdownItemIcon) {
+					items.push({
+						label: child.props.label,
+						reference: child.props.value,
+						selected: child.props.selected,
+						type: DropdownItemType.ICON,
+						disabled: child.props.disabled,
+						icon: true,
+						src: child.props.src
+					})
+				} else if (child.type === DropdownItemImage) {
+					items.push({
+						label: child.props.label,
+						reference: child.props.value,
+						selected: child.props.selected,
+						type: DropdownItemType.IMAGE,
+						disabled: child.props.disabled,
+						image: true,
+						src: child.props.src
+					})
+				} else if (child.type === DropdownItemText) {
+					items.push({
+						label: child.props.label,
+						reference: child.props.value,
+						selected: child.props.selected,
+						type: DropdownItemType.TEXT,
+						disabled: child.props.disabled,
+					})
+				}
 			}
-		}
-	});
+		});
+	}
+
+	collectItems(children);
 
 	const [visible, setVisible] = useState(false);
 
@@ -126,6 +141,8 @@ export const Dropdown: React.FC<Props> = ({
 	const blockMouseClickRef = useRef(blockMouseClick);
 
 	const dropdownOpenedRef = useRef(false);
+
+	const {anchorRef, themeClass} = useOverlayTheme(visible);
 
 	useEffect(() => {
 		visibleRef.current = visible;
@@ -256,93 +273,103 @@ export const Dropdown: React.FC<Props> = ({
 	}
 
 
-	const calculateLeftPosition = () => {
-		try{
-			const rect = inputRef.current?.getBoundingClientRect() as DOMRect;
-			const clientWidth = rect.width;
-			const clientLeft = rect.left;
-			const width = contextWidth != undefined && typeof contextWidth != "string" ? contextWidth : clientWidth;
-			const offset = (width - clientWidth) / 2;
-			return Math.max(0, clientLeft - offset);
-		} catch (e) {
-			return 0;
-		}
-	}
-
-	const generateFullWidth = () => {
-		try{
-			const rect = inputRef.current?.getBoundingClientRect() as DOMRect;
-			const clientWidth = rect.width;
-			return clientWidth.toString() + "px"
-		} catch (e) {
-			return "fit-content";
-		}
-	}
-
-	const isPosAbove = () => {
-		if (getClientTop() > window.innerHeight / 2) {
-			return true;
-		}
-		return false;
-	}
-
-	const getClientTop = () => {
-		try {
-			const rect = inputRef.current?.getBoundingClientRect() as DOMRect;
-			return rect.top;
-		} catch (e) {
-			return 0;
-		}
-
-	}
-
-	const getClientBottom = () => {
-		try {
-			const rect = inputRef.current?.getBoundingClientRect() as DOMRect;
-			return window.innerHeight - rect.bottom;
-		} catch (e) {
-			return 0;
-		}
-
-	}
-
-	const getClientHeight = () => {
-		try{
-			const rect = inputRef.current?.getBoundingClientRect() as DOMRect;
-			return rect.height;
-		} catch (e) {
-			return 0;
-		}
-
-	}
-
-	// A popup wider than its input (e.g. contextWidth="max-content") can run off the
-	// right of the viewport, so it is pulled back on once its rendered width is known.
-	const [clampedLeft, setClampedLeft] = useState<number | undefined>(undefined);
+	// The popup is `position: fixed` and portalled to the body, so it is placed from the anchor's
+	// viewport rect. That rect is re-measured while the popup is open — a scroll or resize anywhere
+	// on the page moves the input out from under a popup that was placed once and left alone.
+	const [anchorRect, setAnchorRect] = useState<DOMRect | undefined>(undefined);
 
 	useLayoutEffect(() => {
 		if (!visible) {
-			setClampedLeft(undefined);
+			setAnchorRect(undefined);
+			return;
+		}
+		const measure = () => {
+			const rect = inputRef.current?.getBoundingClientRect();
+			if (rect) {
+				setAnchorRect(rect);
+			}
+		};
+		measure();
+		// capture phase so a scroll inside any panel between the input and the page is caught, not
+		// just one on the window itself
+		window.addEventListener('scroll', measure, true);
+		window.addEventListener('resize', measure);
+		return () => {
+			window.removeEventListener('scroll', measure, true);
+			window.removeEventListener('resize', measure);
+		}
+	}, [visible]);
+
+	/**
+	 * A percentage contextWidth is measured against the input rather than left to CSS: the popup is
+	 * fixed, so the browser would resolve `100%` against the viewport and render it a screen wide.
+	 */
+	const resolveContextWidth = (): number | string => {
+		if (contextWidth == undefined) {
+			return anchorRect == undefined ? "fit-content" : anchorRect.width + "px";
+		}
+		if (typeof contextWidth != "string") {
+			return contextWidth;
+		}
+		const percentage = /^\s*(\d+(?:\.\d+)?)%\s*$/.exec(contextWidth);
+		if (percentage && anchorRect != undefined) {
+			return anchorRect.width * (Number(percentage[1]) / 100) + "px";
+		}
+		return contextWidth;
+	}
+
+	const calculateLeftPosition = (width: number | string) => {
+		if (anchorRect == undefined) {
+			return 0;
+		}
+		// a popup sized off its content has no width to centre with, so it just starts at the input
+		const resolved = typeof width == "number" ? width : parseFloat(width);
+		if (isNaN(resolved)) {
+			return Math.max(0, anchorRect.left);
+		}
+		const offset = (resolved - anchorRect.width) / 2;
+		return Math.max(0, anchorRect.left - offset);
+	}
+
+	const isPosAbove = () => {
+		return anchorRect != undefined && anchorRect.top > window.innerHeight / 2;
+	}
+
+	const resolvedContextWidth = resolveContextWidth();
+
+	// A popup wider than its input (e.g. contextWidth="max-content") can run off the right of the
+	// viewport, so it is pulled back on once its rendered width is known. The width is what is
+	// tracked rather than the clamped left itself — clamping off the popup's own measured position
+	// would feed the correction back into the next measurement and never settle.
+	const [popupWidth, setPopupWidth] = useState<number | undefined>(undefined);
+
+	useLayoutEffect(() => {
+		if (!visible) {
+			setPopupWidth(undefined);
 			return;
 		}
 		const rect = dropdownRef.current?.getBoundingClientRect();
-		if (!rect) {
-			return;
+		if (rect) {
+			setPopupWidth(rect.width);
 		}
-		const overflow = rect.right - (window.innerWidth - 10);
-		if (overflow > 0) {
-			setClampedLeft(Math.max(10, rect.left - overflow));
+	}, [visible, queryItems.length, anchorRect, resolvedContextWidth]);
+
+	const calculateClampedLeft = () => {
+		const left = calculateLeftPosition(resolvedContextWidth);
+		if (popupWidth == undefined) {
+			return left;
 		}
-	}, [visible, queryItems.length]);
+		return Math.max(10, Math.min(left, window.innerWidth - 10 - popupWidth));
+	}
 
 	var dropdownWindowStyle: React.CSSProperties = {
-		display: visibleRef ? "flex" : "none",
+		display: "flex",
 		flexDirection: "column",
-		width: contextWidth == undefined ? generateFullWidth() : contextWidth,
+		width: resolvedContextWidth,
 		maxHeight: contextMaxHeight == undefined ? "200px" : contextMaxHeight,
-		left: clampedLeft == undefined ? calculateLeftPosition() : clampedLeft,
-		bottom: isPosAbove() ? getClientBottom() + getClientHeight() + 10 + "px" : "unset",
-		top: !isPosAbove() ? getClientTop() + getClientHeight() + 10 + "px" : "unset",
+		left: calculateClampedLeft(),
+		bottom: isPosAbove() && anchorRect != undefined ? (window.innerHeight - anchorRect.bottom) + anchorRect.height + 10 + "px" : "unset",
+		top: !isPosAbove() && anchorRect != undefined ? anchorRect.top + anchorRect.height + 10 + "px" : "unset",
 	}
 
 	var dropdownItemStyle: React.CSSProperties = {
@@ -592,8 +619,10 @@ export const Dropdown: React.FC<Props> = ({
 				}
 			</div>
 			<InputValidationMessage result={validationResult}></InputValidationMessage>
-			{visible &&
-				<div ref={dropdownRef} className="blue-orange-dropdown-window shadow" style={dropdownWindowStyle}>
+			{/* stays behind in the caller's tree so the portalled popup can still read the theme it was written inside */}
+			<span ref={anchorRef} style={{display: "none"}} aria-hidden="true"></span>
+			{visible && typeof document !== "undefined" && createPortal(
+				<div ref={dropdownRef} className={"blue-orange-dropdown-window shadow" + themeClass + (contextClassName ? " " + contextClassName : "")} style={dropdownWindowStyle}>
 					{filter &&
 						<div className="blue-orange-dropdown-window-filter-cont">
 							<Input placeholder={"Filter..."} style={{height: "32px", fontSize: "14px"}} disabled={disabled} onChange={handleFilterChange} focus={true}></Input>
@@ -618,8 +647,13 @@ export const Dropdown: React.FC<Props> = ({
 							</DropdownItemStyle>
 						))}
 					</div>
-				</div>
-			}
+				</div>,
+				// Portalled to the body so an ancestor with a transform, filter, will-change or
+				// contain — a modal or drawer card mid-animation, a virtualised panel — cannot become
+				// the containing block for the fixed popup and re-base the viewport coordinates it
+				// was positioned with.
+				document.body
+			)}
 		</div>
 
 
