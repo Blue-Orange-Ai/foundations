@@ -88,3 +88,16 @@
 .blue-orange-compound-badge-right > .blue-orange-compound-badge-remove:only-child{
     margin-left: 0;
 }
+
+.blue-orange-compound-badge-trailing{
+    display: flex;
+    align-items: center;
+    margin-left: 6px;
+    line-height: 0;
+    font-size: 14px;
+}
+
+/* the value is optional, so the gap only belongs there when something precedes it */
+.blue-orange-compound-badge-right > .blue-orange-compound-badge-trailing:first-child{
+    margin-left: 0;
+}

@@ -1,0 +1,18 @@
+
+
+/* Badge is a plain block, so it is laid out here rather than there — the chevron has to sit on the
+   label's baseline without the badge itself growing a flex row everywhere else it is used. */
+.blue-orange-dropdown-badge .blue-orange-badge{
+    display: inline-flex;
+    align-items: center;
+}
+
+.blue-orange-dropdown-badge-chevron{
+    margin-left: 4px;
+    font-size: 14px;
+    line-height: 0;
+}
+
+.blue-orange-dropdown-badge .blue-orange-badge > .blue-orange-dropdown-badge-chevron:first-child{
+    margin-left: 0;
+}

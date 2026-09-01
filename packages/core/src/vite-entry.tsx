@@ -165,6 +165,7 @@ export * from './components/inputs/dropdown/items/DropdownItemIcon/DropdownItemI
 export * from './components/inputs/dropdown/items/DropdownItemImage/DropdownItemImage'
 export * from './components/inputs/dropdown/items/DropdownItemStyle/DropdownItemStyle'
 export * from './components/inputs/dropdown/items/DropdownItemText/DropdownItemText'
+export * from './components/inputs/dropdown/trigger/DropdownTrigger'
 export * from './components/inputs/emoji/emoji-container/EmojiContainer'
 export * from './components/inputs/emoji/emoji-footer/EmojiFooter'
 export * from './components/inputs/emoji/emoji-group-header-txt/EmojiGroupHeaderTxt'
@@ -310,6 +311,8 @@ export * from './components/table/data-table/DataTable';
 // Text Decorations
 export * from './components/text-decorations/badge/Badge';
 export * from './components/text-decorations/compound-badge/CompoundBadge';
+export * from './components/text-decorations/dropdown-badge/DropdownBadge';
+export * from './components/text-decorations/dropdown-compound-badge/DropdownCompoundBadge';
 export * from './components/text-decorations/code-block/CodeBlock';
 export * from './components/text-decorations/currency/Currency';
 export * from './components/text-decorations/dates/date-display/DateDisplay';
@@ -318,6 +321,8 @@ export * from './components/text-decorations/form-heading/FormHeading';
 export * from './components/text-decorations/page-heading/PageHeading';
 export * from './components/text-decorations/percentage/Percentage';
 export * from './components/text-decorations/compound-tag/CompoundTag';
+export * from './components/text-decorations/dropdown-compound-tag/DropdownCompoundTag';
+export * from './components/text-decorations/dropdown-tag/DropdownTag';
 export * from './components/text-decorations/tag/Tag';
 export * from './components/text-decorations/telephone/TelephoneText';
 export * from './components/text-decorations/paragraph/Paragraph';
