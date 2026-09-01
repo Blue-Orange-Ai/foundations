@@ -4,6 +4,7 @@ import './SimpleTooltip.css'
 import {TippyHTMLElement} from "../../interfaces/AppInterfaces";
 import tippy from "tippy.js";
 import {TOOLTIP_Z_INDEX} from "../../utils/ZIndex";
+import {TOOLTIP_POPPER_OPTIONS} from "../../utils/Tooltip";
 
 interface Props {
 	children: React.ReactNode,
@@ -20,7 +21,8 @@ export const SimpleTooltip: React.FC<Props> = ({children, label}) => {
 			if (current) {
 				tippy(current, {
 					content: label,
-					zIndex: TOOLTIP_Z_INDEX
+					zIndex: TOOLTIP_Z_INDEX,
+					popperOptions: TOOLTIP_POPPER_OPTIONS
 				});
 
 				return () => {

@@ -13,12 +13,16 @@ export enum TimePrecision {
 interface Props {
 	selectedDate?: Date,
 	style: React.CSSProperties,
+	/** Extra classes for the popover root — DateInput re-applies the theme it was portalled out of. */
+	className?: string,
+	/** Ref onto the popover root, so the owner can measure it and tell its own clicks apart. */
+	contextRef?: React.Ref<HTMLDivElement>,
 	showTime?: boolean,
 	timePrecision?: TimePrecision,
 	onSelection: (date: Date) => void;
 }
 
-export const DateContextWindowSingle: React.FC<Props> = ({selectedDate, style, showTime=true,timePrecision=TimePrecision.MINUTE, onSelection}) => {
+export const DateContextWindowSingle: React.FC<Props> = ({selectedDate, style, className, contextRef, showTime=true,timePrecision=TimePrecision.MINUTE, onSelection}) => {
 
 	const padMinutesAndSeconds = (inputValue: string) => {
 		if (+inputValue >= 0 && +inputValue <= 59) {
@@ -187,7 +191,10 @@ export const DateContextWindowSingle: React.FC<Props> = ({selectedDate, style, s
 	}, [selectedDate]);
 
 	return (
-		<div className="blue-orange-date-picker-context-window-single animate__fadeIn" style={style}>
+		<div
+			ref={contextRef}
+			className={"blue-orange-date-picker-context-window-single animate__fadeIn" + (className ? " " + className : "")}
+			style={style}>
 			<Month
 				date={selectedDate}
 				onSelection={onSelection}

@@ -3,6 +3,7 @@ import tippy from "tippy.js";
 import UnicodeEmoji, {EmojiObj} from "../../emoji/data/UnicodeEmoji";
 import {EmojiList} from "../emojilist/EmojiList";
 import {TOOLTIP_Z_INDEX} from "../../../utils/ZIndex";
+import {TOOLTIP_POPPER_OPTIONS} from "../../../utils/Tooltip";
 
 export const fetchEmojiItems = (query: string): EmojiObj[] => {
     try {
@@ -38,7 +39,8 @@ export const renderEmojiSuggestions = (props: any, fetchEmojiItems: (query: stri
                 interactive: true,
                 trigger: 'manual',
                 theme: "blue-orange-rich-text-editor-mention-tippy",
-                zIndex: TOOLTIP_Z_INDEX
+                zIndex: TOOLTIP_Z_INDEX,
+                popperOptions: TOOLTIP_POPPER_OPTIONS
             });
         },
         onUpdate: async (props: any) => {

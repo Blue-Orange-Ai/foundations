@@ -1,14 +1,21 @@
+/* The popover is portalled to the body, so it stacks against the modal and drawer windows rather
+   than inside whichever card it was opened in — it has to out-rank those (99999999, see Modal.css /
+   Drawer.css) while staying under the toast layer, which owns the top of the stack. Matches the
+   dropdown window so the two popups keep the same layer. */
 .blue-orange-date-picker-context-window-single {
     padding: 4px;
     border: 1px solid var(--blue-orange-light-date-picker-border-color);
     position: fixed;
-    background-color: var( --blue-orange-light-date-picker-background-color);
-    z-index: 100000 !important;
+    background-color: var(--blue-orange-light-date-picker-background-color);
+    z-index: 999999999 !important;
 }
 
-.dark .blue-orange-date-picker-context-window-single {
+/* the `.dark` ancestor does not follow the popover out to the body, so DateInput re-applies the
+   class on the popover root itself — both selectors have to be matched */
+.dark .blue-orange-date-picker-context-window-single,
+.blue-orange-date-picker-context-window-single.dark {
     border: 1px solid var(--blue-orange-dark-date-picker-border-color);
-    background-color: 1px solid var(--blue-orange-light-date-picker-background-color);
+    background-color: var(--blue-orange-dark-date-picker-background-color);
 }
 
 .blue-orange-date-picker-time-input {
@@ -34,7 +41,7 @@
 
 .blue-orange-date-picker-context-time-input-group {
     height: 36px;
-    border: 1px solid var(--blue-orange-light-default-border-color);
+    border: 1px solid var(--blue-orange-light-input-border-color);
     padding-left: 5px;
     padding-right: 5px;
     border-radius: 4px;
@@ -52,4 +59,14 @@
 
 .blue-orange-date-picker-time-input {
     -moz-appearance: textfield;
+}
+
+.dark .blue-orange-date-picker-context-time-input-group {
+    border: 1px solid var(--blue-orange-dark-input-border-color);
+}
+
+/* the time boxes are bare inputs, so they inherit nothing from .blue-orange-input */
+.dark .blue-orange-date-picker-time-input {
+    background-color: transparent;
+    color: var(--blue-orange-dark-input-color);
 }

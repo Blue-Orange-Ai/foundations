@@ -1,0 +1,5 @@
+/* Wraps the field on its own so the calendar is placed off the input's rect — a label above it or a
+   validation message below it must not drag the popover away from the box it belongs to. */
+.blue-orange-date-picker-input-anchor {
+    width: 100%;
+}

@@ -4,6 +4,7 @@ import tippy from "tippy.js";
 import './PropertyHistogramItem.css'
 import {TippyHTMLElement} from "../../../interfaces/AppInterfaces";
 import {TOOLTIP_Z_INDEX} from "../../../utils/ZIndex";
+import {TOOLTIP_POPPER_OPTIONS} from "../../../utils/Tooltip";
 
 interface Props {
 	label: string;
@@ -37,7 +38,8 @@ export const PropertyHistogramItem: React.FC<Props> = ({
 		if (current && tooltip) {
 			tippy(current, {
 				content: formatPercentage(percentage),
-				zIndex: TOOLTIP_Z_INDEX
+				zIndex: TOOLTIP_Z_INDEX,
+				popperOptions: TOOLTIP_POPPER_OPTIONS
 			});
 
 			return () => {

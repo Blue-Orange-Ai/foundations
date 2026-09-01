@@ -4,6 +4,7 @@ import tippy from "tippy.js";
 // The sidebar creates these tooltips itself rather than the consumer opting in
 // to a tooltip component, so it has to bring the styling with it.
 import 'tippy.js/dist/tippy.css';
+import {TOOLTIP_POPPER_OPTIONS} from "../../utils/Tooltip";
 
 export interface SideBarContextValue {
 	/**
@@ -65,7 +66,8 @@ export const useSideBarCollapsedTooltip = (
 		const instance = tippy(current, {
 			content: label,
 			placement: "right",
-			zIndex: 999999999999999
+			zIndex: 999999999999999,
+			popperOptions: TOOLTIP_POPPER_OPTIONS
 		});
 
 		return () => {

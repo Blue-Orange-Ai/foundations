@@ -16,8 +16,10 @@
     font-size: 0.8rem;
 }
 
+/* the same resting border as every other input in dark mode — the light border variable read as a
+   near-white outline here, which made the closed dropdown look permanently focused */
 .dark .blue-orange-dropdown{
-    border: 1px solid var(--blue-orange-light-default-border-color);
+    border: 1px solid var(--blue-orange-dark-input-border-color);
     background-color: var(--blue-orange-dark-input-background-color);
 }
 

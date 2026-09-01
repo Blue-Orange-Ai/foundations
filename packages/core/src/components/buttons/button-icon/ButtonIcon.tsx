@@ -3,6 +3,7 @@ import tippy from "tippy.js";
 import {TippyHTMLElement} from "../../interfaces/AppInterfaces";
 import {ButtonSize} from "../button/Button";
 import {TOOLTIP_Z_INDEX} from "../../utils/ZIndex";
+import {TOOLTIP_POPPER_OPTIONS} from "../../utils/Tooltip";
 
 import './ButtonIcon.css'
 
@@ -53,6 +54,7 @@ export const ButtonIcon: React.FC<Props> = ({
 				tippy(current, {
 					content: label,
 					zIndex: TOOLTIP_Z_INDEX,
+					popperOptions: TOOLTIP_POPPER_OPTIONS
 				});
 
 				return () => {
