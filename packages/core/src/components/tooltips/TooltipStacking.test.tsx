@@ -9,6 +9,7 @@ vi.mock('tippy.js', () => ({
 }));
 
 import {TOOLTIP_Z_INDEX} from '../utils/ZIndex';
+import {TOOLTIP_POPPER_OPTIONS} from '../utils/Tooltip';
 import {HelpIcon} from '../inputs/help/HelpIcon';
 import {Button, ButtonType} from '../buttons/button/Button';
 import {Avatar} from '../avatar/avatar/Avatar';
@@ -48,5 +49,40 @@ describe('tooltip stacking against an open modal', () => {
 
         expect(tippyMock).toHaveBeenCalled();
         expect(optionsOfLastTippyCall().zIndex).toBe(TOOLTIP_Z_INDEX);
+    });
+});
+
+/*
+ * A modal window is `position: fixed`, so the field inside it does not move when the page behind
+ * scrolls. Popper's absolute strategy adds that page scroll back on to the reference's viewport
+ * rect, which put the tooltip a full scroll below the icon it belongs to — outside the modal
+ * entirely. The fixed strategy positions straight off the viewport rect instead.
+ */
+describe('tooltip placement against a reference inside a fixed overlay', () => {
+
+    beforeEach(() => {
+        tippyMock.mockClear();
+    });
+
+    it('positions tooltips with the fixed strategy', () => {
+        expect(TOOLTIP_POPPER_OPTIONS.strategy).toBe('fixed');
+    });
+
+    it('gives the help icon tooltip the fixed strategy', () => {
+        render(<HelpIcon label="Explains the field"/>);
+
+        expect(optionsOfLastTippyCall().popperOptions).toBe(TOOLTIP_POPPER_OPTIONS);
+    });
+
+    it('gives the button tooltip the fixed strategy', () => {
+        render(<Button text="Save" buttonType={ButtonType.PRIMARY} tooltip="Saves the form"/>);
+
+        expect(optionsOfLastTippyCall().popperOptions).toBe(TOOLTIP_POPPER_OPTIONS);
+    });
+
+    it('gives the avatar tooltip the fixed strategy', () => {
+        render(<Avatar tooltip={true}/>);
+
+        expect(optionsOfLastTippyCall().popperOptions).toBe(TOOLTIP_POPPER_OPTIONS);
     });
 });

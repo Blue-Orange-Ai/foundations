@@ -336,10 +336,15 @@ interface WeekObj {
 					<Paragraph>
 						This is the floating panel <code>DateInput</code> shows: a <code>Month</code> plus the time
 						boxes. It is <code>position: fixed</code> and takes a <b>required</b> <code>style</code>
-						prop, which is how the caller positions it — <code>DateInput</code> measures its own
-						bounding box and flips the panel above the field when the field sits in the lower half of
-						the viewport. If you use this component directly you own that positioning, and you own
-						closing it; it has no click-outside handling of its own.
+						prop, which is how the caller positions it — <code>DateInput</code> measures the field's
+						viewport rect, re-measures it on scroll, and flips the panel above the field when the
+						field sits in the lower half of the viewport. It also portals the panel to the body, so
+						an ancestor carrying a transform — a modal or drawer card — cannot become the containing
+						block for the fixed panel and re-base the coordinates it was placed with; that is what
+						<code>className</code> and <code>contextRef</code> are for, re-applying the theme the panel
+						was written inside and letting the owner measure it and recognise its own clicks. If you
+						use this component directly you own that positioning, and you own closing it; it has no
+						click-outside handling of its own.
 					</Paragraph>
 
 					<GeneralHeading>Week and Day — the primitives</GeneralHeading>

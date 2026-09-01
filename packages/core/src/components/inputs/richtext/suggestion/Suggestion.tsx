@@ -3,6 +3,7 @@ import {MentionList} from "../mentionlist/MentionList";
 import tippy from 'tippy.js'
 import {MentionItem} from "../default/RichText";
 import {TOOLTIP_Z_INDEX} from "../../../utils/ZIndex";
+import {TOOLTIP_POPPER_OPTIONS} from "../../../utils/Tooltip";
 import passport from "../../../config/BlueOrangePassportConfig";
 import {PublicUser, User, UserSearchPublicResult, UserSearchResult} from "@blue-orange-ai/foundations-clients";
 
@@ -60,7 +61,8 @@ export const renderSuggestions = (props: any, fetchMentionItems: (query: string)
                 interactive: true,
                 trigger: 'manual',
                 theme: "blue-orange-rich-text-editor-mention-tippy",
-                zIndex: TOOLTIP_Z_INDEX
+                zIndex: TOOLTIP_Z_INDEX,
+                popperOptions: TOOLTIP_POPPER_OPTIONS
             });
         },
         onUpdate: async (props: any) => {

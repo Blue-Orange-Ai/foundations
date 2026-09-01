@@ -4,6 +4,7 @@ import tippy from "tippy.js";
 import './HelpIcon.css'
 import {TippyHTMLElement} from "../../interfaces/AppInterfaces";
 import {TOOLTIP_Z_INDEX} from "../../utils/ZIndex";
+import {TOOLTIP_POPPER_OPTIONS} from "../../utils/Tooltip";
 
 interface Props {
 	label: string,
@@ -22,7 +23,8 @@ export const HelpIcon: React.FC<Props> = ({
 			if (current) {
 				tippy(current, {
 					content: label,
-					zIndex: TOOLTIP_Z_INDEX
+					zIndex: TOOLTIP_Z_INDEX,
+					popperOptions: TOOLTIP_POPPER_OPTIONS
 				});
 
 				return () => {

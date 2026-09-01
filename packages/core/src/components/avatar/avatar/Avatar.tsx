@@ -13,6 +13,7 @@ import {ModalHeader} from "../../layouts/modal/modal-header/ModalHeader";
 import {ModalDescription} from "../../layouts/modal/modal-description/ModalDescription";
 import {ModalBody} from "../../layouts/modal/modal-body/ModalBody";
 import {TOOLTIP_Z_INDEX} from "../../utils/ZIndex";
+import {TOOLTIP_POPPER_OPTIONS} from "../../utils/Tooltip";
 import {Avatar as AvatarObj, GroupPermission, Media, User, UserState} from "@blue-orange-ai/foundations-clients";
 
 
@@ -246,7 +247,8 @@ export const Avatar: React.FC<Props> = ({
 		if (current && tooltip) {
 			tippy(current, {
 				content: user ? user.name : "",
-				zIndex: TOOLTIP_Z_INDEX
+				zIndex: TOOLTIP_Z_INDEX,
+				popperOptions: TOOLTIP_POPPER_OPTIONS
 			});
 			return () => {
 				const tippyInstance = current._tippy;
