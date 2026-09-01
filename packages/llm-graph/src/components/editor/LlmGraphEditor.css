@@ -8,15 +8,57 @@
     position: relative;
 }
 
+/**
+ * The canvas and the configuration pane sit side by side: opening a node's
+ * configuration narrows the canvas rather than covering it.
+ */
+.bo-llm-graph-split {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    min-height: 0;
+    width: 100%;
+    overflow: hidden;
+}
+
 .bo-llm-graph-canvas {
     position: relative;
     flex-grow: 1;
+    min-width: 0;
     min-height: 0;
 }
 
 .bo-llm-graph-canvas .blue-orange-graph-parent {
     height: 100%;
     width: 100%;
+}
+
+.bo-llm-graph-split-handle {
+    flex-shrink: 0;
+    width: 5px;
+    cursor: col-resize;
+    background-color: var(--bo-llm-graph-border, #e0e1e2);
+    transition: background-color 0.12s ease;
+}
+
+.bo-llm-graph-split-handle:hover,
+body.bo-llm-graph-resizing .bo-llm-graph-split-handle {
+    background-color: var(--bo-llm-graph-accent, #4f6bed);
+}
+
+.bo-llm-graph-split-pane {
+    flex-shrink: 0;
+    height: 100%;
+    min-width: 0;
+    overflow: hidden;
+    background-color: var(--bo-llm-graph-panel, #ffffff);
+}
+
+/* While a drag is in flight, don't let the pointer select text or slip onto
+   the canvas and start panning it. */
+body.bo-llm-graph-resizing {
+    cursor: col-resize;
+    user-select: none;
 }
 
 .bo-llm-graph-issues {

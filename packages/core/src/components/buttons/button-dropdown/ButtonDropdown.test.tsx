@@ -141,3 +141,43 @@ describe('the buttons docs page', () => {
         expect(popupText).toContain('PDF document');
     });
 });
+
+// The class name used to be seeded into state at mount and only re-derived by an
+// effect keyed on [isLoading], so `isDisabled` never reached the DOM after the
+// first render — a dropdown mounted disabled stayed painted disabled however the
+// prop changed, while its trigger read the live prop.
+describe('ButtonDropdown disabled state', () => {
+
+    const trigger = () =>
+        document.querySelector('.blue-orange-button-dropdown-default-btn') as HTMLElement;
+    const isPaintedDisabled = () =>
+        trigger().classList.contains('blue-orange-button-dropdown-default-btn-disabled');
+
+    const Harness = ({start}: {start: boolean}) => {
+        const [disabled, setDisabled] = React.useState(start);
+        return (
+            <div>
+                <button data-testid="toggle" onClick={() => setDisabled(!start)}>toggle</button>
+                <ButtonDropdown text="Actions" buttonType={ButtonType.PRIMARY} isDisabled={disabled}>
+                    {items}
+                </ButtonDropdown>
+            </div>
+        );
+    };
+
+    it('stops painting disabled once isDisabled goes false', () => {
+        render(<Harness start={true}/>);
+        expect(isPaintedDisabled()).toBe(true);
+
+        fireEvent.click(screen.getByTestId('toggle'));
+        expect(isPaintedDisabled()).toBe(false);
+    });
+
+    it('starts painting disabled once isDisabled goes true', () => {
+        render(<Harness start={false}/>);
+        expect(isPaintedDisabled()).toBe(false);
+
+        fireEvent.click(screen.getByTestId('toggle'));
+        expect(isPaintedDisabled()).toBe(true);
+    });
+});

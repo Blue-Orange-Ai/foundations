@@ -1,3 +1,7 @@
+// The theme palette every component rule reads its colours from. Imported here so it is part
+// of the library build's CSS rather than only the dev app's.
+import './theme.css';
+
 // Accordion
 export * from './components/accordion/accordion/Accordion';
 export * from './components/accordion/accordion-body/AccordionBody';

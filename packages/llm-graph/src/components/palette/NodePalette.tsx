@@ -6,20 +6,29 @@ import './NodePalette.css';
 interface Props {
     onSelect: (type: WorkflowNodeType) => void;
     onClose: () => void;
+    /**
+     * True when there is a node selected that can own tools, so the nested
+     * kinds are offered alongside the free-standing ones.
+     */
+    allowNested?: boolean;
+    /** Display name of the node a nested kind would be attached to. */
+    parentLabel?: string;
 }
 
 /**
  * The add-node menu: a searchable, categorised list of node kinds (from the
  * {@link NODE_CATALOG_LIST}) presented as an overlay. Picking a kind places a
- * fresh node of that type on the canvas.
+ * fresh node of that type on the canvas. Nested kinds (tools) only appear while
+ * a node that can own one is selected, since they cannot stand on their own.
  */
-export const NodePalette: React.FC<Props> = ({ onSelect, onClose }) => {
+export const NodePalette: React.FC<Props> = ({ onSelect, onClose, allowNested, parentLabel }) => {
 
     const [query, setQuery] = useState<string>('');
 
     const term = query.trim().toLowerCase();
     const matches = (label: string, description: string) =>
         term === '' || label.toLowerCase().indexOf(term) !== -1 || description.toLowerCase().indexOf(term) !== -1;
+
 
     return (
         <div className="bo-llm-graph-palette-backdrop" onClick={onClose}>
@@ -28,7 +37,7 @@ export const NodePalette: React.FC<Props> = ({ onSelect, onClose }) => {
                     <i className="ri-search-line"></i>
                     <input
                         className="bo-llm-graph-palette-search"
-                        placeholder="Search nodes…"
+                        placeholder={'Search nodes…'}
                         autoFocus={true}
                         value={query}
                         onChange={(event) => setQuery(event.target.value)}
@@ -38,7 +47,9 @@ export const NodePalette: React.FC<Props> = ({ onSelect, onClose }) => {
                 <div className="bo-llm-graph-palette-body">
                     {NODE_CATEGORIES.map((category) => {
                         const entries = NODE_CATALOG_LIST.filter(
-                            (entry) => entry.category === category.id && matches(entry.label, entry.description));
+                            (entry) => entry.category === category.id
+                                && (!entry.nested || !!allowNested)
+                                && matches(entry.label, entry.description));
                         if (entries.length === 0) return null;
                         return (
                             <div className="bo-llm-graph-palette-group" key={category.id}>
@@ -57,7 +68,11 @@ export const NodePalette: React.FC<Props> = ({ onSelect, onClose }) => {
                                         </div>
                                         <div className="bo-llm-graph-palette-item-text">
                                             <div className="bo-llm-graph-palette-item-label">{entry.label}</div>
-                                            <div className="bo-llm-graph-palette-item-desc">{entry.description}</div>
+                                            <div className="bo-llm-graph-palette-item-desc">
+                                                {entry.nested && parentLabel
+                                                    ? `Attach to ${parentLabel}.`
+                                                    : entry.description}
+                                            </div>
                                         </div>
                                     </div>
                                 ))}

@@ -8,14 +8,28 @@
  * live edges while preserving each node's authored *config*. `validate` runs the
  * same integrity checks the agent enforces (acyclicity, resolvable
  * dependencies) so a graph is caught before it is saved or run.
+ *
+ * Tools are the one place where the editor model and the agent model differ.
+ * The editor holds a tool as its own node, pointing at its owner through
+ * `parent`; the definition the agent runs holds it as an entry in that owner's
+ * `tools` (inline declarations) or `tool_ids` (registry references). `expand`
+ * and `collapse` translate between the two, and `serialize` collapses before
+ * handing the definition off.
+ *
+ * A tool node is never a *canvas* node: it is drawn as a row inside its owner's
+ * box, which is what keeps a group indivisible. Only top-level nodes are
+ * projected onto the graph, and `reconcile` carries the tools across untouched.
  */
 import {
     WorkflowDefinition,
     WorkflowNode,
+    WorkflowTool,
     WorkflowValidationIssue,
 } from '../interfaces/WorkflowGraph';
-import { NodeHtml, NODE_HEIGHT, NODE_WIDTH } from './NodeHtml';
+import { canHostMemory, canHostTools, isNestedNode } from '../interfaces/NodeCatalog';
+import { NodeHtml } from './NodeHtml';
 import { NodeFactory } from './NodeFactory';
+import { WorkflowLayout } from './WorkflowLayout';
 
 /** A directed link derived from the definition's relational fields. */
 export interface LogicalEdge {
@@ -46,25 +60,46 @@ export class WorkflowSerializer {
             (id) => definition.nodes[id].type === 'task');
     }
 
-    /** Build primitives graph nodes (with card HTML + layout) for the canvas. */
+    /** The ids of every node that is placed free-standing on the canvas. */
+    public static topLevelIds(definition: WorkflowDefinition): Array<string> {
+        return Object.keys(definition.nodes).filter((id) => !isNestedNode(definition.nodes[id].type));
+    }
+
+    /** The memory node attached to `parentId`, if it has one. */
+    public static memoryOf(definition: WorkflowDefinition, parentId: string): WorkflowNode | undefined {
+        return WorkflowLayout.memoryOf(definition, parentId);
+    }
+
+    /** The tool nodes owned by `parentId`, in their authored order. */
+    public static toolsOf(definition: WorkflowDefinition, parentId: string): Array<WorkflowNode> {
+        return WorkflowLayout.toolsOf(definition, parentId);
+    }
+
+    /**
+     * Build the primitives graph nodes for the canvas. Only top-level nodes
+     * become graph nodes — an agent's memory store, its tools, and any tools
+     * scoped to those, are rows inside its box.
+     */
     public static toGraphNodes(definition: WorkflowDefinition): Array<any> {
-        const ids = Object.keys(definition.nodes);
-        return ids.map((id, index) => {
+        return WorkflowSerializer.topLevelIds(definition).map((id, index) => {
             const node = definition.nodes[id];
             const ui = (node.metadata && node.metadata.ui) || {};
-            const x = typeof ui.x === 'number' ? ui.x : 80 + (index % 4) * (NODE_WIDTH + 80);
-            const y = typeof ui.y === 'number' ? ui.y : 80 + Math.floor(index / 4) * (NODE_HEIGHT + 80);
+            const rows = WorkflowLayout.boxRows(definition, id);
+            const width = NodeHtml.width(node);
+            const height = NodeHtml.height(node, rows.length);
+            const x = typeof ui.x === 'number' ? ui.x : 80 + (index % 4) * (width + 80);
+            const y = typeof ui.y === 'number' ? ui.y : 80 + Math.floor(index / 4) * (height + 80);
             return {
                 id,
                 x,
                 y,
-                width: NODE_WIDTH,
-                height: NODE_HEIGHT,
+                width,
+                height,
                 border: '1px solid #e0e1e2',
                 borderSelected: '2px solid dodgerblue',
                 borderRadius: 10,
                 backgroundColour: 'white',
-                html: NodeHtml.build(node),
+                html: NodeHtml.build(node, { rows }),
                 movable: true,
                 deletable: true,
             };
@@ -113,6 +148,10 @@ export class WorkflowSerializer {
      * come from `graphNodes`/`graphEdges`; each surviving node keeps its authored
      * config, gets its position synced, and has its canvas-editable relations
      * (`depends_on` for tasks, `next` for steps) rebuilt from the edges.
+     *
+     * Tools are not on the canvas at all, so they are carried across from the
+     * previous definition — except those whose owner has been deleted, which go
+     * with it.
      */
     public static reconcile(
         definition: WorkflowDefinition,
@@ -146,7 +185,139 @@ export class WorkflowSerializer {
             }
         });
 
+        // Memory and tools live inside a box rather than on the canvas, so they
+        // survive reconciliation as long as the owner whose box they sit in does.
+        Object.keys(definition.nodes).forEach((id) => {
+            const node = definition.nodes[id];
+            if (!isNestedNode(node.type)) return;
+            if (node.parent && nextNodes[node.parent]) nextNodes[id] = node;
+        });
+
         return { ...definition, nodes: nextNodes };
+    }
+
+    /**
+     * Turn an agent-shaped definition into the editor's shape: an agent's
+     * `memory` becomes a memory node, every entry in its `tools` / `tool_ids`
+     * becomes a tool node, and so does every tool a tool scopes to itself, all
+     * the way down. Safe to call on a definition that already holds them.
+     */
+    public static expand(definition: WorkflowDefinition): WorkflowDefinition {
+        const nodes: Record<string, WorkflowNode> = {};
+        Object.keys(definition.nodes).forEach((id) => { nodes[id] = { ...definition.nodes[id] }; });
+
+        const expanded: WorkflowDefinition = { ...definition, nodes };
+        Object.keys(definition.nodes).forEach((id) => {
+            const node = nodes[id];
+            if (isNestedNode(node.type)) return;
+
+            if (canHostMemory(node.type) && node.memory) {
+                const memoryNode = NodeFactory.createMemory(id, expanded);
+                memoryNode.memory = JSON.parse(JSON.stringify(node.memory));
+                nodes[memoryNode.id] = memoryNode;
+                // The memory node is the source of truth from here on.
+                node.memory = undefined;
+            }
+
+            if (!canHostTools(node.type)) return;
+            WorkflowSerializer.expandInto(expanded, id, node.tools || [], node.tool_ids || []);
+            // The tool nodes are the source of truth from here on.
+            node.tools = [];
+            node.tool_ids = [];
+        });
+        return expanded;
+    }
+
+    /** Create the tool nodes for one owner, then recurse into each of them. */
+    private static expandInto(
+        expanded: WorkflowDefinition,
+        parentId: string,
+        inline: Array<WorkflowTool>,
+        references: Array<string>,
+    ): void {
+        inline.forEach((tool) => {
+            const toolNode = NodeFactory.createTool(parentId, expanded, tool.name);
+            toolNode.description = tool.description || '';
+            toolNode.parameters = tool.parameters ? tool.parameters.slice() : [];
+            if (toolNode.metadata && toolNode.metadata.ui) toolNode.metadata.ui.label = tool.name;
+            expanded.nodes[toolNode.id] = toolNode;
+            // Tools this tool scopes to itself become rows nested under it.
+            WorkflowSerializer.expandInto(
+                expanded, toolNode.id, tool.tools || [], tool.tool_ids || []);
+        });
+        references.forEach((reference) => {
+            const toolNode = NodeFactory.createTool(parentId, expanded, reference);
+            toolNode.tool_ref = reference;
+            if (toolNode.metadata && toolNode.metadata.ui) toolNode.metadata.ui.label = reference;
+            expanded.nodes[toolNode.id] = toolNode;
+        });
+    }
+
+    /**
+     * The inverse of {@link expand}: fold each memory node back into its
+     * owner's `memory`, and every tool node back into its owner's `tools` /
+     * `tool_ids` — nested tools included, as the `tools` of the tool that
+     * scopes them — then drop them from `nodes`, leaving a definition the
+     * agent's workflow engine understands.
+     *
+     * An agent with no tool nodes keeps whatever it already declares, so
+     * collapsing a definition that is already in the agent's shape leaves it
+     * untouched rather than emptying its tool lists.
+     */
+    public static collapse(definition: WorkflowDefinition): WorkflowDefinition {
+        const nodes: Record<string, WorkflowNode> = {};
+        WorkflowSerializer.topLevelIds(definition).forEach((id) => {
+            nodes[id] = { ...definition.nodes[id] };
+        });
+
+        Object.keys(nodes).forEach((id) => {
+            const node = nodes[id];
+
+            // A node with no memory node keeps whatever it already declares, so
+            // collapsing an already-collapsed definition leaves it untouched.
+            const memory = WorkflowLayout.memoryOf(definition, id);
+            if (memory && memory.memory) node.memory = memory.memory;
+
+            if (!canHostTools(node.type)) return;
+            if (WorkflowSerializer.toolsOf(definition, id).length === 0) return;
+            const folded = WorkflowSerializer.foldTools(definition, id);
+            node.tools = folded.tools;
+            node.tool_ids = folded.tool_ids;
+        });
+
+        return { ...definition, nodes };
+    }
+
+    /** Fold one owner's tool nodes into declarations, recursing into each. */
+    private static foldTools(
+        definition: WorkflowDefinition,
+        parentId: string,
+        seen: Set<string> = new Set<string>(),
+    ): { tools: Array<WorkflowTool>; tool_ids: Array<string> } {
+        const tools: Array<WorkflowTool> = [];
+        const toolIds: Array<string> = [];
+
+        WorkflowSerializer.toolsOf(definition, parentId).forEach((tool) => {
+            // A `parent` chain that loops would recurse forever.
+            if (seen.has(tool.id)) return;
+            seen.add(tool.id);
+
+            if (tool.tool_ref) {
+                toolIds.push(tool.tool_ref);
+                return;
+            }
+            const declaration: WorkflowTool = {
+                name: tool.name || tool.id,
+                description: tool.description || undefined,
+                parameters: (tool.parameters || []).slice(),
+            };
+            const scoped = WorkflowSerializer.foldTools(definition, tool.id, seen);
+            if (scoped.tools.length > 0) declaration.tools = scoped.tools;
+            if (scoped.tool_ids.length > 0) declaration.tool_ids = scoped.tool_ids;
+            tools.push(declaration);
+        });
+
+        return { tools, tool_ids: toolIds };
     }
 
     /** Client-side integrity checks mirroring the agent's validation. */
@@ -183,6 +354,56 @@ export class WorkflowSerializer {
             if (node.type === 'router' && (!node.routes || node.routes.length === 0)) {
                 issues.push({ nodeId: id, message: `Router '${id}' has no routes.`, severity: 'error' });
             }
+            if (node.type === 'memory') {
+                const parent = node.parent ? definition.nodes[node.parent] : undefined;
+                if (!parent) {
+                    issues.push({ nodeId: id, message: `Memory '${id}' is not attached to a node.`, severity: 'error' });
+                } else if (!canHostMemory(parent.type)) {
+                    issues.push({ nodeId: id, message: `Memory '${id}' may only sit under an agent node.`, severity: 'error' });
+                }
+                WorkflowSerializer.memoryIssues(id, node).forEach((issue) => issues.push(issue));
+            }
+            if (node.type === 'tool') {
+                const parent = node.parent ? definition.nodes[node.parent] : undefined;
+                if (!parent) {
+                    issues.push({ nodeId: id, message: `Tool '${id}' is not attached to an agent.`, severity: 'error' });
+                } else if (!canHostTools(parent.type)) {
+                    issues.push({ nodeId: id, message: `Tool '${id}' may only sit under an agent node or another tool.`, severity: 'error' });
+                }
+                if (!node.tool_ref && !(node.name || '').trim()) {
+                    issues.push({ nodeId: id, message: `Tool '${id}' has no name.`, severity: 'error' });
+                }
+                // A registry reference is declared elsewhere, so anything scoped
+                // under it here has nowhere to serialise to.
+                if (node.tool_ref && WorkflowSerializer.toolsOf(definition, id).length > 0) {
+                    issues.push({
+                        nodeId: id,
+                        message: `Tool '${id}' references the registry tool '${node.tool_ref}', so it cannot scope tools of its own.`,
+                        severity: 'error',
+                    });
+                }
+            }
+        });
+
+        WorkflowSerializer.topLevelIds(definition).forEach((parentId) => {
+            const stores = Object.keys(definition.nodes)
+                .filter((id) => definition.nodes[id].type === 'memory'
+                    && definition.nodes[id].parent === parentId);
+            if (stores.length > 1) {
+                issues.push({
+                    nodeId: parentId,
+                    message: `'${parentId}' has ${stores.length} memory stores; an agent may only have one.`,
+                    severity: 'error',
+                });
+            }
+        });
+
+        WorkflowSerializer.duplicateToolNames(definition).forEach((duplicate) => {
+            issues.push({
+                nodeId: duplicate.parentId,
+                message: `'${duplicate.parentId}' has more than one tool named '${duplicate.name}'.`,
+                severity: 'error',
+            });
         });
 
         if (!dag && !definition.start) {
@@ -199,6 +420,62 @@ export class WorkflowSerializer {
             }
         }
         return issues;
+    }
+
+    /** Whether a memory node names a store the agent can actually reach. */
+    private static memoryIssues(id: string, node: WorkflowNode): Array<WorkflowValidationIssue> {
+        const issues: Array<WorkflowValidationIssue> = [];
+        const memory = node.memory;
+        if (!memory) {
+            issues.push({ nodeId: id, message: `Memory '${id}' has no store configured.`, severity: 'error' });
+            return issues;
+        }
+        if (memory.provider !== 'postgres') return issues;
+
+        const connection = memory.postgres || {};
+        const uri = (connection.uri || '').trim();
+        if (!uri && !(connection.host || '').trim()) {
+            issues.push({
+                nodeId: id,
+                message: `Memory '${id}' needs a connection URI, or a host to build one from.`,
+                severity: 'error',
+            });
+        }
+        if (!uri && !(connection.database || '').trim()) {
+            issues.push({ nodeId: id, message: `Memory '${id}' has no database set.`, severity: 'error' });
+        }
+        if (!(connection.table || '').trim()) {
+            issues.push({ nodeId: id, message: `Memory '${id}' has no table set.`, severity: 'warning' });
+        }
+        // A definition is stored and exported as plain JSON, so an inline
+        // password would travel with it.
+        if (/^[a-z+]+:\/\/[^/@]*:[^/@]+@/i.test(uri)) {
+            issues.push({
+                nodeId: id,
+                message: `Memory '${id}' has a password inside its connection URI. Name a secret instead — the definition is saved as plain text.`,
+                severity: 'warning',
+            });
+        }
+        return issues;
+    }
+
+    /** Tool names claimed twice on the same agent (the model can't tell them apart). */
+    private static duplicateToolNames(
+        definition: WorkflowDefinition,
+    ): Array<{ parentId: string; name: string }> {
+        const duplicates: Array<{ parentId: string; name: string }> = [];
+        // Every owner is checked, so two tools scoped to the same tool clash
+        // just as two tools on the same agent do.
+        Object.keys(definition.nodes).forEach((parentId) => {
+            const seen = new Set<string>();
+            WorkflowSerializer.toolsOf(definition, parentId).forEach((tool) => {
+                const name = tool.tool_ref || tool.name || '';
+                if (!name) return;
+                if (seen.has(name)) duplicates.push({ parentId, name });
+                seen.add(name);
+            });
+        });
+        return duplicates;
     }
 
     /** Task ids in dependency order, or `null` if the DAG has a cycle. */
@@ -246,7 +523,7 @@ export class WorkflowSerializer {
 
     /** The definition ready to POST to the agent (`/workflows`). */
     public static serialize(definition: WorkflowDefinition): WorkflowDefinition {
-        return JSON.parse(JSON.stringify(definition));
+        return JSON.parse(JSON.stringify(WorkflowSerializer.collapse(definition)));
     }
 
     /** Pretty-printed JSON of the definition. */

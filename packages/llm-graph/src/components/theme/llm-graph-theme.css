@@ -27,17 +27,21 @@
     --bo-llm-graph-accent: #7b91f5;
 }
 
-/* --- Node card ------------------------------------------------------- */
+/* --- Node box -------------------------------------------------------- */
+/*
+ * Every node renders as a box. An agent that owns tools grows a "well" below
+ * its header holding one row per tool, and that whole box is the graph node —
+ * which is what makes links attach to the outside of the group, and what keeps
+ * a tool from ever being dragged out of it.
+ */
 .bo-llm-graph-node {
     --bo-node-accent: #4f6bed;
     position: relative;
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
     height: 100%;
     width: 100%;
     box-sizing: border-box;
-    padding: 12px 14px 12px 20px;
     background-color: var(--bo-llm-graph-panel, #ffffff);
     color: var(--bo-llm-graph-text, #1c1d22);
     overflow: hidden;
@@ -50,6 +54,20 @@
     bottom: 0;
     width: 6px;
     background-color: var(--bo-node-accent);
+}
+
+.bo-llm-graph-node-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    height: 92px;
+    box-sizing: border-box;
+    padding: 12px 14px 12px 20px;
+}
+
+.bo-llm-graph-node-boxed .bo-llm-graph-node-header {
+    border-bottom: 1px solid var(--bo-llm-graph-subtle, #f2f3f6);
 }
 
 .bo-llm-graph-node-icon {
@@ -90,6 +108,171 @@
 
 .bo-llm-graph-node-subtitle {
     font-size: 0.75rem;
+    color: var(--bo-llm-graph-muted, #6b7280);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- Inline "add tool" button ---------------------------------------- */
+.bo-llm-graph-node-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    height: 26px;
+    width: 26px;
+    border-radius: 50%;
+    font-size: 15px;
+    cursor: pointer;
+    color: var(--bo-llm-graph-muted, #6b7280);
+    border: 1px dashed var(--bo-llm-graph-border, #e0e1e2);
+    background-color: var(--bo-llm-graph-panel, #ffffff);
+}
+
+.bo-llm-graph-node-action:hover {
+    color: #ffffff;
+    border-style: solid;
+    border-color: var(--bo-node-accent);
+    background-color: var(--bo-node-accent);
+}
+
+/* --- The well holding an agent's tools -------------------------------- */
+.bo-llm-graph-node-well {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-grow: 1;
+    box-sizing: border-box;
+    padding: 12px;
+    padding-left: 20px;
+    background-color: var(--bo-llm-graph-subtle, #f7f7f9);
+}
+
+.bo-llm-graph-tool-row {
+    --bo-tool-accent: #d9730d;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    height: 58px;
+    box-sizing: border-box;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--bo-llm-graph-border, #e0e1e2);
+    background-color: var(--bo-llm-graph-panel, #ffffff);
+}
+
+.bo-llm-graph-tool-row:hover {
+    border-color: var(--bo-tool-accent);
+}
+
+.bo-llm-graph-tool-row[data-bo-selected="true"] {
+    border-color: var(--bo-tool-accent);
+    box-shadow: inset 0 0 0 1px var(--bo-tool-accent);
+}
+
+/* The memory store: same row shape as a tool, in its own accent, and marked
+   off from the tools listed under it. */
+.bo-llm-graph-memory-row {
+    border-style: solid;
+    border-color: var(--bo-tool-accent);
+    background-color: color-mix(in srgb, var(--bo-tool-accent) 6%, var(--bo-llm-graph-panel, #ffffff));
+}
+
+/* color-mix is recent; the plain panel background is the fallback. */
+@supports not (background-color: color-mix(in srgb, red 6%, blue)) {
+    .bo-llm-graph-memory-row {
+        background-color: var(--bo-llm-graph-panel, #ffffff);
+    }
+}
+
+/* --- Tree lines for nested rows --------------------------------------
+ * A scoped tool is joined to the tool that owns it by an elbow, with a
+ * vertical run for every ancestor level that still has rows below. The lines
+ * are drawn to bleed into the gap between rows so they read as continuous.
+ */
+.bo-llm-graph-row-guide,
+.bo-llm-graph-row-elbow {
+    position: absolute;
+    pointer-events: none;
+    border-color: var(--bo-llm-graph-border, #e0e1e2);
+}
+
+/* An ancestor level whose subtree continues below this row. */
+.bo-llm-graph-row-guide {
+    top: -9px;
+    bottom: -9px;
+    width: 0;
+    border-left: 1px solid var(--bo-llm-graph-border, #e0e1e2);
+}
+
+/* This row's own level, continuing on to a following sibling. */
+.bo-llm-graph-row-guide-below {
+    top: 50%;
+}
+
+/* Down from the parent above, then across into this row. */
+.bo-llm-graph-row-elbow {
+    top: -9px;
+    height: calc(50% + 9px);
+    width: 8px;
+    border-left: 1px solid var(--bo-llm-graph-border, #e0e1e2);
+    border-bottom: 1px solid var(--bo-llm-graph-border, #e0e1e2);
+    border-bottom-left-radius: 5px;
+}
+
+/* The lines pick up the row's accent while it is selected. Hovering leaves them
+   alone — the row's own border is the hover cue. */
+.bo-llm-graph-tool-row[data-bo-selected="true"] .bo-llm-graph-row-elbow {
+    border-color: var(--bo-tool-accent);
+}
+
+/* The row's own "+" scopes a further tool to it; it only shows on hover so a
+   deep tree doesn't read as a wall of buttons. */
+.bo-llm-graph-tool-row-action {
+    height: 22px;
+    width: 22px;
+    font-size: 13px;
+    opacity: 0;
+}
+
+.bo-llm-graph-tool-row:hover .bo-llm-graph-tool-row-action,
+.bo-llm-graph-tool-row[data-bo-selected="true"] .bo-llm-graph-tool-row-action {
+    opacity: 1;
+}
+
+.bo-llm-graph-tool-row-icon {
+    height: 28px;
+    width: 28px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: var(--bo-tool-accent);
+}
+
+.bo-llm-graph-tool-row-body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex-grow: 1;
+}
+
+.bo-llm-graph-tool-row-name {
+    font-weight: 600;
+    font-size: 0.86rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bo-llm-graph-tool-row-desc {
+    font-size: 0.7rem;
     color: var(--bo-llm-graph-muted, #6b7280);
     white-space: nowrap;
     overflow: hidden;

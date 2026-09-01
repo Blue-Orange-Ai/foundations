@@ -6,7 +6,7 @@
  */
 import { WorkflowNode, WorkflowNodeType } from './WorkflowGraph';
 
-export type NodeCategory = 'agents' | 'logic' | 'terminals';
+export type NodeCategory = 'agents' | 'tools' | 'memory' | 'logic' | 'terminals';
 
 export interface NodeCatalogEntry {
     type: WorkflowNodeType;
@@ -19,6 +19,11 @@ export interface NodeCatalogEntry {
     color: string;
     /** Field defaults merged into a freshly created node of this type. */
     defaults: Partial<WorkflowNode>;
+    /**
+     * True when the kind may only exist nested under a parent node (a `tool`
+     * under an agent), never as a free-standing node on the canvas.
+     */
+    nested?: boolean;
 }
 
 export const NODE_CATALOG: Record<WorkflowNodeType, NodeCatalogEntry> = {
@@ -92,6 +97,32 @@ export const NODE_CATALOG: Record<WorkflowNodeType, NodeCatalogEntry> = {
             until: '',
         },
     },
+    tool: {
+        type: 'tool',
+        label: 'Tool',
+        description: 'A function the agent may call mid-conversation.',
+        category: 'tools',
+        icon: 'ri-tools-line',
+        color: '#d9730d',
+        nested: true,
+        defaults: {
+            name: '',
+            description: '',
+            parameters: [],
+        },
+    },
+    memory: {
+        type: 'memory',
+        label: 'Memory',
+        description: 'A store the agent recalls from and writes back to.',
+        category: 'memory',
+        icon: 'ri-database-2-line',
+        color: '#7c5cbf',
+        nested: true,
+        defaults: {
+            memory: { provider: 'postgres', write: true, recall_limit: 20, postgres: {} },
+        },
+    },
     end: {
         type: 'end',
         label: 'End',
@@ -119,6 +150,8 @@ export const NODE_CATALOG: Record<WorkflowNodeType, NodeCatalogEntry> = {
 export const NODE_CATALOG_LIST: Array<NodeCatalogEntry> = [
     NODE_CATALOG.task,
     NODE_CATALOG.step,
+    NODE_CATALOG.tool,
+    NODE_CATALOG.memory,
     NODE_CATALOG.router,
     NODE_CATALOG.gate,
     NODE_CATALOG.loop,
@@ -128,6 +161,8 @@ export const NODE_CATALOG_LIST: Array<NodeCatalogEntry> = [
 
 export const NODE_CATEGORIES: Array<{ id: NodeCategory; label: string }> = [
     { id: 'agents', label: 'Agents' },
+    { id: 'tools', label: 'Tools' },
+    { id: 'memory', label: 'Memory' },
     { id: 'logic', label: 'Logic' },
     { id: 'terminals', label: 'Terminals' },
 ];
@@ -138,6 +173,42 @@ export const AGENT_NODE_TYPES: Array<WorkflowNodeType> = ['task', 'step', 'route
 export function isAgentNode(type: WorkflowNodeType): boolean {
     return AGENT_NODE_TYPES.indexOf(type) !== -1;
 }
+
+/** True for the editor-only `tool` node kind. */
+export function isToolNode(type: WorkflowNodeType): boolean {
+    return type === 'tool';
+}
+
+/** True for the editor-only `memory` node kind. */
+export function isMemoryNode(type: WorkflowNodeType): boolean {
+    return type === 'memory';
+}
+
+/** True for the kinds that are drawn as a row inside another node's box. */
+export function isNestedNode(type: WorkflowNodeType): boolean {
+    return isToolNode(type) || isMemoryNode(type);
+}
+
+/**
+ * True when a node of this kind may be given a memory store. Only the kinds
+ * that run an agent have a turn to recall into and write back from.
+ */
+export function canHostMemory(type: WorkflowNodeType): boolean {
+    return isAgentNode(type);
+}
+
+/**
+ * True when a node of this kind may own tools — the kinds that run an agent,
+ * and tools themselves, whose children are scoped so that only that tool can
+ * call them.
+ */
+export function canHostTools(type: WorkflowNodeType): boolean {
+    return isAgentNode(type) || isToolNode(type);
+}
+
+/** The kinds that may be placed free-standing on the canvas. */
+export const TOP_LEVEL_NODE_TYPES: Array<WorkflowNodeType> =
+    NODE_CATALOG_LIST.filter((entry) => !entry.nested).map((entry) => entry.type);
 
 export function catalogFor(type: WorkflowNodeType): NodeCatalogEntry {
     return NODE_CATALOG[type] || NODE_CATALOG.task;

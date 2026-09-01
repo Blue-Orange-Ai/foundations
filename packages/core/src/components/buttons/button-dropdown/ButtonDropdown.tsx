@@ -111,51 +111,44 @@ export const ButtonDropdown: React.FC<Props> = ({
 
 	const defaultStyle = generateDefaultStyle()
 
-	const loadingClassName = isDisabled || isLoading ? defaultStyle + " blue-orange-button-dropdown-default-btn-disabled" : defaultStyle;
-
-	const [btnClassname, setBtnClassname] = useState(loadingClassName);
-
-
-	useEffect(() => {
-		setBtnClassname(isDisabled || isLoading ? defaultStyle + " blue-orange-button-dropdown-default-btn-disabled" : defaultStyle)
-	}, [isLoading]);
+	// Derived on every render, never stored — see the note in Button.tsx. Held in
+	// state and re-derived by an effect keyed on [isLoading] alone, `isDisabled`
+	// never reached the DOM after the first render, so a dropdown mounted
+	// disabled stayed painted disabled however the prop changed.
+	const btnClassname = errorAnimation
+		? "blue-orange-button-dropdown-default-btn no-select blue-orange-button-dropdown-danger-btn"
+		: successAnimation
+			? "blue-orange-button-dropdown-default-btn no-select blue-orange-button-dropdown-success-btn"
+			: isDisabled || isLoading
+				? defaultStyle + " blue-orange-button-dropdown-default-btn-disabled"
+				: defaultStyle;
 
 	useEffect(() => {
 		if (isSuccess && successClear) {
 			setSuccessAnimation(true);
-			setBtnClassname("blue-orange-button-dropdown-default-btn no-select blue-orange-button-dropdown-success-btn")
-			setTimeout(() => {
-				setBtnClassname(isDisabled || isLoading ? defaultStyle + " blue-orange-button-dropdown-default-btn-disabled" : defaultStyle)
+			const timer = setTimeout(() => {
 				setSuccessAnimation(false);
 				if (onSuccessAnimationComplete) {
 					onSuccessAnimationComplete();
 				}
 			}, successClearAnimationTime)
-		} else if (isSuccess && !successClear) {
-			setBtnClassname("blue-orange-button-dropdown-default-btn no-select blue-orange-button-dropdown-success-btn")
-			setSuccessAnimation(isSuccess);
-		} else if (!isSuccess && !successClear) {
-			setBtnClassname(isDisabled || isLoading ? defaultStyle + " blue-orange-button-dropdown-default-btn-disabled" : defaultStyle)
+			return () => clearTimeout(timer);
+		} else if (!successClear) {
 			setSuccessAnimation(isSuccess);
 		}
 	}, [isSuccess]);
 
 	useEffect(() => {
 		if (isError && errorClear) {
-			setBtnClassname("blue-orange-button-dropdown-default-btn no-select blue-orange-button-dropdown-danger-btn")
 			setErrorAnimation(true);
-			setTimeout(() => {
-				setBtnClassname(isDisabled || isLoading ? defaultStyle + " blue-orange-button-dropdown-default-btn-disabled" : defaultStyle)
+			const timer = setTimeout(() => {
 				setErrorAnimation(false);
 				if (onErrorAnimationComplete) {
 					onErrorAnimationComplete();
 				}
 			}, errorClearAnimationTime)
-		} else if (isError && !errorClear) {
-			setBtnClassname("blue-orange-button-dropdown-default-btn no-select blue-orange-button-dropdown-danger-btn")
-			setErrorAnimation(isError);
-		} else if (!isError && !errorClear) {
-			setBtnClassname(isDisabled || isLoading ? defaultStyle + " blue-orange-button-dropdown-default-btn-disabled" : defaultStyle)
+			return () => clearTimeout(timer);
+		} else if (!errorClear) {
 			setErrorAnimation(isError);
 		}
 	}, [isError]);
