@@ -1,0 +1,44 @@
+.bo-llm-graph-params-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.bo-llm-graph-params-editor-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.bo-llm-graph-params-editor-empty {
+    font-size: 0.8rem;
+    opacity: 0.6;
+    font-style: italic;
+}
+
+.bo-llm-graph-param-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid var(--bo-llm-graph-border, #e0e1e2);
+    border-radius: 8px;
+    position: relative;
+}
+
+.bo-llm-graph-param-required {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 0.85rem;
+}
+
+.bo-llm-graph-param-remove {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.bo-llm-graph-params-editor-add {
+    padding-top: 4px;
+}

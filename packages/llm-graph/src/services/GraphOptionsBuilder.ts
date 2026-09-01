@@ -4,6 +4,11 @@
  * control toolbar (centre, add-node, auto-arrange, zoom). The control `action`
  * callbacks receive the live `BlueOrangeGraph` instance, matching the pattern in
  * `pipelines-client`'s `PipelineEditor`.
+ *
+ * The flow reads top-to-bottom by default, so links are drawn and created from
+ * a node's bottom edge and the arrange controls hand back to the editor's own
+ * block layout (which the graph's generic ELK arrange can't do, because it
+ * knows nothing about tools nested inside a group).
  */
 import {
     BlueOrangeBezierEdge,
@@ -11,10 +16,13 @@ import {
     BlueOrangeStraightEdge,
 } from '@blue-orange-ai/primitives-graph';
 import { NODE_HEIGHT, NODE_WIDTH } from './NodeHtml';
+import { LayoutDirection } from './WorkflowLayout';
 
 export interface GraphOptionsHandlers {
     /** Called when the toolbar "add node" button is pressed. */
     onAddNode?: () => void;
+    /** Called when one of the auto-layout buttons is pressed. */
+    onAutoLayout?: (direction: LayoutDirection) => void;
 }
 
 export class GraphOptionsBuilder {
@@ -44,7 +52,9 @@ export class GraphOptionsBuilder {
                     straight: BlueOrangeStraightEdge,
                 },
                 defaultType: 'bezier',
-                creationAnchorPos: 'right',
+                // The flow runs downwards, so a dragged-out link starts at the
+                // bottom of the node rather than its right-hand edge.
+                creationAnchorPos: 'bottom',
             },
             zoom: { min: 0.25, max: 3, step: 0.1 },
             position: { scale: 1, top: 0, left: 0 },
@@ -66,9 +76,8 @@ export class GraphOptionsBuilder {
                         icon: '<i class="ri-node-tree"></i>',
                         tooltip: 'Auto-layout (top-down)',
                         marginLeft: 0, marginRight: 0, marginBottom: 0, marginTop: 0,
-                        action: (graph: any) => {
-                            graph.arrange('elk', 'layered', 'down', 120);
-                            graph.centre();
+                        action: () => {
+                            if (handlers.onAutoLayout) handlers.onAutoLayout('vertical');
                         },
                     },
                     {
@@ -77,9 +86,8 @@ export class GraphOptionsBuilder {
                         icon: '<i class="ri-arrow-right-double-line"></i>',
                         tooltip: 'Auto-layout (left-to-right)',
                         marginLeft: 0, marginRight: 0, marginBottom: 0, marginTop: 0,
-                        action: (graph: any) => {
-                            graph.arrange('elk', 'layered', 'right', 120);
-                            graph.centre();
+                        action: () => {
+                            if (handlers.onAutoLayout) handlers.onAutoLayout('horizontal');
                         },
                     },
                     {

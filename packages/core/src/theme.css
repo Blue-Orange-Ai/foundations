@@ -1,0 +1,688 @@
+/* The theme palette and the shared component rules that go with it.
+   Imported by `vite-entry.tsx` as well as the dev app, so the published `dist/style.css`
+   carries the variables its component rules reference — a consumer that only imports
+   `@blue-orange-ai/foundations-core/dist/style.css` used to get every component rule with
+   none of the variables behind it, which resolved `var(--blue-orange-*)` to nothing and
+   left backgrounds, borders and text colours unset. */
+
+:root {
+  /* Sidebar palette. The neutral ramp is the one the shadcn sidebar is built
+     on, so the rail reads as a surface a shade off the page rather than a
+     panel with its own colour. */
+  --blue-orange-light-sidebar-border-color: #e5e5e5;
+  --blue-orange-light-sidebar-background-color: #fafafa;
+  --blue-orange-dark-sidebar-border-color: #262626;
+  --blue-orange-dark-sidebar-background-color: #171717;
+
+  --blue-orange-light-sidebar-control-color: #a1a1a1;
+  --blue-orange-dark-sidebar-control-color: #737373;
+
+  --blue-orange-light-sidebar-body-item-text-color: #0a0a0a;
+  --blue-orange-dark-sidebar-body-item-text-color: #fafafa;
+
+  /* One accent drives both hover and the selected item; the selected item is
+     told apart by its weight, not by a second background. */
+  --blue-orange-light-sidebar-body-item-hover-color: #f0f0f0;
+  --blue-orange-dark-sidebar-body-item-hover-color: #262626;
+
+  /* Group labels and empty states. */
+  --blue-orange-light-sidebar-muted-text-color: #737373;
+  --blue-orange-dark-sidebar-muted-text-color: #a1a1a1;
+
+  --blue-orange-light-sidebar-ring-color: #a1a1a1;
+  --blue-orange-dark-sidebar-ring-color: #737373;
+
+  --blue-orange-light-sidebar-header-item-border-color: #fafafa;
+  --blue-orange-dark-sidebar-header-item-border-color: #262626;
+
+  --blue-orange-light-alert-default-border-color: #e0e1e2;
+  --blue-orange-dark-alert-default-border-color: #28282a;
+  --blue-orange-light-alert-default-background-color: #e0e1e2;
+  --blue-orange-dark-alert-default-background-color: #28282a;
+  --blue-orange-light-default-error-color: #393939;
+  --blue-orange-dark-default-error-color: white;
+
+  --blue-orange-light-alert-error-border-color: #F2D7D5;
+  --blue-orange-dark-alert-error-border-color: #F2D7D5;
+  --blue-orange-light-alert-error-background-color: #F2D7D5;
+  --blue-orange-dark-alert-error-background-color: #F2D7D5;
+  --blue-orange-light-alert-error-color: #922B21;
+  --blue-orange-dark-alert-error-color: #922B21;
+
+  --blue-orange-light-alert-success-border-color: #D5F5E3;
+  --blue-orange-dark-alert-success-border-color: #D5F5E3;
+  --blue-orange-light-alert-success-background-color: #D5F5E3;
+  --blue-orange-dark-alert-success-background-color: #D5F5E3;
+  --blue-orange-light-alert-success-color: #186A3B;
+  --blue-orange-dark-alert-success-color: #186A3B;
+
+  --blue-orange-light-alert-warning-border-color: #f9e79f;
+  --blue-orange-dark-alert-warning-border-color: #f9e79f;
+  --blue-orange-light-alert-warning-background-color: #f9e79f;
+  --blue-orange-dark-alert-warning-background-color: #f9e79f;
+  --blue-orange-light-alert-warning-color: #776206;
+  --blue-orange-dark-alert-warning-color: #776206;
+
+  --blue-orange-light-toaster-background-color: white;
+  --blue-orange-dark-toaster-background-color: #28282a;
+  --blue-orange-light-toaster-color: #393939;
+  --blue-orange-dark-toaster-color: white;
+
+  --blue-orange-light-toaster-error-background-color: #F2D7D5;
+  --blue-orange-dark-toaster-error-background-color: #F2D7D5;
+  --blue-orange-light-toaster-error-color: #922B21;
+  --blue-orange-dark-toaster-error-color: #922B21;
+
+  --blue-orange-light-toaster-success-background-color: #D5F5E3;
+  --blue-orange-dark-toaster-success-background-color: #D5F5E3;
+  --blue-orange-light-toaster-success-color: #186A3B;
+  --blue-orange-dark-toaster-success-color: #186A3B;
+
+  --blue-orange-light-toaster-warning-background-color: #f9e79f;
+  --blue-orange-dark-toaster-warning-background-color: #f9e79f;
+  --blue-orange-light-toaster-warning-color: #b7950b;
+  --blue-orange-dark-toaster-warning-color: #b7950b;
+
+  --blue-orange-light-primary-btn-border-color: black;
+  --blue-orange-dark-primary-btn-border-color: var(--blue-orange-dark-input-border-color);
+  --blue-orange-light-primary-btn-background-color: black;
+  --blue-orange-dark-primary-btn-background-color: var(--blue-orange-dark-input-background-color);
+  --blue-orange-light-primary-btn-color: white;
+  --blue-orange-dark-primary-btn-color: var(--blue-orange-dark-input-color);
+
+  --blue-orange-light-secondary-btn-border-color: #e0e1e2;
+  --blue-orange-dark-secondary-btn-border-color: #e0e1e2;
+  --blue-orange-light-secondary-btn-background-color: white;
+  --blue-orange-dark-secondary-btn-background-color: white;
+  --blue-orange-light-secondary-btn-color: black;
+  --blue-orange-dark-secondary-btn-color: black;
+
+  --blue-orange-light-danger-btn-border-color: #e11d48;
+  --blue-orange-dark-danger-btn-border-color: #e11d48;
+  --blue-orange-light-danger-btn-background-color: #e11d48;
+  --blue-orange-dark-danger-btn-background-color: #e11d48;
+  --blue-orange-light-danger-btn-color: white;
+  --blue-orange-dark-danger-btn-color: white;
+
+  --blue-orange-light-success-btn-border-color: #16a34b;
+  --blue-orange-dark-success-btn-border-color: #16a34b;
+  --blue-orange-light-success-btn-background-color: #16a34b;
+  --blue-orange-dark-success-btn-background-color: #16a34b;
+  --blue-orange-light-success-btn-color: white;
+  --blue-orange-dark-success-btn-color: white;
+
+  --blue-orange-light-warning-btn-border-color: #f97317;
+  --blue-orange-dark-warning-btn-border-color: #f97317;
+  --blue-orange-light-warning-btn-background-color: #f97317;
+  --blue-orange-dark-warning-btn-background-color: #f97317;
+  --blue-orange-light-warning-btn-color: white;
+  --blue-orange-dark-warning-btn-color: white;
+
+  --blue-orange-light-clear-btn-color: black;
+  --blue-orange-dark-clear-btn-color: white;
+
+  --blue-orange-light-btn-icon-border-color: #e0e1e2;
+  --blue-orange-dark-btn-icon-border-color: #28282a;
+
+  --blue-orange-light-btn-toggle-border-color: #e0e1e2;
+  --blue-orange-dark-btn-toggle-border-color: #28282a;
+  --blue-orange-light-btn-toggle-background-color: white;
+  --blue-orange-dark-btn-toggle-background-color: #393939;
+  --blue-orange-light-btn-toggle-color: black;
+  --blue-orange-dark-btn-toggle-color: white;
+  --blue-orange-light-btn-toggle-hover-background-color: #f0f0f0;
+  --blue-orange-dark-btn-toggle-hover-background-color: #47474a;
+  --blue-orange-light-btn-toggle-active-background-color: black;
+  --blue-orange-dark-btn-toggle-active-background-color: white;
+  --blue-orange-light-btn-toggle-active-color: white;
+  --blue-orange-dark-btn-toggle-active-color: black;
+
+  --blue-orange-light-chart-tooltip-background: black;
+  --blue-orange-dark-chart-tooltip-background: #28282a;
+  --blue-orange-light-chart-tooltip-title-color: #ABB4BE;
+  --blue-orange-dark-chart-tooltip-title-color: white;
+  --blue-orange-light-chart-tooltip-value-color: white;
+  --blue-orange-dark-chart-tooltip-value-color: white;
+  --blue-orange-light-chart-tooltip-general-text-color: white;
+  --blue-orange-dark-chart-tooltip-general-text-color: black;
+
+  --blue-orange-light-context-menu-background: white;
+  --blue-orange-dark-context-menu-background: #28282a;
+  --blue-orange-light-context-menu-row-hover-background: #e0e1e2;
+  --blue-orange-dark-context-menu-row-hover-background: #47474a;
+  --blue-orange-light-context-menu-separator-color: #e0e1e2;
+  --blue-orange-dark-context-menu-separator-color: #47474a;
+
+  --blue-orange-light-input-color: black;
+  --blue-orange-dark-input-color: white;
+  --blue-orange-light-input-border-color: #e0e1e2;
+  --blue-orange-dark-input-border-color: #3f3f42;
+  --blue-orange-light-input-background-color: white;
+  --blue-orange-dark-input-background-color: #2a2a2c;
+  --blue-orange-light-input-focus-border-color: black;
+  --blue-orange-dark-input-focus-border-color: white;
+  --blue-orange-light-input-error-color: #e5484d;
+  --blue-orange-dark-input-error-color: #ff6369;
+  --blue-orange-light-input-error-border-color: #e5484d;
+  --blue-orange-dark-input-error-border-color: #ff6369;
+  --blue-orange-light-input-success-color: #30a46c;
+  --blue-orange-dark-input-success-color: #3dd68c;
+  --blue-orange-light-input-select-background: #f7f7f9;
+  --blue-orange-dark-input-select-background: #28282a;
+  --blue-orange-light-input-search-background: #f7f7f9;
+  --blue-orange-dark-input-search-background: #28282a;
+  --blue-orange-light-input-search-icon-color: #f7f7f9;
+  --blue-orange-dark-input-search-icon-color: #28282a;
+  --blue-orange-light-phone-ext-color: #B2BABB;
+  --blue-orange-dark-phone-ext-color: #B2BABB;
+
+  --blue-orange-light-input-toggle-background-color: #ccc;
+  --blue-orange-dark-input-toggle-background-color: #47474a;
+  --blue-orange-light-input-toggle-background-color-before: white;
+  --blue-orange-dark-input-toggle-background-color-before: black;
+  --blue-orange-light-input-toggle-checked-color: #2196F3;
+  --blue-orange-dark-input-toggle-checked-color: #2196F3;
+
+  --blue-orange-input-tag-primary-background-color: black;
+
+  --blue-orange-light-input-tag-background-color: black;
+  --blue-orange-dark-input-tag-background-color: #3f3f42;
+  --blue-orange-light-input-tag-text-color: white;
+  --blue-orange-dark-input-tag-text-color: white;
+  --blue-orange-light-input-tag-hover-color: black;
+  --blue-orange-dark-input-tag-hover-color: #4a4a4e;
+  --blue-orange-light-input-tag-remove-color: white;
+  --blue-orange-dark-input-tag-remove-color: white;
+  --blue-orange-light-input-tag-placeholder-color: #757575;
+  --blue-orange-dark-input-tag-placeholder-color: #9a9a9a;
+
+  --blue-orange-light-input-tag-dropdown-background-color: white;
+  --blue-orange-dark-input-tag-dropdown-background-color: #28282a;
+  --blue-orange-light-input-tag-dropdown-item-color: black;
+  --blue-orange-dark-input-tag-dropdown-item-color: white;
+  --blue-orange-light-input-tag-dropdown-item-active-background-color: #f7f7f9;
+  --blue-orange-dark-input-tag-dropdown-item-active-background-color: #3f3f42;
+
+  --blue-orange-light-input-dropdown-background-color: #f9f9f9;
+  --blue-orange-dark-input-dropdown-background-color: #28282a;
+  --blue-orange-light-input-dropdown-item-color: black;
+  --blue-orange-dark-input-dropdown-item-color: white;
+  --blue-orange-light-input-dropdown-item-hover-color: #f7f8f9;
+  --blue-orange-dark-input-dropdown-item-hover-color: black;
+
+  --blue-orange-light-input-dropdown-item-focus-color: #f7f8f9;
+  --blue-orange-dark-input-dropdown-item-focus-color: #28282a;
+  --blue-orange-light-input-dropdown-item-focus-background-color: #f7f8f9;
+  --blue-orange-dark-input-dropdown-item-focus-background-color: #28282a;
+
+  --blue-orange-light-input-emoji-background-color: white;
+  --blue-orange-dark-input-emoji-background-color: black;
+  --blue-orange-light-input-emoji-footer-background-color: #e0e1e2;
+  --blue-orange-dark-input-emoji-footer-background-color: #28282a;
+  --blue-orange-light-input-emoji-header-text-color: #393939;
+  --blue-orange-dark-input-emoji-header-text-color: white;
+  --blue-orange-light-input-emoji-header-border-bottom-color: #dedede;
+  --blue-orange-dark-input-emoji-header-border-bottom-color: #28282a;
+  --blue-orange-light-input-emoji-header-icon-active-color: dodgerblue;
+  --blue-orange-dark-input-emoji-header-icon-active-color: dodgerblue;
+  --blue-orange-light-input-emoji-general-text-color: black;
+  --blue-orange-dark-input-emoji-general-text-color: white;
+  --blue-orange-light-input-emoji-filter-background-color: white;
+  --blue-orange-dark-input-emoji-filter-background-color: black;
+  --blue-orange-light-input-emoji-option-hover-color: #f7f7f7;
+  --blue-orange-dark-input-emoji-option-hover-color: #28282a;
+
+  --blue-orange-light-date-picker-border-color: #e0e1e2;
+  --blue-orange-dark-date-picker-border-color: #28282a;
+  --blue-orange-light-date-picker-background-color: white;
+  --blue-orange-dark-date-picker-background-color: black;
+
+  --blue-orange-light-date-picker-day-color: #393939;
+  --blue-orange-dark-date-picker-day-color: white;
+
+  --blue-orange-light-date-picker-day-current-color: black;
+  --blue-orange-dark-date-picker-day-current-color: white;
+
+  --blue-orange-light-date-picker-selected-day-border-color: black;
+  --blue-orange-dark-date-picker-selected-day-border-color: white;
+  --blue-orange-light-date-picker-selected-day-background-color: black;
+  --blue-orange-dark-date-picker-selected-day-background-color: white;
+  --blue-orange-light-date-picker-selected-day-color: white;
+  --blue-orange-dark-date-picker-selected-day-color: black;
+
+  --blue-orange-light-date-picker-day-heading-color: #71717a;
+  --blue-orange-dark-date-picker-day-heading-color: #71717a;
+
+  --blue-orange-light-help-icon-color: #2c3e50;
+  --blue-orange-dark-help-icon-color: #2c3e50;
+
+  --blue-orange-light-required-icon-color: #e74c3c;
+  --blue-orange-dark-required-icon-color: #e74c3c;
+
+  --blue-orange-light-input-rich-text-editor-background-color: var(--blue-orange-light-input-background-color);
+  --blue-orange-dark-input-rich-text-editor-background-color: var(--blue-orange-dark-input-background-color);
+  --blue-orange-light-input-rich-text-editor-border-color: var(--blue-orange-light-input-border-color);
+  --blue-orange-dark-input-rich-text-editor-border-color: var(--blue-orange-dark-input-border-color);
+
+  --blue-orange-light-input-rich-text-editor-heading-background-color: #f7f9f8;
+  --blue-orange-dark-input-rich-text-editor-heading-background-color: #1c1c1e;
+  --blue-orange-light-input-rich-text-editor-heading-color: black;
+  --blue-orange-dark-input-rich-text-editor-heading-color: white;
+
+  --blue-orange-light-input-rich-text-editor-heading-sep-color: #e0e1e2;
+  --blue-orange-dark-input-rich-text-editor-heading-sep-color: #28282a;
+
+  --blue-orange-light-input-rich-text-editor-mention-items-background-color: #fff;
+  --blue-orange-dark-input-rich-text-editor-mention-items-background-color: black;
+  --blue-orange-light-input-rich-text-editor-mention-items-color: black;
+  --blue-orange-dark-input-rich-text-editor-mention-items-color: white;
+
+  --blue-orange-light-input-rich-text-editor-mention-item-selected-border-color: black;
+  --blue-orange-dark-input-rich-text-editor-mention-item-selected-border-color: white;
+
+  --blue-orange-light-input-rich-text-editor-mention-tippy-background-color: white;
+  --blue-orange-dark-input-rich-text-editor-mention-tippy-background-color: #28282a;
+
+  --blue-orange-light-input-rich-text-editor-file-upload-background-color: #e0e1e2;
+  --blue-orange-dark-input-rich-text-editor-file-upload-background-color: #28282a;
+  --blue-orange-light-input-rich-text-editor-file-upload-text-color: black;
+  --blue-orange-dark-input-rich-text-editor-file-upload-text-color: white;
+
+  --blue-orange-light-input-rich-text-editor-file-upload-error-background-color: #f5b7b1;
+  --blue-orange-dark-input-rich-text-editor-file-upload-error-background-color: #f5b7b1;
+  --blue-orange-light-input-rich-text-editor-file-upload-error-color: #943126;
+  --blue-orange-dark-input-rich-text-editor-file-upload-error-color: #943126;
+
+  --blue-orange-light-page-background-color: white;
+  --blue-orange-dark-page-background-color: #1e1e1e;
+  --blue-orange-light-page-text-color: black;
+  --blue-orange-dark-page-text-color: white;
+
+  --blue-orange-light-default-card-background: white;
+  --blue-orange-dark-default-card-background: #28282a;
+
+  --blue-orange-light-default-border-color: #e0e1e2;
+  --blue-orange-dark-default-border-color: #28282a;
+
+  --blue-orange-light-active-border-color: dodgerblue;
+  --blue-orange-dark-active-border-color: dodgerblue;
+
+  --blue-orange-light-simple-metric-border-color: #e0e1e2;
+  --blue-orange-dark-simple-metric-border-color: #28282a;
+  --blue-orange-light-simple-metric-color: black;
+  --blue-orange-dark-simple-metric-color: white;
+
+  --blue-orange-light-table-border-color: black;
+  --blue-orange-dark-table-border-color: white;
+
+  /* object list theme — the outer frame and the row separators must share this colour */
+  --blue-orange-light-table-object-list-border-color: #e0e1e2;
+  --blue-orange-dark-table-object-list-border-color: #3f3f42;
+
+  --blue-orange-light-table-row-hover-background-color: #e0e1e2;
+  --blue-orange-dark-table-row-hover-background-color: #47474a;
+
+  /* the data table header band, the row number gutter and the corner cell all share this colour */
+  --blue-orange-light-data-table-header-background-color: #e0e1e2;
+  --blue-orange-dark-data-table-header-background-color: #28282a;
+
+  --blue-orange-light-badge-background-color: #18181b;
+  --blue-orange-dark-badge-background-color: #3f3f42;
+  --blue-orange-light-badge-color: white;
+  --blue-orange-dark-badge-color: white;
+
+  /* the compound badge is one pill in two halves — the left key half sits darker than the right value half */
+  --blue-orange-light-compound-badge-left-background-color: #18181b;
+  --blue-orange-dark-compound-badge-left-background-color: #3f3f42;
+  --blue-orange-light-compound-badge-left-color: white;
+  --blue-orange-dark-compound-badge-left-color: white;
+  --blue-orange-light-compound-badge-right-background-color: #52525b;
+  --blue-orange-dark-compound-badge-right-background-color: #5c5c60;
+  --blue-orange-light-compound-badge-right-color: white;
+  --blue-orange-dark-compound-badge-right-color: white;
+
+  --blue-orange-light-default-text-color: black;
+  --blue-orange-dark-default-text-color: white;
+
+  --blue-orange-light-default-tag-background-color: #18181b;
+  --blue-orange-dark-default-tag-background-color: #18181b;
+  --blue-orange-light-default-tag-color: white;
+  --blue-orange-dark-default-tag-color: white;
+
+  --blue-orange-light-metrics-card-background-color: #E0e1e2;
+  --blue-orange-dark-metrics-card-background-color: #28282a;
+  --blue-orange-light-metrics-card-color: black;
+  --blue-orange-dark-metrics-card-color: white;
+
+  --blue-orange-light-file-system-row-hover-background: #f7f7f9;
+  --blue-orange-dark-file-system-row-hover-background: #3f3f42;
+
+  --blue-orange-light-file-system-selected-row-background: black;
+  --blue-orange-dark-file-system-selected-row-background: black;
+  --blue-orange-light-file-system-selected-row-color: white;
+  --blue-orange-dark-file-system-selected-row-color: white;
+
+  /* Muted (secondary) text shared by the newer components */
+  --blue-orange-light-muted-text-color: #71717a;
+  --blue-orange-dark-muted-text-color: #a1a1aa;
+
+  --blue-orange-light-card-background-color: white;
+  --blue-orange-dark-card-background-color: #28282a;
+  --blue-orange-light-card-border-color: #e0e1e2;
+  --blue-orange-dark-card-border-color: #3f3f42;
+  --blue-orange-light-card-color: black;
+  --blue-orange-dark-card-color: white;
+
+  --blue-orange-light-option-card-background-color: white;
+  --blue-orange-dark-option-card-background-color: #28282a;
+  --blue-orange-light-option-card-border-color: #e0e1e2;
+  --blue-orange-dark-option-card-border-color: #3f3f42;
+  --blue-orange-light-option-card-color: black;
+  --blue-orange-dark-option-card-color: white;
+  --blue-orange-light-option-card-hint-color: #71717a;
+  --blue-orange-dark-option-card-hint-color: #a1a1aa;
+  --blue-orange-light-option-card-icon-color: #71717a;
+  --blue-orange-dark-option-card-icon-color: #a1a1aa;
+  /* The selected card is told apart by its border and a wash of the same accent. */
+  --blue-orange-light-option-card-active-border-color: dodgerblue;
+  --blue-orange-dark-option-card-active-border-color: dodgerblue;
+  --blue-orange-light-option-card-active-background-color: rgba(30, 144, 255, 0.08);
+  --blue-orange-dark-option-card-active-background-color: rgba(30, 144, 255, 0.16);
+
+  --blue-orange-light-carousel-control-background-color: white;
+  --blue-orange-dark-carousel-control-background-color: #28282a;
+  --blue-orange-light-carousel-control-border-color: #e0e1e2;
+  --blue-orange-dark-carousel-control-border-color: #3f3f42;
+  --blue-orange-light-carousel-control-color: black;
+  --blue-orange-dark-carousel-control-color: white;
+
+  --blue-orange-light-command-background-color: white;
+  --blue-orange-dark-command-background-color: #28282a;
+  --blue-orange-light-command-border-color: #e0e1e2;
+  --blue-orange-dark-command-border-color: #3f3f42;
+  --blue-orange-light-command-color: black;
+  --blue-orange-dark-command-color: white;
+  --blue-orange-light-command-item-active-background-color: #f4f4f5;
+  --blue-orange-dark-command-item-active-background-color: #3f3f42;
+  --blue-orange-light-command-group-label-color: #71717a;
+  --blue-orange-dark-command-group-label-color: #a1a1aa;
+
+  --blue-orange-light-empty-media-background-color: #f4f4f5;
+  --blue-orange-dark-empty-media-background-color: #3f3f42;
+  --blue-orange-light-empty-border-color: #e0e1e2;
+  --blue-orange-dark-empty-border-color: #3f3f42;
+
+  --blue-orange-light-hover-card-background-color: white;
+  --blue-orange-dark-hover-card-background-color: #28282a;
+  --blue-orange-light-hover-card-border-color: #e0e1e2;
+  --blue-orange-dark-hover-card-border-color: #3f3f42;
+  --blue-orange-light-hover-card-color: black;
+  --blue-orange-dark-hover-card-color: white;
+
+  --blue-orange-light-input-otp-background-color: white;
+  --blue-orange-dark-input-otp-background-color: #2a2a2c;
+  --blue-orange-light-input-otp-border-color: #e0e1e2;
+  --blue-orange-dark-input-otp-border-color: #3f3f42;
+  --blue-orange-light-input-otp-active-border-color: black;
+  --blue-orange-dark-input-otp-active-border-color: white;
+  --blue-orange-light-input-otp-color: black;
+  --blue-orange-dark-input-otp-color: white;
+
+  --blue-orange-light-kbd-background-color: #f4f4f5;
+  --blue-orange-dark-kbd-background-color: #3f3f42;
+  --blue-orange-light-kbd-border-color: #e0e1e2;
+  --blue-orange-dark-kbd-border-color: #4a4a4e;
+  --blue-orange-light-kbd-color: #52525b;
+  --blue-orange-dark-kbd-color: #e4e4e7;
+
+  --blue-orange-light-menubar-background-color: white;
+  --blue-orange-dark-menubar-background-color: #28282a;
+  --blue-orange-light-menubar-border-color: #e0e1e2;
+  --blue-orange-dark-menubar-border-color: #3f3f42;
+  --blue-orange-light-menubar-color: black;
+  --blue-orange-dark-menubar-color: white;
+  --blue-orange-light-menubar-trigger-hover-background-color: #f4f4f5;
+  --blue-orange-dark-menubar-trigger-hover-background-color: #3f3f42;
+  --blue-orange-light-menubar-trigger-active-background-color: #e0e1e2;
+  --blue-orange-dark-menubar-trigger-active-background-color: #47474a;
+
+  --blue-orange-light-navigation-menu-background-color: white;
+  --blue-orange-dark-navigation-menu-background-color: #28282a;
+  --blue-orange-light-navigation-menu-border-color: #e0e1e2;
+  --blue-orange-dark-navigation-menu-border-color: #3f3f42;
+  --blue-orange-light-navigation-menu-color: black;
+  --blue-orange-dark-navigation-menu-color: white;
+  --blue-orange-light-navigation-menu-hover-background-color: #f4f4f5;
+  --blue-orange-dark-navigation-menu-hover-background-color: #3f3f42;
+
+  --blue-orange-light-pagination-color: black;
+  --blue-orange-dark-pagination-color: white;
+  --blue-orange-light-pagination-hover-background-color: #f4f4f5;
+  --blue-orange-dark-pagination-hover-background-color: #3f3f42;
+  --blue-orange-light-pagination-active-background-color: black;
+  --blue-orange-dark-pagination-active-background-color: white;
+  --blue-orange-light-pagination-active-color: white;
+  --blue-orange-dark-pagination-active-color: black;
+  --blue-orange-light-pagination-border-color: #e0e1e2;
+  --blue-orange-dark-pagination-border-color: #3f3f42;
+
+  --blue-orange-light-property-histogram-track-color: #e4e4e7;
+  --blue-orange-dark-property-histogram-track-color: #3f3f42;
+  --blue-orange-light-property-histogram-bar-color: black;
+  --blue-orange-dark-property-histogram-bar-color: white;
+
+  --blue-orange-light-separator-color: #e0e1e2;
+  --blue-orange-dark-separator-color: #3f3f42;
+  --blue-orange-light-separator-label-color: #71717a;
+  --blue-orange-dark-separator-label-color: #a1a1aa;
+
+  --blue-orange-light-slider-track-color: #e4e4e7;
+  --blue-orange-dark-slider-track-color: #3f3f42;
+  --blue-orange-light-slider-range-color: black;
+  --blue-orange-dark-slider-range-color: white;
+  --blue-orange-light-slider-thumb-background-color: white;
+  --blue-orange-dark-slider-thumb-background-color: #1e1e1e;
+  --blue-orange-light-slider-thumb-border-color: black;
+  --blue-orange-dark-slider-thumb-border-color: white;
+
+  --blue-orange-light-spinner-color: black;
+  --blue-orange-dark-spinner-color: white;
+
+  --blue-orange-light-tabs-color: #71717a;
+  --blue-orange-dark-tabs-color: #a1a1aa;
+  --blue-orange-light-tabs-hover-color: black;
+  --blue-orange-dark-tabs-hover-color: white;
+  --blue-orange-light-tabs-active-color: black;
+  --blue-orange-dark-tabs-active-color: white;
+  --blue-orange-light-tabs-indicator-color: black;
+  --blue-orange-dark-tabs-indicator-color: white;
+
+  --blue-orange-light-button-tabs-background-color: #f4f4f5;
+  --blue-orange-dark-button-tabs-background-color: #28282a;
+  --blue-orange-light-button-tabs-border-color: #e0e1e2;
+  --blue-orange-dark-button-tabs-border-color: #3f3f42;
+  --blue-orange-light-button-tabs-color: #71717a;
+  --blue-orange-dark-button-tabs-color: #a1a1aa;
+  --blue-orange-light-button-tabs-active-background-color: white;
+  --blue-orange-dark-button-tabs-active-background-color: #47474a;
+  --blue-orange-light-button-tabs-active-color: black;
+  --blue-orange-dark-button-tabs-active-color: white;
+
+  --blue-orange-light-panel-background-color: white;
+  --blue-orange-dark-panel-background-color: #28282a;
+  --blue-orange-light-panel-border-color: #e0e1e2;
+  --blue-orange-dark-panel-border-color: #3f3f42;
+  --blue-orange-light-panel-color: black;
+  --blue-orange-dark-panel-color: white;
+  --blue-orange-light-panel-header-background-color: #f4f4f5;
+  --blue-orange-dark-panel-header-background-color: #3f3f42;
+  --blue-orange-light-panel-header-color: black;
+  --blue-orange-dark-panel-header-color: white;
+  --blue-orange-light-panel-header-btn-color: #71717a;
+  --blue-orange-dark-panel-header-btn-color: #a1a1aa;
+  --blue-orange-light-panel-header-btn-hover-background-color: #e0e1e2;
+  --blue-orange-dark-panel-header-btn-hover-background-color: #52525b;
+  --blue-orange-light-panel-tab-color: #71717a;
+  --blue-orange-dark-panel-tab-color: #a1a1aa;
+  --blue-orange-light-panel-tab-hover-color: black;
+  --blue-orange-dark-panel-tab-hover-color: white;
+  --blue-orange-light-panel-tab-active-color: black;
+  --blue-orange-dark-panel-tab-active-color: white;
+  --blue-orange-light-panel-tab-indicator-color: black;
+  --blue-orange-dark-panel-tab-indicator-color: white;
+
+  --blue-orange-light-filter-row-background-color: white;
+  --blue-orange-dark-filter-row-background-color: #2a2a2c;
+  --blue-orange-light-filter-row-border-color: #e0e1e2;
+  --blue-orange-dark-filter-row-border-color: #3f3f42;
+  --blue-orange-light-filter-row-separator-color: #e0e1e2;
+  --blue-orange-dark-filter-row-separator-color: #3f3f42;
+  --blue-orange-light-filter-row-color: black;
+  --blue-orange-dark-filter-row-color: white;
+  --blue-orange-light-filter-row-muted-color: #71717a;
+  --blue-orange-dark-filter-row-muted-color: #a1a1aa;
+  --blue-orange-light-filter-row-hover-background-color: #f4f4f5;
+  --blue-orange-dark-filter-row-hover-background-color: #3f3f42;
+
+  /* Filter pills — the bucket filters above a list. An unselected pill is an
+     outline, the selected one takes the inverse fill a selected toggle button
+     takes, and the count rides inside the pill on its own ground. */
+  --blue-orange-light-filter-pill-background-color: transparent;
+  --blue-orange-dark-filter-pill-background-color: transparent;
+  --blue-orange-light-filter-pill-border-color: #e0e1e2;
+  --blue-orange-dark-filter-pill-border-color: #3f3f42;
+  --blue-orange-light-filter-pill-color: #71717a;
+  --blue-orange-dark-filter-pill-color: #a1a1aa;
+  --blue-orange-light-filter-pill-hover-background-color: #f4f4f5;
+  --blue-orange-dark-filter-pill-hover-background-color: #3f3f42;
+  --blue-orange-light-filter-pill-hover-color: black;
+  --blue-orange-dark-filter-pill-hover-color: white;
+  --blue-orange-light-filter-pill-active-background-color: #18181b;
+  --blue-orange-dark-filter-pill-active-background-color: white;
+  --blue-orange-light-filter-pill-active-border-color: #18181b;
+  --blue-orange-dark-filter-pill-active-border-color: white;
+  --blue-orange-light-filter-pill-active-color: white;
+  --blue-orange-dark-filter-pill-active-color: #18181b;
+  --blue-orange-light-filter-pill-count-background-color: #f4f4f5;
+  --blue-orange-dark-filter-pill-count-background-color: #3f3f42;
+  --blue-orange-light-filter-pill-count-color: #52525b;
+  --blue-orange-dark-filter-pill-count-color: #d4d4d8;
+  --blue-orange-light-filter-pill-active-count-background-color: rgba(255, 255, 255, 0.18);
+  --blue-orange-dark-filter-pill-active-count-background-color: rgba(0, 0, 0, 0.12);
+  --blue-orange-light-filter-pill-active-count-color: white;
+  --blue-orange-dark-filter-pill-active-count-color: #18181b;
+
+  /* Questionnaire — one question at a time on its own panel. The choices take
+     the same accent an option card takes when it is picked, so a survey and a
+     "what are you creating?" step read as the same kind of choice. */
+  --blue-orange-light-questionnaire-background-color: white;
+  --blue-orange-dark-questionnaire-background-color: #28282a;
+  --blue-orange-light-questionnaire-border-color: #e0e1e2;
+  --blue-orange-dark-questionnaire-border-color: #3f3f42;
+  --blue-orange-light-questionnaire-prompt-color: black;
+  --blue-orange-dark-questionnaire-prompt-color: white;
+  --blue-orange-light-questionnaire-description-color: #71717a;
+  --blue-orange-dark-questionnaire-description-color: #a1a1aa;
+  --blue-orange-light-questionnaire-count-color: #71717a;
+  --blue-orange-dark-questionnaire-count-color: #a1a1aa;
+  --blue-orange-light-questionnaire-track-color: #e4e4e7;
+  --blue-orange-dark-questionnaire-track-color: #3f3f42;
+  --blue-orange-light-questionnaire-fill-color: dodgerblue;
+  --blue-orange-dark-questionnaire-fill-color: dodgerblue;
+  --blue-orange-light-questionnaire-choice-background-color: white;
+  --blue-orange-dark-questionnaire-choice-background-color: #28282a;
+  --blue-orange-light-questionnaire-choice-border-color: #e0e1e2;
+  --blue-orange-dark-questionnaire-choice-border-color: #3f3f42;
+  --blue-orange-light-questionnaire-choice-color: black;
+  --blue-orange-dark-questionnaire-choice-color: white;
+  --blue-orange-light-questionnaire-choice-active-border-color: dodgerblue;
+  --blue-orange-dark-questionnaire-choice-active-border-color: dodgerblue;
+  --blue-orange-light-questionnaire-choice-active-background-color: rgba(30, 144, 255, 0.08);
+  --blue-orange-dark-questionnaire-choice-active-background-color: rgba(30, 144, 255, 0.16);
+  --blue-orange-light-questionnaire-indicator-border-color: #d4d4d8;
+  --blue-orange-dark-questionnaire-indicator-border-color: #52525b;
+  --blue-orange-light-questionnaire-indicator-mark-color: white;
+  --blue-orange-dark-questionnaire-indicator-mark-color: white;
+
+  --blue-orange-light-stepper-indicator-background-color: white;
+  --blue-orange-dark-stepper-indicator-background-color: #2a2a2c;
+  --blue-orange-light-stepper-indicator-border-color: #e0e1e2;
+  --blue-orange-dark-stepper-indicator-border-color: #3f3f42;
+  --blue-orange-light-stepper-indicator-color: #71717a;
+  --blue-orange-dark-stepper-indicator-color: #a1a1aa;
+  --blue-orange-light-stepper-active-background-color: black;
+  --blue-orange-dark-stepper-active-background-color: white;
+  --blue-orange-light-stepper-active-color: white;
+  --blue-orange-dark-stepper-active-color: black;
+  --blue-orange-light-stepper-completed-background-color: black;
+  --blue-orange-dark-stepper-completed-background-color: white;
+  --blue-orange-light-stepper-completed-color: white;
+  --blue-orange-dark-stepper-completed-color: black;
+  --blue-orange-light-stepper-error-background-color: #e11d48;
+  --blue-orange-dark-stepper-error-background-color: #e11d48;
+  --blue-orange-light-stepper-error-color: white;
+  --blue-orange-dark-stepper-error-color: white;
+  --blue-orange-light-stepper-separator-color: #e0e1e2;
+  --blue-orange-dark-stepper-separator-color: #3f3f42;
+  --blue-orange-light-stepper-separator-completed-color: black;
+  --blue-orange-dark-stepper-separator-completed-color: white;
+  --blue-orange-light-stepper-title-color: black;
+  --blue-orange-dark-stepper-title-color: white;
+
+  --blue-orange-light-timeline-line-color: #e0e1e2;
+  --blue-orange-dark-timeline-line-color: #3f3f42;
+  --blue-orange-light-timeline-indicator-background-color: white;
+  --blue-orange-dark-timeline-indicator-background-color: #2a2a2c;
+  --blue-orange-light-timeline-indicator-border-color: #d4d4d8;
+  --blue-orange-dark-timeline-indicator-border-color: #52525b;
+  --blue-orange-light-timeline-indicator-color: #71717a;
+  --blue-orange-dark-timeline-indicator-color: #a1a1aa;
+  --blue-orange-light-timeline-title-color: black;
+  --blue-orange-dark-timeline-title-color: white;
+  --blue-orange-light-timeline-active-color: dodgerblue;
+  --blue-orange-dark-timeline-active-color: dodgerblue;
+  --blue-orange-light-timeline-success-color: #16a34b;
+  --blue-orange-dark-timeline-success-color: #16a34b;
+  --blue-orange-light-timeline-warning-color: #f97317;
+  --blue-orange-dark-timeline-warning-color: #f97317;
+  --blue-orange-light-timeline-error-color: #e11d48;
+  --blue-orange-dark-timeline-error-color: #e11d48;
+
+  --blue-orange-light-input-label-font-size: 0.8rem;
+  --blue-orange-dark-input-label-font-size: 0.8rem;
+  --blue-orange-light-input-label-font-weight: 700;
+  --blue-orange-dark-input-label-font-weight: 700;
+  --blue-orange-light-input-label-margin-bottom: 10px;
+  --blue-orange-dark-input-label-margin-bottom: 10px;
+  --blue-orange-light-input-label-opacity: 0.8;
+  --blue-orange-dark-input-label-opacity: 0.8;
+
+}
+
+.blue-orange-default-input-label-cont {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: var(--blue-orange-light-input-label-font-size);
+    font-weight: var(--blue-orange-light-input-label-font-weight);
+    margin-bottom: var(--blue-orange-light-input-label-margin-bottom);
+    opacity: var(--blue-orange-light-input-label-opacity);
+    gap: 4px;
+}
+
+.dark .blue-orange-default-input-label-cont {
+    font-size: var(--blue-orange-dark-input-label-font-size);
+    font-weight: var(--blue-orange-dark-input-label-font-weight);
+    margin-bottom: var(--blue-orange-dark-input-label-margin-bottom);
+    opacity: var(--blue-orange-dark-input-label-opacity);
+}
+
+/* Applied to the label container when a validate callback reports an error. */
+.blue-orange-default-input-label-cont-error {
+    color: var(--blue-orange-light-input-error-color);
+    opacity: 1;
+}
+
+.dark .blue-orange-default-input-label-cont-error {
+    color: var(--blue-orange-dark-input-error-color);
+}
