@@ -6,5 +6,6 @@ export type {DemoWidth} from './DemoStage';
 export {PropControls} from './PropControls';
 export {PropsTable} from './PropsTable';
 export {validationProps} from './InputProps';
+export {dropdownTriggerProps} from './DropdownProps';
 export {generateSnippet, initialValues, parseDefault, printProp} from './PropSpec';
 export type {InterfaceDoc, PropControlType, PropOption, PropSpec, SnippetOptions} from './PropSpec';

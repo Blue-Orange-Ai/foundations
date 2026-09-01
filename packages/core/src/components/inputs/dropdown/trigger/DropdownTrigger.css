@@ -1,0 +1,42 @@
+
+
+.blue-orange-dropdown-trigger{
+    position: relative;
+    display: inline-flex;
+    width: fit-content;
+    max-width: 100%;
+    cursor: pointer;
+    /* the invisible dropdown input keeps its own intrinsic size, which is taller than a badge —
+       clipping it stops the overhang catching clicks outside the trigger it is standing in for */
+    overflow: hidden;
+}
+
+.blue-orange-dropdown-trigger.blue-orange-dropdown-trigger-fill{
+    display: flex;
+    width: 100%;
+}
+
+.blue-orange-dropdown-trigger.blue-orange-dropdown-trigger-disabled{
+    cursor: not-allowed;
+    opacity: .6;
+}
+
+.blue-orange-dropdown-trigger-overlay{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.blue-orange-dropdown-trigger-overlay .blue-orange-dropdown-cont{
+    height: 100%;
+}
+
+/* A tag is only as wide as its label, so the popup sizes to its own content instead. The floor keeps
+   a two word menu from opening as a sliver. The popup is portalled to the body, so it is reached by
+   its own class rather than as a descendant of the trigger. */
+.blue-orange-dropdown-trigger-window{
+    min-width: 140px;
+}

@@ -1,0 +1,7 @@
+/* The invisible dropdown input covers the whole pill, remove button included. Lifting the button
+   over it is what keeps it clickable — without this the only thing a click on it could do is open
+   the popup. */
+.blue-orange-dropdown-compound-tag .blue-orange-compound-tag-remove{
+    position: relative;
+    z-index: 2;
+}

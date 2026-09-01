@@ -68,3 +68,16 @@
 .blue-orange-compound-tag-right > .blue-orange-compound-tag-remove:only-child{
     margin-left: 0;
 }
+
+.blue-orange-compound-tag-trailing{
+    display: flex;
+    align-items: center;
+    margin-left: 6px;
+    line-height: 0;
+    font-size: 16px;
+}
+
+/* the value is optional, so the gap only belongs there when something precedes it */
+.blue-orange-compound-tag-right > .blue-orange-compound-tag-trailing:first-child{
+    margin-left: 0;
+}

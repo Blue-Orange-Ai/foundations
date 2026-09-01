@@ -1,0 +1,14 @@
+.blue-orange-dropdown-tag-chevron{
+    margin-left: 4px;
+    font-size: 16px;
+    line-height: 0;
+}
+
+.blue-orange-dropdown-tag .blue-orange-tag > .blue-orange-dropdown-tag-chevron:first-child{
+    margin-left: 0;
+}
+
+/* the label takes the slack so the chevron stays pinned to the right of a filled tag */
+.blue-orange-dropdown-tag.blue-orange-dropdown-trigger-fill .blue-orange-tag{
+    justify-content: space-between;
+}
