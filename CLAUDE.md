@@ -55,12 +55,13 @@ All packages live under `packages/`. There is no root-level source code.
 **Non-UI package** (built with plain tsc, output CommonJS):
 - **clients** — Shared API client utilities (STOMP/WebSocket, cookies, phone parsing, LRU cache)
 
-**Not in this repo:** `@blue-orange-ai/foundations-passport-client` keeps the
-`foundations-` package name but lives in the
+**Not in this repo:** Passport's UI lives in the
 [passport-mono](https://github.com/Blue-Orange-Ai/passport-mono) repo, under
-`passport-client/`, and is released from there. A stale copy stayed behind here
-after that move and every foundations release republished it over the newer
-package — do not re-add it.
+`passport-client/`, and is released from there as
+`@blue-orange-ai/passport-client`. A stale copy stayed behind here after that
+move, and because it still carried the old `foundations-passport-client` name,
+every foundations release republished it over the newer package — do not re-add
+it.
 
 ### Dependency graph (internal)
 

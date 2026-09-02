@@ -51,11 +51,11 @@ The library covers a wide range of UI needs: core components (buttons, inputs, t
 | **[deployment-manager](packages/deployment-manager)** | Deployment management UI | UI |
 | **[clients](packages/clients)** | Shared API client utilities — STOMP/WebSocket, cookies, phone parsing, LRU cache | Non-UI |
 
-> `@blue-orange-ai/foundations-passport-client` is still published under the
-> `foundations-` name, but its source moved to the
+> Passport's UI is no longer part of this monorepo. It moved to the
 > [passport-mono](https://github.com/Blue-Orange-Ai/passport-mono) repo
-> (`passport-client/`), next to the service it talks to. It is released from
-> there, not from here.
+> (`passport-client/`), next to the service it talks to, and is released from
+> there as `@blue-orange-ai/passport-client` — it dropped the `foundations-`
+> prefix along with the move.
 
 ---
 
