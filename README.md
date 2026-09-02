@@ -48,9 +48,14 @@ The library covers a wide range of UI needs: core components (buttons, inputs, t
 | **[llm-client](packages/llm-client)** | LLM chat and interaction UI | UI |
 | **[search-client](packages/search-client)** | Search interface UI | UI |
 | **[pipelines-client](packages/pipelines-client)** | Pipeline graph editor | UI |
-| **[passport-client](packages/passport-client)** | Authentication and user management UI | UI |
 | **[deployment-manager](packages/deployment-manager)** | Deployment management UI | UI |
 | **[clients](packages/clients)** | Shared API client utilities — STOMP/WebSocket, cookies, phone parsing, LRU cache | Non-UI |
+
+> `@blue-orange-ai/foundations-passport-client` is still published under the
+> `foundations-` name, but its source moved to the
+> [passport-mono](https://github.com/Blue-Orange-Ai/passport-mono) repo
+> (`passport-client/`), next to the service it talks to. It is released from
+> there, not from here.
 
 ---
 
@@ -164,7 +169,6 @@ foundations/
     ├── graph/              # Graph visualization
     ├── llm-client/         # LLM interaction UI
     ├── map/                # Map components
-    ├── passport-client/    # Auth/user management UI
     ├── pipelines-client/   # Pipeline graph editor
     └── search-client/      # Search UI
 ```
@@ -196,10 +200,10 @@ packages/<name>/
                   │    client  manager   client
                   │                        │
                   │    ┌─────────┐         │
-                  ├───►│ clients │         │
-                  │    └─────────┘    ┌────┴────┐
-             passport    search       │  graph  │
-             client      client       └─────────┘
+                  └───►│ clients │    ┌────┴────┐
+                       └────┬────┘    │  graph  │
+                          search      └─────────┘
+                          client
 ```
 
 - `block-editor` → `core`
@@ -207,7 +211,6 @@ packages/<name>/
 - `llm-client` → `core`
 - `deployment-manager` → `core`
 - `search-client` → `core`, `clients`
-- `passport-client` → `core`, `clients`
 - `pipelines-client` → `core`, `graph`
 
 ### Build System
