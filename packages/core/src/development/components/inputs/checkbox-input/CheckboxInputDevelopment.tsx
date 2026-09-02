@@ -21,6 +21,26 @@ const CHECKBOX_PROPS: Array<PropSpec> = [
 		description: "Whether the box is ticked."
 	},
 	{
+		name: "label",
+		type: "string",
+		control: "text",
+		value: "Terms and conditions",
+		description: "The label above the box."
+	},
+	{
+		name: "text",
+		type: "string",
+		control: "text",
+		value: "I accept the terms and conditions",
+		description: "Optional text sat to the right of the box. Clicking it ticks the box."
+	},
+	{
+		name: "help",
+		type: "string",
+		control: "text",
+		description: "Puts a help icon beside the label with this text behind it."
+	},
+	{
 		name: "onCheckboxChange",
 		type: "(checked: boolean) => void",
 		description: "Fires with what the box has become."
@@ -43,6 +63,18 @@ const CHECKBOX_PROPS: Array<PropSpec> = [
 		default: "{}",
 		description: "Inline style put on the box."
 	},
+	{
+		name: "labelStyle",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the label."
+	},
+	{
+		name: "textStyle",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the text beside the box."
+	},
 	...validationProps("boolean")
 ];
 
@@ -59,13 +91,16 @@ export const CheckboxInputDevelopment: React.FC<Props> = ({}) => {
 			<SplitPageMajor>
 				<ComponentDoc
 					title="Checkbox"
-					description="A box that is ticked or not. It is controlled — `checked` is the parent's to hold — and it takes the same name and validation props as every other input, so it can sit inside a FormGroup."
+					description="A box that is ticked or not. It takes the same `label`, `help` and validation props as every other input, and an optional `text` that sits to the right of the box. It is controlled — `checked` is the parent's to hold — so it can sit inside a FormGroup."
 					name="Checkbox"
 					previewHeight={120}
 					props={CHECKBOX_PROPS}
 					preview={values => (
 						<Checkbox
 							checked={values.checked}
+							label={values.label}
+							text={values.text}
+							help={values.help}
 							readonly={values.readonly}
 							name={values.name}
 							required={values.required}
@@ -75,6 +110,9 @@ export const CheckboxInputDevelopment: React.FC<Props> = ({}) => {
 					)}>
 					<Checkbox
 						checked={checked}
+						label="Terms and conditions"
+						text="I accept the terms and conditions"
+						help="You have to accept these before you can carry on."
 						onCheckboxChange={setChecked}
 					></Checkbox>
 				</ComponentDoc>

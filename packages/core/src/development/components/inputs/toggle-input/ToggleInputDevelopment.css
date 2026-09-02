@@ -1,0 +1,8 @@
+
+/* A stand in for the form a left labelled switch is meant to sit in. */
+.workspace-toggle-example-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 420px;
+}

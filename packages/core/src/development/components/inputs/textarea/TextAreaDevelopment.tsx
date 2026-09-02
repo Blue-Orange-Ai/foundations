@@ -54,10 +54,29 @@ const TEXT_AREA_PROPS: Array<PropSpec> = [
 		description: "Fires on every keystroke."
 	},
 	{
+		name: "height",
+		type: "number | string",
+		control: "number",
+		description: "A fixed height for the field. A number is taken as pixels."
+	},
+	{
+		name: "minHeight",
+		type: "number | string",
+		control: "number",
+		value: 80,
+		description: "The shortest the field is allowed to be. A number is taken as pixels."
+	},
+	{
+		name: "maxHeight",
+		type: "number | string",
+		control: "number",
+		description: "The tallest the field is allowed to be, after which it scrolls. A number is taken as pixels."
+	},
+	{
 		name: "style",
 		type: "React.CSSProperties",
 		default: "{}",
-		description: "Inline style put on the field — this is where its height comes from."
+		description: "Inline style put on the field. The height props are applied over the top of it."
 	},
 	{
 		name: "labelStyle",
@@ -81,7 +100,7 @@ export const TextAreaDevelopment: React.FC<Props> = ({}) => {
 			<SplitPageMajor>
 				<ComponentDoc
 					title="Text Area"
-					description="The multi line field, for a note or a description. It takes the same label, help and validation props as Input."
+					description="The multi line field, for a note or a description. It takes the same label, help and validation props as Input, and `height`, `minHeight` and `maxHeight` for how tall it sits."
 					name="TextArea"
 					previewHeight={200}
 					previewCentered={false}
@@ -93,6 +112,9 @@ export const TextAreaDevelopment: React.FC<Props> = ({}) => {
 								label={values.label}
 								placeholder={values.placeholder}
 								help={values.help}
+								height={values.height}
+								minHeight={values.minHeight}
+								maxHeight={values.maxHeight}
 								disabled={values.disabled}
 								name={values.name}
 								required={values.required}
@@ -101,7 +123,12 @@ export const TextAreaDevelopment: React.FC<Props> = ({}) => {
 								onChange={() => {}}></TextArea>
 						</div>
 					)}>
-					<TextArea value={query} onChange={setQuery}></TextArea>
+					<TextArea
+						value={query}
+						label="Notes"
+						minHeight={120}
+						maxHeight={240}
+						onChange={setQuery}></TextArea>
 				</ComponentDoc>
 			</SplitPageMajor>
 			<SplitPageMinor>
