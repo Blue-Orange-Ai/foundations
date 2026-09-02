@@ -188,6 +188,7 @@ export * from './components/inputs/form-group/FormSubmitButton'
 export * from './components/inputs/help/HelpIcon'
 export * from './components/inputs/input/Input';
 export * from './components/inputs/phone/PhoneInput';
+export * from './components/inputs/phrase/PhraseInput';
 export * from './components/inputs/required-icon/RequiredIcon';
 export * from './components/inputs/richtext/default/RichText';
 export * from './components/inputs/richtext/emojiitem/EmojiButton';

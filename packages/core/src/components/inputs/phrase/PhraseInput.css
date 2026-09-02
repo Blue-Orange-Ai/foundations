@@ -1,0 +1,42 @@
+
+.blue-orange-phrase-input-cont {
+    position: relative;
+    width: 100%;
+    display: flex;
+}
+
+/* The preview is drawn over the field rather than behind it, so the field keeps
+   its own background, border and focus outline. It never takes the pointer, so
+   clicking it puts the caret in the input underneath. */
+.blue-orange-phrase-input-preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    /* Matches the field's own box so the phrase sits on the same baseline. */
+    border: 1px solid transparent;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 0.8rem;
+    font-family: inherit;
+    white-space: pre;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* Takes up the width of what has been typed without drawing over it. */
+.blue-orange-phrase-input-preview-typed {
+    visibility: hidden;
+}
+
+.blue-orange-phrase-input-preview-remaining {
+    color: var(--blue-orange-light-input-tag-placeholder-color);
+}
+
+.dark .blue-orange-phrase-input-preview-remaining {
+    color: var(--blue-orange-dark-input-tag-placeholder-color);
+}
