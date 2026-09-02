@@ -10,6 +10,12 @@ interface Props {
 	value?:string;
 	placeholder?: string;
 	style?: React.CSSProperties;
+	/** A fixed height for the field. A number is taken as pixels. */
+	height?: number | string;
+	/** The shortest the field is allowed to be. A number is taken as pixels. */
+	minHeight?: number | string;
+	/** The tallest the field is allowed to be, after which it scrolls. A number is taken as pixels. */
+	maxHeight?: number | string;
 	onChange?: (value: string) => void;
 	label?:string;
 	/** Registers the input with a surrounding FormGroup under this key. */
@@ -28,6 +34,9 @@ export const TextArea: React.FC<Props> = ({
 											  value="",
 											  placeholder="",
 											  style = {},
+											  height,
+											  minHeight,
+											  maxHeight,
 											  onChange,
 											  label,
 											  name,
@@ -67,6 +76,24 @@ export const TextArea: React.FC<Props> = ({
 		handleBlurValidation(text === undefined || text == null ? "" : text);
 	};
 
+	/**
+	 * The height props are applied over the top of `style`, so a field that is
+	 * given both is sized by the prop that names what it is doing.
+	 */
+	const textAreaStyle = (): React.CSSProperties => {
+		const sizing: React.CSSProperties = {};
+		if (height !== undefined) {
+			sizing.height = height;
+		}
+		if (minHeight !== undefined) {
+			sizing.minHeight = minHeight;
+		}
+		if (maxHeight !== undefined) {
+			sizing.maxHeight = maxHeight;
+		}
+		return {...style, ...sizing};
+	};
+
 	return (
 		<div className="blue-orange-text-area-input-cont" style={style}>
 			{label &&
@@ -85,7 +112,7 @@ export const TextArea: React.FC<Props> = ({
 				placeholder={placeholder}
 				onChange={handleInputChange}
 				onBlur={handleBlur}
-				style={style}>
+				style={textAreaStyle()}>
 			</textarea>
 			<InputValidationMessage result={validationResult}></InputValidationMessage>
 		</div>

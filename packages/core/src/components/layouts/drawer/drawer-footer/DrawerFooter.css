@@ -5,5 +5,19 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    gap: 8px;
 }
 
+/* the left and right groups lay their buttons out in a row — without this they are plain block
+   divs and two buttons stack on top of one another */
+.blue-orange-drawer-footer-left,
+.blue-orange-drawer-footer-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.blue-orange-drawer-footer-right {
+    justify-content: flex-end;
+}

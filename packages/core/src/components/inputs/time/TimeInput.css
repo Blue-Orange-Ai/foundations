@@ -1,3 +1,6 @@
+/* The text styling — border, height, colour and font — comes from the shared
+   .blue-orange-input rule this field is given alongside this class. Only what is
+   particular to a time field belongs here. */
 .blue-orange-time-input {
     color-scheme: light;
 }

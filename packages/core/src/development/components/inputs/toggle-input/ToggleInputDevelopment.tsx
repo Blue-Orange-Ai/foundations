@@ -21,6 +21,36 @@ const TOGGLE_PROPS: Array<PropSpec> = [
 		description: "Whether the switch is on."
 	},
 	{
+		name: "label",
+		type: "string",
+		control: "text",
+		value: "Email notifications",
+		description: "The label for the switch."
+	},
+	{
+		name: "text",
+		type: "string",
+		control: "text",
+		description: "Optional text sat to the right of the switch. Clicking it flips the switch."
+	},
+	{
+		name: "help",
+		type: "string",
+		control: "text",
+		description: "Puts a help icon beside the label with this text behind it."
+	},
+	{
+		name: "labelPosition",
+		type: "ToggleLabelPosition",
+		default: "\"top\"",
+		control: "select",
+		options: [
+			{label: "top", value: "top"},
+			{label: "left", value: "left"}
+		],
+		description: "\"top\" stacks the label above the switch like every other input. \"left\" puts them on one row, pushed to either end of the full width of the container, which is how a switch usually sits in a form."
+	},
+	{
 		name: "onChange",
 		type: "(checked: boolean) => void",
 		description: "Fires with what the switch has become."
@@ -42,6 +72,18 @@ const TOGGLE_PROPS: Array<PropSpec> = [
 		type: "React.CSSProperties",
 		default: "{}",
 		description: "Inline style put on the switch."
+	},
+	{
+		name: "labelStyle",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the label."
+	},
+	{
+		name: "textStyle",
+		type: "React.CSSProperties",
+		default: "{}",
+		description: "Inline style put on the text beside the switch."
 	},
 	...validationProps("boolean")
 ];
@@ -66,6 +108,10 @@ export const ToggleInputDevelopment: React.FC<Props> = ({}) => {
 					preview={values => (
 						<Toggle
 							checked={values.checked}
+							label={values.label}
+							text={values.text}
+							help={values.help}
+							labelPosition={values.labelPosition}
 							disabled={values.disabled}
 							name={values.name}
 							required={values.required}
@@ -73,7 +119,19 @@ export const ToggleInputDevelopment: React.FC<Props> = ({}) => {
 							validateOnChange={values.validateOnChange}
 							onChange={() => {}}></Toggle>
 					)}>
-					<Toggle checked={query} onChange={setQuery}></Toggle>
+					<div className="workspace-toggle-example-form">
+						<Toggle
+							checked={query}
+							label="Email notifications"
+							help="We will let you know when something needs your attention."
+							labelPosition="left"
+							onChange={setQuery}></Toggle>
+						<Toggle
+							checked={query}
+							label="Email notifications"
+							text={query ? "On" : "Off"}
+							onChange={setQuery}></Toggle>
+					</div>
 				</ComponentDoc>
 			</SplitPageMajor>
 			<SplitPageMinor>

@@ -1,4 +1,16 @@
 
+.blue-orange-checkbox {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.blue-orange-checkbox-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
 .blue-orange-checkbox input {
     margin: 4px;
 }
@@ -15,3 +27,22 @@
     accent-color: var(--blue-orange-dark-input-error-border-color);
 }
 
+/* Optional text sat to the right of the box. Clicking it ticks the box. */
+.blue-orange-checkbox-text {
+    font-size: var(--blue-orange-light-input-label-font-size);
+    color: var(--blue-orange-light-input-color);
+    margin-left: 4px;
+    line-height: 1.3;
+    cursor: pointer;
+    user-select: none;
+}
+
+.dark .blue-orange-checkbox-text {
+    font-size: var(--blue-orange-dark-input-label-font-size);
+    color: var(--blue-orange-dark-input-color);
+}
+
+.blue-orange-checkbox-text-readonly {
+    cursor: default;
+    opacity: 0.8;
+}

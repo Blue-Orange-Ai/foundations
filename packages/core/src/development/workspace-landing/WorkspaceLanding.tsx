@@ -48,6 +48,7 @@ import {DateInputDevelopment} from "../components/inputs/date-input/DateInputDev
 import {DropdownInputDevelopment} from "../components/inputs/dropdown-input/DropdownInputDevelopment";
 import {EmojiInputDevelopment} from "../components/inputs/emoji-input/EmojiInputDevelopment";
 import {PhoneInputDevelopment} from "../components/inputs/phone-input/PhoneInputDevelopment";
+import {PhraseInputDevelopment} from "../components/inputs/phrase-input/PhraseInputDevelopment";
 import {TagInputDevelopment} from "../components/inputs/tag-input/TagInputDevelopment";
 import {PassportTagInputDevelopment} from "../components/inputs/passport-tag-input/PassportTagInputDevelopment";
 import {GeneralInputDevelopment} from "../components/inputs/general-input/GeneralInputDevelopment";
@@ -560,6 +561,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							activeStyle={activeStyle}
 							icon={<i className="ri-cellphone-line"></i>}
 							onClick={() => navigate("/inputs-phone")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Phrase Input"}
+							active={component == "inputs-phrase"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-input-cursor-move"></i>}
+							onClick={() => navigate("/inputs-phrase")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
 							label={"Rich Text Input"}
@@ -1290,6 +1300,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "inputs-dropdown" && <DropdownInputDevelopment></DropdownInputDevelopment>}
 			{component == "inputs-emoji" && <EmojiInputDevelopment></EmojiInputDevelopment>}
 			{component == "inputs-phone" && <PhoneInputDevelopment></PhoneInputDevelopment>}
+			{component == "inputs-phrase" && <PhraseInputDevelopment></PhraseInputDevelopment>}
 			{component == "inputs-tags" && <TagInputDevelopment></TagInputDevelopment>}
 			{component == "inputs-passport-tags" && <PassportTagInputDevelopment></PassportTagInputDevelopment>}
 			{component == "inputs-general" && <GeneralInputDevelopment></GeneralInputDevelopment>}
