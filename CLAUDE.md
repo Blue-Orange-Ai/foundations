@@ -50,11 +50,18 @@ All packages live under `packages/`. There is no root-level source code.
 - **llm-graph** — Node-based LLM agent workflow (DAG) editor for the `llm-agent` (depends on core + graph)
 - **search-client** — Search UI (depends on core + clients)
 - **pipelines-client** — Pipeline graph editor (depends on core + graph)
-- **passport-client** — Auth/user management UI (depends on core + clients)
 - **deployment-manager** — Deployment management UI (depends on core, uses Monaco)
 
 **Non-UI package** (built with plain tsc, output CommonJS):
 - **clients** — Shared API client utilities (STOMP/WebSocket, cookies, phone parsing, LRU cache)
+
+**Not in this repo:** Passport's UI lives in the
+[passport-mono](https://github.com/Blue-Orange-Ai/passport-mono) repo, under
+`passport-client/`, and is released from there as
+`@blue-orange-ai/passport-client`. A stale copy stayed behind here after that
+move, and because it still carried the old `foundations-passport-client` name,
+every foundations release republished it over the newer package — do not re-add
+it.
 
 ### Dependency graph (internal)
 
@@ -66,7 +73,6 @@ All packages live under `packages/`. There is no root-level source code.
 - `deployment-manager` → `core`
 - `pipelines-client` → `core`, `graph`
 - `search-client` → `core`, `clients`
-- `passport-client` → `core`, `clients`
 
 ### Build system
 
