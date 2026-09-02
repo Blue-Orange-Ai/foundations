@@ -5,6 +5,10 @@ import {ContextMenuHeading} from "../context-menu-heading/ContextMenuHeading";
 import {ContextMenuItem} from "../context-menu-item/ContextMenuItem";
 import {ContextMenuSeparator} from "../context-menu-separator/ContextMenuSeparator";
 
+// Context menus float above page chrome such as resizable sidebar/split handles,
+// so they sit at the same stacking level as dropdowns and date pickers.
+const CONTEXT_MENU_Z_INDEX = 999999999;
+
 export enum IContextMenuType {
 	CONTENT=0,
 	SEPARATOR=1,
@@ -319,7 +323,7 @@ export const ContextMenu: React.FC<Props> = ({
 			top: top + 'px',
 			width: width == undefined ? 'fit-content' : expectedWidth + 'px',
 			maxHeight: maxHeightPx + 'px',
-			zIndex: 10 + level,
+			zIndex: CONTEXT_MENU_Z_INDEX + level,
 		};
 	}
 
@@ -370,7 +374,7 @@ export const ContextMenu: React.FC<Props> = ({
 		return (
 			<div
 				className="blue-orange-default-context-menu shadow"
-				style={{...panelStyle, zIndex: 10 + panelLevel}}
+				style={{...panelStyle, zIndex: CONTEXT_MENU_Z_INDEX + panelLevel}}
 				ref={(el) => updatePanelSize(panelLevel, el)}
 				onMouseEnter={() => clearSubmenuCloseTimer()}
 				onMouseLeave={() => scheduleSubmenuCloseFromLevel(panelLevel)}

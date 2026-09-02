@@ -3,7 +3,7 @@
 
 .blue-orange-default-context-menu{
     position: fixed;
-    z-index: 10;
+    z-index: 999999999;
     background-color: var(--blue-orange-light-context-menu-background);
     min-width: 200px;
     overflow-y: auto;
@@ -13,7 +13,7 @@
 
 .dark .blue-orange-default-context-menu{
     position: fixed;
-    z-index: 10;
+    z-index: 999999999;
     background-color: var(--blue-orange-dark-context-menu-background);
     min-width: 50px;
     overflow-y: auto;
