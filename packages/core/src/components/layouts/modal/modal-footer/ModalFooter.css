@@ -5,6 +5,20 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    gap: 8px;
     margin-top: 20px;
 }
 
+/* the left and right groups lay their buttons out in a row — without this they are plain block
+   divs and two buttons stack on top of one another */
+.blue-orange-modal-footer-left,
+.blue-orange-modal-footer-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.blue-orange-modal-footer-right {
+    justify-content: flex-end;
+}
