@@ -21,6 +21,8 @@ import {Media, MediaPermission, GroupPermission} from "@blue-orange-ai/foundatio
 import CustomMention from "../mention-extension/MentionExtension";
 import {InputValidateCallback, useInputValidation} from "../../validation/InputValidation";
 import {InputValidationMessage} from "../../validation/InputValidationMessage";
+import {HelpIcon} from "../../help/HelpIcon";
+import {RequiredIcon} from "../../required-icon/RequiredIcon";
 
 export interface MentionItem {
 	label: string,
@@ -42,9 +44,16 @@ interface Props {
 	singleLine?: boolean,
 	allowMentions?: boolean,
 	allowEmojis?: boolean,
+	allowFileUpload?: boolean,
+	allowFormattingToggle?: boolean,
 	uploadPermissions?: Array<MediaPermission>,
 	disabled?: boolean,
 	clearState?: string,
+	/** Sits above the editor, and names the field in the message a failed requirement produces. */
+	label?: string,
+	/** Puts a tooltip beside the label. */
+	help?: string,
+	labelStyle?: React.CSSProperties,
 	/** Registers the input with a surrounding FormGroup under this key. */
 	name?: string,
 	/** Overrides the message shown when a required field is left empty. */
@@ -68,13 +77,19 @@ export const RichText: React.FC<Props> = ({
 											  files=[],
 											  placeholder,
 											  displayFormatting= true,
+											  editorHeight,
 											  minEditorHeight = 10,
 											  singleLine = false,
 											  allowMentions=true,
 											  allowEmojis=true,
+											  allowFileUpload=true,
+											  allowFormattingToggle=true,
 											  uploadPermissions=defaultUploadPermission,
 											  disabled = false,
 											  clearState = "",
+											  label,
+											  help,
+											  labelStyle = {},
 											  onChange,
 											  onEnter,
 											  name,
@@ -86,12 +101,23 @@ export const RichText: React.FC<Props> = ({
 
 	const editorRef = useRef<any>(null);
 
+	// What the field is worth to a form. An untouched editor still reports an
+	// empty paragraph as its html, which would read as a filled in field, so
+	// nothing is what it is worth until something is typed into it.
+	const currentValue = (): string => {
+		if (!editorRef.current || editorRef.current.isEmpty) {
+			return "";
+		}
+		return editorRef.current.getHTML();
+	}
+
 	const {validationResult, isError, handleBlurValidation, handleChangeValidation} =
 		useInputValidation<string>(validate, validateOnChange, {
 			name: name,
+			label: label,
 			required: required,
 			requiredMessage: requiredMessage,
-			getValue: () => editorRef.current ? editorRef.current.getHTML() : ""
+			getValue: () => currentValue()
 		});
 
 	const initialiseFiles = (): RichTextEditorUploadedFile[] => {
@@ -140,9 +166,25 @@ export const RichText: React.FC<Props> = ({
 
 	const disabledRef = useRef(disabled);
 
+	const singleLineRef = useRef(singleLine);
+
+	const placeholderRef = useRef(placeholder ?? "");
+
 	const onEnterRef = useRef(onEnter);
 
 	const initialClearState = useRef(clearState);
+
+	// The editor is rebuilt whenever the extension set changes, so the html it
+	// currently holds is kept to hand back to the instance that replaces it.
+	const contentRef = useRef(content ?? "");
+
+	// The last value the content prop pushed in, so a rebuild is not mistaken
+	// for the parent asking for different content.
+	const appliedContentRef = useRef(content);
+
+	const filesKey = (media: Array<Media>) => media.map(item => item.uuid).join(",");
+
+	const appliedFilesRef = useRef(filesKey(files));
 
 	const getEmojiHtml = (emoji: EmojiObj) => {
 		const skin_tone = Cookies.get("skinTone")
@@ -219,15 +261,20 @@ export const RichText: React.FC<Props> = ({
 		addKeyboardShortcuts() {
 			return {
 				Enter: () => {
-					if (!onEnterRef.current) return false;
 					const suggestionPopup = document.querySelector(
 						'[data-tippy-root] .tippy-box[data-theme="blue-orange-rich-text-editor-mention-tippy"]'
 					);
 					if (suggestionPopup) return false;
+					if (!onEnterRef.current) {
+						// Nothing to send it to, so a single line editor simply
+						// swallows the key rather than growing a second line.
+						return singleLineRef.current;
+					}
 					onEnterRef.current();
 					return true;
 				},
 				'Shift-Enter': ({ editor }) => {
+					if (singleLineRef.current) return true;
 					if (!onEnterRef.current) return false;
 					if (editor.isActive('codeBlock')) {
 						return editor.commands.newlineInCode();
@@ -254,7 +301,7 @@ export const RichText: React.FC<Props> = ({
 	var extensions = [
 		StarterKit,
 		Placeholder.configure({
-			placeholder: placeholder ?? "",
+			placeholder: () => placeholderRef.current,
 		}),
 		Link.configure({
 			protocols: ['ftp', 'mailto'],
@@ -268,7 +315,7 @@ export const RichText: React.FC<Props> = ({
 	const extensionsNoMentions = [
 		StarterKit,
 		Placeholder.configure({
-			placeholder: placeholder ?? "",
+			placeholder: () => placeholderRef.current,
 		}),
 		Link.configure({
 			protocols: ['ftp', 'mailto'],
@@ -281,7 +328,7 @@ export const RichText: React.FC<Props> = ({
 	const extensionsNoEmojis = [
 		StarterKit,
 		Placeholder.configure({
-			placeholder: placeholder ?? "",
+			placeholder: () => placeholderRef.current,
 		}),
 		Link.configure({
 			protocols: ['ftp', 'mailto'],
@@ -294,7 +341,7 @@ export const RichText: React.FC<Props> = ({
 	const extensionsNoMentionsNoEmojis: AnyExtension[] = [
 		StarterKit,
 		Placeholder.configure({
-			placeholder: placeholder ?? "",
+			placeholder: () => placeholderRef.current,
 		}),
 		Link.configure({
 			protocols: ['ftp', 'mailto'],
@@ -318,13 +365,20 @@ export const RichText: React.FC<Props> = ({
 
 	const editor = useEditor({
 		extensions,
-		content,
+		content: contentRef.current,
+		editable: !disabled,
 		onUpdate({ editor }) {
 			editorChanged();
 		}
-	})
+	}, [allowMentions, allowEmojis])
 
 	editorRef.current = editor;
+
+	// Read by handlers that are registered once, so they have to be kept current
+	// on every render rather than captured at mount.
+	disabledRef.current = disabled;
+	singleLineRef.current = singleLine;
+	placeholderRef.current = placeholder ?? "";
 
 	const defaultIconStyle: React.CSSProperties = {
 		height: "30px",
@@ -336,10 +390,23 @@ export const RichText: React.FC<Props> = ({
 		justifyContent: "center"
 	}
 
-	const editorStyle: React.CSSProperties = {
-		minHeight: "500px",
-		width: "100%"
+	const editorStyle = {
+		"--blue-orange-rich-text-editor-min-height": minEditorHeight + "px",
+		"--blue-orange-rich-text-editor-height": editorHeight === undefined ? "auto" : editorHeight + "px"
+	} as React.CSSProperties;
+
+	const editorClassName = () => {
+		var classNames = ["blue-orange-rich-text-editor"];
+		if (singleLine) classNames.push("blue-orange-rich-text-editor-single-line");
+		if (editorHeight !== undefined) classNames.push("blue-orange-rich-text-editor-fixed-height");
+		if (disabled) classNames.push("blue-orange-rich-text-editor-disabled");
+		if (isError) classNames.push("blue-orange-rich-text-editor-error");
+		return classNames.join(" ");
 	}
+
+	// Nothing left to put in the footer once every tool is turned off, so the
+	// bar itself goes with them unless there are children to hold.
+	const displayFooterTools = allowFileUpload || allowFormattingToggle || allowEmojis || allowMentions;
 
 	const toggleHeading = () => {
 		setDisplayHeading(!displayHeading);
@@ -366,6 +433,9 @@ export const RichText: React.FC<Props> = ({
 	}
 
 	const editorChanged = () => {
+		if (editorRef.current) {
+			contentRef.current = editorRef.current.getHTML();
+		}
 		if (editorRef.current && onChange) {
 			var content = editorRef.current.getHTML();
 			var mentions = generateMentions(content);
@@ -375,16 +445,12 @@ export const RichText: React.FC<Props> = ({
 				generateStoredFileAttachments(),
 				areFilesUploading())
 		}
-		if (editorRef.current) {
-			handleChangeValidation(editorRef.current.getHTML());
-		}
+		handleChangeValidation(currentValue());
 
 	}
 
 	const editorBlurred = () => {
-		if (editorRef.current) {
-			handleBlurValidation(editorRef.current.getHTML());
-		}
+		handleBlurValidation(currentValue());
 	}
 
 	useEffect(() => {
@@ -392,16 +458,6 @@ export const RichText: React.FC<Props> = ({
 	}, [onEnter]);
 
 	const initialise = () => {
-		const intervalId = setInterval(() => {
-			if (editorContainerRef.current) {
-				const childElements = editorContainerRef.current.querySelectorAll('.tiptap');
-				if (childElements.length > 0) {
-					var tiptapEl: HTMLElement = childElements[0] as HTMLElement;
-					tiptapEl.style.minHeight = minEditorHeight + "px";
-					clearInterval(intervalId);
-				}
-			}
-		}, 10);
 		if (editorContainerRef.current) {
 			editorContainerRef.current.addEventListener("keyup", () => {
 				editorChanged();
@@ -419,11 +475,50 @@ export const RichText: React.FC<Props> = ({
 		if (!initRef.current) {
 			initRef.current = true
 			initialise();
-			if (focus && editor) {
-				editor.chain().focus();
-			}
 		}
 	}, []);
+
+	useEffect(() => {
+		if (focus && editor && !editor.isDestroyed) {
+			editor.commands.focus();
+		}
+	}, [focus, editor]);
+
+	useEffect(() => {
+		if (appliedContentRef.current === content) return;
+		appliedContentRef.current = content;
+		contentRef.current = content ?? "";
+		if (editor && !editor.isDestroyed && editor.getHTML() !== content) {
+			editor.commands.setContent(content ?? "", false);
+		}
+	}, [content, editor]);
+
+	useEffect(() => {
+		if (editor && !editor.isDestroyed) {
+			editor.setEditable(!disabled);
+		}
+	}, [disabled, editor]);
+
+	useEffect(() => {
+		// The placeholder is drawn as a decoration, so it only picks a new value
+		// up once the editor is asked to redraw.
+		if (editor && !editor.isDestroyed) {
+			editor.view.dispatch(editor.state.tr);
+		}
+	}, [placeholder, editor]);
+
+	useEffect(() => {
+		setDisplayHeading(displayFormatting);
+	}, [displayFormatting]);
+
+	useEffect(() => {
+		const key = filesKey(files);
+		if (key === appliedFilesRef.current) return;
+		appliedFilesRef.current = key;
+		const updated = initialiseFiles();
+		storedFilesRef.current = updated;
+		setStoredFiles(updated);
+	}, [files]);
 
 	const emojiSelection = (emoji: string) => {
 		if (editor) {
@@ -472,119 +567,142 @@ export const RichText: React.FC<Props> = ({
 	}, [clearState]);
 
 	return (
-		<div className={`blue-orange-rich-text-editor${singleLine ? ' blue-orange-rich-text-editor-single-line' : ''}${isError ? ' blue-orange-rich-text-editor-error' : ''}`}>
-			{displayHeading &&
-				<div className="blue-orange-rich-text-editor-heading">
-					<ButtonIcon
-						icon={"ri-bold"}
-						style={defaultIconStyle}
-						onClick={() => editor?.chain().focus().toggleBold().run()}
-						className={editor?.isActive('bold') ? 'blue-orange-rich-text-editor-heading-is-active' : ''}
-					></ButtonIcon>
-					<ButtonIcon
-						icon={"ri-italic"}
-						style={defaultIconStyle}
-						onClick={() => editor?.chain().focus().toggleItalic().run()}
-						className={editor?.isActive('italic') ? 'blue-orange-rich-text-editor-heading-is-active' : ''}
-					></ButtonIcon>
-					<ButtonIcon
-						icon={"ri-strikethrough"}
-						style={defaultIconStyle}
-						onClick={() => editor?.chain().focus().toggleStrike().run()}
-						className={editor?.isActive('strike') ? 'blue-orange-rich-text-editor-heading-is-active' : ''}
-					></ButtonIcon>
-					<div style={defaultIconStyle}>
-						<div className="blue-orange-rich-text-editor-vertical-line-sep"></div>
-					</div>
-					<ButtonIcon
-						icon={"ri-list-unordered"}
-						style={defaultIconStyle}
-						onClick={() => editor?.chain().focus().toggleBulletList().run()}
-						className={editor?.isActive('bulletList') ? 'blue-orange-rich-text-editor-heading-is-active' : ''}
-					></ButtonIcon>
-					<ButtonIcon
-						icon={"ri-list-ordered"}
-						style={defaultIconStyle}
-						onClick={() => editor?.chain().focus().toggleOrderedList().run()}
-						className={editor?.isActive('orderedList') ? 'blue-orange-rich-text-editor-heading-is-active' : ''}
-					></ButtonIcon>
-					<div style={defaultIconStyle}>
-						<div className="blue-orange-rich-text-editor-vertical-line-sep"></div>
-					</div>
-					<ButtonIcon
-						icon={"ri-quote-text"}
-						style={defaultIconStyle}
-						onClick={() => editor?.chain().focus().toggleBlockquote().run()}
-						className={editor?.isActive('blockquote') ? 'blue-orange-rich-text-editor-heading-is-active' : ''}
-					></ButtonIcon>
-					<ButtonIcon
-						icon={"ri-code-view"}
-						style={defaultIconStyle}
-						onClick={() => editor?.chain().focus().toggleCode().run()}
-						className={editor?.isActive('code') ? 'blue-orange-rich-text-editor-heading-is-active' : ''}
-					></ButtonIcon>
-					<ButtonIcon
-						icon={"ri-code-block"}
-						style={defaultIconStyle}
-						onClick={() => editor?.chain().focus().toggleCodeBlock().run()}
-						className={editor?.isActive('codeBlock') ? 'blue-orange-rich-text-editor-heading-is-active' : ''}
-					></ButtonIcon>
+		<div className="blue-orange-rich-text-editor-cont">
+			{label &&
+				<div
+					className={"blue-orange-default-input-label-cont" + (isError ? " blue-orange-default-input-label-cont-error" : "")}
+					style={labelStyle}>
+					{label}
+					{help && <HelpIcon label={help}></HelpIcon>}
+					{required && <RequiredIcon></RequiredIcon>}
 				</div>
 			}
-			<div ref={editorContainerRef} onBlur={editorBlurred}>
-				<EditorContent editor={editor}></EditorContent>
-			</div>
-			{storedFiles.length > 0 &&
-				<div className="blue-orange-rich-text-editor-uploaded-files">
-					{storedFiles.map((item, index) => (
-						<UploadedFile
-							key={item.uuid}
-							upload={item}
-							uploadPermissions={uploadPermissions}
-							onRemove={removeStoredFile}
-							onMediaUploaded={(media: Media) => {
-								item.media = media;
-								editorChanged();
-							}}
-						></UploadedFile>
-					))}
-				</div>
-			}
-			<div className="blue-orange-rich-text-editor-heading-footer">
-				<div className="blue-orange-rich-text-editor-heading-footer-left-cont">
-					<FileInputWrapper accept={"*/*"} onFileSelect={fileSelected}>
+			<div className={editorClassName()} style={editorStyle}>
+				{displayHeading &&
+					<div className="blue-orange-rich-text-editor-heading">
 						<ButtonIcon
-							icon={"ri-add-line"}
+							icon={"ri-bold"}
 							style={defaultIconStyle}
-							label={"Add files"}
+							onClick={() => editor?.chain().focus().toggleBold().run()}
+							className={editor?.isActive('bold') ? 'blue-orange-rich-text-editor-heading-is-active' : ''}
 						></ButtonIcon>
-					</FileInputWrapper>
-					<div style={defaultIconStyle}>
-						<div className="blue-orange-rich-text-editor-vertical-line-sep"></div>
+						<ButtonIcon
+							icon={"ri-italic"}
+							style={defaultIconStyle}
+							onClick={() => editor?.chain().focus().toggleItalic().run()}
+							className={editor?.isActive('italic') ? 'blue-orange-rich-text-editor-heading-is-active' : ''}
+						></ButtonIcon>
+						<ButtonIcon
+							icon={"ri-strikethrough"}
+							style={defaultIconStyle}
+							onClick={() => editor?.chain().focus().toggleStrike().run()}
+							className={editor?.isActive('strike') ? 'blue-orange-rich-text-editor-heading-is-active' : ''}
+						></ButtonIcon>
+						<div style={defaultIconStyle}>
+							<div className="blue-orange-rich-text-editor-vertical-line-sep"></div>
+						</div>
+						<ButtonIcon
+							icon={"ri-list-unordered"}
+							style={defaultIconStyle}
+							onClick={() => editor?.chain().focus().toggleBulletList().run()}
+							className={editor?.isActive('bulletList') ? 'blue-orange-rich-text-editor-heading-is-active' : ''}
+						></ButtonIcon>
+						<ButtonIcon
+							icon={"ri-list-ordered"}
+							style={defaultIconStyle}
+							onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+							className={editor?.isActive('orderedList') ? 'blue-orange-rich-text-editor-heading-is-active' : ''}
+						></ButtonIcon>
+						<div style={defaultIconStyle}>
+							<div className="blue-orange-rich-text-editor-vertical-line-sep"></div>
+						</div>
+						<ButtonIcon
+							icon={"ri-quote-text"}
+							style={defaultIconStyle}
+							onClick={() => editor?.chain().focus().toggleBlockquote().run()}
+							className={editor?.isActive('blockquote') ? 'blue-orange-rich-text-editor-heading-is-active' : ''}
+						></ButtonIcon>
+						<ButtonIcon
+							icon={"ri-code-view"}
+							style={defaultIconStyle}
+							onClick={() => editor?.chain().focus().toggleCode().run()}
+							className={editor?.isActive('code') ? 'blue-orange-rich-text-editor-heading-is-active' : ''}
+						></ButtonIcon>
+						<ButtonIcon
+							icon={"ri-code-block"}
+							style={defaultIconStyle}
+							onClick={() => editor?.chain().focus().toggleCodeBlock().run()}
+							className={editor?.isActive('codeBlock') ? 'blue-orange-rich-text-editor-heading-is-active' : ''}
+						></ButtonIcon>
 					</div>
-					<ButtonIcon
-						icon={"ri-font-size"}
-						style={defaultIconStyle}
-						onClick={toggleHeading}
-						label={"Toggle formatting"}
-					></ButtonIcon>
-					<EmojiWrapper onSelection={emojiSelection}>
-						<ButtonIcon
-							icon={"ri-emotion-happy-line"}
-							style={defaultIconStyle}
-							label={"Emoji"}
-						></ButtonIcon>
-					</EmojiWrapper>
-					<ButtonIcon
-						icon={"ri-at-line"}
-						style={defaultIconStyle}
-						onClick={insertMentionStart}
-						label={"Mention someone"}
-					></ButtonIcon>
+				}
+				<div ref={editorContainerRef} onBlur={editorBlurred}>
+					<EditorContent editor={editor}></EditorContent>
 				</div>
-				{children &&
-					<div className="blue-orange-rich-text-editor-heading-footer-right-cont">
-						{children}
+				{storedFiles.length > 0 &&
+					<div className="blue-orange-rich-text-editor-uploaded-files">
+						{storedFiles.map((item, index) => (
+							<UploadedFile
+								key={item.uuid}
+								upload={item}
+								uploadPermissions={uploadPermissions}
+								onRemove={removeStoredFile}
+								onMediaUploaded={(media: Media) => {
+									item.media = media;
+									editorChanged();
+								}}
+							></UploadedFile>
+						))}
+					</div>
+				}
+				{(displayFooterTools || children) &&
+					<div className="blue-orange-rich-text-editor-heading-footer">
+						<div className="blue-orange-rich-text-editor-heading-footer-left-cont">
+							{allowFileUpload &&
+								<FileInputWrapper accept={"*/*"} onFileSelect={fileSelected}>
+									<ButtonIcon
+										icon={"ri-add-line"}
+										style={defaultIconStyle}
+										label={"Add files"}
+									></ButtonIcon>
+								</FileInputWrapper>
+							}
+							{allowFileUpload && (allowFormattingToggle || allowEmojis || allowMentions) &&
+								<div style={defaultIconStyle}>
+									<div className="blue-orange-rich-text-editor-vertical-line-sep"></div>
+								</div>
+							}
+							{allowFormattingToggle &&
+								<ButtonIcon
+									icon={"ri-font-size"}
+									style={defaultIconStyle}
+									onClick={toggleHeading}
+									label={"Toggle formatting"}
+								></ButtonIcon>
+							}
+							{allowEmojis &&
+								<EmojiWrapper onSelection={emojiSelection}>
+									<ButtonIcon
+										icon={"ri-emotion-happy-line"}
+										style={defaultIconStyle}
+										label={"Emoji"}
+									></ButtonIcon>
+								</EmojiWrapper>
+							}
+							{allowMentions &&
+								<ButtonIcon
+									icon={"ri-at-line"}
+									style={defaultIconStyle}
+									onClick={insertMentionStart}
+									label={"Mention someone"}
+								></ButtonIcon>
+							}
+						</div>
+						{children &&
+							<div className="blue-orange-rich-text-editor-heading-footer-right-cont">
+								{children}
+							</div>
+						}
 					</div>
 				}
 			</div>

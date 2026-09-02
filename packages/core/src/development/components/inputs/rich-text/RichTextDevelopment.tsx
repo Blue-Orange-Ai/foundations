@@ -12,6 +12,9 @@ import {Media} from "@blue-orange-ai/foundations-clients";
 import {ComponentDoc} from "../../../framework/ComponentDoc";
 import {PropSpec} from "../../../framework/PropSpec";
 import {validationProps} from "../../../framework/InputProps";
+import {FormGroup} from "../../../../components/inputs/form-group/FormGroup";
+import {FormActions} from "../../../../components/inputs/form-group/FormActions";
+import {FormSubmitButton} from "../../../../components/inputs/form-group/FormSubmitButton";
 
 interface RichTextState {
 	content: string,
@@ -27,6 +30,18 @@ const RICH_TEXT_PROPS: Array<PropSpec> = [
 		control: "text",
 		value: "<p>The depot reports every hour.</p>",
 		description: "The starting content, as HTML."
+	},
+	{
+		name: "label",
+		type: "string",
+		control: "text",
+		description: "Sits above the editor, and names the field in the message a failed requirement produces."
+	},
+	{
+		name: "help",
+		type: "string",
+		control: "text",
+		description: "Puts a tooltip beside the label."
 	},
 	{
 		name: "placeholder",
@@ -70,14 +85,28 @@ const RICH_TEXT_PROPS: Array<PropSpec> = [
 		type: "boolean",
 		default: "true",
 		control: "toggle",
-		description: "Turns @ into a people picker."
+		description: "Turns @ into a people picker, and keeps the mention button in the footer."
 	},
 	{
 		name: "allowEmojis",
 		type: "boolean",
 		default: "true",
 		control: "toggle",
-		description: "Turns : into an emoji picker."
+		description: "Turns : into an emoji picker, and keeps the emoji button in the footer."
+	},
+	{
+		name: "allowFileUpload",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Keeps the attach button in the footer."
+	},
+	{
+		name: "allowFormattingToggle",
+		type: "boolean",
+		default: "true",
+		control: "toggle",
+		description: "Keeps the button that shows and hides the formatting toolbar."
 	},
 	{
 		name: "focus",
@@ -164,15 +193,17 @@ export const RichTextDevelopment: React.FC<Props> = ({}) => {
 			<SplitPageMajor>
 				<ComponentDoc
 					title="Rich Text"
-					description="The full editor: formatting, mentions, emojis and file attachments, built on tiptap. It reports its content as HTML together with the mentions and the media that went with it, and says whether any upload is still in flight."
+					description="The full editor: formatting, mentions, emojis and file attachments, built on tiptap. It reports its content as HTML together with the mentions and the media that went with it, and says whether any upload is still in flight. Give it a name and the demo puts it inside a FormGroup — which is what enforces required — so submitting it empty fails the field."
 					name="RichText"
 					previewHeight={280}
 					previewCentered={false}
 					props={RICH_TEXT_PROPS}
-					preview={values => (
-						<div style={{width: "100%"}}>
+					preview={values => {
+						const editor = (
 							<RichText
 								content={values.content}
+								label={values.label}
+								help={values.help}
 								placeholder={values.placeholder}
 								displayFormatting={values.displayFormatting}
 								minEditorHeight={values.minEditorHeight}
@@ -180,14 +211,33 @@ export const RichTextDevelopment: React.FC<Props> = ({}) => {
 								singleLine={values.singleLine}
 								allowMentions={values.allowMentions}
 								allowEmojis={values.allowEmojis}
+								allowFileUpload={values.allowFileUpload}
+								allowFormattingToggle={values.allowFormattingToggle}
+								focus={values.focus}
+								clearState={values.clearState}
 								disabled={values.disabled}
 								name={values.name}
 								required={values.required}
 								requiredMessage={values.requiredMessage}
 								validateOnChange={values.validateOnChange}
 								onChange={() => {}}></RichText>
-						</div>
-					)}>
+						);
+						// name is what registers the field with a form, so the demo only
+						// grows one once there is a name to register under — which is also
+						// the only thing that enforces required.
+						return (
+							<div style={{width: "100%"}}>
+								{values.name
+									? <FormGroup onSubmit={() => {}} paddingTop={0}>
+										{editor}
+										<FormActions>
+											<FormSubmitButton text="Submit"></FormSubmitButton>
+										</FormActions>
+									</FormGroup>
+									: editor}
+							</div>
+						);
+					}}>
 					<RichText
 						minEditorHeight={10}
 						content={richTextContent.content}
