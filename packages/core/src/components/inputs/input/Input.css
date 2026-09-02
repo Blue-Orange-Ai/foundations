@@ -16,6 +16,10 @@
     padding-left: 5px;
     padding-right: 5px;
     font-size: 0.8rem;
+    /* Form controls do not inherit the page font on their own, and the browser
+       hands the date and time types a monospace one, so every field is named the
+       same font here rather than being left to the four the user agent picks. */
+    font-family: inherit;
 }
 
 .dark .blue-orange-input {
