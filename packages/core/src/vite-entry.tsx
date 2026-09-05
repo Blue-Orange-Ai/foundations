@@ -278,6 +278,7 @@ export * from './components/layouts/right-aligned-div/RightAlignedDiv';
 export * from './components/loading/loading/Loading';
 export * from './components/loading/skeleton/Skeleton';
 export * from './components/loading/spinner/Spinner';
+export * from './components/loading/multi-stage-loading/MultiStageLoading';
 
 // Media
 export * from './components/media/default/RenderMedia';

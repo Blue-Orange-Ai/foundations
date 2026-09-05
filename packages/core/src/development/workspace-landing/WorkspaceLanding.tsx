@@ -114,6 +114,7 @@ import {NavigationMenuDevelopment} from "../components/navigation-menu/Navigatio
 import {PaginationDevelopment} from "../components/pagination/PaginationDevelopment";
 import {PanelDevelopment} from "../components/panel/PanelDevelopment";
 import {SpinnerDevelopment} from "../components/loading/spinner/SpinnerDevelopment";
+import {MultiStageLoadingDevelopment} from "../components/loading/multi-stage-loading/MultiStageLoadingDevelopment";
 import {SliderDevelopment} from "../components/inputs/slider/SliderDevelopment";
 import {OTPInputDevelopment} from "../components/inputs/otp-input/OTPInputDevelopment";
 import {KbdDevelopment} from "../components/text-decorations/kbd/KbdDevelopment";
@@ -807,6 +808,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						onClick={() => navigate("/spinner")}
 					></SideBarBodyItem>
 					<SideBarBodyItem
+						label={"Multi Stage Loading"}
+						active={component == "multi-stage-loading"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-list-check-2"></i>}
+						onClick={() => navigate("/multi-stage-loading")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
 						label={"Menubar"}
 						active={component == "menubar"}
 						focused={false}
@@ -1372,6 +1382,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "pagination" && <PaginationDevelopment></PaginationDevelopment>}
 			{component == "panel" && <PanelDevelopment></PanelDevelopment>}
 			{component == "spinner" && <SpinnerDevelopment></SpinnerDevelopment>}
+			{component == "multi-stage-loading" && <MultiStageLoadingDevelopment></MultiStageLoadingDevelopment>}
 			{component == "inputs-slider" && <SliderDevelopment></SliderDevelopment>}
 			{component == "inputs-otp" && <OTPInputDevelopment></OTPInputDevelopment>}
 			{component == "text-decoration-kbd" && <KbdDevelopment></KbdDevelopment>}
