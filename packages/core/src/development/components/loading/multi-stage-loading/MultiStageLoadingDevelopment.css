@@ -1,0 +1,27 @@
+.blue-orange-multi-stage-docs-preview {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+}
+
+.blue-orange-multi-stage-docs-example {
+    margin-bottom: 40px;
+}
+
+.blue-orange-multi-stage-docs-panel {
+    max-width: 420px;
+    padding: 16px 18px;
+    border: 1px solid var(--blue-orange-light-sidebar-border-color);
+    border-radius: 8px;
+}
+
+.dark .blue-orange-multi-stage-docs-panel {
+    border-color: var(--blue-orange-dark-sidebar-border-color);
+}
+
+.blue-orange-multi-stage-docs-controls {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    margin-top: 12px;
+}

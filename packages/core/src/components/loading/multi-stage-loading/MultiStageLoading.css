@@ -1,0 +1,208 @@
+.blue-orange-multi-stage-loading {
+    --blue-orange-multi-stage-loading-duration: 450ms;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    color: var(--blue-orange-light-default-text-color);
+}
+
+.dark .blue-orange-multi-stage-loading {
+    color: var(--blue-orange-dark-default-text-color);
+}
+
+/*
+ * The window the stages travel through. The top padding is the slot the
+ * stages above the active one sit in — overflow clips at the outer edge of
+ * that padding, so they stay visible right up to the top of the component
+ * and are cut off cleanly rather than pushing the layout around.
+ */
+.blue-orange-multi-stage-loading-viewport {
+    position: relative;
+    box-sizing: border-box;
+    overflow: hidden;
+    width: 100%;
+}
+
+.blue-orange-multi-stage-loading-track {
+    display: flex;
+    flex-direction: column;
+    will-change: transform;
+}
+
+/*
+ * Only added a frame after mount, so a component that appears part way
+ * through a run opens on its current stage instead of sliding to it.
+ */
+.blue-orange-multi-stage-loading-track-animated {
+    transition: transform var(--blue-orange-multi-stage-loading-duration) cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.blue-orange-multi-stage-loading-stage {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    box-sizing: border-box;
+    padding: 0 2px;
+    min-width: 0;
+    transition: opacity var(--blue-orange-multi-stage-loading-duration) ease,
+    color var(--blue-orange-multi-stage-loading-duration) ease,
+    filter var(--blue-orange-multi-stage-loading-duration) ease;
+}
+
+.blue-orange-multi-stage-loading-center .blue-orange-multi-stage-loading-stage {
+    justify-content: center;
+    text-align: center;
+}
+
+.blue-orange-multi-stage-loading-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 20px;
+    font-size: 1.05rem;
+    line-height: 1;
+}
+
+.blue-orange-multi-stage-loading-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.blue-orange-multi-stage-loading-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.blue-orange-multi-stage-loading-description {
+    font-size: 0.78rem;
+    color: var(--blue-orange-light-muted-text-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dark .blue-orange-multi-stage-loading-description {
+    color: var(--blue-orange-dark-muted-text-color);
+}
+
+.blue-orange-multi-stage-loading-trailing {
+    margin-left: auto;
+    flex-shrink: 0;
+    font-size: 0.78rem;
+    color: var(--blue-orange-light-muted-text-color);
+}
+
+.dark .blue-orange-multi-stage-loading-trailing {
+    color: var(--blue-orange-dark-muted-text-color);
+}
+
+/*
+ * The active stage is the only one at full weight. The rest are dimmed by the
+ * opacity the component sets on the row; the weight change is what stops them
+ * reading as a second heading once they are still faintly legible.
+ */
+.blue-orange-multi-stage-loading-stage-active .blue-orange-multi-stage-loading-label {
+    font-weight: 600;
+}
+
+.blue-orange-multi-stage-loading-stage-complete .blue-orange-multi-stage-loading-icon {
+    color: #16a34b;
+}
+
+.blue-orange-multi-stage-loading-stage-error .blue-orange-multi-stage-loading-icon {
+    color: var(--blue-orange-light-input-error-color);
+}
+
+.dark .blue-orange-multi-stage-loading-stage-error .blue-orange-multi-stage-loading-icon {
+    color: var(--blue-orange-dark-input-error-color);
+}
+
+.blue-orange-multi-stage-loading-stage-error .blue-orange-multi-stage-loading-label {
+    color: var(--blue-orange-light-input-error-color);
+}
+
+.dark .blue-orange-multi-stage-loading-stage-error .blue-orange-multi-stage-loading-label {
+    color: var(--blue-orange-dark-input-error-color);
+}
+
+@keyframes blue-orange-multi-stage-loading-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.blue-orange-multi-stage-loading-spin {
+    display: inline-block;
+    transform-origin: center;
+    animation: blue-orange-multi-stage-loading-spin 0.6s linear infinite;
+}
+
+.blue-orange-multi-stage-loading-progress {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 3px;
+    margin-top: 12px;
+    border-radius: 3px;
+    background-color: var(--blue-orange-light-sidebar-border-color);
+}
+
+.dark .blue-orange-multi-stage-loading-progress {
+    background-color: var(--blue-orange-dark-sidebar-border-color);
+}
+
+.blue-orange-multi-stage-loading-progress-bar {
+    height: 100%;
+    border-radius: 3px;
+    background-color: var(--blue-orange-light-default-text-color);
+    transition: width var(--blue-orange-multi-stage-loading-duration) cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.dark .blue-orange-multi-stage-loading-progress-bar {
+    background-color: var(--blue-orange-dark-default-text-color);
+}
+
+.blue-orange-multi-stage-loading-count {
+    margin-top: 8px;
+    font-size: 0.78rem;
+    color: var(--blue-orange-light-muted-text-color);
+}
+
+.dark .blue-orange-multi-stage-loading-count {
+    color: var(--blue-orange-dark-muted-text-color);
+}
+
+.blue-orange-multi-stage-loading-center .blue-orange-multi-stage-loading-count {
+    text-align: center;
+}
+
+.blue-orange-multi-stage-loading-empty {
+    font-size: 0.85rem;
+    color: var(--blue-orange-light-muted-text-color);
+}
+
+.dark .blue-orange-multi-stage-loading-empty {
+    color: var(--blue-orange-dark-muted-text-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .blue-orange-multi-stage-loading-track-animated,
+    .blue-orange-multi-stage-loading-stage,
+    .blue-orange-multi-stage-loading-progress-bar {
+        transition-duration: 0.01ms;
+    }
+
+    .blue-orange-multi-stage-loading-spin {
+        animation-duration: 2s;
+    }
+}
