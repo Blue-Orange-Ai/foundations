@@ -37,6 +37,8 @@ export * from './components/charts/bar/BarChart';
 export * from './components/charts/line/LineChart';
 export * from './components/charts/scatter/ScatterChart';
 export * from './components/charts/combo/ComboChart';
+export * from './components/charts/uptime/UptimeChart';
+export * from './components/charts/contribution/ContributionChart';
 export * from './components/charts/types/ChartTypes';
 
 // Config

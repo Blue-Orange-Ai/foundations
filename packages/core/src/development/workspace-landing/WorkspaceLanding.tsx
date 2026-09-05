@@ -15,6 +15,8 @@ import {SideBarBodyItem} from "../../components/layouts/sidebar/items/sidebar-bo
 import {useNavigate, useParams} from "react-router-dom";
 import {LineChartDevelopment} from "../components/charts/line/LineChartDevelopment";
 import {ScatterChartDevelopment} from "../components/charts/scatter/ScatterChartDevelopment";
+import {UptimeChartDevelopment} from "../components/charts/uptime/UptimeChartDevelopment";
+import {ContributionChartDevelopment} from "../components/charts/contribution/ContributionChartDevelopment";
 import {BarChartDevelopment} from "../components/charts/bar/BarChartDevelopment";
 import {RuleEditorDevelopment} from "../components/rules/rule-editor/RuleEditorDevelopment";
 import {FileSystemDevelopment} from "../components/file-system/FileSystemDevelopment";
@@ -321,6 +323,24 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							activeStyle={activeStyle}
 							icon={<i className="ri-bubble-chart-fill"></i>}
 							onClick={() => navigate("/charts-scatter")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Uptime"}
+							active={component == "charts-uptime"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-pulse-line"></i>}
+							onClick={() => navigate("/charts-uptime")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
+							label={"Contribution"}
+							active={component == "charts-contribution"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-grid-fill"></i>}
+							onClick={() => navigate("/charts-contribution")}
 						></SideBarBodyItem>
 					</SideBarBodyGroup>
 					<SideBarBodyGroup opened={sidebarCommentState} openOnActiveChild={true} onOpenedChange={setSidebarCommentState}>
@@ -1259,6 +1279,8 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "charts-bar" && <BarChartDevelopment></BarChartDevelopment>}
 			{component == "charts-combo" && <ComboChartDevelopment></ComboChartDevelopment>}
 			{component == "charts-scatter" && <ScatterChartDevelopment></ScatterChartDevelopment>}
+			{component == "charts-uptime" && <UptimeChartDevelopment></UptimeChartDevelopment>}
+			{component == "charts-contribution" && <ContributionChartDevelopment></ContributionChartDevelopment>}
 			{component == "rules" && <RuleEditorDevelopment></RuleEditorDevelopment>}
 			{component == "metrics-group" && <MetricsGroupDevelopment></MetricsGroupDevelopment>}
 			{component == "search-query" && <SearchQueryEditorDevelopment></SearchQueryEditorDevelopment>}

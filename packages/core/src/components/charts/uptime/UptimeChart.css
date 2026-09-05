@@ -1,0 +1,233 @@
+.blue-orange-uptime-chart {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.blue-orange-uptime-chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.blue-orange-uptime-chart-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--blue-orange-light-default-text-color);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dark .blue-orange-uptime-chart-title {
+    color: var(--blue-orange-dark-default-text-color);
+}
+
+.blue-orange-uptime-chart-uptime {
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0.6;
+    color: var(--blue-orange-light-default-text-color);
+}
+
+.dark .blue-orange-uptime-chart-uptime {
+    color: var(--blue-orange-dark-default-text-color);
+}
+
+.blue-orange-uptime-chart-bars {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+}
+
+.blue-orange-uptime-chart-cell {
+    height: 100%;
+}
+
+/*
+ * Each bar sits in a HoverCard, whose wrapper is a fit-content inline-block by
+ * default. Inside the chart the bars are laid out by the flex row instead, so
+ * the wrapper has to hand its width and height straight through.
+ */
+.blue-orange-uptime-chart-bars .blue-orange-hover-card,
+.blue-orange-uptime-chart-bars .blue-orange-hover-card-trigger-cont,
+.blue-orange-uptime-chart-bars .blue-orange-hover-card-trigger {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.blue-orange-uptime-chart-bar {
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.blue-orange-uptime-chart-bar:hover {
+    opacity: 0.7;
+    transform: scaleY(1.12);
+}
+
+.blue-orange-uptime-chart-bar-clickable {
+    cursor: pointer;
+}
+
+.blue-orange-uptime-chart-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    opacity: 0.6;
+    border-radius: 4px;
+    border: 1px dashed var(--blue-orange-light-default-border-color);
+    color: var(--blue-orange-light-default-text-color);
+}
+
+.dark .blue-orange-uptime-chart-empty {
+    border: 1px dashed var(--blue-orange-dark-default-border-color);
+    color: var(--blue-orange-dark-default-text-color);
+}
+
+.blue-orange-uptime-chart-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.blue-orange-uptime-chart-footer-label {
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0.6;
+    color: var(--blue-orange-light-default-text-color);
+}
+
+.dark .blue-orange-uptime-chart-footer-label {
+    color: var(--blue-orange-dark-default-text-color);
+}
+
+.blue-orange-uptime-chart-footer-line {
+    flex: 1 1 auto;
+    height: 1px;
+    background-color: var(--blue-orange-light-default-border-color);
+}
+
+.dark .blue-orange-uptime-chart-footer-line {
+    background-color: var(--blue-orange-dark-default-border-color);
+}
+
+.blue-orange-uptime-chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 16px;
+    margin-top: 12px;
+}
+
+.blue-orange-uptime-chart-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.blue-orange-uptime-chart-legend-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+}
+
+.blue-orange-uptime-chart-legend-label {
+    font-size: 0.75rem;
+    opacity: 0.6;
+    color: var(--blue-orange-light-default-text-color);
+}
+
+.dark .blue-orange-uptime-chart-legend-label {
+    color: var(--blue-orange-dark-default-text-color);
+}
+
+/* The popup — a HoverCardContent, tightened up for the detail it carries. */
+.blue-orange-uptime-chart-popup {
+    gap: 6px;
+    padding: 12px;
+}
+
+.blue-orange-uptime-chart-popup-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.8rem;
+}
+
+.blue-orange-uptime-chart-popup-label {
+    opacity: 0.6;
+}
+
+.blue-orange-uptime-chart-popup-value {
+    font-weight: 600;
+}
+
+.blue-orange-uptime-chart-popup-note {
+    font-size: 0.75rem;
+    line-height: 1.4;
+    opacity: 0.7;
+}
+
+.blue-orange-uptime-chart-popup-incidents {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 2px;
+    padding-top: 8px;
+    border-top: 1px solid var(--blue-orange-light-hover-card-border-color);
+}
+
+.dark .blue-orange-uptime-chart-popup-incidents {
+    border-top: 1px solid var(--blue-orange-dark-hover-card-border-color);
+}
+
+.blue-orange-uptime-chart-popup-incident {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.blue-orange-uptime-chart-popup-incident-dot {
+    flex: 0 0 auto;
+    width: 8px;
+    height: 8px;
+    margin-top: 4px;
+    border-radius: 9999px;
+}
+
+.blue-orange-uptime-chart-popup-incident-body {
+    min-width: 0;
+}
+
+.blue-orange-uptime-chart-popup-incident-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.blue-orange-uptime-chart-popup-incident-meta {
+    font-size: 0.7rem;
+    line-height: 1.3;
+    opacity: 0.6;
+    margin-top: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .blue-orange-uptime-chart-bar {
+        transition: none;
+    }
+
+    .blue-orange-uptime-chart-bar:hover {
+        transform: none;
+    }
+}

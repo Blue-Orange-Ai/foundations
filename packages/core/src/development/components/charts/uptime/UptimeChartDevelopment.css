@@ -1,0 +1,16 @@
+.blue-orange-uptime-docs-example {
+    margin-bottom: 40px;
+}
+
+.blue-orange-uptime-docs-services {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.blue-orange-uptime-docs-popup {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.8rem;
+}

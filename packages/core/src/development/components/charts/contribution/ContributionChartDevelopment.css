@@ -1,0 +1,17 @@
+.blue-orange-contribution-docs-example {
+    margin-bottom: 40px;
+}
+
+.blue-orange-contribution-docs-popup {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.8rem;
+}
+
+/* Shows the chart taking the dark theme's scale without being handed one. */
+.blue-orange-contribution-docs-dark {
+    padding: 20px;
+    border-radius: 8px;
+    background-color: var(--blue-orange-dark-docs-background-color, #0a0a0a);
+}

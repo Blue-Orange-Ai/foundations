@@ -150,3 +150,78 @@ export interface VerticalLineOptions {
      */
     onCursorMove?: (position: CursorPosition | null) => void,
 }
+
+/**
+ * The condition a single period of an uptime chart was in. These are the states
+ * a status page reports against, so they map straight onto one.
+ */
+export enum UptimeStatus {
+    /** Everything was working. */
+    OPERATIONAL = "OPERATIONAL",
+    /** Working, but slower or less reliably than it should have been. */
+    DEGRADED = "DEGRADED",
+    /** Some of the service was down. */
+    PARTIAL_OUTAGE = "PARTIAL_OUTAGE",
+    /** The service was down. */
+    MAJOR_OUTAGE = "MAJOR_OUTAGE",
+    /** Down on purpose — planned work. */
+    MAINTENANCE = "MAINTENANCE",
+    /** Nothing was recorded for this period. */
+    NO_DATA = "NO_DATA"
+}
+
+/** One incident listed in an uptime bar's popup. */
+export interface UptimeIncident {
+    /** What happened, in a few words. */
+    title: string,
+    /** The state it put the service in — free text, e.g. "Degraded performance". */
+    status?: string,
+    /** How long it ran for, e.g. "14:02 – 15:20 UTC". */
+    duration?: string,
+    /** Overrides the dot colour, which otherwise follows the entry's status. */
+    color?: string
+}
+
+/**
+ * One bar of an uptime chart — a single period (a day, on a status page) and
+ * how the service behaved during it.
+ */
+export interface UptimeEntry {
+    /** The period the bar covers. A Date, or anything `new Date()` can read. */
+    date: Date | string | number,
+    /** How the service behaved. */
+    status: UptimeStatus,
+    /**
+     * The percentage of the period the service was up. Shown in the popup, and
+     * used for the overall figure when every entry carries one.
+     */
+    uptime?: number,
+    /** Incidents to list in the popup. */
+    incidents?: Array<UptimeIncident>,
+    /** Overrides the bar colour that the status would otherwise resolve to. */
+    color?: string,
+    /** A line of free text under the status in the popup. */
+    note?: string
+}
+
+/**
+ * One day of a contribution chart — a single date and how much happened on it.
+ * The count is what drives the square's shade; everything else is detail for
+ * the popup.
+ */
+export interface ContributionEntry {
+    /** The day this covers. A Date, or anything `new Date()` can read. */
+    date: Date | string | number,
+    /** How much happened that day. Zero and negative counts read as empty. */
+    count: number,
+    /**
+     * Pins the square to a shade rather than letting the count decide, as an
+     * index into the chart's `levelColors`. Useful when the server has already
+     * banded the data.
+     */
+    level?: number,
+    /** Overrides the square's colour outright. */
+    color?: string,
+    /** A line of free text under the count in the popup. */
+    note?: string
+}
