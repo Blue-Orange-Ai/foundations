@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useMemo, useEffect, useRef, ReactNode } from 'react';
 import { Passport } from '@blue-orange-ai/foundations-clients';
-import legacyPassport from '@blue-orange-ai/foundations-core/src/components/config/BlueOrangePassportConfig';
 
 const PASSPORT_CONFIG_URI_KEY = 'passport-config-uri';
 
@@ -149,18 +148,6 @@ export const usePassport = (): Passport => {
         throw new Error('usePassport must be used within a PassportProvider');
     }
     return context.passport;
-};
-
-/**
- * The Passport client the pages and forms talk to: the one configured by the
- * nearest PassportProvider. Only when there is no provider does it fall back
- * to core's built-in client (http://localhost:8080), which is meant for local
- * development — sign-in credentials and tokens must go to the server the host
- * configured, never to a hard-coded address.
- */
-export const usePassportClient = (): Passport => {
-    const context = useContext(PassportContext);
-    return context ? context.passport : legacyPassport;
 };
 
 export const usePassportUri = (): string => {

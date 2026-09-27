@@ -7,27 +7,15 @@ import {
     DropdownItemObj, DropdownItemText,
     DropdownItemType, ErrorBlockAlert,
     Input,
-    InputForm,
-    sanitizeRedirect,
-    sanitizeUrl,
+    InputForm
 } from "@blue-orange-ai/foundations-core";
 
 
-import {usePassportClient} from "../../../providers/PassportProvider";
-import {authCookieAttributes} from "../../../providers/AuthCookie";
+import passport from "@blue-orange-ai/foundations-core/src/components/config/BlueOrangePassportConfig";
 
 import './LoginPageImageBackground.css'
 import Cookies from "js-cookie";
 import { useLocation, useNavigate } from "react-router-dom";
-
-// A malformed escape in the query string must not stop the sign-in completing.
-const decodeRedirect = (value: string): string => {
-	try {
-		return decodeURIComponent(value);
-	} catch (e) {
-		return value;
-	}
-};
 
 interface Props {
 	domainSelection?: boolean,
@@ -48,7 +36,6 @@ export const LoginPageImageBackground: React.FC<Props> = ({
 															  registerUri="/register",
 															  allowRegistrations=true
 														  }) => {
-	const passport = usePassportClient();
 
 	const location = useLocation();
 
@@ -93,21 +80,19 @@ export const LoginPageImageBackground: React.FC<Props> = ({
 			password: password,
 			domain: domain
 		}).then(response => {
+			console.log("success");
+			console.log(response);
 			const expiryDate = new Date(response.expiry);
-			Cookies.set("authorization", response.token, authCookieAttributes(expiryDate));
+			Cookies.set("authorization", response.token, { expires: expiryDate});
 			setLoading(false);
 			if (response.forcePasswordReset) {
 				navigate(passwordResetUri);
-				// The reset has to happen first; the redirect below must not replace it.
-				return;
 			}
 			const searchParams = new URLSearchParams(location.search);
 			const redirectUri = searchParams.get('redirect_uri');
 			if (redirectUri) {
-				// The target comes from the query string, so anyone can craft a sign-in
-				// link with it. Only a path on this site is followed; anything else
-				// (another origin, `javascript:`) goes to the default page.
-				navigate(sanitizeRedirect(decodeRedirect(redirectUri), defaultRedirectUri));
+				// Decode the redirect URI before using it
+				navigate(decodeURIComponent(redirectUri));
 			} else {
 				navigate(defaultRedirectUri);
 			}
@@ -176,7 +161,7 @@ export const LoginPageImageBackground: React.FC<Props> = ({
 					></Button>
 					{allowRegistrations &&
 						<div className="passport-login-page-image-background-sign-up">Don't have an account? <a
-							href={sanitizeUrl(registerUri)}>Sign Up</a>
+							href={registerUri}>Sign Up</a>
 						</div>
 					}
 				</div>

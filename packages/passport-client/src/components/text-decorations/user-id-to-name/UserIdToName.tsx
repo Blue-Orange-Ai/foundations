@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
 
-import {usePassportClient} from "../../providers/PassportProvider";
+import passport from "@blue-orange-ai/foundations-core/src/components/config/BlueOrangePassportConfig";
 
 interface Props {
     userId?: string
@@ -9,7 +9,6 @@ interface Props {
 export const UserIdToName: React.FC<Props> = ({
                                                     userId
                                                 }) => {
-    const passport = usePassportClient();
 
     const [name, setName] = useState("");
 

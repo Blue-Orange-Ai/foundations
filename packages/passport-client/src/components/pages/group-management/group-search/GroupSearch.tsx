@@ -26,7 +26,7 @@ import {
 } from "@blue-orange-ai/foundations-core";
 
 
-import {usePassportClient} from "../../../providers/PassportProvider";
+import passport from "@blue-orange-ai/foundations-core/src/components/config/BlueOrangePassportConfig";
 
 import './GroupSearch.css'
 import {v4 as uuidv4} from "uuid";
@@ -38,7 +38,6 @@ interface Props {
 }
 
 export const GroupSearch: React.FC<Props> = ({groupRedirectUri="/groups/"}) => {
-	const passport = usePassportClient();
 
 	const { addToast } = useContext(ToastContext);
 

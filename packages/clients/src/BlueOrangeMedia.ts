@@ -1,7 +1,6 @@
 import Cookies from "js-cookie";
 import {GroupPermission, UserSearchResult} from "./Passport";
 import {LRUCache} from 'lru-cache';
-import {pathSegment} from "./PathSegment";
 
 export type Media = {
     id?: number;
@@ -119,7 +118,7 @@ export class BlueOrangeMedia {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
-            xhr.open('GET', this.baseUrl + '/api/v1/storage/get/' + pathSegment(mediaId));
+            xhr.open('GET', this.baseUrl + '/api/v1/storage/get/' + mediaId);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -172,7 +171,7 @@ export class BlueOrangeMedia {
     }
 
     deleteWithToken(authToken: string | null, media: Media): Promise<Response> {
-        return fetch(this.baseUrl + '/api/v1/storage/delete/' + pathSegment(media.uuid), {
+        return fetch(this.baseUrl + '/api/v1/storage/delete/' + media.uuid, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -182,7 +181,7 @@ export class BlueOrangeMedia {
     }
 
     deleteByIdWithToken(authToken: string | null, id: number): Promise<Response> {
-        return fetch(this.baseUrl + '/api/v1/storage/delete/id/' + pathSegment(id), {
+        return fetch(this.baseUrl + '/api/v1/storage/delete/id/' + id, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',

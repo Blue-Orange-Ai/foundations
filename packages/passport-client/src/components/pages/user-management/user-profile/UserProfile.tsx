@@ -49,7 +49,7 @@ import {
 	UserGroup,
 	UserState
 } from "@blue-orange-ai/foundations-clients";
-import {usePassportClient} from "../../../providers/PassportProvider";
+import passport from "@blue-orange-ai/foundations-core/src/components/config/BlueOrangePassportConfig";
 import {v4 as uuidv4} from "uuid";
 import {useNavigate} from "react-router-dom";
 
@@ -61,7 +61,6 @@ interface Props {
 }
 
 export const UserProfile: React.FC<Props> = ({profileUser, admin = true, userDeleted, groupsRedirectUri="/groups/"}) => {
-	const passport = usePassportClient();
 
 	const { addToast } = useContext(ToastContext);
 

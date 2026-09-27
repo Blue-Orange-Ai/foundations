@@ -9,7 +9,7 @@ import {
 } from "@blue-orange-ai/foundations-core";
 
 
-import {usePassportClient} from "../../../providers/PassportProvider";
+import passport from "@blue-orange-ai/foundations-core/src/components/config/BlueOrangePassportConfig";
 
 import './UserProfileAdmin.css'
 import {UserProfile} from "../user-profile/UserProfile";
@@ -21,7 +21,6 @@ interface Props {
 }
 
 export const UserProfileAdmin: React.FC<Props> = ({}) => {
-    const passport = usePassportClient();
 
     const navigate = useNavigate();
 

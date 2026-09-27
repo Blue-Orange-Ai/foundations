@@ -6,29 +6,17 @@ import {
     InputForm,
     PaddedPage,
     PageHeading,
-    PhoneInput,
-    sanitizeRedirect,
-    sanitizeUrl,
+    PhoneInput
 } from "@blue-orange-ai/foundations-core";
 import React, {useEffect, useState} from "react";
 
 
 import {Address, Telephone} from "@blue-orange-ai/foundations-clients";
-import {usePassportClient} from "../../../providers/PassportProvider";
-import {authCookieAttributes} from "../../../providers/AuthCookie";
+import passport from "@blue-orange-ai/foundations-core/src/components/config/BlueOrangePassportConfig";
 import Cookies from "js-cookie";
 import {useLocation, useNavigate} from "react-router-dom";
 
 import './RegistrationPage.css'
-
-// A malformed escape in the query string must not stop the sign-in completing.
-const decodeRedirect = (value: string): string => {
-	try {
-		return decodeURIComponent(value);
-	} catch (e) {
-		return value;
-	}
-};
 
 interface Props {
 	defaultDomain?: string,
@@ -59,7 +47,6 @@ export const RegistrationPage: React.FC<Props> = ({
 													  showPhone=true,
 													  showAddress=true
 }) => {
-	const passport = usePassportClient();
 
 
 	const location = useLocation();
@@ -124,20 +111,15 @@ export const RegistrationPage: React.FC<Props> = ({
 			domain: defaultDomain
 		}).then(response => {
 			const expiryDate = new Date(response.expiry);
-			Cookies.set("authorization", response.token, authCookieAttributes(expiryDate));
+			Cookies.set("authorization", response.token, { expires: expiryDate});
 			setLoading(false);
 			if (response.forcePasswordReset) {
 				navigate(passwordResetUri);
-				// The reset has to happen first; the redirect below must not replace it.
-				return;
 			}
 			const searchParams = new URLSearchParams(location.search);
 			const redirectUri = searchParams.get('redirect_uri');
 			if (redirectUri) {
-				// The target comes from the query string, so anyone can craft a sign-in
-				// link with it. Only a path on this site is followed; anything else
-				// (another origin, `javascript:`) goes to the default page.
-				navigate(sanitizeRedirect(decodeRedirect(redirectUri), defaultRedirectUri));
+				navigate(decodeURIComponent(redirectUri));
 			} else {
 				navigate(defaultRedirectUri);
 			}
@@ -242,7 +224,7 @@ export const RegistrationPage: React.FC<Props> = ({
 				</div>
 				<div className="passport-register-main-headings">
 					<h2 className="passport-register-main-heading">Create an account</h2>
-					<p className="passport-register-main-headings-description">If you already have an account? <a href={sanitizeUrl(signInUri)}>Click here to sign</a></p>
+					<p className="passport-register-main-headings-description">If you already have an account? <a href={signInUri}>Click here to sign</a></p>
 				</div>
 				{ showName && <Input label={"Name"} placeholder={"Full Name"} onChange={setFullName} style={fullNameStyle}></Input> }
 				{ showUsername && <Input label={"Username"} preventSpaces={true} placeholder={"Username"} style={usernameStyle} onChange={setUsername}></Input> }
@@ -255,7 +237,7 @@ export const RegistrationPage: React.FC<Props> = ({
 					<div className="passport-registration-page-checkbox-group">
 						<Checkbox checked={termsAndConditionsState}
 								  onCheckboxChange={(s) => setTermsAndConditionsState(s)}></Checkbox>
-						<p className="passport-registration-terms-of-service-text" style={termsAndConditionsStyle}>I agree with the <a href={sanitizeUrl(termsLink)} target="_blank" rel="noopener noreferrer">Terms of Service</a>, <a href={sanitizeUrl(privacyLink)} target="_blank" rel="noopener noreferrer">Privacy Policy</a> and default <a href={sanitizeUrl(notificationLink)} target="_blank" rel="noopener noreferrer">Notification Settings</a>.
+						<p className="passport-registration-terms-of-service-text" style={termsAndConditionsStyle}>I agree with the <a href={termsLink} target="_blank">Terms of Service</a>, <a href={privacyLink} target="_blank">Privacy Policy</a> and default <a href={notificationLink} target="_blank">Notification Settings</a>.
 						</p>
 					</div>
 				}

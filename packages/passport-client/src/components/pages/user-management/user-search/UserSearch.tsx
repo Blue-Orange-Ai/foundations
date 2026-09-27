@@ -33,7 +33,7 @@ import {
 } from "@blue-orange-ai/foundations-core";
 
 
-import {usePassportClient} from "../../../providers/PassportProvider";
+import passport from "@blue-orange-ai/foundations-core/src/components/config/BlueOrangePassportConfig";
 
 import './UserSearch.css'
 import {v4 as uuidv4} from "uuid";
@@ -45,7 +45,6 @@ interface Props {
 }
 
 export const UserSearch: React.FC<Props> = ({userRedirectUri="/users/"}) => {
-	const passport = usePassportClient();
 
 	const { addToast } = useContext<ToastContextType>(ToastContext);
 
