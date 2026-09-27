@@ -9,10 +9,12 @@ import {
     Input,
     InputForm,
     sanitizeRedirect,
+    sanitizeUrl,
 } from "@blue-orange-ai/foundations-core";
 
 
-import passport from "@blue-orange-ai/foundations-core/src/components/config/BlueOrangePassportConfig";
+import {usePassportClient} from "../../../providers/PassportProvider";
+import {authCookieAttributes} from "../../../providers/AuthCookie";
 
 import './LoginPageImageBackground.css'
 import Cookies from "js-cookie";
@@ -46,6 +48,7 @@ export const LoginPageImageBackground: React.FC<Props> = ({
 															  registerUri="/register",
 															  allowRegistrations=true
 														  }) => {
+	const passport = usePassportClient();
 
 	const location = useLocation();
 
@@ -90,13 +93,13 @@ export const LoginPageImageBackground: React.FC<Props> = ({
 			password: password,
 			domain: domain
 		}).then(response => {
-			console.log("success");
-			console.log(response);
 			const expiryDate = new Date(response.expiry);
-			Cookies.set("authorization", response.token, { expires: expiryDate});
+			Cookies.set("authorization", response.token, authCookieAttributes(expiryDate));
 			setLoading(false);
 			if (response.forcePasswordReset) {
 				navigate(passwordResetUri);
+				// The reset has to happen first; the redirect below must not replace it.
+				return;
 			}
 			const searchParams = new URLSearchParams(location.search);
 			const redirectUri = searchParams.get('redirect_uri');
@@ -173,7 +176,7 @@ export const LoginPageImageBackground: React.FC<Props> = ({
 					></Button>
 					{allowRegistrations &&
 						<div className="passport-login-page-image-background-sign-up">Don't have an account? <a
-							href={registerUri}>Sign Up</a>
+							href={sanitizeUrl(registerUri)}>Sign Up</a>
 						</div>
 					}
 				</div>

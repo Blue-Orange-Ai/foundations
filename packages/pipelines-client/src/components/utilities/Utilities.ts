@@ -28,7 +28,7 @@ export class Utilities {
 
         var iconCont = document.createElement("div");
         iconCont.className = "blue-orange-pipeline-editor-node-icon"
-        iconCont.innerHTML = sanitizeHtml(icon, {allowStyles: false});
+        iconCont.innerHTML = sanitizeHtml(icon, {allowStyles: false, allowMedia: false});
         iconCont.style.color = iconColor;
         iconCont.style.backgroundColor = iconBackground;
         parentElement.appendChild(iconCont);
@@ -67,7 +67,7 @@ export class Utilities {
     public static getNodeIcon(nodeHtml: string): string {
         var tempDiv = Utilities.parse(nodeHtml);
         var iconElement = tempDiv.querySelector(".blue-orange-pipeline-editor-node-icon") as HTMLElement;
-        return iconElement ? sanitizeHtml(iconElement.innerHTML, {allowStyles: false}) : "";
+        return iconElement ? sanitizeHtml(iconElement.innerHTML, {allowStyles: false, allowMedia: false}) : "";
     }
 
     public static getNodeIconColor(nodeHtml: string): string {

@@ -2,7 +2,7 @@ import React, {useCallback, useContext, useEffect, useState} from "react";
 import {ToastContext, ToasterType, ToastLocation} from "@blue-orange-ai/foundations-core";
 
 
-import passport from "@blue-orange-ai/foundations-core/src/components/config/BlueOrangePassportConfig";
+import {usePassportClient} from "../../../providers/PassportProvider";
 
 import './UserProfileMe.css'
 import {UserProfile} from "../user-profile/UserProfile";
@@ -13,6 +13,7 @@ interface Props {
 }
 
 export const UserProfileMe: React.FC<Props> = ({}) => {
+	const passport = usePassportClient();
 
 	const { addToast } = useContext(ToastContext);
 

@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import {pathSegment} from "./PathSegment";
 
 export enum RequestVerb {
     GET = "GET",
@@ -190,7 +191,7 @@ export class Schedule {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie);
-            xhr.open('DELETE', this.baseUrl + "/api/v1/job/delete/" + uniqueKey);
+            xhr.open('DELETE', this.baseUrl + "/api/v1/job/delete/" + pathSegment(uniqueKey));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -212,7 +213,7 @@ export class Schedule {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie);
-            xhr.open('GET', this.baseUrl + "/api/v1/job/get/" + group + "/" + page + "/" + size);
+            xhr.open('GET', this.baseUrl + "/api/v1/job/get/" + pathSegment(group) + "/" + pathSegment(page) + "/" + pathSegment(size));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -235,7 +236,7 @@ export class Schedule {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie);
-            xhr.open('GET', this.baseUrl + "/api/v1/job/get/attampts/" + uniqueKey + "/" + page + "/" + size);
+            xhr.open('GET', this.baseUrl + "/api/v1/job/get/attampts/" + pathSegment(uniqueKey) + "/" + pathSegment(page) + "/" + pathSegment(size));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -258,7 +259,7 @@ export class Schedule {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie);
-            xhr.open('GET', this.baseUrl + "/api/v1/job/count/attempts/" + uniqueKey + "/" + page + "/" + size);
+            xhr.open('GET', this.baseUrl + "/api/v1/job/count/attempts/" + pathSegment(uniqueKey) + "/" + pathSegment(page) + "/" + pathSegment(size));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -281,7 +282,7 @@ export class Schedule {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie);
-            xhr.open('POST', this.baseUrl + "/api/v1/scheduler/job-group/" + jobGroup + "/jobs");
+            xhr.open('POST', this.baseUrl + "/api/v1/scheduler/job-group/" + pathSegment(jobGroup) + "/jobs");
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -304,7 +305,7 @@ export class Schedule {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie);
-            xhr.open('GET', this.baseUrl + "/api/v1/scheduler/job-group/" + jobGroup + "/jobs/" + jobName);
+            xhr.open('GET', this.baseUrl + "/api/v1/scheduler/job-group/" + pathSegment(jobGroup) + "/jobs/" + pathSegment(jobName));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -327,7 +328,7 @@ export class Schedule {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie);
-            xhr.open('PUT', this.baseUrl + "/api/v1/scheduler/job-group/" + jobGroup + "/jobs/" + jobName);
+            xhr.open('PUT', this.baseUrl + "/api/v1/scheduler/job-group/" + pathSegment(jobGroup) + "/jobs/" + pathSegment(jobName));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -350,7 +351,7 @@ export class Schedule {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie);
-            xhr.open('DELETE', this.baseUrl + "/api/v1/scheduler/job-group/" + jobGroup + "/jobs/" + jobName);
+            xhr.open('DELETE', this.baseUrl + "/api/v1/scheduler/job-group/" + pathSegment(jobGroup) + "/jobs/" + pathSegment(jobName));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -373,7 +374,7 @@ export class Schedule {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie);
-            xhr.open('PATCH', this.baseUrl + "/api/v1/scheduler/job-group/" + jobGroup + "/jobs/" + jobName + "/pause");
+            xhr.open('PATCH', this.baseUrl + "/api/v1/scheduler/job-group/" + pathSegment(jobGroup) + "/jobs/" + pathSegment(jobName) + "/pause");
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -396,7 +397,7 @@ export class Schedule {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie);
-            xhr.open('PATCH', this.baseUrl + "/api/v1/scheduler/job-group/" + jobGroup + "/jobs/" + jobName + "/resume");
+            xhr.open('PATCH', this.baseUrl + "/api/v1/scheduler/job-group/" + pathSegment(jobGroup) + "/jobs/" + pathSegment(jobName) + "/resume");
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -485,7 +486,7 @@ export class Schedule {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie);
-            xhr.open('GET', this.baseUrl + "/api/v1/slave/get/" + page + "/" + size);
+            xhr.open('GET', this.baseUrl + "/api/v1/slave/get/" + pathSegment(page) + "/" + pathSegment(size));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {

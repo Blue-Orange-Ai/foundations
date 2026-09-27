@@ -103,7 +103,7 @@ export const sanitizeRedirect = (url: unknown, fallback: string = "/"): string =
 		try {
 			const absolute = new URL(normalised);
 			if ((absolute.protocol === "http:" || absolute.protocol === "https:") && absolute.origin === window.location.origin) {
-				return absolute.pathname + absolute.search + absolute.hash;
+				return sitePath(absolute);
 			}
 		} catch (e) {
 			// Not a URL at all.
@@ -121,8 +121,14 @@ export const sanitizeRedirect = (url: unknown, fallback: string = "/"): string =
 		if (resolved.origin !== window.location.origin) {
 			return fallback;
 		}
-		return resolved.pathname + resolved.search + resolved.hash;
+		return sitePath(resolved);
 	} catch (e) {
 		return fallback;
 	}
 };
+
+// Dot segments can leave a path that starts with more than one slash
+// (`/..//elsewhere` resolves to `//elsewhere`), which a browser would read as
+// another host, so the leading run is collapsed to a single slash.
+const sitePath = (url: URL): string =>
+	url.pathname.replace(/^[\/\\]+/, "/") + url.search + url.hash;

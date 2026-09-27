@@ -8,12 +8,14 @@ import {
     PageHeading,
     PhoneInput,
     sanitizeRedirect,
+    sanitizeUrl,
 } from "@blue-orange-ai/foundations-core";
 import React, {useEffect, useState} from "react";
 
 
 import {Address, Telephone} from "@blue-orange-ai/foundations-clients";
-import passport from "@blue-orange-ai/foundations-core/src/components/config/BlueOrangePassportConfig";
+import {usePassportClient} from "../../../providers/PassportProvider";
+import {authCookieAttributes} from "../../../providers/AuthCookie";
 import Cookies from "js-cookie";
 import {useLocation, useNavigate} from "react-router-dom";
 
@@ -57,6 +59,7 @@ export const RegistrationPage: React.FC<Props> = ({
 													  showPhone=true,
 													  showAddress=true
 }) => {
+	const passport = usePassportClient();
 
 
 	const location = useLocation();
@@ -121,10 +124,12 @@ export const RegistrationPage: React.FC<Props> = ({
 			domain: defaultDomain
 		}).then(response => {
 			const expiryDate = new Date(response.expiry);
-			Cookies.set("authorization", response.token, { expires: expiryDate});
+			Cookies.set("authorization", response.token, authCookieAttributes(expiryDate));
 			setLoading(false);
 			if (response.forcePasswordReset) {
 				navigate(passwordResetUri);
+				// The reset has to happen first; the redirect below must not replace it.
+				return;
 			}
 			const searchParams = new URLSearchParams(location.search);
 			const redirectUri = searchParams.get('redirect_uri');
@@ -237,7 +242,7 @@ export const RegistrationPage: React.FC<Props> = ({
 				</div>
 				<div className="passport-register-main-headings">
 					<h2 className="passport-register-main-heading">Create an account</h2>
-					<p className="passport-register-main-headings-description">If you already have an account? <a href={signInUri}>Click here to sign</a></p>
+					<p className="passport-register-main-headings-description">If you already have an account? <a href={sanitizeUrl(signInUri)}>Click here to sign</a></p>
 				</div>
 				{ showName && <Input label={"Name"} placeholder={"Full Name"} onChange={setFullName} style={fullNameStyle}></Input> }
 				{ showUsername && <Input label={"Username"} preventSpaces={true} placeholder={"Username"} style={usernameStyle} onChange={setUsername}></Input> }
@@ -250,7 +255,7 @@ export const RegistrationPage: React.FC<Props> = ({
 					<div className="passport-registration-page-checkbox-group">
 						<Checkbox checked={termsAndConditionsState}
 								  onCheckboxChange={(s) => setTermsAndConditionsState(s)}></Checkbox>
-						<p className="passport-registration-terms-of-service-text" style={termsAndConditionsStyle}>I agree with the <a href={termsLink} target="_blank">Terms of Service</a>, <a href={privacyLink} target="_blank">Privacy Policy</a> and default <a href={notificationLink} target="_blank">Notification Settings</a>.
+						<p className="passport-registration-terms-of-service-text" style={termsAndConditionsStyle}>I agree with the <a href={sanitizeUrl(termsLink)} target="_blank" rel="noopener noreferrer">Terms of Service</a>, <a href={sanitizeUrl(privacyLink)} target="_blank" rel="noopener noreferrer">Privacy Policy</a> and default <a href={sanitizeUrl(notificationLink)} target="_blank" rel="noopener noreferrer">Notification Settings</a>.
 						</p>
 					</div>
 				}

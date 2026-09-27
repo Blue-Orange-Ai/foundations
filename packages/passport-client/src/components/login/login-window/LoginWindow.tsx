@@ -7,6 +7,7 @@ import './LoginWindow.css';
 import {useNavigate} from "react-router-dom";
 import {UserLoginRequest} from "@blue-orange-ai/foundations-clients";
 import {usePassport} from "../../providers/PassportProvider";
+import {authCookieAttributes} from "../../providers/AuthCookie";
 import {
     Button,
     ButtonType,
@@ -83,7 +84,7 @@ export const LoginWindow: React.FC<Props> = ({}) => {
 			}
 			passport.login(loginRequest)
 				.then(loginResponse => {
-					Cookies.set("authorization", loginResponse.token)
+					Cookies.set("authorization", loginResponse.token, authCookieAttributes())
 					setLoading(false);
 					setErrorAlert(false);
 					setInfoAlert(false);

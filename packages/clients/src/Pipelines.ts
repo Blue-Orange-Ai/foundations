@@ -2,6 +2,7 @@ import Cookies from "js-cookie";
 import {
     SimpleGroupMember,
 } from "./Passport";
+import {pathSegment} from "./PathSegment";
 
 export type PipelineStageStaticData = {
     id: number,
@@ -101,7 +102,7 @@ export class Pipelines {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
-            xhr.open('DELETE', this.baseUrl + "/api/v1/pipelines/delete/" + pipeline.uuid);
+            xhr.open('DELETE', this.baseUrl + "/api/v1/pipelines/delete/" + pathSegment(pipeline.uuid));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {

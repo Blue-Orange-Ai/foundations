@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import {pathSegment} from "./PathSegment";
 
 export enum RuleGroupType {
     DEFAULT = "DEFAULT",
@@ -249,7 +250,7 @@ export class Rules {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie);
-            xhr.open('DELETE', this.baseUrl + "/api/rules/group/delete/" + id);
+            xhr.open('DELETE', this.baseUrl + "/api/rules/group/delete/" + pathSegment(id));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -294,7 +295,7 @@ export class Rules {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie);
-            xhr.open('POST', this.baseUrl + "/api/rules/group/fire/" + groupId);
+            xhr.open('POST', this.baseUrl + "/api/rules/group/fire/" + pathSegment(groupId));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -363,7 +364,7 @@ export class Rules {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie);
-            xhr.open('DELETE', this.baseUrl + "/api/rules/rule/delete/" + id);
+            xhr.open('DELETE', this.baseUrl + "/api/rules/rule/delete/" + pathSegment(id));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {

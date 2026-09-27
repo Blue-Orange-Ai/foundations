@@ -87,6 +87,18 @@ describe('sanitizeRedirect', () => {
 		expect(sanitizeRedirect(undefined)).toBe('/');
 	});
 
+	it.each([
+		'/..//attacker.example/x',
+		'/../\\attacker.example',
+		'/%2e%2e//attacker.example',
+		'/./..//attacker.example',
+	])('never hands back a path another host could be read from: %j', (url) => {
+		const result = sanitizeRedirect(url, '/home');
+		expect(result.startsWith('//')).toBe(false);
+		expect(result.startsWith('/\\')).toBe(false);
+		expect(new URL(result, window.location.origin).origin).toBe(window.location.origin);
+	});
+
 	it('reduces an absolute url on this site to its path', () => {
 		expect(sanitizeRedirect(window.location.origin + '/settings?a=1#b')).toBe('/settings?a=1#b');
 	});

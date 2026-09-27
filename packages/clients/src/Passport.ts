@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import {pathSegment} from "./PathSegment";
 
 export type AddGroup = {
     id?: string;
@@ -482,7 +483,7 @@ export class Passport {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
-            xhr.open('GET', this.baseUrl + "/api/users/get/" + userId);
+            xhr.open('GET', this.baseUrl + "/api/users/get/" + pathSegment(userId));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -505,7 +506,7 @@ export class Passport {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
-            xhr.open('POST', this.baseUrl + "/api/users/update/password/" + userId);
+            xhr.open('POST', this.baseUrl + "/api/users/update/password/" + pathSegment(userId));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -571,7 +572,7 @@ export class Passport {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
-            xhr.open('DELETE', this.baseUrl + "/api/users/delete/" + userId);
+            xhr.open('DELETE', this.baseUrl + "/api/users/delete/" + pathSegment(userId));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -616,7 +617,7 @@ export class Passport {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
-            xhr.open('POST', this.baseUrl + "/api/users/get/groups/" + userId);
+            xhr.open('POST', this.baseUrl + "/api/users/get/groups/" + pathSegment(userId));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -842,7 +843,7 @@ export class Passport {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
-            xhr.open('POST', this.baseUrl + "/api/groups/exclude/" + groupId);
+            xhr.open('POST', this.baseUrl + "/api/groups/exclude/" + pathSegment(groupId));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -864,7 +865,7 @@ export class Passport {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
-            xhr.open('POST', this.baseUrl + "/api/groups/include/" + groupId);
+            xhr.open('POST', this.baseUrl + "/api/groups/include/" + pathSegment(groupId));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -886,7 +887,7 @@ export class Passport {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
-            xhr.open('POST', this.baseUrl + "/api/groups/search/members/" + groupId);
+            xhr.open('POST', this.baseUrl + "/api/groups/search/members/" + pathSegment(groupId));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -1021,7 +1022,7 @@ export class Passport {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
-            xhr.open('DELETE', this.baseUrl + "/api/bearer/revoke/" + token);
+            xhr.open('DELETE', this.baseUrl + "/api/bearer/revoke/" + pathSegment(token));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -1043,7 +1044,7 @@ export class Passport {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
-            xhr.open('DELETE', this.baseUrl + "/api/bearer/admin/revoke/" + token);
+            xhr.open('DELETE', this.baseUrl + "/api/bearer/admin/revoke/" + pathSegment(token));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {

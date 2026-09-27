@@ -1,6 +1,7 @@
 import { Client, IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import Cookies from "js-cookie";
+import {pathSegment} from "./PathSegment";
 
 export class Sockets {
 
@@ -14,7 +15,7 @@ export class Sockets {
         this.baseUrl = baseUrl;
         this.authCookie = authCookie;
         var authToken = Cookies.get(this.authCookie)
-        const socket = new SockJS(this.baseUrl + '/ws?authentication=' + authToken);
+        const socket = new SockJS(this.baseUrl + '/ws?authentication=' + encodeURIComponent(authToken ?? ''));
         this.client = new Client({
             webSocketFactory: () => socket,
             reconnectDelay: 5000,
@@ -49,7 +50,7 @@ export class Sockets {
 
     async send(topic: string, payload: any) {
         var authToken = Cookies.get(this.authCookie)
-        const response = await fetch(this.baseUrl + '/send/' + topic, {
+        const response = await fetch(this.baseUrl + '/send/' + pathSegment(topic), {
             method: 'POST',
             body: JSON.stringify(payload),
             headers: {

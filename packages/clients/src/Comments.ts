@@ -1,5 +1,6 @@
 import Cookies from "js-cookie";
 import {Media} from "./BlueOrangeMedia";
+import {pathSegment} from "./PathSegment";
 
 export enum CommentType {
     CREATE="CREATE",
@@ -46,7 +47,7 @@ export class Comments {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
-            xhr.open('GET', this.baseUrl + "/api/v1/comments/get/" + topic);
+            xhr.open('GET', this.baseUrl + "/api/v1/comments/get/" + pathSegment(topic));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -69,7 +70,7 @@ export class Comments {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
-            xhr.open('GET', this.baseUrl + "/api/v1/comments/get/" + topic);
+            xhr.open('GET', this.baseUrl + "/api/v1/comments/get/" + pathSegment(topic));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -138,7 +139,7 @@ export class Comments {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
-            xhr.open('DELETE', this.baseUrl + "/api/v1/comments/delete/" + comment.id);
+            xhr.open('DELETE', this.baseUrl + "/api/v1/comments/delete/" + pathSegment(comment.id));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {
@@ -160,7 +161,7 @@ export class Comments {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             var authToken = Cookies.get(this.authCookie)
-            xhr.open('GET', this.baseUrl + "/api/v1/comments/editable/" + comment.id);
+            xhr.open('GET', this.baseUrl + "/api/v1/comments/editable/" + pathSegment(comment.id));
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Authorization', authToken == undefined ? "" : authToken);
             xhr.onload = function() {

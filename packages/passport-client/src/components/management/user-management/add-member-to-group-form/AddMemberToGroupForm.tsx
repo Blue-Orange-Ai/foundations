@@ -15,7 +15,7 @@ import {
     ToastLocation
 } from "@blue-orange-ai/foundations-core";
 import {isDisabled} from "@testing-library/user-event/dist/utils";
-import passport from "@blue-orange-ai/foundations-core/dist/types/components/config/BlueOrangePassportConfig";
+import {usePassportClient} from "../../../providers/PassportProvider";
 
 interface Props {
     groupId: string,
@@ -45,6 +45,7 @@ export const AddMemberToGroupForm: React.FC<Props> = ({
     onError,
     onCancel
   }) => {
+    const passport = usePassportClient();
 
     const { addToast } = useContext(ToastContext);
 
