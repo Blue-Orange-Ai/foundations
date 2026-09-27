@@ -69,6 +69,15 @@ const createColorDot = (border?: string, background?: string): HTMLElement => {
     return dot;
 };
 
+// Labels and values come from the chart's data (dataset and category labels,
+// formatter results), so they are written as text, never parsed as markup.
+const appendTooltipLabel = (target: HTMLElement, prefix: string, label: unknown) => {
+    const span = document.createElement("span");
+    span.className = `blue-orange-chart-${prefix}-tooltip-dataset-label`;
+    span.textContent = `${label}:`;
+    target.appendChild(span);
+};
+
 /**
  * Build the tooltip body DOM for a chart. This is the single, shared, testable
  * implementation used by every chart's external tooltip. When no `tooltip`
@@ -138,8 +147,8 @@ export const buildTooltipContent = (tooltipModel: any, options: BuildTooltipOpti
 
             const val = document.createElement("div");
             val.className = `blue-orange-chart-${prefix}-tooltip-value`;
-            val.innerHTML =
-                `<span class='blue-orange-chart-${prefix}-tooltip-dataset-label'>${label}:</span>${value}`;
+            appendTooltipLabel(val, prefix, label);
+            val.appendChild(document.createTextNode(`${value}`));
 
             row.appendChild(val);
             container.appendChild(row);
@@ -165,11 +174,9 @@ export const buildTooltipContent = (tooltipModel: any, options: BuildTooltipOpti
             const val = document.createElement("div");
             val.className = `blue-orange-chart-${prefix}-tooltip-value`;
             if (label !== undefined && label !== "") {
-                val.innerHTML =
-                    `<span class='blue-orange-chart-${prefix}-tooltip-dataset-label'>${label}:</span>${value ?? ""}`;
-            } else {
-                val.innerHTML = `${value ?? ""}`;
+                appendTooltipLabel(val, prefix, label);
             }
+            val.appendChild(document.createTextNode(`${value ?? ""}`));
 
             row.appendChild(val);
             container.appendChild(row);

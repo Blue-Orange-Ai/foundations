@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image, Pdf } from '@blue-orange-ai/foundations-core';
+import { Image, Pdf, sanitizeUrl } from '@blue-orange-ai/foundations-core';
 
 import { useMediaClient } from '../providers/LlmAgentProvider';
 import './MediaView.css';
@@ -40,7 +40,10 @@ const humanSize = (bytes?: number | null): string => {
  */
 export const MediaView: React.FC<Props> = ({ media, height = 240, compact }) => {
     const mediaClient = useMediaClient();
-    const [url, setUrl] = useState<string | undefined>(media.url || undefined);
+    const [resolvedUrl, setUrl] = useState<string | undefined>(media.url || undefined);
+    // The URL is part of the message (a model or another participant can put
+    // anything there), so only a real download location is linked to or shown.
+    const url = sanitizeUrl(resolvedUrl, { protocols: ['http:', 'https:', 'blob:'] });
     const [failed, setFailed] = useState(false);
 
     useEffect(() => {
@@ -68,7 +71,7 @@ export const MediaView: React.FC<Props> = ({ media, height = 240, compact }) => 
 
     if (isImage(media) && url && !failed) {
         return (
-            <a href={url} target="_blank" rel="noreferrer" className="blue-orange-llm-media-image-link">
+            <a href={url} target="_blank" rel="noopener noreferrer" className="blue-orange-llm-media-image-link">
                 <Image src={url} alt={name} height={compact ? 64 : height} borderRadius="8px" fit="cover" />
             </a>
         );
@@ -107,7 +110,7 @@ export const MediaView: React.FC<Props> = ({ media, height = 240, compact }) => 
     );
 
     return url ? (
-        <a href={url} target="_blank" rel="noreferrer" className="blue-orange-llm-media-chip-link">
+        <a href={url} target="_blank" rel="noopener noreferrer" className="blue-orange-llm-media-chip-link">
             {chip}
         </a>
     ) : (

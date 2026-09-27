@@ -77,6 +77,7 @@ import {CopyableTextDevelopment} from "../components/text-decorations/copyable-t
 import {PropertiesDisplayDevelopment} from "../components/text-decorations/properties-display/PropertiesDisplayDevelopment";
 import {PropertyHistogramDevelopment} from "../components/text-decorations/property-histogram/PropertyHistogramDevelopment";
 import {RenderHtmlDevelopment} from "../components/text-decorations/render-html/RenderHtmlDevelopment";
+import {RenderRichTextDevelopment} from "../components/text-decorations/render-rich-text/RenderRichTextDevelopment";
 import {CompoundTagDevelopment} from "../components/text-decorations/compound-tag/CompoundTagDevelopment";
 import {TagDevelopment} from "../components/text-decorations/tag/TagDevelopment";
 import {TelephoneTextDevelopment} from "../components/text-decorations/telephone-text/TelephoneTextDevelopment";
@@ -1233,6 +1234,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 							onClick={() => navigate("/text-decoration-render-html")}
 						></SideBarBodyItem>
 						<SideBarBodyItem
+							label={"Render Rich Text"}
+							active={component == "text-decoration-render-rich-text"}
+							focused={false}
+							defaultStyle={inactiveStyle}
+							activeStyle={activeStyle}
+							icon={<i className="ri-text-block"></i>}
+							onClick={() => navigate("/text-decoration-render-rich-text")}
+						></SideBarBodyItem>
+						<SideBarBodyItem
 							label={"Compound Tag"}
 							active={component == "text-decoration-compound-tag"}
 							focused={false}
@@ -1359,6 +1369,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "text-decoration-properties-display" && <PropertiesDisplayDevelopment></PropertiesDisplayDevelopment>}
 			{component == "text-decoration-property-histogram" && <PropertyHistogramDevelopment></PropertyHistogramDevelopment>}
 			{component == "text-decoration-render-html" && <RenderHtmlDevelopment></RenderHtmlDevelopment>}
+			{component == "text-decoration-render-rich-text" && <RenderRichTextDevelopment></RenderRichTextDevelopment>}
 			{component == "text-decoration-compound-tag" && <CompoundTagDevelopment></CompoundTagDevelopment>}
 			{component == "text-decoration-tag" && <TagDevelopment></TagDevelopment>}
 			{component == "text-decoration-telephone" && <TelephoneTextDevelopment></TelephoneTextDevelopment>}

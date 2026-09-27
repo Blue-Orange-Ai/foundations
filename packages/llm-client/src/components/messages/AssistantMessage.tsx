@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SimpleTooltip } from '@blue-orange-ai/foundations-core';
+import { SimpleTooltip, sanitizeHtml } from '@blue-orange-ai/foundations-core';
 
 import { ChatMessage, messageText } from '../../interfaces/ChatInterfaces';
 import { MessageParts } from './MessageParts';
@@ -57,7 +57,7 @@ export const AssistantMessage: React.FC<Props> = ({
                         <span
                             className="blue-orange-llm-avatar-logo"
                             // eslint-disable-next-line react/no-danger
-                            dangerouslySetInnerHTML={{ __html: logo }}
+                            dangerouslySetInnerHTML={{ __html: sanitizeHtml(logo) }}
                         />
                     ) : (
                         <img src={logo} alt="assistant" className="blue-orange-llm-avatar-logo-img" />

@@ -96,6 +96,15 @@ const objectRowsToTable = (
 	};
 };
 
+const isRemoteUrl = (url: string): boolean => {
+	try {
+		const protocol = new URL(url.trim(), typeof window !== "undefined" ? window.location.href : undefined).protocol;
+		return protocol === "http:" || protocol === "https:";
+	} catch (e) {
+		return false;
+	}
+};
+
 /** Fetch and normalise the rows described by a remote source. */
 export const fetchRemoteTable = async (
 	source: ChartRemoteSource,
@@ -104,10 +113,20 @@ export const fetchRemoteTable = async (
 	if (!source.url || source.url.trim() === "") {
 		throw new Error("No data server URL has been set.");
 	}
+	// The source is part of the document, so whoever wrote the chart chooses
+	// where every viewer's browser sends this request. It goes out without the
+	// viewer's cookies or the page address, so it cannot act as the viewer
+	// (a forged request against an API they are signed in to) or reveal where
+	// they are reading it.
+	if (!isRemoteUrl(source.url)) {
+		throw new Error("The data server URL must be an http or https address.");
+	}
 	const init: RequestInit = {
 		method: source.method || "GET",
 		headers: {Accept: "application/json", ...(source.headers || {})},
 		signal: signal,
+		credentials: "omit",
+		referrerPolicy: "no-referrer",
 	};
 	if (init.method === "POST" && source.body != null && source.body !== "") {
 		init.body = source.body;

@@ -1,6 +1,6 @@
-import {describe, expect, it} from "vitest";
+import {afterEach, describe, expect, it, vi} from "vitest";
 
-import {remoteResponseToTable, selectPath} from "./remote";
+import {fetchRemoteTable, remoteResponseToTable, selectPath} from "./remote";
 
 describe("selectPath", () => {
 
@@ -76,5 +76,31 @@ describe("remoteResponseToTable", () => {
 	it("rejects a payload it cannot recognise", () => {
 		expect(() => remoteResponseToTable("nope")).toThrow(/Unrecognised response shape/);
 		expect(() => remoteResponseToTable(null)).toThrow(/empty/);
+	});
+});
+
+describe("fetchRemoteTable request hardening", () => {
+	const originalFetch = globalThis.fetch;
+
+	afterEach(() => {
+		globalThis.fetch = originalFetch;
+	});
+
+	const source = (url: string): any => ({url, method: "GET", headers: {}, body: "", path: "", refreshSeconds: 0});
+
+	it("sends no cookies and no referrer", async () => {
+		const fetchMock = vi.fn().mockResolvedValue({ok: true, text: async () => "[]"});
+		globalThis.fetch = fetchMock as any;
+		await fetchRemoteTable(source("https://data.example/rows"));
+		const init = fetchMock.mock.calls[0][1];
+		expect(init.credentials).toBe("omit");
+		expect(init.referrerPolicy).toBe("no-referrer");
+	});
+
+	it.each(["javascript:alert(1)", "file:///etc/passwd", "data:application/json,[]"])("refuses %s", async (url) => {
+		const fetchMock = vi.fn();
+		globalThis.fetch = fetchMock as any;
+		await expect(fetchRemoteTable(source(url))).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });

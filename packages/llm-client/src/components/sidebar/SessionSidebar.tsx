@@ -17,6 +17,7 @@ import {
     SideBarBodyItem,
     SideBarBodyLabel,
     SimpleTooltip,
+    sanitizeHtml,
 } from '@blue-orange-ai/foundations-core';
 
 import { ConfigAgentDto } from '../../interfaces/AgentProtocol';
@@ -164,7 +165,7 @@ export const SessionSidebar: React.FC<Props> = ({
                                         <span
                                             className="blue-orange-llm-sidebar-brand-logo"
                                             // eslint-disable-next-line react/no-danger
-                                            dangerouslySetInnerHTML={{ __html: brandingLogo }}
+                                            dangerouslySetInnerHTML={{ __html: sanitizeHtml(brandingLogo) }}
                                         />
                                     ) : (
                                         <img

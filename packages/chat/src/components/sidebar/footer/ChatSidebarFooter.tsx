@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar } from "@blue-orange-ai/foundations-core";
+import { Avatar, emojiHtmlToText } from "@blue-orange-ai/foundations-core";
 import { IChatUser, ChatUserStatus } from "../../../interfaces/ChatInterfaces";
 import { DEFAULT_STATUS_EMOJI } from "../../user-settings/UserSettingsView";
 
@@ -47,10 +47,9 @@ export const ChatSidebarFooter: React.FC<Props> = ({
                     tabIndex={0}
                 >
                     <span className="blue-orange-chat-sidebar-footer-status-popover" role="tooltip">
-                        <span
-                            className="blue-orange-chat-sidebar-footer-status-popover-emoji"
-                            dangerouslySetInnerHTML={{ __html: emoji }}
-                        />
+                        <span className="blue-orange-chat-sidebar-footer-status-popover-emoji">
+                            {emojiHtmlToText(emoji)}
+                        </span>
                         <span className="blue-orange-chat-sidebar-footer-status-popover-label">
                             {label}
                         </span>

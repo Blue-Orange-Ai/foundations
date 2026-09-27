@@ -7,6 +7,7 @@ import {SimpleMetric} from "../../../metrics/simple-metric/SimpleMetric";
 import blueOrangeMediaInstance from "../../../config/BlueOrangeMediaConfig";
 import {GroupPermission} from "@blue-orange-ai/foundations-clients";
 import {MediaPermission} from "@blue-orange-ai/foundations-clients";
+import {sanitizeUrl} from "../../../utils/SanitizeUrl";
 
 export interface RichTextEditorUploadedFile {
 	uuid: string,
@@ -57,8 +58,14 @@ export const UploadedFile: React.FC<Props> = ({
 	const uploadStarted = useRef(false);
 
 	const downloadFile = (filename: string, url: string) => {
+		// The address comes from the media record, so only a real download
+		// location is followed.
+		const safeUrl = sanitizeUrl(url, {protocols: ["http:", "https:", "blob:"]});
+		if (!safeUrl) {
+			return;
+		}
 		const link = document.createElement('a');
-		link.href = url;
+		link.href = safeUrl;
 		// @ts-ignore
 		link.download = filename;
 		document.body.appendChild(link);

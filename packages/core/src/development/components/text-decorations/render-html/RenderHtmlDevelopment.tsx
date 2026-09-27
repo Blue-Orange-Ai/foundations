@@ -13,7 +13,12 @@ const RENDER_HTML_PROPS: Array<PropSpec> = [
 		required: true,
 		control: "text",
 		value: "<h3>Melbourne Depot</h3><p>Operational since <strong>2019</strong>.</p>",
-		description: "The markup to insert. It goes in through dangerouslySetInnerHTML, so anything in it runs as written."
+		description: "The markup to show. It is sanitized first: formatting is kept, and scripts, event handlers, javascript: links, iframes, forms and <style> are removed."
+	},
+	{
+		name: "sanitizeOptions",
+		type: "SanitizeHtmlOptions",
+		description: "Narrows what is kept: allowStyles, allowMedia and allowSvg all default to true. Use {allowStyles: false} for text written by other users."
 	}
 ];
 
@@ -41,10 +46,13 @@ export const RenderHtmlDevelopment: React.FC<Props> = ({}) => {
 
 	const linkHtml = '<p>Visit <a href="https://example.com" target="_blank">Example Website</a> for more info.</p>';
 
+	const unsafeHtml = '<p>Only this sentence survives.<img src="x" onerror="alert(1)"><script>alert(1)</script>' +
+		' <a href="javascript:alert(1)">This link has no target.</a></p>';
+
 	return (
 		<ComponentDoc
 			title="Render HTML"
-			description="Puts a string of HTML into the page as real markup. It does no sanitising of its own, so only content you already trust should be handed to it."
+			description="Puts a string of HTML into the page as real markup, after sanitizing it so nothing in it can run. For text written in the rich text editors, use RenderRichText, which renders the editor's JSON document without going through markup at all."
 			name="RenderHtml"
 			previewHeight={160}
 			previewCentered={false}
@@ -66,6 +74,9 @@ export const RenderHtmlDevelopment: React.FC<Props> = ({}) => {
 
 			<GeneralHeading>HTML with Links</GeneralHeading>
 			<RenderHtml html={linkHtml} />
+
+			<GeneralHeading>Unsafe HTML</GeneralHeading>
+			<RenderHtml html={unsafeHtml} />
 		</ComponentDoc>
 	)
 }

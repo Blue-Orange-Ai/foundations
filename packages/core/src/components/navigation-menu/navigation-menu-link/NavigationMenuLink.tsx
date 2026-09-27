@@ -1,6 +1,7 @@
 import React from "react";
 
 import './NavigationMenuLink.css'
+import {sanitizeUrl} from "../../utils/SanitizeUrl";
 
 interface Props {
 	/** The bold first line. */
@@ -48,9 +49,13 @@ export const NavigationMenuLink: React.FC<Props> = ({
 		</>
 	);
 
-	if (href) {
+	// Menus are often built from data, so a `javascript:` href falls back to
+	// the plain row rather than becoming a link.
+	const safeHref = sanitizeUrl(href);
+
+	if (safeHref) {
 		return (
-			<a className={className} href={href} onClick={onClick} style={style}>
+			<a className={className} href={safeHref} onClick={onClick} style={style}>
 				{content}
 			</a>
 		)

@@ -9,6 +9,7 @@ import {
     isOwnEvent,
     resolveEventColors,
     tintBackground,
+    conferencingBlockHtml,
 } from './calendarUtils';
 import {
     CalendarEventResponse,
@@ -262,5 +263,14 @@ describe('formatDuration', () => {
         expect(
             formatDuration(new Date(2026, 6, 21, 9, 0), new Date(2026, 6, 23, 9, 0))
         ).toBe('2 days');
+    });
+});
+
+describe('conferencingBlockHtml escaping', () => {
+    it('escapes provider fields', () => {
+        const html = conferencingBlockHtml({ id: '"><img src=x onerror=alert(1)>', name: '<b>Evil</b>', icon: 'ri-x' });
+        expect(html).not.toContain('<img');
+        expect(html).not.toContain('<b>');
+        expect(html).toContain('&lt;b&gt;Evil&lt;/b&gt;');
     });
 });

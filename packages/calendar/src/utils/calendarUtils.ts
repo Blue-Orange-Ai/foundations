@@ -500,9 +500,20 @@ export const DEFAULT_CONFERENCING_PROVIDERS: IConferencingProvider[] = [
  */
 export function conferencingBlockHtml(provider: IConferencingProvider): string {
     return (
-        `<p data-conferencing="${provider.id}">\u{1F4F9} ${provider.name} meeting` +
+        `<p data-conferencing="${escapeHtml(provider.id)}">\u{1F4F9} ${escapeHtml(provider.name)} meeting` +
         ` — a joining link will be added when the event is saved.</p>`
     );
+}
+
+// Provider names can come from configuration rather than code, so they are
+// escaped before they become part of the description markup.
+function escapeHtml(value: string): string {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
 /** Strips any previously seeded conferencing block from description HTML. */

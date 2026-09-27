@@ -5,6 +5,8 @@ import {fetchRemoteTable} from "../data/remote";
 import {ChartConfigModal} from "./ChartConfigModal";
 import {ChartRenderer} from "./ChartRenderer";
 
+const MIN_REFRESH_SECONDS = 5;
+
 interface Props {
 	data: ChartBlockData,
 	editable: boolean,
@@ -33,7 +35,10 @@ export const ChartBlockView: React.FC<Props> = ({data, editable, onChange, onDel
 	const remoteKey = remote
 		? [remote.url, remote.method, remote.path ?? "", remote.body ?? "", JSON.stringify(remote.headers)].join("|")
 		: "";
-	const refreshSeconds = remote?.refreshSeconds ?? 0;
+	// Every viewer polls, so a document cannot ask for more than one request
+	// every few seconds from each of them.
+	const requestedRefresh = remote?.refreshSeconds ?? 0;
+	const refreshSeconds = requestedRefresh > 0 ? Math.max(requestedRefresh, MIN_REFRESH_SECONDS) : 0;
 
 	// Rows loaded from the server replace the stored snapshot, but only while
 	// the block is still pointed at the same endpoint.

@@ -7,6 +7,7 @@ import {
     ButtonIcon,
     ButtonToggle,
     EmojiWrapper,
+    emojiHtmlToText,
     Input,
     TimeInput,
     Toggle,
@@ -146,10 +147,9 @@ export const UserSettingsView: React.FC<Props> = ({ user, onSave, onClose }) => 
                                 className="blue-orange-chat-user-settings-emoji-btn"
                                 title="Pick a status emoji"
                             >
-                                <span
-                                    className="blue-orange-chat-user-settings-emoji"
-                                    dangerouslySetInnerHTML={{ __html: effectiveEmoji }}
-                                />
+                                <span className="blue-orange-chat-user-settings-emoji">
+                                    {emojiHtmlToText(effectiveEmoji)}
+                                </span>
                             </button>
                         </EmojiWrapper>
                         <div className="blue-orange-chat-user-settings-status-text">

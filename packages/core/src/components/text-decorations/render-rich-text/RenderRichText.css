@@ -1,0 +1,11 @@
+.blue-orange-render-rich-text .mention {
+    border: 1px solid #000;
+    border-radius: 0.4rem;
+    box-decoration-break: clone;
+    padding: 0.1rem 0.3rem;
+    font-size: 0.8rem;
+}
+
+.dark .blue-orange-render-rich-text .mention {
+    border: 1px solid var(--blue-orange-dark-default-text-color);
+}

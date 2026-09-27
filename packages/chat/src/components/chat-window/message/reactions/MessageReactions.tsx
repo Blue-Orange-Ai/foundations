@@ -1,5 +1,5 @@
 import React from 'react';
-import { EmojiWrapper } from '@blue-orange-ai/foundations-core';
+import { EmojiWrapper, emojiHtmlToText } from '@blue-orange-ai/foundations-core';
 import { IChatReaction } from '../../../../interfaces/ChatInterfaces';
 
 import './MessageReactions.css';
@@ -48,10 +48,10 @@ export const MessageReactions: React.FC<Props> = ({
                         className={className}
                         onClick={() => handleToggle(reaction.emoji)}
                     >
-                        <span
-                            className="blue-orange-chat-reactions-emoji"
-                            dangerouslySetInnerHTML={{ __html: reaction.emoji }}
-                        />
+                        {/* Any member chooses this string, so it is shown as text. */}
+                        <span className="blue-orange-chat-reactions-emoji">
+                            {emojiHtmlToText(reaction.emoji)}
+                        </span>
                         <span className="blue-orange-chat-reactions-count">
                             {reaction.userIds.length}
                         </span>

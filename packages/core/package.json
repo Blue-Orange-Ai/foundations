@@ -24,6 +24,7 @@
     "chrono-node": "^2.10.1",
     "codemirror": "^5.65.21",
     "dagre": "^0.8.5",
+    "dompurify": "^3.4.16",
     "elkjs": "^0.8.2",
     "fuse.js": "^7.5.0",
     "highlight.js": "^11.12.0",

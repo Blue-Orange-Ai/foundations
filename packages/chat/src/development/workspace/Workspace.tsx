@@ -5,6 +5,7 @@ import {
     IContextMenuType,
     SearchSuggestion,
     SearchSuggestionGroup,
+    sanitizeUrl,
 } from '@blue-orange-ai/foundations-core';
 import { Media } from '@blue-orange-ai/foundations-clients';
 import { ChatLayout } from '../../components/chat-layout/ChatLayout';
@@ -463,7 +464,12 @@ export const Workspace: React.FC = () => {
     }, []);
 
     const handleBookmarkClick = useCallback((bookmark: IChatBookmark) => {
-        window.open(bookmark.url, '_blank');
+        // Bookmarks are shared by every member, so only a real address is
+        // opened, and without a handle back to this window.
+        const url = sanitizeUrl(bookmark.url, { allowRelative: false });
+        if (url) {
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
     }, []);
 
     // -- Conversation settings --

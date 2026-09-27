@@ -12,6 +12,7 @@ import { ChatInput } from '../chat-input/ChatInput';
 import { MessageList } from '../chat-window/message-list/MessageList';
 
 import './AllUnreadsView.css';
+import { messagePreview } from '../../utils/messageContent';
 
 export interface IUnreadMessageItem {
     message: IChatMessage;
@@ -35,13 +36,6 @@ const conversationIcon = (conversation: IChatConversation) => {
     if (conversation.type === ChatConversationType.CHANNEL) return 'ri-hashtag';
     if (conversation.type === ChatConversationType.GROUP) return 'ri-team-line';
     return 'ri-chat-1-line';
-};
-
-const stripHtml = (html: string) => {
-    if (typeof document === 'undefined') return html;
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    return (div.textContent || div.innerText || '').trim();
 };
 
 export const AllUnreadsView: React.FC<Props> = ({
@@ -95,7 +89,7 @@ export const AllUnreadsView: React.FC<Props> = ({
                     unreadMessages.map((item) => {
                         const isFocused = item.conversation.id === focusedId;
                         const senderName = item.message.sender.user.name;
-                        const preview = stripHtml(item.message.content);
+                        const preview = messagePreview(item.message.content);
                         return (
                             <button
                                 key={`${item.conversation.id}-${item.message.id}`}

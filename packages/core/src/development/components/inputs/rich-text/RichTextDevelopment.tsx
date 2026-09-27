@@ -26,10 +26,10 @@ interface RichTextState {
 const RICH_TEXT_PROPS: Array<PropSpec> = [
 	{
 		name: "content",
-		type: "string",
+		type: "RichTextDocument | string",
 		control: "text",
 		value: "<p>The depot reports every hour.</p>",
-		description: "The starting content, as HTML."
+		description: "The starting content: the editor's JSON document (as onChange hands it back), a serialized document, or HTML. HTML is parsed against the editor's schema in an inert document, so only what the editor supports is kept."
 	},
 	{
 		name: "label",
@@ -147,8 +147,8 @@ const RICH_TEXT_PROPS: Array<PropSpec> = [
 	},
 	{
 		name: "onChange",
-		type: "(content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean) => void",
-		description: "Fires with the HTML, whoever was mentioned, whatever was attached, and whether an upload is still running."
+		type: "(content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean, document: RichTextDocument) => void",
+		description: "Fires with the HTML, whoever was mentioned, whatever was attached, whether an upload is still running, and the content as a TipTap JSON document. Store and render the document (with RenderRichText) rather than the HTML: rendering stored HTML means trusting whoever saved it."
 	},
 	{
 		name: "onEnter",
@@ -193,7 +193,7 @@ export const RichTextDevelopment: React.FC<Props> = ({}) => {
 			<SplitPageMajor>
 				<ComponentDoc
 					title="Rich Text"
-					description="The full editor: formatting, mentions, emojis and file attachments, built on tiptap. It reports its content as HTML together with the mentions and the media that went with it, and says whether any upload is still in flight. Give it a name and the demo puts it inside a FormGroup — which is what enforces required — so submitting it empty fails the field."
+					description="The full editor: formatting, mentions, emojis and file attachments, built on tiptap. It reports its content as a JSON document and as HTML, together with the mentions and the media that went with it, and says whether any upload is still in flight. Give it a name and the demo puts it inside a FormGroup — which is what enforces required — so submitting it empty fails the field."
 					name="RichText"
 					previewHeight={280}
 					previewCentered={false}

@@ -168,6 +168,7 @@ export * from './components/inputs/dropdown/items/DropdownItemImage/DropdownItem
 export * from './components/inputs/dropdown/items/DropdownItemStyle/DropdownItemStyle'
 export * from './components/inputs/dropdown/items/DropdownItemText/DropdownItemText'
 export * from './components/inputs/dropdown/trigger/DropdownTrigger'
+export * from './components/inputs/emoji/data/EmojiText'
 export * from './components/inputs/emoji/emoji-container/EmojiContainer'
 export * from './components/inputs/emoji/emoji-footer/EmojiFooter'
 export * from './components/inputs/emoji/emoji-group-header-txt/EmojiGroupHeaderTxt'
@@ -193,9 +194,11 @@ export * from './components/inputs/phone/PhoneInput';
 export * from './components/inputs/phrase/PhraseInput';
 export * from './components/inputs/required-icon/RequiredIcon';
 export * from './components/inputs/richtext/default/RichText';
+export * from './components/inputs/richtext/document/RichTextDocument';
 export * from './components/inputs/richtext/emojiitem/EmojiButton';
 export * from './components/inputs/richtext/emojilist/EmojiList';
 export * from './components/inputs/richtext/extensions/EmojiMention';
+export * from './components/inputs/richtext/extensions/SafeLink';
 export * from './components/inputs/richtext/mention-extension/MentionExtension';
 export * from './components/inputs/richtext/mentionitem/MentionButton';
 export * from './components/inputs/richtext/mentionlist/MentionList';
@@ -332,6 +335,7 @@ export * from './components/text-decorations/telephone/TelephoneText';
 export * from './components/text-decorations/paragraph/Paragraph';
 export * from './components/text-decorations/description/Description';
 export * from './components/text-decorations/render-html/RenderHtml';
+export * from './components/text-decorations/render-rich-text/RenderRichText';
 export * from './components/text-decorations/dates/time/TimeDisplay';
 export * from './components/text-decorations/dates/relative-time/RelativeTime';
 export * from './components/text-decorations/dotified-text/DotifiedText';
@@ -368,3 +372,7 @@ export * from './components/tooltips/hover-card/hover-card-content/HoverCardCont
 // File System
 export * from './components/file-system/file-system/FileSystem';
 export * from './components/file-system/file-system-row/FileSystemRow';
+
+// Security helpers for markup and URLs that come from data.
+export * from './components/utils/SanitizeHtml';
+export * from './components/utils/SanitizeUrl';

@@ -3,6 +3,7 @@ import React from 'react';
 import { Suggestion, WelcomeBranding } from '../../interfaces/ChatInterfaces';
 import { Suggestions } from '../suggestions/Suggestions';
 import './ThreadWelcome.css';
+import { sanitizeHtml } from '@blue-orange-ai/foundations-core';
 
 interface Props {
     branding?: WelcomeBranding;
@@ -23,7 +24,7 @@ export const ThreadWelcome: React.FC<Props> = ({ branding, suggestions, onSelect
                     <span
                         className="blue-orange-llm-welcome-logo-svg"
                         // eslint-disable-next-line react/no-danger
-                        dangerouslySetInnerHTML={{ __html: branding.logo }}
+                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(branding.logo) }}
                     />
                 ) : (
                     <img src={branding.logo} alt="logo" className="blue-orange-llm-welcome-logo-img" />

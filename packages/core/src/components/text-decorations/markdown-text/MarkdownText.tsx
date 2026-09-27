@@ -9,6 +9,7 @@ import rehypeKatex from 'rehype-katex';
 import rehypeStringify from 'rehype-stringify';
 
 import './MarkdownText.css';
+import {sanitizeHtml, SanitizeHtmlOptions} from "../../utils/SanitizeHtml";
 import 'highlight.js/styles/atom-one-dark.css';
 
 interface Props {
@@ -16,6 +17,12 @@ interface Props {
 	enableMath?: boolean;
 	enableGfm?: boolean;
 	enableCodeHighlighting?: boolean;
+	/**
+	 * Shows images the markdown links to. Turn it off for text an attacker can
+	 * steer, such as a language model's reply: an image is fetched as soon as
+	 * it is shown, so its URL can carry data out without anyone clicking.
+	 */
+	allowImages?: boolean;
 	className?: string;
 }
 
@@ -24,6 +31,7 @@ export const MarkdownText: React.FC<Props> = ({
 	enableMath = true,
 	enableGfm = true,
 	enableCodeHighlighting = true,
+	allowImages = true,
 	className = ""
 }) => {
 	const [renderedContent, setRenderedContent] = useState<string>("");
@@ -49,11 +57,15 @@ export const MarkdownText: React.FC<Props> = ({
 			processor = processor.use(rehypeStringify);
 
 			const result = await processor.process(children);
-			setRenderedContent(String(result));
+			// Markdown drops raw HTML, but links and images keep whatever URL
+			// was written — `[x](javascript:...)` included — so the output is
+			// sanitized before it reaches the page.
+			const options: SanitizeHtmlOptions = {allowMedia: allowImages};
+			setRenderedContent(sanitizeHtml(String(result), options));
 		};
 
 		renderMarkdown();
-	}, [children, enableMath, enableGfm]);
+	}, [children, enableMath, enableGfm, allowImages]);
 
 	useEffect(() => {
 		if (enableCodeHighlighting && renderedContent && containerRef.current) {

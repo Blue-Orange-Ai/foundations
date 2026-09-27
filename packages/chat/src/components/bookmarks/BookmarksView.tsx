@@ -7,6 +7,7 @@ import {
     ButtonToggle,
     FileUploadBtn,
     Input,
+    isSafeUrl,
 } from '@blue-orange-ai/foundations-core';
 import {
     BlueOrangeMedia,
@@ -57,10 +58,15 @@ export const BookmarksView: React.FC<Props> = ({
         setUploadError(null);
     };
 
+    // A bookmark is shown to everyone in the conversation, so it has to be a
+    // real web or mail address — never `javascript:` or a `data:` document.
+    const isBookmarkUrl = (value: string) =>
+        isSafeUrl(value, { protocols: ['http:', 'https:', 'mailto:'], allowRelative: false });
+
     const canSubmit =
         !isUploading &&
         label.trim().length > 0 &&
-        (mode === 'link' ? url.trim().length > 0 : media != null);
+        (mode === 'link' ? isBookmarkUrl(url.trim()) : media != null);
 
     const handleAdd = () => {
         if (!canSubmit) return;

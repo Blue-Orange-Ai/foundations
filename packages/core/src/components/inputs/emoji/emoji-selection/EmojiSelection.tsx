@@ -3,6 +3,7 @@ import React, {ReactNode, useEffect, useState} from "react";
 import './EmojiSelection.css'
 import {EmojiHeader} from "../emoji-header/EmojiHeader";
 import {EmojiObj} from "../data/UnicodeEmoji";
+import {emojiHtmlToText} from "../data/EmojiText";
 
 interface Props {
 	emoji: EmojiObj,
@@ -72,8 +73,8 @@ export const EmojiSelection: React.FC<Props> = ({
 			onMouseOver={mouseEnter}
 			onMouseLeave={mouseLeave}
 			onClick={selection}
-			dangerouslySetInnerHTML={{ __html: emojiHtml }}
 		>
+			{emojiHtmlToText(emojiHtml)}
 		</div>
 	)
 }

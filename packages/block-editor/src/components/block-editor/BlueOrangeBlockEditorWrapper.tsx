@@ -321,11 +321,13 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 			return "";
 		}
 
-		const originalElements = editorRef.current.querySelectorAll('[blue-orange-comment-id="' + commentId + '"]');
-		if (originalElements == null || originalElements.length < 1) {
+		// The id is read from the document, which collaborators write, so it is
+		// compared rather than spliced into a selector.
+		const originalElement = Array.from(editorRef.current.querySelectorAll('[blue-orange-comment-id]'))
+			.find(element => element.getAttribute('blue-orange-comment-id') === commentId);
+		if (!originalElement) {
 			return ""
 		}
-		const originalElement = originalElements[0];
 		const clonedElement = originalElement.cloneNode(true) as HTMLElement;
 		removeIds(clonedElement);
 		return clonedElement.outerHTML;
@@ -389,6 +391,21 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 		}
 	}
 
+	// Display names are chosen by other users, so the mention markup is built
+	// with the DOM — the name as text, the ids as attribute values — and only
+	// then serialized, rather than concatenated into an HTML string.
+	const mentionHtml = (tag: string, className: string, uuid: string, user: User | PublicUser, inline: boolean): string => {
+		const element = document.createElement(tag);
+		element.className = className;
+		element.setAttribute("blue-orange-editor-mention-uuid", uuid);
+		element.setAttribute("blue-orange-user-id", String(user.id ?? ""));
+		if (inline) {
+			element.setAttribute("contenteditable", "false");
+		}
+		element.textContent = "@" + (getDisplayName(user) ?? "");
+		return element.outerHTML;
+	}
+
 	const fetchUsers = async (query: string): Promise<EditorMention[]> => {
 		try {
 			var searchResult: UserSearchPublicResult = await passport.searchPublicUsers(
@@ -405,8 +422,8 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 					userId: user.id,
 					uuid: uuid,
 					type: "mention",
-					contextHtml: "<div class='blue-orange-mention-context' blue-orange-editor-mention-uuid=" + uuid + " blue-orange-user-id=" + user.id + ">@" + getDisplayName(user) + "</div>",
-					inlineHtml: "<span class='blue-orange-editor-mention-context' blue-orange-editor-mention-uuid=" + uuid + " blue-orange-user-id=" + user.id + "contenteditable='false'>@" + getDisplayName(user) + "</span>"
+					contextHtml: mentionHtml("div", "blue-orange-mention-context", uuid, user, false),
+					inlineHtml: mentionHtml("span", "blue-orange-editor-mention-context", uuid, user, true)
 				}
 			})
 
@@ -451,7 +468,8 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 
 			var emojiDisplay = document.createElement("div");
 			emojiDisplay.className = "blue-orange-editor-emoji-context-row-emoji";
-			emojiDisplay.innerHTML = html;
+			// Shown as the characters it stands for, never parsed as markup.
+			emojiDisplay.textContent = new DOMParser().parseFromString(html, "text/html").body.textContent;
 			contextHtml.appendChild(emojiDisplay);
 
 			var textDisplay = document.createElement("div");

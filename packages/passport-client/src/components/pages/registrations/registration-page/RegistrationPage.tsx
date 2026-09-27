@@ -6,7 +6,8 @@ import {
     InputForm,
     PaddedPage,
     PageHeading,
-    PhoneInput
+    PhoneInput,
+    sanitizeRedirect,
 } from "@blue-orange-ai/foundations-core";
 import React, {useEffect, useState} from "react";
 
@@ -17,6 +18,15 @@ import Cookies from "js-cookie";
 import {useLocation, useNavigate} from "react-router-dom";
 
 import './RegistrationPage.css'
+
+// A malformed escape in the query string must not stop the sign-in completing.
+const decodeRedirect = (value: string): string => {
+	try {
+		return decodeURIComponent(value);
+	} catch (e) {
+		return value;
+	}
+};
 
 interface Props {
 	defaultDomain?: string,
@@ -119,7 +129,10 @@ export const RegistrationPage: React.FC<Props> = ({
 			const searchParams = new URLSearchParams(location.search);
 			const redirectUri = searchParams.get('redirect_uri');
 			if (redirectUri) {
-				navigate(decodeURIComponent(redirectUri));
+				// The target comes from the query string, so anyone can craft a sign-in
+				// link with it. Only a path on this site is followed; anything else
+				// (another origin, `javascript:`) goes to the default page.
+				navigate(sanitizeRedirect(decodeRedirect(redirectUri), defaultRedirectUri));
 			} else {
 				navigate(defaultRedirectUri);
 			}
