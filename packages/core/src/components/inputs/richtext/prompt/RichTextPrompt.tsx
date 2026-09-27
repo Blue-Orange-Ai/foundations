@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import './RichTextPrompt.css';
 import {Placeholder} from "@tiptap/extension-placeholder";
-import {Link} from "@tiptap/extension-link";
+import {SafeLink} from "../extensions/SafeLink";
 import {fetchMentionItems, renderSuggestions} from "../suggestion/Suggestion";
 import {fetchEmojiItems, renderEmojiSuggestions} from "../suggestion/EmojiSuggestions";
 import {EmojiMention} from "../extensions/EmojiMention";
@@ -17,6 +17,7 @@ import {FileInputWrapper} from "../../file-input-wrapper/FileInputWrapper";
 import {RichTextEditorUploadedFile, UploadedFile} from "../uploaded-file/UploadedFile";
 import {Media, MediaPermission, GroupPermission} from "@blue-orange-ai/foundations-clients";
 import CustomMention from "../mention-extension/MentionExtension";
+import {RichTextContent, RichTextDocument, richTextMentions, toEditorContent} from "../document/RichTextDocument";
 
 export interface MentionItem {
 	label: string,
@@ -27,7 +28,11 @@ export interface MentionItem {
 }
 
 interface Props {
-	content?: string,
+	/**
+	 * A document (what onChange hands back as `document`), a serialized
+	 * document, or HTML written by an earlier version of the editor.
+	 */
+	content?: RichTextContent,
 	focus?: boolean,
 	files?: Array<Media>
 	placeholder?: string,
@@ -37,7 +42,12 @@ interface Props {
 	uploadPermissions?: Array<MediaPermission>,
 	disabled?: boolean,
 	clearState?: string,
-	onChange?: (content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean) => void,
+	/**
+	 * `document` is the content as a TipTap JSON document — store and render
+	 * that (with RenderRichText) rather than `content`, which is the same text
+	 * as HTML, kept for existing callers.
+	 */
+	onChange?: (content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean, document: RichTextDocument) => void,
 	onSend?: () => void,
 	onClose?: () => void,
 }
@@ -76,20 +86,6 @@ export const RichTextPrompt: React.FC<Props> = ({
 		return formattedFiles
 	}
 
-	const generateMentions = (html: string | undefined) => {
-		if (html == undefined) {
-			return [];
-		}
-		const tempMentionsEl = document.createElement("div");
-		tempMentionsEl.innerHTML = html;
-		const mentionElements = tempMentionsEl.querySelectorAll('[data-type="mention"]');
-		var mentions: string[] = []
-		mentionElements.forEach((element) => {
-			mentions.push(element.getAttribute("data-user-id") as string)
-		});
-		return mentions;
-	}
-
 	const [query, setQuery] = useState('');
 
 	const [mentionItems, setMentionItems] = useState<Array<MentionItem>>([]);
@@ -100,7 +96,9 @@ export const RichTextPrompt: React.FC<Props> = ({
 
 	const storedFilesRef = useRef<Array<RichTextEditorUploadedFile>>(initialiseFiles());
 
-	const [mentions, setMentions] = useState<Array<string>>(generateMentions(content));
+	// Read from the document, never by parsing the content into a detached
+	// element, whose images would load and run their handlers.
+	const [mentions, setMentions] = useState<Array<string>>(() => richTextMentions(content));
 
 	const editorContainerRef = useRef<HTMLDivElement>(null);
 
@@ -192,10 +190,7 @@ export const RichTextPrompt: React.FC<Props> = ({
 		Placeholder.configure({
 			placeholder: placeholder ?? "",
 		}),
-		Link.configure({
-			protocols: ['ftp', 'mailto'],
-			openOnClick: true,
-		}),
+		SafeLink,
 		mentionExtension,
 		emojiExtension
 	]
@@ -205,10 +200,7 @@ export const RichTextPrompt: React.FC<Props> = ({
 		Placeholder.configure({
 			placeholder: placeholder ?? "",
 		}),
-		Link.configure({
-			protocols: ['ftp', 'mailto'],
-			openOnClick: true,
-		}),
+		SafeLink,
 		emojiExtension
 	]
 
@@ -217,10 +209,7 @@ export const RichTextPrompt: React.FC<Props> = ({
 		Placeholder.configure({
 			placeholder: placeholder ?? "",
 		}),
-		Link.configure({
-			protocols: ['ftp', 'mailto'],
-			openOnClick: true,
-		}),
+		SafeLink,
 		mentionExtension
 	]
 
@@ -229,10 +218,7 @@ export const RichTextPrompt: React.FC<Props> = ({
 		Placeholder.configure({
 			placeholder: placeholder ?? "",
 		}),
-		Link.configure({
-			protocols: ['ftp', 'mailto'],
-			openOnClick: true,
-		})
+		SafeLink
 	]
 
 	const initExtensions = () => {
@@ -250,7 +236,7 @@ export const RichTextPrompt: React.FC<Props> = ({
 
 	const editor = useEditor({
 		extensions,
-		content,
+		content: toEditorContent(content, {allowMentions, allowEmojis}),
 		onUpdate({ editor }) {
 			editorChanged();
 		},
@@ -335,13 +321,13 @@ export const RichTextPrompt: React.FC<Props> = ({
 
 	const editorChanged = () => {
 		if (editorRef.current && onChange) {
-			var content = editorRef.current.getHTML();
-			var mentions = generateMentions(content);
+			var richText = editorRef.current.getJSON() as RichTextDocument;
 			onChange(
-				content,
-				mentions,
+				editorRef.current.getHTML(),
+				richTextMentions(richText),
 				generateStoredFileAttachments(),
-				areFilesUploading())
+				areFilesUploading(),
+				richText)
 		}
 
 	}
@@ -377,7 +363,7 @@ export const RichTextPrompt: React.FC<Props> = ({
 			initRef.current = true
 			initialise();
 			if (content && content != "" && editor) {
-				editor.commands.setContent(content);
+				editor.commands.setContent(toEditorContent(content, {allowMentions, allowEmojis}));
 			}
 			if (focus && editor) {
 				editor.chain().focus();

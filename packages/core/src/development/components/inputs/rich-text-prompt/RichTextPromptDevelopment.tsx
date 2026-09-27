@@ -7,12 +7,16 @@ import {
 	HorizontalSplitPage
 } from "../../../../components/layouts/pages/split-pages/horizontal-split-page/HorizontalSplitPage";
 import {Media} from "@blue-orange-ai/foundations-clients";
+import {
+	emptyRichTextDocument,
+	RichTextDocument
+} from "../../../../components/inputs/richtext/document/RichTextDocument";
 import {RichTextPrompt} from "../../../../components/inputs/richtext/prompt/RichTextPrompt";
 import {ComponentDoc} from "../../../framework/ComponentDoc";
 import {PropSpec} from "../../../framework/PropSpec";
 
 interface RichTextState {
-	content: string,
+	content: RichTextDocument,
 	mentions: string[],
 	attachments: Media[],
 	filesUploading: boolean
@@ -21,9 +25,9 @@ interface RichTextState {
 const RICH_TEXT_PROMPT_PROPS: Array<PropSpec> = [
 	{
 		name: "content",
-		type: "string",
+		type: "RichTextDocument | string",
 		control: "text",
-		description: "The starting content, as HTML."
+		description: "The starting content: the editor's JSON document (as onChange hands it back), a serialized document, or HTML. HTML is parsed against the editor's schema in an inert document, so only what the editor supports is kept."
 	},
 	{
 		name: "placeholder",
@@ -87,8 +91,8 @@ const RICH_TEXT_PROMPT_PROPS: Array<PropSpec> = [
 	},
 	{
 		name: "onChange",
-		type: "(content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean) => void",
-		description: "Fires with the HTML, whoever was mentioned, whatever was attached, and whether an upload is still running."
+		type: "(content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean, document: RichTextDocument) => void",
+		description: "Fires with the HTML, whoever was mentioned, whatever was attached, whether an upload is still running, and the content as a TipTap JSON document. Store and render the document (with RenderRichText) rather than the HTML: rendering stored HTML means trusting whoever saved it."
 	},
 	{
 		name: "onSend",
@@ -109,7 +113,7 @@ export const RichTextPromptDevelopment: React.FC<Props> = ({}) => {
 
 	const startingState: RichTextState = {
 		attachments: [],
-		content: "",
+		content: emptyRichTextDocument(),
 		filesUploading: false,
 		mentions: []
 	}
@@ -122,12 +126,10 @@ export const RichTextPromptDevelopment: React.FC<Props> = ({}) => {
 
 	const [richTextContentStr, setRichTextContentStr] = useState(generateContentStr(startingState));
 
-	const processChangeData = (content: string, mentions: string[], attachments: Media[], filesUploading: boolean) => {
-		var state = richTextContent;
-		state["content"] = content
-		state["mentions"] = mentions
-		state["attachments"] = attachments
-		state["filesUploading"] = filesUploading
+	// The document, not the HTML, is what gets stored — so it is what the output
+	// window shows and what is fed back in as content.
+	const processChangeData = (_html: string, mentions: string[], attachments: Media[], filesUploading: boolean, document: RichTextDocument) => {
+		const state: RichTextState = {content: document, mentions, attachments, filesUploading};
 		setRichTextContent(state);
 		setRichTextContentStr(generateContentStr(state));
 	}

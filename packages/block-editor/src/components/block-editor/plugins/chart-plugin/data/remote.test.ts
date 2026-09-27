@@ -1,6 +1,6 @@
-import {describe, expect, it} from "vitest";
+import {afterEach, describe, expect, it, vi} from "vitest";
 
-import {remoteResponseToTable, selectPath} from "./remote";
+import {fetchRemoteTable, remoteResponseToTable, selectPath} from "./remote";
 
 describe("selectPath", () => {
 
@@ -76,5 +76,51 @@ describe("remoteResponseToTable", () => {
 	it("rejects a payload it cannot recognise", () => {
 		expect(() => remoteResponseToTable("nope")).toThrow(/Unrecognised response shape/);
 		expect(() => remoteResponseToTable(null)).toThrow(/empty/);
+	});
+});
+
+describe("fetchRemoteTable request hardening", () => {
+	const originalFetch = globalThis.fetch;
+
+	afterEach(() => {
+		globalThis.fetch = originalFetch;
+	});
+
+	const source = (url: string): any => ({url, method: "GET", headers: {}, body: "", path: "", refreshSeconds: 0});
+
+	it("reads with only same-origin cookies and no referrer", async () => {
+		const fetchMock = vi.fn().mockResolvedValue({ok: true, text: async () => "[]"});
+		globalThis.fetch = fetchMock as any;
+		await fetchRemoteTable(source("https://data.example/rows"));
+		const init = fetchMock.mock.calls[0][1];
+		expect(init.credentials).toBe("same-origin");
+		expect(init.referrerPolicy).toBe("no-referrer");
+	});
+
+	it("sends no cookies when the document adds headers of its own", async () => {
+		const fetchMock = vi.fn().mockResolvedValue({ok: true, text: async () => "[]"});
+		globalThis.fetch = fetchMock as any;
+		await fetchRemoteTable({...source("/api/state"), headers: {"X-Requested-With": "XMLHttpRequest"}});
+		expect(fetchMock.mock.calls[0][1].credentials).toBe("omit");
+	});
+
+	it("refuses a response too large to chart", async () => {
+		const fetchMock = vi.fn().mockResolvedValue({ok: true, text: async () => "[" + "1,".repeat(3 * 1024 * 1024) + "1]"});
+		globalThis.fetch = fetchMock as any;
+		await expect(fetchRemoteTable(source("https://data.example/rows"))).rejects.toThrow(/too large/);
+	});
+
+	it("sends no cookies with a request that could change something", async () => {
+		const fetchMock = vi.fn().mockResolvedValue({ok: true, text: async () => "[]"});
+		globalThis.fetch = fetchMock as any;
+		await fetchRemoteTable({...source("/api/admin/delete"), method: "POST", body: "{}"});
+		expect(fetchMock.mock.calls[0][1].credentials).toBe("omit");
+	});
+
+	it.each(["javascript:alert(1)", "file:///etc/passwd", "data:application/json,[]"])("refuses %s", async (url) => {
+		const fetchMock = vi.fn();
+		globalThis.fetch = fetchMock as any;
+		await expect(fetchRemoteTable(source(url))).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });

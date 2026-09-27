@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
     Button,
     ButtonType,
@@ -18,6 +18,7 @@ import {
     SideBarBodyLabel,
     SimpleTooltip,
 } from '@blue-orange-ai/foundations-core';
+import { logoMarkup } from '../../services/LogoMarkup';
 
 import { ConfigAgentDto } from '../../interfaces/AgentProtocol';
 import { ChatSession } from '../../interfaces/ChatInterfaces';
@@ -72,6 +73,10 @@ export const SessionSidebar: React.FC<Props> = ({
     isDark,
     onToggleTheme,
 }) => {
+    const svgBrandingLogo = useMemo(
+        () => (brandingLogo && brandingLogoIsSvg ? logoMarkup(brandingLogo) : undefined),
+        [brandingLogo, brandingLogoIsSvg]
+    );
     // Renaming happens in a modal rather than in place: core's SideBarBodyGroup
     // only renders its own item types, so an inline edit row is dropped from the
     // tree — the conversation would vanish from the list mid-rename.
@@ -160,15 +165,15 @@ export const SessionSidebar: React.FC<Props> = ({
                         <div className="blue-orange-llm-sidebar-brand">
                             <div className="blue-orange-llm-sidebar-brand-identity">
                                 {brandingLogo ? (
-                                    brandingLogoIsSvg ? (
+                                    svgBrandingLogo && 'html' in svgBrandingLogo ? (
                                         <span
                                             className="blue-orange-llm-sidebar-brand-logo"
                                             // eslint-disable-next-line react/no-danger
-                                            dangerouslySetInnerHTML={{ __html: brandingLogo }}
+                                            dangerouslySetInnerHTML={{ __html: svgBrandingLogo.html }}
                                         />
                                     ) : (
                                         <img
-                                            src={brandingLogo}
+                                            src={svgBrandingLogo ? svgBrandingLogo.src : brandingLogo}
                                             alt="logo"
                                             className="blue-orange-llm-sidebar-brand-logo-img"
                                         />

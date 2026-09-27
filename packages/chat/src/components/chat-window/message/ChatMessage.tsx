@@ -1,11 +1,15 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import moment from 'moment';
-import { Avatar, EmojiWrapper, RichText, Button, ButtonType, ButtonSize } from '@blue-orange-ai/foundations-core';
+import { Avatar, EmojiWrapper, RichText, Button, ButtonType, ButtonSize, RenderRichText, RichTextDocument } from '@blue-orange-ai/foundations-core';
 import { IChatMessage, IChatMessageBlock, IChatUser } from '../../../interfaces/ChatInterfaces';
+import { isMessageContentEmpty, serializeMessageContent, trimTrailingEmptyParagraphs } from '../../../utils/messageContent';
 
 import './ChatMessage.css';
 
 const MAX_THREAD_AVATARS = 5;
+
+// Tallest a message block may make itself, in pixels.
+const MAX_BLOCK_HEIGHT = 2000;
 
 interface Props {
     message: IChatMessage;
@@ -30,18 +34,6 @@ const formatTimestamp = (date: Date): string => {
 
 const formatShortTimestamp = (date: Date): string => {
     return moment(date).format('h:mm');
-};
-
-const stripTrailingEmptyParagraphs = (html: string): string => {
-    return html.replace(/(<p>(\s|<br\s*\/?>)*<\/p>)+$/gi, '');
-};
-
-const truncateContent = (content: string, maxLength: number): string => {
-    const text = content.replace(/<[^>]*>/g, '');
-    if (text.length <= maxLength) {
-        return text;
-    }
-    return text.substring(0, maxLength) + '...';
 };
 
 const buildBlockSrcdoc = (block: IChatMessageBlock): string => {
@@ -77,7 +69,12 @@ const ChatMessageBlockFrame: React.FC<{ block: IChatMessageBlock }> = ({ block }
         const handleMessage = (event: MessageEvent) => {
             if (event.data?.type === 'blue-orange-block-resize' && iframeRef.current) {
                 if (event.source === iframeRef.current.contentWindow) {
-                    iframeRef.current.style.height = event.data.height + 'px';
+                    // The height is reported by the block's own script, which
+                    // the sender wrote, so it is held to a sensible range.
+                    const height = Number(event.data.height);
+                    if (Number.isFinite(height)) {
+                        iframeRef.current.style.height = Math.min(Math.max(height, 0), MAX_BLOCK_HEIGHT) + 'px';
+                    }
                 }
             }
         };
@@ -109,7 +106,14 @@ export const ChatMessage: React.FC<Props> = ({
     children
 }) => {
     const [editing, setEditing] = useState(false);
-    const [editContent, setEditContent] = useState('');
+    const [editContent, setEditContent] = useState<RichTextDocument | string>('');
+    // Parsed once per content, not on every render: legacy HTML goes through
+    // the editor schema, which is not free, and a message list re-renders often.
+    const content = useMemo(() => trimTrailingEmptyParagraphs(message.content), [message.content]);
+    const linkedContent = useMemo(
+        () => (message.replyTo ? trimTrailingEmptyParagraphs(message.replyTo.content) : undefined),
+        [message.replyTo?.content]
+    );
 
     const isOwnMessage = currentUserId != null && message.sender.user.id === currentUserId;
 
@@ -136,14 +140,13 @@ export const ChatMessage: React.FC<Props> = ({
         setEditing(true);
     };
 
-    const handleEditChange = useCallback((content: string) => {
-        setEditContent(content);
+    const handleEditChange = useCallback((document: RichTextDocument) => {
+        setEditContent(document);
     }, []);
 
     const handleSaveEdit = useCallback(() => {
-        const cleaned = stripTrailingEmptyParagraphs(editContent);
-        if (onEdit && cleaned.trim()) {
-            onEdit(message, cleaned);
+        if (onEdit && !isMessageContentEmpty(editContent)) {
+            onEdit(message, serializeMessageContent(editContent));
         }
         setEditing(false);
     }, [editContent, message, onEdit]);
@@ -181,10 +184,9 @@ export const ChatMessage: React.FC<Props> = ({
                                 {formatTimestamp(linked.timestamp)}
                             </span>
                         </div>
-                        <div
-                            className="blue-orange-chat-message-content"
-                            dangerouslySetInnerHTML={{ __html: stripTrailingEmptyParagraphs(linked.content) }}
-                        />
+                        <div className="blue-orange-chat-message-content">
+                            <RenderRichText content={linkedContent} />
+                        </div>
                         {linked.edited && (
                             <span className="blue-orange-chat-message-edited">(edited)</span>
                         )}
@@ -252,7 +254,7 @@ export const ChatMessage: React.FC<Props> = ({
                         singleLine={true}
                         content={message.content}
                         focus={true}
-                        onChange={(content) => handleEditChange(content)}
+                        onChange={(_html, _mentions, _attachments, _uploading, document) => handleEditChange(document)}
                         onEnter={handleSaveEdit}
                     />
                 </div>
@@ -291,10 +293,10 @@ export const ChatMessage: React.FC<Props> = ({
         }
         return (
             <>
-                <div
-                    className="blue-orange-chat-message-content"
-                    dangerouslySetInnerHTML={{ __html: stripTrailingEmptyParagraphs(message.content) }}
-                />
+                {/* Another member's words: rendered from the document, never as markup. */}
+                <div className="blue-orange-chat-message-content">
+                    <RenderRichText content={content} />
+                </div>
                 {renderEditedLabel()}
             </>
         );

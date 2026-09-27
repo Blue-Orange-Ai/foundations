@@ -49,7 +49,7 @@ export const PipelineNodePreview: React.FC<Props> = ({
 	return (
 		<div className="blue-orange-pipeline-editor-node" style={style}>
 			<div className="blue-orange-pipeline-editor-node-icon" style={iconStyle}>
-				<RenderHtml html={iconHtml}></RenderHtml>
+				<RenderHtml html={iconHtml} sanitizeOptions={{allowStyles: false, allowMedia: false}}></RenderHtml>
 			</div>
 			<div className="blue-orange-pipeline-editor-node-body">
 				<div className="blue-orange-pipeline-editor-node-body-title" style={{color: fontColor}}>{title}</div>

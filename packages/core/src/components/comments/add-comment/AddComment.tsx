@@ -9,6 +9,11 @@ import {Skeleton} from "../../loading/skeleton/Skeleton";
 import {v4 as uuidv4} from "uuid";
 import {CommentAuthor, CommentsStore} from "../comments-store/CommentsStore";
 import {commentsRootClassNames, useComments} from "../comments-store/CommentsProvider";
+import {
+	isRichTextDocumentEmpty,
+	RichTextDocument,
+	serializeRichTextDocument
+} from "../../inputs/richtext/document/RichTextDocument";
 
 interface Props {
 	topic: string,
@@ -47,7 +52,9 @@ export const AddComment: React.FC<Props> = ({
 
 	const [editableCommentLastSent, setEditableCommentLastSent] = useState<string>("");
 
-	const processChangeData = (content: string, mentions: string[], attachments: Media[], filesUploading: boolean) => {
+	// Comments keep the editor's JSON document, not its HTML, so a comment can
+	// only ever be shown as the text and formatting it describes.
+	const processChangeData = (content: string, mentions: string[], attachments: Media[], filesUploading: boolean, document: RichTextDocument) => {
 		if (editableComment.current == null) {
 			editableComment.current = {
 				topic: topic,
@@ -57,13 +64,13 @@ export const AddComment: React.FC<Props> = ({
 				created: new Date(),
 				edited: false,
 				lastModified: new Date(),
-				text: content,
+				text: serializeRichTextDocument(document),
 				files: attachments,
 				mentions: mentions,
 				type: CommentType.CREATE
 			}
 		} else {
-			editableComment.current.text = content;
+			editableComment.current.text = serializeRichTextDocument(document);
 			editableComment.current.files = attachments;
 			editableComment.current.mentions = mentions;
 		}
@@ -71,7 +78,9 @@ export const AddComment: React.FC<Props> = ({
 
 	const createComment = () => {
 		const comment = editableComment.current;
-		if (comment == null || (comment.text ?? "").trim() == "") {
+		// A comment may be only an attachment, so it is empty only when it has
+		// neither words nor files.
+		if (comment == null || (isRichTextDocumentEmpty(comment.text) && (comment.files ?? []).length === 0)) {
 			return;
 		}
 		setEditableCommentLastSent(uuidv4())

@@ -89,7 +89,9 @@ export const buildPlugins = (config: ResolvedConfig) => {
 	}
 
 	if (needsAnnotation) {
-		plugins.push(createPluginRegistration(AnnotationPluginPackage, {}));
+		// Link targets are chosen by whoever made the PDF, so the viewer opens
+		// them itself (see useController) instead of letting any URI through.
+		plugins.push(createPluginRegistration(AnnotationPluginPackage, { autoOpenLinks: false }));
 	}
 
 	if (config.enableForms) {

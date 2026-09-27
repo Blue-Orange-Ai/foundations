@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 
 import './NavigationMenu.css'
+import {sanitizeUrl} from "../../utils/SanitizeUrl";
 import {NavigationMenuItem} from "../navigation-menu-item/NavigationMenuItem";
 
 export enum NavigationMenuAlign {
@@ -55,7 +56,7 @@ export const NavigationMenu: React.FC<Props> = ({
 				items.push({
 					label: child.props.label as string,
 					icon: child.props.icon as (string | undefined),
-					href: child.props.href as (string | undefined),
+					href: sanitizeUrl(child.props.href),
 					disabled: (child.props.disabled as boolean) ?? false,
 					onClick: child.props.onClick as ((() => void) | undefined),
 					content: child.props.children as React.ReactNode

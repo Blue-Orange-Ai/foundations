@@ -3,6 +3,7 @@ import React, {ReactNode, useState} from "react";
 import './EmojiFooter.css'
 import {EmojiHeader} from "../emoji-header/EmojiHeader";
 import {EmojiObj} from "../data/UnicodeEmoji";
+import {emojiHtmlToText} from "../data/EmojiText";
 
 interface Props {
 	focusedEmoji?: EmojiObj,
@@ -40,8 +41,7 @@ export const EmojiFooter: React.FC<Props> = ({focusedEmoji, skin_tone, changeSki
 					{focusedEmoji && !skinToneSelectionState &&
 						<div className="blue-orange-html-emoji-focused-display">
 							<div
-								className="blue-orange-html-emoji-option blue-orange-html-emoji-option-xlg"
-								dangerouslySetInnerHTML={{ __html: getEmojiHtml(focusedEmoji) }}></div>
+								className="blue-orange-html-emoji-option blue-orange-html-emoji-option-xlg">{emojiHtmlToText(getEmojiHtml(focusedEmoji))}</div>
 							<div className="blue-orange-html-emoji-focused-description">
 								<div className="blue-orange-html-emoji-focused-description-title">{focusedEmoji.description}</div>
 								<div className="blue-orange-html-emoji-focused-description-secondary">:{focusedEmoji.uuid}:</div>

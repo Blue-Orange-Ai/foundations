@@ -1,5 +1,5 @@
 import React from 'react';
-import {fireEvent, render, screen, waitFor} from '@testing-library/react';
+import {act, fireEvent, render, screen, waitFor} from '@testing-library/react';
 import {RichText} from './RichText';
 import {FormGroup} from '../../form-group/FormGroup';
 import {FormActions} from '../../form-group/FormActions';
@@ -195,5 +195,85 @@ describe('RichText', () => {
 
 		await waitFor(() => expect(screen.getByText('Release note is required.')).toBeInTheDocument());
 		expect(document.querySelector('.blue-orange-default-input-label-cont-error')).not.toBeNull();
+	});
+
+	it('hands the content to onChange as a JSON document as well as html', () => {
+		const onChange = vi.fn();
+		render(<RichText content="<p>Hello <strong>there</strong></p>" onChange={onChange}></RichText>);
+		fireEvent.keyUp(editable(), {key: 'a'});
+		expect(onChange).toHaveBeenCalled();
+		const [html, mentions, attachments, uploading, document] = onChange.mock.calls[onChange.mock.calls.length - 1];
+		expect(html).toBe('<p>Hello <strong>there</strong></p>');
+		expect(mentions).toEqual([]);
+		expect(attachments).toEqual([]);
+		expect(uploading).toBe(false);
+		expect(document).toEqual({
+			type: 'doc',
+			content: [{type: 'paragraph', content: [
+				{type: 'text', text: 'Hello '},
+				{type: 'text', text: 'there', marks: [{type: 'bold'}]}
+			]}]
+		});
+	});
+
+	it('takes a document, or a serialized one, as content', () => {
+		const document = {type: 'doc' as const, content: [{type: 'paragraph', content: [{type: 'text', text: 'From JSON'}]}]};
+		const {rerender} = render(<RichText content={document}></RichText>);
+		expect(editable().textContent).toBe('From JSON');
+
+		rerender(<RichText content={JSON.stringify({...document, content: [{type: 'paragraph', content: [{type: 'text', text: 'Serialized'}]}]})}></RichText>);
+		expect(editable().textContent).toBe('Serialized');
+	});
+
+	it('reports mentions from the document', () => {
+		const onChange = vi.fn();
+		render(<RichText content={'<p><span data-type="mention" data-id="Ann" data-label="Ann" data-user-id="u1">@Ann</span></p>'} onChange={onChange}></RichText>);
+		fireEvent.keyUp(editable(), {key: 'a'});
+		expect(onChange.mock.calls[onChange.mock.calls.length - 1][1]).toEqual(['u1']);
+	});
+
+	it('never runs markup that arrives as content', () => {
+		const onChange = vi.fn();
+		const payload = '<p>hi<img src="x" onerror="window.__xss = 1"><script>window.__xss = 1</script></p>';
+		// jsdom never loads images, so the payload is traced to the sinks
+		// instead: it must never be assigned through innerHTML.
+		const setter = vi.spyOn(Element.prototype, 'innerHTML', 'set');
+		const {rerender} = render(<RichText content={payload} onChange={onChange}></RichText>);
+		rerender(<RichText content={payload} onChange={onChange} placeholder="again"></RichText>);
+		fireEvent.keyUp(editable(), {key: 'a'});
+		expect(editable().querySelector('img, script')).toBeNull();
+		expect(setter.mock.calls.some(call => String(call[0]).includes('onerror'))).toBe(false);
+		setter.mockRestore();
+	});
+
+	it('pins link targets whatever the content says', () => {
+		render(<RichText content={'<p><a href="https://example.com" target="payments" rel="opener" class="x">link</a></p>'}></RichText>);
+		const link = editable().querySelector('a') as HTMLAnchorElement;
+		expect(link.getAttribute('target')).toBe('_blank');
+		expect(link.getAttribute('rel')).toBe('noopener noreferrer nofollow');
+		expect(link.getAttribute('class')).toBeNull();
+	});
+
+	it('keeps script links out of the editor', () => {
+		render(<RichText content={'<p><a href="javascript:window.__xss = 1">link</a></p>'}></RichText>);
+		expect(editable().querySelector('a')).toBeNull();
+		expect(editable().textContent).toBe('link');
+	});
+
+	it('keeps what is being typed when the parent passes a fresh document object each render', () => {
+		const saved = {type: 'doc' as const, content: [{type: 'paragraph', content: [{type: 'text', text: 'Saved'}]}]};
+		const Parent = () => {
+			const [, setChanges] = React.useState(0);
+			return <RichText content={{...saved}} onChange={() => setChanges(changes => changes + 1)}></RichText>;
+		};
+		render(<Parent/>);
+		expect(editable().textContent).toBe('Saved');
+		// TipTap hangs the editor off its DOM node; type through it, then let
+		// the keyup report the change so the parent re-renders.
+		act(() => {
+			(editable() as any).editor.commands.insertContentAt(6, ' typed');
+			fireEvent.keyUp(editable(), {key: 'd'});
+		});
+		expect(editable().textContent).toBe('Saved typed');
 	});
 });

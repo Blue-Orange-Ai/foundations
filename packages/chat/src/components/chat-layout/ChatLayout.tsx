@@ -11,6 +11,7 @@ import {
     ContextMenu,
     SearchSuggestion,
     SearchSuggestionGroup,
+    sanitizeUrl,
 } from '@blue-orange-ai/foundations-core';
 import {
     IChatGroup,
@@ -338,7 +339,10 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
         if (onLinkedMessageClick) {
             onLinkedMessageClick(linkedMessage);
         } else {
-            const el = document.querySelector(`[data-message-id="${linkedMessage.id}"]`);
+            // Found by comparing the attribute rather than building a selector
+            // from the id, which comes from the server.
+            const el = Array.from(document.querySelectorAll('[data-message-id]'))
+                .find((candidate) => candidate.getAttribute('data-message-id') === linkedMessage.id);
             if (el) {
                 el.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
@@ -586,7 +590,11 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                                 <span
                                     key={bm.id}
                                     className="blue-orange-chat-layout-bookmark-chip"
-                                    onClick={() => onBookmarkClick?.(bm)}
+                                    onClick={() => {
+                                        // A bookmark anyone added must not hand the host a script URL to open.
+                                        if (bm.url && !sanitizeUrl(bm.url, { allowRelative: false })) return;
+                                        onBookmarkClick?.(bm);
+                                    }}
                                 >
                                     <i className={bm.media ? 'ri-file-line' : 'ri-bookmark-fill'} />
                                     {bm.label}

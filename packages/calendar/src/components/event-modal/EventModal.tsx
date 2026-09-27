@@ -15,6 +15,7 @@ import {
     ModalFooter,
     ModalFooterLeft,
     ModalFooterRight,
+    RenderHtml,
 } from '@blue-orange-ai/foundations-core';
 import {
     CalendarDeleteScope,
@@ -457,12 +458,13 @@ export const EventModal: React.FC<Props> = ({
                         </div>
                     )}
 
-                    {/* Rendered description. */}
+                    {/* Rendered description. An invite's body is written by its
+                        organizer — often someone outside the organization — so
+                        it is sanitized before it is shown. */}
                     {event.body && (
-                        <div
-                            className="blue-orange-calendar-event-detail-body"
-                            dangerouslySetInnerHTML={{ __html: event.body }}
-                        />
+                        <div className="blue-orange-calendar-event-detail-body">
+                            <RenderHtml html={event.body} sanitizeOptions={{ allowClasses: false }} />
+                        </div>
                     )}
 
                     {/* Notification — editable for any event. */}

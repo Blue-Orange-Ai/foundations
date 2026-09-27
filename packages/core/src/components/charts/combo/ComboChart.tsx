@@ -603,10 +603,10 @@ export const ComboChart: React.FC<Props> = ({
                 // For line charts (including stacked areas), always use stroke color
                 // For other chart types (bars, scatter), use fill color
                 if (isLineChart) {
-                    boxSpan.style.background = item.strokeStyle;
+                    boxSpan.style.backgroundColor = item.strokeStyle;
                     boxSpan.style.borderColor = item.strokeStyle;
                 } else {
-                    boxSpan.style.background = item.fillStyle;
+                    boxSpan.style.backgroundColor = item.fillStyle;
                     boxSpan.style.borderColor = item.strokeStyle;
                 }
                 

@@ -2,6 +2,7 @@ import React, {useEffect, useImperativeHandle, useState} from "react";
 import {MentionItem} from "../default/RichText";
 import {EmojiObj} from "../../emoji/data/UnicodeEmoji";
 import Cookies from "js-cookie";
+import {emojiHtmlToText} from "../../emoji/data/EmojiText";
 
 
 interface Props {
@@ -49,7 +50,7 @@ export const EmojiButton: React.FC<Props> = ({
         <button
             className={classname}
             onClick={() => command(item)}>
-            <span className="blue-orange-rich-text-editor-emoji-item-display" dangerouslySetInnerHTML={{ __html: getEmojiHtml(item) }}></span>
+            <span className="blue-orange-rich-text-editor-emoji-item-display">{emojiHtmlToText(getEmojiHtml(item))}</span>
             :{item.uuid}:
         </button>
     );

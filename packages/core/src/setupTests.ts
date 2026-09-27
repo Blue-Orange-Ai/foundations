@@ -6,6 +6,7 @@ import '@testing-library/jest-dom';
 
 // jsdom has no layout, so it never implements scrollIntoView — components that
 // keep a focused item in view call it on render and would throw without this.
-if (!Element.prototype.scrollIntoView) {
+// Guarded so tests that run without a DOM (server rendering) can share this setup.
+if (typeof Element !== 'undefined' && !Element.prototype.scrollIntoView) {
 	Element.prototype.scrollIntoView = () => {};
 }

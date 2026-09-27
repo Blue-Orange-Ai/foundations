@@ -9,6 +9,8 @@ import {
     isOwnEvent,
     resolveEventColors,
     tintBackground,
+    conferencingBlockHtml,
+    stripConferencingBlock,
 } from './calendarUtils';
 import {
     CalendarEventResponse,
@@ -262,5 +264,29 @@ describe('formatDuration', () => {
         expect(
             formatDuration(new Date(2026, 6, 21, 9, 0), new Date(2026, 6, 23, 9, 0))
         ).toBe('2 days');
+    });
+});
+
+describe('conferencingBlockHtml escaping', () => {
+    it('escapes provider fields', () => {
+        const html = conferencingBlockHtml({ id: '"><img src=x onerror=alert(1)>', name: '<b>Evil</b>', icon: 'ri-x' });
+        expect(html).not.toContain('<img');
+        expect(html).not.toContain('<b>');
+        expect(html).toContain('&lt;b&gt;Evil&lt;/b&gt;');
+    });
+});
+
+describe('untrusted event data', () => {
+    it('only passes on a known response', () => {
+        const event: any = { id: '1', title: 't', start: new Date(), end: new Date(), organizer: 'someone@else', response: 'needs-action blue-orange-modal-window' };
+        expect(effectiveResponse(event, 'me@here')).toBe('needs-action');
+    });
+
+    it('strips the conferencing block in linear time', () => {
+        const body = '<p data-conferencing="">'.repeat(20000);
+        const started = performance.now();
+        stripConferencingBlock(body);
+        expect(performance.now() - started).toBeLessThan(200);
+        expect(stripConferencingBlock(conferencingBlockHtml({ id: 'zoom', name: 'Zoom', icon: 'ri-x' }) + '<p>rest</p>')).toBe('<p>rest</p>');
     });
 });

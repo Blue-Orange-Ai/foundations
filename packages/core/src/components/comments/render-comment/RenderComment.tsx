@@ -4,7 +4,8 @@ import './RenderComment.css'
 import {Avatar} from "../../avatar/avatar/Avatar";
 import {ButtonIcon} from "../../buttons/button-icon/ButtonIcon";
 import {Badge} from "../../text-decorations/badge/Badge";
-import {RenderHtml} from "../../text-decorations/render-html/RenderHtml";
+import {RenderRichText} from "../../text-decorations/render-rich-text/RenderRichText";
+import {RichTextDocument, serializeRichTextDocument} from "../../inputs/richtext/document/RichTextDocument";
 import {ContextMenu, IContextMenuItem, IContextMenuType} from "../../contextmenu/contextmenu/ContextMenu";
 import {Comment, Media, User} from "@blue-orange-ai/foundations-clients";
 import {Skeleton} from "../../loading/skeleton/Skeleton";
@@ -114,11 +115,11 @@ export const RenderComment: React.FC<Props> = ({
 			});
 	}
 
-	const processChangeData = (content: string, mentions: string[], attachments: Media[], filesUploading: boolean) => {
+	const processChangeData = (content: string, mentions: string[], attachments: Media[], filesUploading: boolean, document: RichTextDocument) => {
 		if (editableComment.current == null) {
 			editableComment.current = comment;
 		} else {
-			editableComment.current.text = content;
+			editableComment.current.text = serializeRichTextDocument(document);
 			editableComment.current.files = attachments;
 			editableComment.current.mentions = mentions;
 		}
@@ -216,7 +217,10 @@ export const RenderComment: React.FC<Props> = ({
 				</div>
 				<div className="blue-orange-comments-render-body-cont">
 					{!editState &&
-						<RenderHtml html={comment.text}></RenderHtml>
+						// Comment text is the editor's JSON document (or HTML from before
+						// it was), rendered as React elements — never as markup, since
+						// anyone who can reach the comments API decides what it holds.
+						<RenderRichText content={comment.text}></RenderRichText>
 
 					}
 					{editState &&

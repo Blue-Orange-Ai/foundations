@@ -48,6 +48,7 @@ import {
 	toScrollStrategy,
 	flattenRect,
 } from './mappings';
+import { sanitizeUrl } from '@blue-orange-ai/foundations-core';
 
 /** Convert an @embedpdf Task into a Promise. */
 const taskToPromise = <T,>(task: {
@@ -246,6 +247,22 @@ export const usePdfViewerController = ({
 			});
 		});
 	}, [annotation.provides, props.onAnnotationsChange]);
+
+	// Link annotations. A PDF can point a link at `javascript:` or a `data:`
+	// document as easily as at a web page, and the file may have come from
+	// anyone, so only web and mail addresses are opened, always in a new tab
+	// with no handle back to this one.
+	useEffect(() => {
+		const anno = annotation.provides;
+		if (!anno) return;
+		return anno.onNavigate((event) => {
+			if (event.result.outcome !== 'uri') return;
+			const uri = sanitizeUrl(event.result.uri, { protocols: ['http:', 'https:', 'mailto:'], allowRelative: false });
+			if (uri) {
+				window.open(uri, '_blank', 'noopener,noreferrer');
+			}
+		});
+	}, [annotation.provides]);
 
 	// Form field changes
 	useEffect(() => {

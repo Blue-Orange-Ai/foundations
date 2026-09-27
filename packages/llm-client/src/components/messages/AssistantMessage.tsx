@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { SimpleTooltip } from '@blue-orange-ai/foundations-core';
+import { logoMarkup } from '../../services/LogoMarkup';
 
 import { ChatMessage, messageText } from '../../interfaces/ChatInterfaces';
 import { MessageParts } from './MessageParts';
@@ -34,6 +35,8 @@ export const AssistantMessage: React.FC<Props> = ({
     feedback,
 }) => {
     const [copied, setCopied] = useState(false);
+    // Prepared once per logo, not on every render (messages re-render while streaming).
+    const svgLogo = useMemo(() => (logo && logoIsSvg ? logoMarkup(logo) : undefined), [logo, logoIsSvg]);
     const streaming = message.status === 'streaming';
     const isEmpty = message.parts.length === 0;
 
@@ -53,14 +56,14 @@ export const AssistantMessage: React.FC<Props> = ({
         <div className="blue-orange-llm-message blue-orange-llm-message-assistant">
             <div className="blue-orange-llm-message-avatar blue-orange-llm-message-avatar-assistant">
                 {logo ? (
-                    logoIsSvg ? (
+                    svgLogo && 'html' in svgLogo ? (
                         <span
                             className="blue-orange-llm-avatar-logo"
                             // eslint-disable-next-line react/no-danger
-                            dangerouslySetInnerHTML={{ __html: logo }}
+                            dangerouslySetInnerHTML={{ __html: svgLogo.html }}
                         />
                     ) : (
-                        <img src={logo} alt="assistant" className="blue-orange-llm-avatar-logo-img" />
+                        <img src={svgLogo ? svgLogo.src : logo} alt="assistant" className="blue-orange-llm-avatar-logo-img" />
                     )
                 ) : (
                     <i className="ri-sparkling-2-fill" />

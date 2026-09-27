@@ -2,6 +2,7 @@ import React, {useRef, useState} from "react";
 
 import './SideBarBodyItemLink.css'
 import {useSideBarCollapsedTooltip} from "../../SideBarContext";
+import {sanitizeUrl} from "../../../../utils/SanitizeUrl";
 
 interface Props {
 	label: string,
@@ -60,7 +61,7 @@ export const SideBarBodyItemLink: React.FC<Props> = ({
 	return (
 		<a
 			ref={itemRef}
-			href={href}
+			href={sanitizeUrl(href)}
 			style={active ? activeStyle : style}
 			onMouseEnter={mouseEntered}
 			onMouseLeave={mouseLeave}

@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import './RichText.css';
 import {Placeholder} from "@tiptap/extension-placeholder";
-import {Link} from "@tiptap/extension-link";
+import {SafeLink} from "../extensions/SafeLink";
 import {fetchMentionItems, renderSuggestions} from "../suggestion/Suggestion";
 import {fetchEmojiItems, renderEmojiSuggestions} from "../suggestion/EmojiSuggestions";
 import {EmojiMention} from "../extensions/EmojiMention";
@@ -23,6 +23,7 @@ import {InputValidateCallback, useInputValidation} from "../../validation/InputV
 import {InputValidationMessage} from "../../validation/InputValidationMessage";
 import {HelpIcon} from "../../help/HelpIcon";
 import {RequiredIcon} from "../../required-icon/RequiredIcon";
+import {RichTextContent, RichTextDocument, richTextMentions, toEditorContent} from "../document/RichTextDocument";
 
 export interface MentionItem {
 	label: string,
@@ -34,7 +35,11 @@ export interface MentionItem {
 
 interface Props {
 	children?: React.ReactNode,
-	content?: string,
+	/**
+	 * A document (what onChange hands back as `document`), a serialized
+	 * document, or HTML written by an earlier version of the editor.
+	 */
+	content?: RichTextContent,
 	focus?: boolean,
 	files?: Array<Media>
 	placeholder?: string,
@@ -59,11 +64,20 @@ interface Props {
 	/** Overrides the message shown when a required field is left empty. */
 	requiredMessage?: string,
 	required?: boolean,
-	onChange?: (content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean) => void,
+	/**
+	 * `document` is the content as a TipTap JSON document — store and render
+	 * that (with RenderRichText) rather than `content`. `content` is the same
+	 * text as HTML, kept for existing callers; HTML must never be put into the
+	 * page as it is, since whoever saves it need not have used this editor.
+	 */
+	onChange?: (content: string, mentions: Array<string>, attachments: Array<Media>, filesUploading: boolean, document: RichTextDocument) => void,
 	onEnter?: () => void,
 	validate?: InputValidateCallback<string>,
 	validateOnChange?: boolean
 }
+
+const contentKey = (content: RichTextContent): string =>
+	typeof content === "string" ? content : JSON.stringify(content ?? "");
 
 const defaultUploadPermission: MediaPermission[] = [{
 	groupName: "everyone",
@@ -132,20 +146,6 @@ export const RichText: React.FC<Props> = ({
 		return formattedFiles
 	}
 
-	const generateMentions = (html: string | undefined) => {
-		if (html == undefined) {
-			return [];
-		}
-		const tempMentionsEl = document.createElement("div");
-		tempMentionsEl.innerHTML = html;
-		const mentionElements = tempMentionsEl.querySelectorAll('[data-type="mention"]');
-		var mentions: string[] = []
-		mentionElements.forEach((element) => {
-			mentions.push(element.getAttribute("data-user-id") as string)
-		});
-		return mentions;
-	}
-
 	const [displayHeading, setDisplayHeading] = useState(displayFormatting);
 
 	const [query, setQuery] = useState('');
@@ -158,7 +158,10 @@ export const RichText: React.FC<Props> = ({
 
 	const storedFilesRef = useRef<Array<RichTextEditorUploadedFile>>(initialiseFiles());
 
-	const [mentions, setMentions] = useState<Array<string>>(generateMentions(content));
+	// Read from the document rather than by putting the content into a
+	// detached element: an element's innerHTML loads images and runs their
+	// handlers even when it is never added to the page.
+	const [mentions, setMentions] = useState<Array<string>>(() => richTextMentions(content));
 
 	const editorContainerRef = useRef<HTMLDivElement>(null);
 
@@ -174,13 +177,15 @@ export const RichText: React.FC<Props> = ({
 
 	const initialClearState = useRef(clearState);
 
-	// The editor is rebuilt whenever the extension set changes, so the html it
-	// currently holds is kept to hand back to the instance that replaces it.
-	const contentRef = useRef(content ?? "");
+	// The editor is rebuilt whenever the extension set changes, so the document
+	// it currently holds is kept to hand back to the instance that replaces it.
+	const contentRef = useRef<RichTextDocument | string>(toEditorContent(content, {allowMentions, allowEmojis}));
 
 	// The last value the content prop pushed in, so a rebuild is not mistaken
-	// for the parent asking for different content.
-	const appliedContentRef = useRef(content);
+	// for the parent asking for different content. Kept by value: a parent that
+	// builds its document object afresh on each render is not asking for new
+	// content, and resetting the editor would throw away what is being typed.
+	const appliedContentRef = useRef(contentKey(content));
 
 	const filesKey = (media: Array<Media>) => media.map(item => item.uuid).join(",");
 
@@ -303,10 +308,7 @@ export const RichText: React.FC<Props> = ({
 		Placeholder.configure({
 			placeholder: () => placeholderRef.current,
 		}),
-		Link.configure({
-			protocols: ['ftp', 'mailto'],
-			openOnClick: true,
-		}),
+		SafeLink,
 		mentionExtension,
 		emojiExtension,
 		enterKeymapExtension
@@ -317,10 +319,7 @@ export const RichText: React.FC<Props> = ({
 		Placeholder.configure({
 			placeholder: () => placeholderRef.current,
 		}),
-		Link.configure({
-			protocols: ['ftp', 'mailto'],
-			openOnClick: true,
-		}),
+		SafeLink,
 		emojiExtension,
 		enterKeymapExtension
 	]
@@ -330,10 +329,7 @@ export const RichText: React.FC<Props> = ({
 		Placeholder.configure({
 			placeholder: () => placeholderRef.current,
 		}),
-		Link.configure({
-			protocols: ['ftp', 'mailto'],
-			openOnClick: true,
-		}),
+		SafeLink,
 		mentionExtension,
 		enterKeymapExtension
 	]
@@ -343,10 +339,7 @@ export const RichText: React.FC<Props> = ({
 		Placeholder.configure({
 			placeholder: () => placeholderRef.current,
 		}),
-		Link.configure({
-			protocols: ['ftp', 'mailto'],
-			openOnClick: true,
-		}),
+		SafeLink,
 		enterKeymapExtension
 	]
 
@@ -365,7 +358,7 @@ export const RichText: React.FC<Props> = ({
 
 	const editor = useEditor({
 		extensions,
-		content: contentRef.current,
+		content: toEditorContent(contentRef.current, {allowMentions, allowEmojis}),
 		editable: !disabled,
 		onUpdate({ editor }) {
 			editorChanged();
@@ -434,16 +427,16 @@ export const RichText: React.FC<Props> = ({
 
 	const editorChanged = () => {
 		if (editorRef.current) {
-			contentRef.current = editorRef.current.getHTML();
+			contentRef.current = editorRef.current.getJSON() as RichTextDocument;
 		}
 		if (editorRef.current && onChange) {
-			var content = editorRef.current.getHTML();
-			var mentions = generateMentions(content);
+			var richText = editorRef.current.getJSON() as RichTextDocument;
 			onChange(
-				content,
-				mentions,
+				editorRef.current.getHTML(),
+				richTextMentions(richText),
 				generateStoredFileAttachments(),
-				areFilesUploading())
+				areFilesUploading(),
+				richText)
 		}
 		handleChangeValidation(currentValue());
 
@@ -485,11 +478,18 @@ export const RichText: React.FC<Props> = ({
 	}, [focus, editor]);
 
 	useEffect(() => {
-		if (appliedContentRef.current === content) return;
-		appliedContentRef.current = content;
-		contentRef.current = content ?? "";
-		if (editor && !editor.isDestroyed && editor.getHTML() !== content) {
-			editor.commands.setContent(content ?? "", false);
+		const key = contentKey(content);
+		if (appliedContentRef.current === key) return;
+		appliedContentRef.current = key;
+		const next = toEditorContent(content, {allowMentions, allowEmojis});
+		contentRef.current = next;
+		// Content the parent only echoes back from onChange is already in the
+		// editor, and setting it again would move the cursor.
+		const holds = editor && !editor.isDestroyed && (typeof next === "string"
+			? editor.getHTML() === next
+			: JSON.stringify(editor.getJSON()) === JSON.stringify(next));
+		if (editor && !editor.isDestroyed && !holds) {
+			editor.commands.setContent(next, false);
 		}
 	}, [content, editor]);
 

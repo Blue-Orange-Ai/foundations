@@ -24,6 +24,21 @@ describe('EventModal', () => {
         expect(screen.getByText('Review the new calendar package.')).toBeInTheDocument();
     });
 
+    it('renders an invite body without running anything in it', () => {
+        const invite: ICalendarEvent = {
+            ...event,
+            body: '<p>Agenda <b>here</b><img src="x" onerror="window.__xss = 1"></p><script>window.__xss = 1</script>' +
+                '<a href="javascript:window.__xss = 1">join</a><iframe src="https://attacker.example"></iframe>',
+        };
+        const { container } = render(<EventModal event={invite} onClose={vi.fn()} />);
+        const body = container.ownerDocument.querySelector('.blue-orange-calendar-event-detail-body') as HTMLElement;
+        expect(body.querySelector('b')!.textContent).toBe('here');
+        expect(body.querySelector('script, iframe')).toBeNull();
+        expect(body.querySelector('img')!.getAttribute('onerror')).toBeNull();
+        expect(body.querySelector('a')!.getAttribute('href')).toBeNull();
+        expect((window as any).__xss).toBeUndefined();
+    });
+
     it('renders the formatted time range and a readable duration', () => {
         render(<EventModal event={event} onClose={vi.fn()} />);
         expect(screen.getByText(/1:00 PM - 2:00 PM/)).toBeInTheDocument();

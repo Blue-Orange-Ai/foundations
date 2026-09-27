@@ -284,3 +284,32 @@ describe("buildTooltipContent - hideDataPoints", () => {
         expect(el.textContent).toContain("Only:field");
     });
 });
+
+describe("buildTooltipContent - untrusted text", () => {
+    const payload = '<img src="x" onerror="window.__xss = 1">';
+
+    afterEach(() => {
+        delete (window as any).__xss;
+    });
+
+    it("writes dataset labels and values as text", () => {
+        const model = makeTooltipModel([makeDataPoint({datasetLabel: payload, formattedValue: payload})]);
+        const el = buildTooltipContent(model, {classPrefix: "line"});
+        expect(el.querySelector("img")).toBeNull();
+        expect(el.textContent).toBe(`${payload}:${payload}`);
+        expect((window as any).__xss).toBeUndefined();
+    });
+
+    it("writes yLabel, valueFormatter and field results as text", () => {
+        const model = makeTooltipModel([makeDataPoint()]);
+        const tooltip: TooltipConfig = {
+            yLabel: () => payload,
+            valueFormatter: () => payload,
+            fields: [{label: payload, value: payload}, {label: "", value: payload}],
+        };
+        const el = buildTooltipContent(model, {classPrefix: "line", tooltip});
+        expect(el.querySelector("img")).toBeNull();
+        expect(el.textContent).toContain(`${payload}:${payload}`);
+        expect((window as any).__xss).toBeUndefined();
+    });
+});

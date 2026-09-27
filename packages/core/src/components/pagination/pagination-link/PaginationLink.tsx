@@ -1,6 +1,7 @@
 import React from "react";
 
 import './PaginationLink.css'
+import {sanitizeUrl} from "../../utils/SanitizeUrl";
 
 interface Props {
 	children?: React.ReactNode;
@@ -64,11 +65,13 @@ export const PaginationLink: React.FC<Props> = ({
 		</>
 	);
 
-	if (href) {
+	const safeHref = sanitizeUrl(href);
+
+	if (safeHref) {
 		return (
 			<a
 				className={generateClassName()}
-				href={href}
+				href={safeHref}
 				aria-label={ariaLabel}
 				aria-current={active ? "page" : undefined}
 				aria-disabled={disabled}

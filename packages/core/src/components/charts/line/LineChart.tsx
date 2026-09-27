@@ -288,7 +288,7 @@ export const LineChart: React.FC<Props> = ({
 					// Color box
 					const boxSpan = document.createElement('span');
 					boxSpan.className = "blue-orange-line-chart-legend-item-color-span"
-					boxSpan.style.background = item.fillStyle;
+					boxSpan.style.backgroundColor = item.fillStyle;
 					boxSpan.style.borderColor = item.strokeStyle;
 					boxSpan.style.borderWidth = item.lineWidth + 'px';
 					boxSpan.style.display = 'inline-block';
