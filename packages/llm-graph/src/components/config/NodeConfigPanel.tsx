@@ -143,7 +143,7 @@ export const NodeConfigPanel: React.FC<Props> = ({
             <div className="bo-llm-graph-tool-list">
                 {tools.map((tool) => (
                     <div className="bo-llm-graph-tool-chip" key={tool.id}>
-                        <i className={(tool.metadata && tool.metadata.ui && tool.metadata.ui.icon) || 'ri-tools-line'}></i>
+                        <i className={NodeHtml.iconClass(tool)}></i>
                         <div className="bo-llm-graph-tool-chip-text">
                             <span className="bo-llm-graph-tool-chip-name">{NodeHtml.title(tool)}</span>
                             <span className="bo-llm-graph-tool-chip-desc">{NodeHtml.subtitle(tool)}</span>
@@ -177,7 +177,7 @@ export const NodeConfigPanel: React.FC<Props> = ({
             {memory &&
                 <div className="bo-llm-graph-tool-list">
                     <div className="bo-llm-graph-tool-chip">
-                        <i className={(memory.metadata && memory.metadata.ui && memory.metadata.ui.icon) || 'ri-database-2-line'}></i>
+                        <i className={NodeHtml.iconClass(memory)}></i>
                         <div className="bo-llm-graph-tool-chip-text">
                             <span className="bo-llm-graph-tool-chip-name">{NodeHtml.title(memory)}</span>
                             <span className="bo-llm-graph-tool-chip-desc">{NodeHtml.subtitle(memory)}</span>
@@ -208,7 +208,7 @@ export const NodeConfigPanel: React.FC<Props> = ({
                         className={`bo-llm-graph-owner-chip${onSelectNode ? ' bo-llm-graph-owner-chip-link' : ''}`}
                         onClick={() => onSelectNode && onSelectNode(owner.id)}
                     >
-                        <i className={(owner.metadata && owner.metadata.ui && owner.metadata.ui.icon) || 'ri-robot-2-line'}></i>
+                        <i className={NodeHtml.iconClass(owner)}></i>
                         <span>{NodeHtml.title(owner)}</span>
                     </div>
                 </div>}
@@ -232,7 +232,7 @@ export const NodeConfigPanel: React.FC<Props> = ({
                         className={`bo-llm-graph-owner-chip${onSelectNode ? ' bo-llm-graph-owner-chip-link' : ''}`}
                         onClick={() => onSelectNode && onSelectNode(owner.id)}
                     >
-                        <i className={(owner.metadata && owner.metadata.ui && owner.metadata.ui.icon) || 'ri-robot-2-line'}></i>
+                        <i className={NodeHtml.iconClass(owner)}></i>
                         <span>{NodeHtml.title(owner)}</span>
                     </div>
                 </div>}
@@ -371,7 +371,7 @@ export const NodeConfigPanel: React.FC<Props> = ({
                     className="bo-llm-graph-config-header-icon"
                     style={{ backgroundColor: NodeHtml.accent(node) }}
                 >
-                    <i className={ui.icon || catalog.icon}></i>
+                    <i className={NodeHtml.iconClass(node)}></i>
                 </div>
                 <div className="bo-llm-graph-config-header-text">
                     <div className="bo-llm-graph-config-header-kind">{catalog.label}</div>

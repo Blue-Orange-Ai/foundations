@@ -97,6 +97,19 @@ describe("fetchRemoteTable request hardening", () => {
 		expect(init.referrerPolicy).toBe("no-referrer");
 	});
 
+	it("sends no cookies when the document adds headers of its own", async () => {
+		const fetchMock = vi.fn().mockResolvedValue({ok: true, text: async () => "[]"});
+		globalThis.fetch = fetchMock as any;
+		await fetchRemoteTable({...source("/api/state"), headers: {"X-Requested-With": "XMLHttpRequest"}});
+		expect(fetchMock.mock.calls[0][1].credentials).toBe("omit");
+	});
+
+	it("refuses a response too large to chart", async () => {
+		const fetchMock = vi.fn().mockResolvedValue({ok: true, text: async () => "[" + "1,".repeat(3 * 1024 * 1024) + "1]"});
+		globalThis.fetch = fetchMock as any;
+		await expect(fetchRemoteTable(source("https://data.example/rows"))).rejects.toThrow(/too large/);
+	});
+
 	it("sends no cookies with a request that could change something", async () => {
 		const fetchMock = vi.fn().mockResolvedValue({ok: true, text: async () => "[]"});
 		globalThis.fetch = fetchMock as any;

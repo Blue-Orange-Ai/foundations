@@ -105,9 +105,9 @@ export class CollaborationSimulator {
 	// ---- internals -------------------------------------------------------
 
 	private stripHtml(html: string): string {
-		const d = document.createElement("div");
-		d.innerHTML = html || "";
-		return d.innerText;
+		// Parsed in an inert document: a detached element's innerHTML would
+		// still load images and run their handlers.
+		return new DOMParser().parseFromString(html || "", "text/html").body.textContent ?? "";
 	}
 
 	// Insert a character into an HTML string at a "visible" character offset,

@@ -29,6 +29,9 @@ import { canHostMemory, canHostTools, catalogFor } from '../interfaces/NodeCatal
 /** A hex, rgb(a), hsl(a) or named colour — nothing that can end the declaration or load a resource. */
 const SAFE_COLOR = /^(#[0-9a-f]{3,8}|(rgb|hsl)a?\([0-9\s.,%deg/+-]*\)|[a-z]{3,30})$/i;
 
+/** One or more remixicon classes, e.g. `ri-robot-2-line` or `ri-robot-2-line ri-lg`. */
+const ICON_CLASS = /^ri-[a-z0-9-]+(\s+ri-[a-z0-9-]+)*$/;
+
 /** Width of every node box on the canvas. */
 export const NODE_WIDTH = 300;
 /** Height of a plain card, and of the header row inside a box with tools. */
@@ -150,11 +153,18 @@ export class NodeHtml {
         return uri.replace(/\/\/[^/@]*@/, '//');
     }
 
-    /** The icon's class names, e.g. `ri-robot-2-line`. */
+    /**
+     * The icon's class names, e.g. `ri-robot-2-line`. Only remixicon classes
+     * are taken from the node: any other class would borrow styling from the
+     * page (the library's full-screen modal layer, for one), so it falls back
+     * to the catalog's icon.
+     */
     public static iconClass(node: WorkflowNode): string {
         const ui = node.metadata && node.metadata.ui;
-        const icon = (ui && ui.icon) || catalogFor(node.type).icon;
-        return String(icon);
+        const icon = ui && ui.icon;
+        return typeof icon === 'string' && ICON_CLASS.test(icon.trim())
+            ? icon.trim()
+            : catalogFor(node.type).icon;
     }
 
     /** The node's icon as an element; the class is set as a property, so it cannot carry markup. */

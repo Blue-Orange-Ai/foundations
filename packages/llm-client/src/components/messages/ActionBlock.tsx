@@ -25,6 +25,11 @@ const ACTION_ICON: Record<DisplayActionType, string> = {
 const hasContent = (part: ActionPart): boolean =>
     Boolean((part.arguments && Object.keys(part.arguments).length) || part.detail);
 
+// The status comes from the agent's stream, and becomes part of a class name,
+// so only the known values are used.
+const statusClass = (status: unknown): string =>
+    status === 'RUNNING' || status === 'ERROR' || status === 'COMPLETE' ? status.toLowerCase() : 'complete';
+
 /**
  * Renders a tool call / display action inline in the assistant message — icon,
  * title and a RUNNING → COMPLETE/ERROR status, expandable to show the call
@@ -43,7 +48,7 @@ export const ActionBlock: React.FC<Props> = ({ part }) => {
             : 'ri-check-line blue-orange-llm-action-done';
 
     return (
-        <div className={`blue-orange-llm-action blue-orange-llm-action-${part.status.toLowerCase()}`}>
+        <div className={`blue-orange-llm-action blue-orange-llm-action-${statusClass(part.status)}`}>
             <button
                 type="button"
                 className="blue-orange-llm-action-row"

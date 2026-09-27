@@ -150,6 +150,22 @@ interface ReferenceDetail {
 	referenceDescription?: string,
 }
 
+// A reference's link is part of the document, so it is only handed to the
+// host when it is a web or mail address — never `javascript:` or `data:`.
+const withSafeReferenceLink = (detail: ReferenceDetail): ReferenceDetail => {
+	const link = typeof detail.referenceLink === "string" ? detail.referenceLink.trim() : undefined;
+	let safe: string | undefined;
+	if (link) {
+		try {
+			const protocol = new URL(link, window.location.href).protocol;
+			safe = protocol === "http:" || protocol === "https:" || protocol === "mailto:" ? link : undefined;
+		} catch (e) {
+			safe = undefined;
+		}
+	}
+	return {...detail, referenceLink: safe};
+};
+
 export interface BlueOrangeBlockEditorHandle {
 	getEditor: () => BlockEditor | null,
 	toJson: () => BlueOrangeDocument | null,
@@ -661,16 +677,16 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 
 			// Reference events
 			current.addEventListener("blue-orange-editor-new-reference-added", (ev: any) => {
-				onReferenceAdded?.(ev.detail);
+				onReferenceAdded?.(withSafeReferenceLink(ev.detail));
 			})
 			current.addEventListener("blue-orange-editor-reference-updated", (ev: any) => {
-				onReferenceUpdated?.(ev.detail);
+				onReferenceUpdated?.(withSafeReferenceLink(ev.detail));
 			})
 			current.addEventListener("blue-orange-editor-reference-removed", (ev: any) => {
-				onReferenceRemoved?.(ev.detail);
+				onReferenceRemoved?.(withSafeReferenceLink(ev.detail));
 			})
 			current.addEventListener("blue-orange-editor-reference-clicked", (ev: any) => {
-				onReferenceClicked?.(ev.detail);
+				onReferenceClicked?.(withSafeReferenceLink(ev.detail));
 			})
 
 			// Inline context (mentions & emoji)

@@ -96,6 +96,46 @@ const objectRowsToTable = (
 	};
 };
 
+// Every viewer downloads and parses the response, so a chart cannot make them
+// take in more than this.
+const MAX_RESPONSE_BYTES = 5 * 1024 * 1024;
+
+const isPlainRead = (source: ChartRemoteSource): boolean =>
+	(source.method || "GET").toUpperCase() === "GET" &&
+	Object.keys(source.headers || {}).every((name) => name.toLowerCase() === "accept");
+
+const readLimited = async (response: Response, limit: number): Promise<string> => {
+	const tooLarge = () => new Error("The data server's response is too large to chart.");
+	const declared = Number(response.headers?.get?.("content-length"));
+	if (Number.isFinite(declared) && declared > limit) {
+		throw tooLarge();
+	}
+	const reader = response.body && typeof response.body.getReader === "function" ? response.body.getReader() : undefined;
+	if (!reader) {
+		const text = await response.text();
+		if (text.length > limit) {
+			throw tooLarge();
+		}
+		return text;
+	}
+	const decoder = new TextDecoder();
+	let received = 0;
+	let text = "";
+	for (;;) {
+		const {done, value} = await reader.read();
+		if (done) {
+			break;
+		}
+		received += value.byteLength;
+		if (received > limit) {
+			await reader.cancel();
+			throw tooLarge();
+		}
+		text += decoder.decode(value, {stream: true});
+	}
+	return text + decoder.decode();
+};
+
 const isRemoteUrl = (url: string): boolean => {
 	try {
 		const protocol = new URL(url.trim(), typeof window !== "undefined" ? window.location.href : undefined).protocol;
@@ -114,11 +154,13 @@ export const fetchRemoteTable = async (
 		throw new Error("No data server URL has been set.");
 	}
 	// The source is part of the document, so whoever wrote the chart chooses
-	// where every viewer's browser sends this request. A read (GET) keeps the
-	// browser's usual same-origin cookies, since what it returns is only shown
-	// to the viewer; anything that could change something goes out without
-	// them, so a chart cannot make a signed-in viewer's browser post to an API
-	// on their behalf. The page address is never sent.
+	// where every viewer's browser sends this request. Only a plain read — a
+	// GET with no headers of the document's own — carries the viewer's
+	// same-origin cookies: that can do nothing an ordinary link could not, and
+	// what it returns is only shown to the viewer. Anything else goes out
+	// without them, so a chart cannot make a signed-in viewer's browser post to
+	// an API, or pass a header-based CSRF check, on their behalf. The page
+	// address is never sent.
 	if (!isRemoteUrl(source.url)) {
 		throw new Error("The data server URL must be an http or https address.");
 	}
@@ -126,7 +168,7 @@ export const fetchRemoteTable = async (
 		method: source.method || "GET",
 		headers: {Accept: "application/json", ...(source.headers || {})},
 		signal: signal,
-		credentials: (source.method || "GET").toUpperCase() === "GET" ? "same-origin" : "omit",
+		credentials: isPlainRead(source) ? "same-origin" : "omit",
 		referrerPolicy: "no-referrer",
 	};
 	if (init.method === "POST" && source.body != null && source.body !== "") {
@@ -141,7 +183,7 @@ export const fetchRemoteTable = async (
 	if (!response.ok) {
 		throw new Error("The data server responded with " + response.status + " " + response.statusText + ".");
 	}
-	const text = await response.text();
+	const text = await readLimited(response, MAX_RESPONSE_BYTES);
 	let body: any;
 	try {
 		body = JSON.parse(text);
