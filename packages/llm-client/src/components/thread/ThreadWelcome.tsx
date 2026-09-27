@@ -3,7 +3,7 @@ import React from 'react';
 import { Suggestion, WelcomeBranding } from '../../interfaces/ChatInterfaces';
 import { Suggestions } from '../suggestions/Suggestions';
 import './ThreadWelcome.css';
-import { sanitizeHtml } from '@blue-orange-ai/foundations-core';
+import { logoMarkup } from '../../services/LogoMarkup';
 
 interface Props {
     branding?: WelcomeBranding;
@@ -16,18 +16,20 @@ interface Props {
  * grid of starter prompts — the composer sits directly beneath it (mounted by
  * the Thread) so a new conversation starts in the middle of the screen.
  */
-export const ThreadWelcome: React.FC<Props> = ({ branding, suggestions, onSelectSuggestion }) => (
+export const ThreadWelcome: React.FC<Props> = ({ branding, suggestions, onSelectSuggestion }) => {
+    const svgLogo = branding?.logo && branding.logoIsSvg ? logoMarkup(branding.logo) : undefined;
+    return (
     <div className="blue-orange-llm-welcome">
         <div className="blue-orange-llm-welcome-logo">
             {branding?.logo ? (
-                branding.logoIsSvg ? (
+                svgLogo && 'html' in svgLogo ? (
                     <span
                         className="blue-orange-llm-welcome-logo-svg"
                         // eslint-disable-next-line react/no-danger
-                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(branding.logo) }}
+                        dangerouslySetInnerHTML={{ __html: svgLogo.html }}
                     />
                 ) : (
-                    <img src={branding.logo} alt="logo" className="blue-orange-llm-welcome-logo-img" />
+                    <img src={svgLogo ? svgLogo.src : branding.logo} alt="logo" className="blue-orange-llm-welcome-logo-img" />
                 )
             ) : (
                 <i className="ri-sparkling-2-fill" />
@@ -42,4 +44,5 @@ export const ThreadWelcome: React.FC<Props> = ({ branding, suggestions, onSelect
             </div>
         )}
     </div>
-);
+    );
+};

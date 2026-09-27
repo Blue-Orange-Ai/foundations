@@ -70,6 +70,32 @@ export const isRichTextDocument = (value: unknown): value is RichTextDocument =>
 	return candidate.type === "doc" && (candidate.content === undefined || Array.isArray(candidate.content));
 };
 
+// A stored document is JSON anyone could have written. JSON.parse turns a
+// `"__proto__"` key into an ordinary own property, and TipTap's attribute
+// merging (GHSA-cp6q-959q-f8rh) can promote such a key into a real prototype,
+// so these keys are dropped from every document before it reaches an editor.
+const PROTOTYPE_KEYS = new Set(["__proto__", "constructor", "prototype"]);
+
+const withoutPrototypeKeys = (key: string, value: unknown): unknown =>
+	PROTOTYPE_KEYS.has(key) ? undefined : value;
+
+/** A copy of a JSON value with the prototype keys removed at every level. */
+const cleanJson = (value: unknown, depth: number = 0): unknown => {
+	if (value === null || typeof value !== "object" || depth > 1000) {
+		return value;
+	}
+	if (Array.isArray(value)) {
+		return value.map(item => cleanJson(item, depth + 1));
+	}
+	const copy: Record<string, unknown> = {};
+	Object.keys(value).forEach(key => {
+		if (!PROTOTYPE_KEYS.has(key)) {
+			copy[key] = cleanJson((value as Record<string, unknown>)[key], depth + 1);
+		}
+	});
+	return copy;
+};
+
 /**
  * Reads a document that was stored as a JSON string. Returns undefined for
  * anything else — including HTML, which is left to htmlToRichTextDocument.
@@ -83,7 +109,7 @@ export const parseRichTextDocument = (value: string | null | undefined): RichTex
 		return undefined;
 	}
 	try {
-		const parsed = JSON.parse(trimmed);
+		const parsed = JSON.parse(trimmed, withoutPrototypeKeys);
 		return isRichTextDocument(parsed) ? parsed : undefined;
 	} catch (e) {
 		return undefined;
@@ -199,7 +225,7 @@ const fitToEditor = (node: RichTextNode, options: EditorContentOptions, depth: n
  */
 export const toEditorContent = (content: RichTextContent, options: EditorContentOptions = {}): RichTextDocument | string => {
 	const document = isRichTextDocument(content)
-		? content
+		? cleanJson(content) as RichTextDocument
 		: typeof content === "string" ? parseRichTextDocument(content) : undefined;
 	if (document) {
 		return fitToEditor(document, options, 0) as RichTextDocument;

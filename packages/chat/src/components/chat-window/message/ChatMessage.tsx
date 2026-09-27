@@ -8,6 +8,9 @@ import './ChatMessage.css';
 
 const MAX_THREAD_AVATARS = 5;
 
+// Tallest a message block may make itself, in pixels.
+const MAX_BLOCK_HEIGHT = 2000;
+
 interface Props {
     message: IChatMessage;
     isConsecutive?: boolean;
@@ -66,7 +69,12 @@ const ChatMessageBlockFrame: React.FC<{ block: IChatMessageBlock }> = ({ block }
         const handleMessage = (event: MessageEvent) => {
             if (event.data?.type === 'blue-orange-block-resize' && iframeRef.current) {
                 if (event.source === iframeRef.current.contentWindow) {
-                    iframeRef.current.style.height = event.data.height + 'px';
+                    // The height is reported by the block's own script, which
+                    // the sender wrote, so it is held to a sensible range.
+                    const height = Number(event.data.height);
+                    if (Number.isFinite(height)) {
+                        iframeRef.current.style.height = Math.min(Math.max(height, 0), MAX_BLOCK_HEIGHT) + 'px';
+                    }
                 }
             }
         };

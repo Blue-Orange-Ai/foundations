@@ -7,8 +7,12 @@ describe('messageContent', () => {
     });
 
     it('previews legacy html as text without running it', () => {
+        // jsdom never loads images, so the payload would not fire here either
+        // way; what matters is that it never reaches an innerHTML sink.
+        const setter = vi.spyOn(Element.prototype, 'innerHTML', 'set');
         expect(messagePreview('<p>Hello <b>there</b><img src="x" onerror="window.__xss = 1"></p>')).toBe('Hello there');
-        expect((window as any).__xss).toBeUndefined();
+        expect(setter.mock.calls.some(call => String(call[0]).includes('onerror'))).toBe(false);
+        setter.mockRestore();
     });
 
     it('truncates a preview', () => {
@@ -29,5 +33,9 @@ describe('messageContent', () => {
         ] };
         expect(trimTrailingEmptyParagraphs(document).content).toHaveLength(1);
         expect(JSON.parse(serializeMessageContent(document)).content).toHaveLength(1);
+    });
+
+    it('keeps one block for a message that is only an attachment', () => {
+        expect(JSON.parse(serializeMessageContent(''))).toEqual({ type: 'doc', content: [{ type: 'paragraph' }] });
     });
 });

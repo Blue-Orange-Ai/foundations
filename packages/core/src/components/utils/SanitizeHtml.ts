@@ -51,7 +51,22 @@ const MEDIA_TAGS = ["img", "picture", "source", "video", "audio", "track", "imag
 
 // Inline styles are filtered per declaration rather than dropped outright, so
 // highlighted code and formatted text keep their colours.
-const UNSAFE_STYLE_VALUE = /url\s*\(|image-set\s*\(|image\s*\(|element\s*\(|expression\s*\(|paint\s*\(|javascript:|vbscript:|-moz-binding|behavior|@import|\\/i;
+const UNSAFE_STYLE_VALUE = /image-set\s*\(|image\s*\(|element\s*\(|expression\s*\(|paint\s*\(|javascript:|vbscript:|-moz-binding|behavior|@import|\\/i;
+
+// `url()` loads whatever it names — unless it names something in this same
+// document (`url(#gradient)`, as SVG fills do), which loads nothing.
+const URL_REFERENCE = /url\s*\(\s*(['"]?)([^'")]*)\1\s*\)/gi;
+const loadsResource = (value: string): boolean => {
+	if (!/url\s*\(/i.test(value)) {
+		return false;
+	}
+	const references = Array.from(value.matchAll(URL_REFERENCE));
+	// Anything url(-like that did not parse cleanly is treated as loading.
+	if (references.length !== (value.match(/url\s*\(/gi) ?? []).length) {
+		return true;
+	}
+	return references.some(reference => !/^#[\w\-.:]+$/.test(reference[2].trim()));
+};
 const UNSAFE_STYLE_PROPERTIES = new Set(["z-index", "behavior", "-moz-binding", "-ms-behavior"]);
 const SAFE_POSITIONS = new Set(["static", "relative", ""]);
 
@@ -87,7 +102,7 @@ export const sanitizeStyle = (style: string, ownerDocument?: Document): string =
 		const property = source.item(i);
 		const value = source.getPropertyValue(property);
 		const lowered = property.toLowerCase();
-		if (UNSAFE_STYLE_PROPERTIES.has(lowered) || UNSAFE_STYLE_VALUE.test(value) || UNSAFE_STYLE_VALUE.test(property)) {
+		if (UNSAFE_STYLE_PROPERTIES.has(lowered) || UNSAFE_STYLE_VALUE.test(value) || UNSAFE_STYLE_VALUE.test(property) || loadsResource(value)) {
 			continue;
 		}
 		if (lowered === "position" && !SAFE_POSITIONS.has(value.trim().toLowerCase())) {

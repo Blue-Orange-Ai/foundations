@@ -235,11 +235,15 @@ describe('RichText', () => {
 	it('never runs markup that arrives as content', () => {
 		const onChange = vi.fn();
 		const payload = '<p>hi<img src="x" onerror="window.__xss = 1"><script>window.__xss = 1</script></p>';
+		// jsdom never loads images, so the payload is traced to the sinks
+		// instead: it must never be assigned through innerHTML.
+		const setter = vi.spyOn(Element.prototype, 'innerHTML', 'set');
 		const {rerender} = render(<RichText content={payload} onChange={onChange}></RichText>);
 		rerender(<RichText content={payload} onChange={onChange} placeholder="again"></RichText>);
 		fireEvent.keyUp(editable(), {key: 'a'});
 		expect(editable().querySelector('img, script')).toBeNull();
-		expect((window as any).__xss).toBeUndefined();
+		expect(setter.mock.calls.some(call => String(call[0]).includes('onerror'))).toBe(false);
+		setter.mockRestore();
 	});
 
 	it('pins link targets whatever the content says', () => {

@@ -1,4 +1,5 @@
 import {
+    emptyRichTextDocument,
     isRichTextDocumentEmpty,
     RichTextContent,
     RichTextDocument,
@@ -27,7 +28,9 @@ export const trimTrailingEmptyParagraphs = (content: RichTextContent): RichTextD
     while (blocks.length > 0 && isEmptyParagraph(blocks[blocks.length - 1])) {
         blocks.pop();
     }
-    return { ...document, content: blocks };
+    // A document needs at least one block, even for a message that is only
+    // an attachment.
+    return blocks.length === 0 ? emptyRichTextDocument() : { ...document, content: blocks };
 };
 
 /** What a message should be stored as: its trimmed document, serialized. */

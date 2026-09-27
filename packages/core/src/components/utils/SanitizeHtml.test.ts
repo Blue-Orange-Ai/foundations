@@ -151,6 +151,19 @@ describe('sanitizeStyle', () => {
 		expect(sanitizeStyle(declaration)).toBe('');
 	});
 
+	it('keeps a reference to something in the same document, such as an SVG gradient', () => {
+		expect(sanitizeStyle('fill: url(#g1)')).toContain('url(');
+		expect(sanitizeStyle('fill: url("#g1")')).toContain('url(');
+	});
+
+	it.each([
+		'fill: url(#g1) url(https://attacker.example/x)',
+		'background: url( https://attacker.example/x )',
+		'fill: url(#a), url(//attacker.example/x)',
+	])('drops %s once anything outside the document is named', (declaration) => {
+		expect(sanitizeStyle(declaration)).toBe('');
+	});
+
 	it('keeps relative positioning', () => {
 		expect(sanitizeStyle('position: relative; top: -0.2em')).toContain('position: relative');
 	});

@@ -127,4 +127,26 @@ describe('RichTextDocument', () => {
 		expect(() => richTextToPlainText(document)).not.toThrow();
 		expect(() => isRichTextDocumentEmpty(document)).not.toThrow();
 	});
+
+	it('drops prototype keys from a stored document before it reaches an editor', () => {
+		const stored = '{"type":"doc","content":[{"type":"paragraph","attrs":{"__proto__":{"onload":"x()"}},"content":[{"type":"text","text":"hi","marks":[{"type":"link","attrs":{"href":"https://a.b","constructor":{"prototype":{}}}}]}]}]}';
+		const parsed = parseRichTextDocument(stored)!;
+		const paragraph = parsed.content![0];
+		expect(Object.prototype.hasOwnProperty.call(paragraph.attrs, '__proto__')).toBe(false);
+		expect(Object.prototype.hasOwnProperty.call(paragraph.content![0].marks![0].attrs, 'constructor')).toBe(false);
+
+		const object = JSON.parse(stored);
+		const forEditor = toEditorContent(object) as RichTextDocument;
+		expect(Object.prototype.hasOwnProperty.call(forEditor.content![0].attrs, '__proto__')).toBe(false);
+		expect(({} as any).onload).toBeUndefined();
+	});
+
+	it('never puts a stored document through innerHTML', () => {
+		const setter = vi.spyOn(Element.prototype, 'innerHTML', 'set');
+		richTextMentions('<p><img src=x onerror="window.__xss = 1"></p>');
+		richTextToPlainText('<p><img src=x onerror="window.__xss = 1"></p>');
+		toRichTextDocument('<p><img src=x onerror="window.__xss = 1"></p>');
+		expect(setter.mock.calls.some(call => String(call[0]).includes('onerror'))).toBe(false);
+		setter.mockRestore();
+	});
 });
