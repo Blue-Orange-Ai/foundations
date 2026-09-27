@@ -22,6 +22,20 @@ describe('Utilities', () => {
         expect((window as any).__xss).toBeUndefined();
     });
 
+    it('never parses saved node markup through innerHTML', () => {
+        // jsdom never loads images, so the payload would not fire here either
+        // way; what matters is that it never reaches an innerHTML sink.
+        const setter = vi.spyOn(Element.prototype, 'innerHTML', 'set');
+        const saved = `<div class="blue-orange-pipeline-editor-node"><div class="blue-orange-pipeline-editor-node-icon">${payload}</div>` +
+            `<div class="blue-orange-pipeline-editor-node-body"><div class="blue-orange-pipeline-editor-node-body-title">T</div></div></div>`;
+        Utilities.getNodeTitle(saved);
+        Utilities.getNodeIcon(saved);
+        Utilities.getNodeIconColor(saved);
+        Utilities.generateGeneralNodeHtml(payload, '#000', '#fff', 't', 'd', '#000');
+        expect(setter.mock.calls.some(call => String(call[0]).includes('onerror'))).toBe(false);
+        setter.mockRestore();
+    });
+
     it('reads saved node markup without running it', () => {
         const saved = `<div class="blue-orange-pipeline-editor-node" icon-color="#111"><div class="blue-orange-pipeline-editor-node-icon">${payload}<i class="ri-x"></i></div>` +
             `<div class="blue-orange-pipeline-editor-node-body"><div class="blue-orange-pipeline-editor-node-body-title">T</div></div></div>`;
