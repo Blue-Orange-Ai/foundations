@@ -9,6 +9,10 @@ import {
 } from "../../../../components/layouts/pages/split-pages/horizontal-split-page/HorizontalSplitPage";
 import {RichText} from "../../../../components/inputs/richtext/default/RichText";
 import {Media} from "@blue-orange-ai/foundations-clients";
+import {
+	emptyRichTextDocument,
+	RichTextDocument
+} from "../../../../components/inputs/richtext/document/RichTextDocument";
 import {ComponentDoc} from "../../../framework/ComponentDoc";
 import {PropSpec} from "../../../framework/PropSpec";
 import {validationProps} from "../../../framework/InputProps";
@@ -17,7 +21,7 @@ import {FormActions} from "../../../../components/inputs/form-group/FormActions"
 import {FormSubmitButton} from "../../../../components/inputs/form-group/FormSubmitButton";
 
 interface RichTextState {
-	content: string,
+	content: RichTextDocument,
 	mentions: string[],
 	attachments: Media[],
 	filesUploading: boolean
@@ -165,7 +169,7 @@ export const RichTextDevelopment: React.FC<Props> = ({}) => {
 
 	const startingState: RichTextState = {
 		attachments: [],
-		content: "",
+		content: emptyRichTextDocument(),
 		filesUploading: false,
 		mentions: []
 	}
@@ -178,12 +182,10 @@ export const RichTextDevelopment: React.FC<Props> = ({}) => {
 
 	const [richTextContentStr, setRichTextContentStr] = useState(generateContentStr(startingState));
 
-	const processChangeData = (content: string, mentions: string[], attachments: Media[], filesUploading: boolean) => {
-		var state = richTextContent;
-		state["content"] = content
-		state["mentions"] = mentions
-		state["attachments"] = attachments
-		state["filesUploading"] = filesUploading
+	// The document, not the HTML, is what gets stored — so it is what the output
+	// window shows and what is fed back in as content.
+	const processChangeData = (_html: string, mentions: string[], attachments: Media[], filesUploading: boolean, document: RichTextDocument) => {
+		const state: RichTextState = {content: document, mentions, attachments, filesUploading};
 		setRichTextContent(state);
 		setRichTextContentStr(generateContentStr(state));
 	}
