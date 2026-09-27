@@ -94,6 +94,20 @@ describe('sanitizeHtml', () => {
 		expect(sanitizeHtml('<span style="color: red">x</span>', {allowStyles: false})).toBe('<span>x</span>');
 	});
 
+	it('removes the library\'s own class names', () => {
+		const container = mount('<div class="blue-orange-modal-window note bo-llm-graph-node">x</div><p class="blue-orange-toast">y</p>');
+		expect(container.querySelector('div')!.getAttribute('class')).toBe('note');
+		expect(container.querySelector('p')!.getAttribute('class')).toBeNull();
+	});
+
+	it('keeps other class names, such as code highlighting', () => {
+		expect(sanitizeHtml('<span class="line hljs-keyword">x</span>')).toBe('<span class="line hljs-keyword">x</span>');
+	});
+
+	it('drops classes when asked to', () => {
+		expect(sanitizeHtml('<p class="fixed inset-0 z-50">x</p>', {allowClasses: false})).toBe('<p>x</p>');
+	});
+
 	it('adds noopener to links that open a new window', () => {
 		const container = mount('<a href="https://example.com" target="_blank" rel="nofollow">x</a>');
 		const rel = container.querySelector('a')!.getAttribute('rel')!.split(' ');

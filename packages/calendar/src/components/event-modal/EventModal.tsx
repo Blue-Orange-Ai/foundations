@@ -463,7 +463,7 @@ export const EventModal: React.FC<Props> = ({
                         it is sanitized before it is shown. */}
                     {event.body && (
                         <div className="blue-orange-calendar-event-detail-body">
-                            <RenderHtml html={event.body} />
+                            <RenderHtml html={event.body} sanitizeOptions={{ allowClasses: false }} />
                         </div>
                     )}
 

@@ -1,3 +1,13 @@
+/* The markup shown here comes from data. Paint containment makes this box the
+   containing block for anything positioned inside it and clips what is drawn
+   to it, so nothing in the markup — a class that happens to be fixed and
+   full-screen in the host's CSS, a large negative offset — can cover the page
+   around it. Wide content scrolls rather than being cut off. */
+.blue-orange-render-html {
+    contain: paint;
+    overflow-x: auto;
+}
+
 
 .blue-orange-render-html .mention {
     border: 1px solid #000;

@@ -25,6 +25,14 @@ export interface SanitizeHtmlOptions {
 	allowMedia?: boolean;
 	/** Keeps inline `<svg>` markup, e.g. an icon or a logo. Defaults to true. */
 	allowSvg?: boolean;
+	/**
+	 * Keeps `class` attributes (the library's own class names are always
+	 * removed, see RESERVED_CLASS). Turn it off for markup written somewhere
+	 * else, such as an invite's HTML body: its classes only matter to its own
+	 * stylesheet, which is never kept, and any that match the host page's CSS
+	 * would borrow that styling. Defaults to true.
+	 */
+	allowClasses?: boolean;
 }
 
 // Never wanted, whatever the options: they run script, pull in other documents,
@@ -48,6 +56,12 @@ const UNSAFE_STYLE_PROPERTIES = new Set(["z-index", "behavior", "-moz-binding", 
 const SAFE_POSITIONS = new Set(["static", "relative", ""]);
 
 const LINK_TARGETS = new Set(["_blank", "_self"]);
+
+// The library's own class names. Markup that borrowed them would pick up the
+// library's styling — `blue-orange-modal-window`, for one, is a fixed,
+// full-screen layer above everything — so they are taken off whatever the
+// markup says.
+const RESERVED_CLASS = /^(blue-orange|bo|foundations)-|^(tiptap|ProseMirror|tippy-box|tippy-content)$/i;
 
 let purifier: Purifier | undefined;
 
@@ -91,6 +105,14 @@ const onAttribute = (node: Element, data: UponSanitizeAttributeHookEvent) => {
 			data.keepAttr = false;
 		} else {
 			data.attrValue = cleaned;
+		}
+	}
+	if (data.attrName === "class") {
+		const kept = data.attrValue.split(/\s+/).filter(name => name !== "" && !RESERVED_CLASS.test(name));
+		if (kept.length === 0) {
+			data.keepAttr = false;
+		} else {
+			data.attrValue = kept.join(" ");
 		}
 	}
 	if (data.attrName === "target") {
@@ -142,6 +164,9 @@ const buildConfig = (options: SanitizeHtmlOptions): Config => {
 	}
 	if (options.allowStyles === false) {
 		forbiddenAttributes.push("style");
+	}
+	if (options.allowClasses === false) {
+		forbiddenAttributes.push("class");
 	}
 	return {
 		USE_PROFILES: {html: true, svg: options.allowSvg !== false, svgFilters: options.allowSvg !== false, mathMl: true},
