@@ -78,6 +78,10 @@ describe('RenderRichText', () => {
 		'java\tscript:window.__xss = 1',
 		'data:text/html,<script>window.__xss = 1</script>',
 		'vbscript:msgbox(1)',
+		'\u00A0javascript:window.__xss = 1',
+		'\uFEFFjavascript:window.__xss = 1',
+		'\u3000javascript:window.__xss = 1',
+		'\u2028data:text/html,<script>window.__xss = 1</script>',
 	])('drops a link to %j but keeps its text', (href) => {
 		const document: RichTextDocument = {
 			type: 'doc',

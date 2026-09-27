@@ -1,5 +1,5 @@
 import React from 'react';
-import {fireEvent, render, screen, waitFor} from '@testing-library/react';
+import {act, fireEvent, render, screen, waitFor} from '@testing-library/react';
 import {RichText} from './RichText';
 import {FormGroup} from '../../form-group/FormGroup';
 import {FormActions} from '../../form-group/FormActions';
@@ -254,5 +254,22 @@ describe('RichText', () => {
 		render(<RichText content={'<p><a href="javascript:window.__xss = 1">link</a></p>'}></RichText>);
 		expect(editable().querySelector('a')).toBeNull();
 		expect(editable().textContent).toBe('link');
+	});
+
+	it('keeps what is being typed when the parent passes a fresh document object each render', () => {
+		const saved = {type: 'doc' as const, content: [{type: 'paragraph', content: [{type: 'text', text: 'Saved'}]}]};
+		const Parent = () => {
+			const [, setChanges] = React.useState(0);
+			return <RichText content={{...saved}} onChange={() => setChanges(changes => changes + 1)}></RichText>;
+		};
+		render(<Parent/>);
+		expect(editable().textContent).toBe('Saved');
+		// TipTap hangs the editor off its DOM node; type through it, then let
+		// the keyup report the change so the parent re-renders.
+		act(() => {
+			(editable() as any).editor.commands.insertContentAt(6, ' typed');
+			fireEvent.keyUp(editable(), {key: 'd'});
+		});
+		expect(editable().textContent).toBe('Saved typed');
 	});
 });

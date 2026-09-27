@@ -34,6 +34,19 @@ describe('sanitizeUrl', () => {
 		expect(isSafeUrl(url)).toBe(false);
 	});
 
+	it.each(['\u00A0', '\uFEFF', '\u1680', '\u2000', '\u2028', '\u2029', '\u202F', '\u205F', '\u3000', '\u200B', '\u00A0\uFEFF '])(
+		'refuses a script link behind unicode whitespace %j', (prefix) => {
+			expect(sanitizeUrl(prefix + 'javascript:alert(1)')).toBeUndefined();
+			expect(sanitizeUrl(prefix + 'data:text/html,<script>alert(1)</script>')).toBeUndefined();
+			expect(sanitizeUrl('javascript:alert(1)' + prefix)).toBeUndefined();
+		});
+
+	it('hands back exactly the url it checked', () => {
+		expect(sanitizeUrl('  https://example.com/a  ')).toBe('https://example.com/a');
+		expect(sanitizeUrl('\u00A0/path')).toBe('/path');
+		expect(sanitizeUrl('https://exa\tmple.com')).toBe('https://example.com');
+	});
+
 	it('refuses anything that is not a string', () => {
 		expect(sanitizeUrl(undefined)).toBeUndefined();
 		expect(sanitizeUrl(null)).toBeUndefined();

@@ -11,9 +11,9 @@ export const Pdf: React.FC<Props> = ({
 									   }) => {
 
 	// The source often comes from message or media data. An embed will load
-	// any document it is pointed at, so only an http(s) (or same-site) address
-	// is used.
-	const safeSrc = sanitizeUrl(src, {protocols: ["http:", "https:"]});
+	// any document it is pointed at, so only an http(s) (or same-site) address,
+	// or an object URL this page created, is used.
+	const safeSrc = sanitizeUrl(src, {protocols: ["http:", "https:", "blob:"]});
 
 	return (
 		<div className="blue-orange-media-pdf-canvas">

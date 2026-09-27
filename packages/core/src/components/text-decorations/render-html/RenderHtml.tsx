@@ -2,6 +2,7 @@ import React, {useMemo} from "react";
 
 import './RenderHtml.css'
 import {sanitizeHtml, SanitizeHtmlOptions} from "../../utils/SanitizeHtml";
+import {useIsClient} from "../../utils/UseIsClient";
 
 interface Props {
 	/**
@@ -25,9 +26,13 @@ export const RenderHtml: React.FC<Props> = ({html, sanitizeOptions}) => {
 	const allowSvg = sanitizeOptions?.allowSvg;
 	const allowClasses = sanitizeOptions?.allowClasses;
 
+	// Without a DOM the markup cannot be sanitized, so the server renders an
+	// empty box and the client fills it in (see useIsClient).
+	const isClient = useIsClient();
+
 	const safeHtml = useMemo(
-		() => sanitizeHtml(html, {allowStyles, allowMedia, allowSvg, allowClasses}),
-		[html, allowStyles, allowMedia, allowSvg, allowClasses]
+		() => isClient ? sanitizeHtml(html, {allowStyles, allowMedia, allowSvg, allowClasses}) : "",
+		[isClient, html, allowStyles, allowMedia, allowSvg, allowClasses]
 	);
 
 	return (

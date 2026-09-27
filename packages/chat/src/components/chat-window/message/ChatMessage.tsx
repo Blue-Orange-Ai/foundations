@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import moment from 'moment';
 import { Avatar, EmojiWrapper, RichText, Button, ButtonType, ButtonSize, RenderRichText, RichTextDocument } from '@blue-orange-ai/foundations-core';
 import { IChatMessage, IChatMessageBlock, IChatUser } from '../../../interfaces/ChatInterfaces';
@@ -99,6 +99,13 @@ export const ChatMessage: React.FC<Props> = ({
 }) => {
     const [editing, setEditing] = useState(false);
     const [editContent, setEditContent] = useState<RichTextDocument | string>('');
+    // Parsed once per content, not on every render: legacy HTML goes through
+    // the editor schema, which is not free, and a message list re-renders often.
+    const content = useMemo(() => trimTrailingEmptyParagraphs(message.content), [message.content]);
+    const linkedContent = useMemo(
+        () => (message.replyTo ? trimTrailingEmptyParagraphs(message.replyTo.content) : undefined),
+        [message.replyTo?.content]
+    );
 
     const isOwnMessage = currentUserId != null && message.sender.user.id === currentUserId;
 
@@ -170,7 +177,7 @@ export const ChatMessage: React.FC<Props> = ({
                             </span>
                         </div>
                         <div className="blue-orange-chat-message-content">
-                            <RenderRichText content={trimTrailingEmptyParagraphs(linked.content)} />
+                            <RenderRichText content={linkedContent} />
                         </div>
                         {linked.edited && (
                             <span className="blue-orange-chat-message-edited">(edited)</span>
@@ -280,7 +287,7 @@ export const ChatMessage: React.FC<Props> = ({
             <>
                 {/* Another member's words: rendered from the document, never as markup. */}
                 <div className="blue-orange-chat-message-content">
-                    <RenderRichText content={trimTrailingEmptyParagraphs(message.content)} />
+                    <RenderRichText content={content} />
                 </div>
                 {renderEditedLabel()}
             </>

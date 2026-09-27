@@ -33,10 +33,15 @@ export interface SanitizeUrlOptions {
 
 // Browsers drop leading and trailing control characters and spaces, and every
 // tab and newline anywhere in a URL, before they look for its scheme — so
-// `java\tscript:` is still a script. The scheme is judged on what the browser
-// will actually see.
+// `java\tscript:` is still a script. Unicode spaces and invisible format
+// characters (no-break space, the byte order mark, line separators) are
+// trimmed too, since plenty of code between here and the browser trims them
+// with String.prototype.trim. The scheme is judged on this cleaned form, and
+// the cleaned form is what is returned: the URL that was checked is exactly
+// the URL that is used.
+const EDGE_SPACE = "\\u0000-\\u0020\\u007F-\\u00A0\\u1680\\u180E\\u2000-\\u200F\\u2028-\\u202F\\u205F-\\u206F\\u3000\\uFEFF";
 const STRIPPED_ANYWHERE = /[\t\n\r]/g;
-const STRIPPED_AT_ENDS = /^[\u0000- ]+|[\u0000- ]+$/g;
+const STRIPPED_AT_ENDS = new RegExp("^[" + EDGE_SPACE + "]+|[" + EDGE_SPACE + "]+$", "g");
 const HAS_SCHEME = /^[a-z][a-z0-9+.\-]*:/i;
 const SAFE_DATA_IMAGE = /^data:image\/(png|gif|jpe?g|webp|avif|bmp|x-icon);base64,[a-z0-9+\/=\s]*$/i;
 
@@ -44,8 +49,9 @@ const normalise = (url: string): string => url.replace(STRIPPED_ANYWHERE, "").re
 
 /**
  * Returns the URL when its scheme is one of the allowed ones (or it is
- * relative), and undefined otherwise. The URL is handed back as it was given,
- * trimmed; it is never rewritten.
+ * relative), and undefined otherwise. What comes back is the URL with
+ * surrounding whitespace, and any tab or newline, removed — exactly the string
+ * that was checked.
  */
 export const sanitizeUrl = (url: unknown, options: SanitizeUrlOptions = {}): string | undefined => {
 	if (typeof url !== "string") {
@@ -60,10 +66,10 @@ export const sanitizeUrl = (url: unknown, options: SanitizeUrlOptions = {}): str
 	if (!HAS_SCHEME.test(normalised)) {
 		// No scheme of its own, so it resolves against the page. `//host` is
 		// still relative in form, and keeps the page's (safe) scheme.
-		return allowRelative ? url.trim() : undefined;
+		return allowRelative ? normalised : undefined;
 	}
 	if (options.allowDataImages && SAFE_DATA_IMAGE.test(normalised)) {
-		return url.trim();
+		return normalised;
 	}
 	let protocol: string;
 	try {
@@ -71,7 +77,7 @@ export const sanitizeUrl = (url: unknown, options: SanitizeUrlOptions = {}): str
 	} catch (e) {
 		return undefined;
 	}
-	return protocols.map(item => item.toLowerCase()).includes(protocol) ? url.trim() : undefined;
+	return protocols.map(item => item.toLowerCase()).includes(protocol) ? normalised : undefined;
 };
 
 /** True when sanitizeUrl would let the URL through. */

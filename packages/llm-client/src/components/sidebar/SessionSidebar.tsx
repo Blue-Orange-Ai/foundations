@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
     Button,
     ButtonType,
@@ -73,6 +73,10 @@ export const SessionSidebar: React.FC<Props> = ({
     isDark,
     onToggleTheme,
 }) => {
+    const safeBrandingLogo = useMemo(
+        () => (brandingLogo && brandingLogoIsSvg ? sanitizeHtml(brandingLogo) : ''),
+        [brandingLogo, brandingLogoIsSvg]
+    );
     // Renaming happens in a modal rather than in place: core's SideBarBodyGroup
     // only renders its own item types, so an inline edit row is dropped from the
     // tree — the conversation would vanish from the list mid-rename.
@@ -165,7 +169,7 @@ export const SessionSidebar: React.FC<Props> = ({
                                         <span
                                             className="blue-orange-llm-sidebar-brand-logo"
                                             // eslint-disable-next-line react/no-danger
-                                            dangerouslySetInnerHTML={{ __html: sanitizeHtml(brandingLogo) }}
+                                            dangerouslySetInnerHTML={{ __html: safeBrandingLogo }}
                                         />
                                     ) : (
                                         <img

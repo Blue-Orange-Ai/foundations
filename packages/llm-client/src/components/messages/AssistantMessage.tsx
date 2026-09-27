@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { SimpleTooltip, sanitizeHtml } from '@blue-orange-ai/foundations-core';
 
 import { ChatMessage, messageText } from '../../interfaces/ChatInterfaces';
@@ -34,6 +34,8 @@ export const AssistantMessage: React.FC<Props> = ({
     feedback,
 }) => {
     const [copied, setCopied] = useState(false);
+    // Sanitized once per logo, not on every render (messages re-render while streaming).
+    const safeLogo = useMemo(() => (logo && logoIsSvg ? sanitizeHtml(logo) : ''), [logo, logoIsSvg]);
     const streaming = message.status === 'streaming';
     const isEmpty = message.parts.length === 0;
 
@@ -57,7 +59,7 @@ export const AssistantMessage: React.FC<Props> = ({
                         <span
                             className="blue-orange-llm-avatar-logo"
                             // eslint-disable-next-line react/no-danger
-                            dangerouslySetInnerHTML={{ __html: sanitizeHtml(logo) }}
+                            dangerouslySetInnerHTML={{ __html: safeLogo }}
                         />
                     ) : (
                         <img src={logo} alt="assistant" className="blue-orange-llm-avatar-logo-img" />

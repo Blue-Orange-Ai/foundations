@@ -109,8 +109,7 @@ export const htmlToRichTextDocument = (html: string | null | undefined): RichTex
 		return emptyRichTextDocument();
 	}
 	if (typeof window === "undefined" || typeof window.DOMParser === "undefined") {
-		// No inert parser to read the markup with, so keep only its words.
-		return plainTextToRichTextDocument(html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim());
+		return htmlToPlainTextDocument(html);
 	}
 	try {
 		const parsed = ProseMirrorDOMParser.fromSchema(getRichTextSchema()).parse(elementFromString(html)).toJSON();
@@ -119,6 +118,14 @@ export const htmlToRichTextDocument = (html: string | null | undefined): RichTex
 		return emptyRichTextDocument();
 	}
 };
+
+/**
+ * Legacy HTML reduced to its words without parsing it — for when there is no
+ * inert parser to read it with (the server). The same input always gives the
+ * same document, wherever it runs.
+ */
+export const htmlToPlainTextDocument = (html: string | null | undefined): RichTextDocument =>
+	plainTextToRichTextDocument((html ?? "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim());
 
 /** A document holding the text as written, one paragraph per line. */
 export const plainTextToRichTextDocument = (text: string | null | undefined): RichTextDocument => {

@@ -76,6 +76,9 @@ interface Props {
 	validateOnChange?: boolean
 }
 
+const contentKey = (content: RichTextContent): string =>
+	typeof content === "string" ? content : JSON.stringify(content ?? "");
+
 const defaultUploadPermission: MediaPermission[] = [{
 	groupName: "everyone",
 	permission: GroupPermission.READ
@@ -179,8 +182,10 @@ export const RichText: React.FC<Props> = ({
 	const contentRef = useRef<RichTextDocument | string>(toEditorContent(content, {allowMentions, allowEmojis}));
 
 	// The last value the content prop pushed in, so a rebuild is not mistaken
-	// for the parent asking for different content.
-	const appliedContentRef = useRef(content);
+	// for the parent asking for different content. Kept by value: a parent that
+	// builds its document object afresh on each render is not asking for new
+	// content, and resetting the editor would throw away what is being typed.
+	const appliedContentRef = useRef(contentKey(content));
 
 	const filesKey = (media: Array<Media>) => media.map(item => item.uuid).join(",");
 
@@ -473,8 +478,9 @@ export const RichText: React.FC<Props> = ({
 	}, [focus, editor]);
 
 	useEffect(() => {
-		if (appliedContentRef.current === content) return;
-		appliedContentRef.current = content;
+		const key = contentKey(content);
+		if (appliedContentRef.current === key) return;
+		appliedContentRef.current = key;
 		const next = toEditorContent(content, {allowMentions, allowEmojis});
 		contentRef.current = next;
 		// Content the parent only echoes back from onChange is already in the

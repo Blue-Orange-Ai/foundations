@@ -88,13 +88,20 @@ describe("fetchRemoteTable request hardening", () => {
 
 	const source = (url: string): any => ({url, method: "GET", headers: {}, body: "", path: "", refreshSeconds: 0});
 
-	it("sends no cookies and no referrer", async () => {
+	it("reads with only same-origin cookies and no referrer", async () => {
 		const fetchMock = vi.fn().mockResolvedValue({ok: true, text: async () => "[]"});
 		globalThis.fetch = fetchMock as any;
 		await fetchRemoteTable(source("https://data.example/rows"));
 		const init = fetchMock.mock.calls[0][1];
-		expect(init.credentials).toBe("omit");
+		expect(init.credentials).toBe("same-origin");
 		expect(init.referrerPolicy).toBe("no-referrer");
+	});
+
+	it("sends no cookies with a request that could change something", async () => {
+		const fetchMock = vi.fn().mockResolvedValue({ok: true, text: async () => "[]"});
+		globalThis.fetch = fetchMock as any;
+		await fetchRemoteTable({...source("/api/admin/delete"), method: "POST", body: "{}"});
+		expect(fetchMock.mock.calls[0][1].credentials).toBe("omit");
 	});
 
 	it.each(["javascript:alert(1)", "file:///etc/passwd", "data:application/json,[]"])("refuses %s", async (url) => {

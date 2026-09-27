@@ -173,6 +173,9 @@ const buildConfig = (options: SanitizeHtmlOptions): Config => {
 		ADD_ATTR: ["target"],
 		FORBID_TAGS: forbiddenTags,
 		FORBID_ATTR: forbiddenAttributes,
+		// KaTeX puts the TeX source in an <annotation>, which is not kept; its
+		// text is dropped with it rather than left loose inside the formula.
+		ADD_FORBID_CONTENTS: ["annotation", "annotation-xml"],
 		ALLOW_UNKNOWN_PROTOCOLS: false,
 		ALLOW_DATA_ATTR: true,
 		RETURN_TRUSTED_TYPE: false,

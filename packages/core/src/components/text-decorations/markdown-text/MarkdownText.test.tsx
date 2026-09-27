@@ -47,4 +47,18 @@ describe('MarkdownText', () => {
 		render(<MarkdownText enableCodeHighlighting={false}>{'![x](https://example.com/a.png)'}</MarkdownText>);
 		await waitFor(() => expect(root().querySelector('img')).not.toBeNull());
 	});
+
+	it('shows task list items as checked and unchecked', async () => {
+		render(<MarkdownText enableCodeHighlighting={false}>{'- [x] done\n- [ ] todo'}</MarkdownText>);
+		await waitFor(() => expect(root().textContent).toContain('todo'));
+		const items = Array.from(root().querySelectorAll('li')).map(item => item.textContent!.trim());
+		expect(items).toEqual(['\u2611 done', '\u2610 todo']);
+		expect(root().querySelector('input')).toBeNull();
+	});
+
+	it('does not leave the TeX source loose inside rendered math', async () => {
+		render(<MarkdownText enableCodeHighlighting={false}>{'$$\\frac{a}{b}$$'}</MarkdownText>);
+		await waitFor(() => expect(root().querySelector('math')).not.toBeNull());
+		expect(root().querySelector('math')!.textContent).not.toContain('\\frac');
+	});
 });

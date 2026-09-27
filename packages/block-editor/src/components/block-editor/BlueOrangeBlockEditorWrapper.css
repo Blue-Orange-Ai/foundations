@@ -284,6 +284,19 @@
     color: inherit;
 }
 
+/* The snippet is sanitized, so its marker arrives as a data- attribute. */
+.blue-orange-block-editor-comment-target [data-blue-orange-comment-id] {
+    background-color: var(--blue-orange-light-comment-highlight-color, rgba(255, 212, 0, 0.35));
+    box-shadow: inset 0 -1px 0 0 var(--blue-orange-light-comment-highlight-border-color, rgba(180, 140, 0, 0.6));
+    border-radius: 2px;
+    color: inherit;
+}
+
+.dark .blue-orange-block-editor-comment-target [data-blue-orange-comment-id] {
+    background-color: var(--blue-orange-dark-comment-highlight-color, rgba(255, 212, 0, 0.22));
+    box-shadow: inset 0 -1px 0 0 var(--blue-orange-dark-comment-highlight-border-color, rgba(255, 212, 0, 0.55));
+}
+
 .blue-orange-block-editor-comment-target > div {
     max-width: 100%;
 }

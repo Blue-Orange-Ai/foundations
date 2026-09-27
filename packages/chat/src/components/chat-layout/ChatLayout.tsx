@@ -590,7 +590,11 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
                                 <span
                                     key={bm.id}
                                     className="blue-orange-chat-layout-bookmark-chip"
-                                    onClick={() => onBookmarkClick?.(bm.url ? { ...bm, url: sanitizeUrl(bm.url, { allowRelative: false }) ?? '' } : bm)}
+                                    onClick={() => {
+                                        // A bookmark anyone added must not hand the host a script URL to open.
+                                        if (bm.url && !sanitizeUrl(bm.url, { allowRelative: false })) return;
+                                        onBookmarkClick?.(bm);
+                                    }}
                                 >
                                     <i className={bm.media ? 'ri-file-line' : 'ri-bookmark-fill'} />
                                     {bm.label}

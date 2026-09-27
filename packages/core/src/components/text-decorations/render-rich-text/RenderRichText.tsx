@@ -2,12 +2,16 @@ import React, {Fragment, ReactNode, useMemo} from "react";
 
 import './RenderRichText.css'
 import {
+	htmlToPlainTextDocument,
+	isRichTextDocument,
+	parseRichTextDocument,
 	RichTextContent,
 	RichTextMark,
 	RichTextNode,
 	toRichTextDocument
 } from "../../inputs/richtext/document/RichTextDocument";
 import {sanitizeUrl} from "../../utils/SanitizeUrl";
+import {useIsClient} from "../../utils/UseIsClient";
 
 interface Props {
 	/**
@@ -170,7 +174,15 @@ const renderNode = (node: RichTextNode | undefined, key: string, depth: number):
 
 export const RenderRichText: React.FC<Props> = ({content, className, style}) => {
 
-	const document = useMemo(() => toRichTextDocument(content), [content]);
+	// Legacy HTML is parsed with the browser's inert parser. On the server, and
+	// while hydrating, only its words are shown, so both render the same; the
+	// client then re-renders with the formatting (see useIsClient).
+	const isClient = useIsClient();
+
+	const document = useMemo(() => {
+		const isLegacyHtml = typeof content === "string" && !isRichTextDocument(content) && parseRichTextDocument(content) === undefined;
+		return isLegacyHtml && !isClient ? htmlToPlainTextDocument(content as string) : toRichTextDocument(content);
+	}, [content, isClient]);
 
 	return (
 		<div

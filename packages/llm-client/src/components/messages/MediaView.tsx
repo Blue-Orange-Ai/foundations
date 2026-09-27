@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image, Pdf, sanitizeUrl } from '@blue-orange-ai/foundations-core';
+import { Image, Pdf, sanitizeMediaUrl, sanitizeUrl } from '@blue-orange-ai/foundations-core';
 
 import { useMediaClient } from '../providers/LlmAgentProvider';
 import './MediaView.css';
@@ -44,6 +44,8 @@ export const MediaView: React.FC<Props> = ({ media, height = 240, compact }) => 
     // The URL is part of the message (a model or another participant can put
     // anything there), so only a real download location is linked to or shown.
     const url = sanitizeUrl(resolvedUrl, { protocols: ['http:', 'https:', 'blob:'] });
+    // An inline image may also be a raster data: URL (never SVG).
+    const imageUrl = sanitizeMediaUrl(resolvedUrl);
     const [failed, setFailed] = useState(false);
 
     useEffect(() => {
@@ -69,12 +71,13 @@ export const MediaView: React.FC<Props> = ({ media, height = 240, compact }) => 
 
     const name = media.filename || 'attachment';
 
-    if (isImage(media) && url && !failed) {
-        return (
+    if (isImage(media) && imageUrl && !failed) {
+        const image = <Image src={imageUrl} alt={name} height={compact ? 64 : height} borderRadius="8px" fit="cover" />;
+        return url ? (
             <a href={url} target="_blank" rel="noopener noreferrer" className="blue-orange-llm-media-image-link">
-                <Image src={url} alt={name} height={compact ? 64 : height} borderRadius="8px" fit="cover" />
+                {image}
             </a>
-        );
+        ) : image;
     }
 
     if (isPdf(media) && url && !compact) {

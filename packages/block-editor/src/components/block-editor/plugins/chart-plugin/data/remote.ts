@@ -114,10 +114,11 @@ export const fetchRemoteTable = async (
 		throw new Error("No data server URL has been set.");
 	}
 	// The source is part of the document, so whoever wrote the chart chooses
-	// where every viewer's browser sends this request. It goes out without the
-	// viewer's cookies or the page address, so it cannot act as the viewer
-	// (a forged request against an API they are signed in to) or reveal where
-	// they are reading it.
+	// where every viewer's browser sends this request. A read (GET) keeps the
+	// browser's usual same-origin cookies, since what it returns is only shown
+	// to the viewer; anything that could change something goes out without
+	// them, so a chart cannot make a signed-in viewer's browser post to an API
+	// on their behalf. The page address is never sent.
 	if (!isRemoteUrl(source.url)) {
 		throw new Error("The data server URL must be an http or https address.");
 	}
@@ -125,7 +126,7 @@ export const fetchRemoteTable = async (
 		method: source.method || "GET",
 		headers: {Accept: "application/json", ...(source.headers || {})},
 		signal: signal,
-		credentials: "omit",
+		credentials: (source.method || "GET").toUpperCase() === "GET" ? "same-origin" : "omit",
 		referrerPolicy: "no-referrer",
 	};
 	if (init.method === "POST" && source.body != null && source.body !== "") {

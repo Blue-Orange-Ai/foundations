@@ -12,6 +12,10 @@ import './MarkdownText.css';
 import {sanitizeHtml, SanitizeHtmlOptions} from "../../utils/SanitizeHtml";
 import 'highlight.js/styles/atom-one-dark.css';
 
+// What remark-gfm renders for `- [x]` and `- [ ]`. Raw HTML written in the
+// markdown never reaches the output, so only task lists produce this.
+const TASK_CHECKBOX = /<input type="checkbox"( checked)? disabled>/g;
+
 interface Props {
 	children: string;
 	enableMath?: boolean;
@@ -60,8 +64,11 @@ export const MarkdownText: React.FC<Props> = ({
 			// Markdown drops raw HTML, but links and images keep whatever URL
 			// was written — `[x](javascript:...)` included — so the output is
 			// sanitized before it reaches the page.
+			// Task list checkboxes are the one form control markdown makes; the
+			// sanitizer drops form controls, so they are shown as glyphs.
+			const html = String(result).replace(TASK_CHECKBOX, (_match, checked) => checked ? "\u2611" : "\u2610");
 			const options: SanitizeHtmlOptions = {allowMedia: allowImages};
-			setRenderedContent(sanitizeHtml(String(result), options));
+			setRenderedContent(sanitizeHtml(html, options));
 		};
 
 		renderMarkdown();

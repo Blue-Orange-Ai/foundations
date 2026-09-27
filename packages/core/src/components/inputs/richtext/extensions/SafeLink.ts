@@ -1,6 +1,6 @@
 import {Link} from '@tiptap/extension-link'
 import {Plugin, PluginKey} from '@tiptap/pm/state'
-import {sanitizeUrl} from '../../../utils/SanitizeUrl'
+import {isSafeUrl, sanitizeUrl} from '../../../utils/SanitizeUrl'
 
 // The editors' link mark. TipTap's own link already refuses `javascript:` and
 // other unsafe schemes, but it copies `target`, `rel` and `class` from whatever
@@ -20,6 +20,9 @@ export const SafeLink = Link.extend({
             // Clicks are handled below instead, with noopener.
             openOnClick: false,
             protocols: ['ftp', 'mailto'],
+            // TipTap's own scheme check, and ours on top of it.
+            isAllowedUri: (url: string, ctx: {defaultValidate: (url: string) => boolean}) =>
+                ctx.defaultValidate(url) && isSafeUrl(url),
             HTMLAttributes: {
                 target: '_blank',
                 rel: SAFE_LINK_REL,

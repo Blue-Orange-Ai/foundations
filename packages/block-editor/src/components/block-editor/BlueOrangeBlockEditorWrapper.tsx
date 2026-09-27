@@ -330,6 +330,16 @@ export const BlueOrangeBlockEditorWrapper = forwardRef<BlueOrangeBlockEditorHand
 		}
 		const clonedElement = originalElement.cloneNode(true) as HTMLElement;
 		removeIds(clonedElement);
+		// The snippet is sanitized before it is shown, which keeps data-*
+		// attributes but not primitives' own marker, so the marker is carried
+		// across under a data- name for the highlight to hang off.
+		[clonedElement, ...Array.from(clonedElement.querySelectorAll('[blue-orange-comment-id]'))].forEach(element => {
+			const id = element.getAttribute('blue-orange-comment-id');
+			if (id !== null) {
+				element.setAttribute('data-blue-orange-comment-id', id);
+				element.removeAttribute('blue-orange-comment-id');
+			}
+		});
 		return clonedElement.outerHTML;
 	}
 

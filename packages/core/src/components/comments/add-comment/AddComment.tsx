@@ -78,7 +78,9 @@ export const AddComment: React.FC<Props> = ({
 
 	const createComment = () => {
 		const comment = editableComment.current;
-		if (comment == null || isRichTextDocumentEmpty(comment.text)) {
+		// A comment may be only an attachment, so it is empty only when it has
+		// neither words nor files.
+		if (comment == null || (isRichTextDocumentEmpty(comment.text) && (comment.files ?? []).length === 0)) {
 			return;
 		}
 		setEditableCommentLastSent(uuidv4())
