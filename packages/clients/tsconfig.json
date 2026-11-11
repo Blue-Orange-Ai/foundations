@@ -1,8 +1,12 @@
 {
   "compilerOptions": {
     "outDir": "./lib",
-    "target": "es5",
+    "rootDir": "./src",
+    "target": "es2020",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "declaration": true,
+    "emitDeclarationOnly": true,
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true

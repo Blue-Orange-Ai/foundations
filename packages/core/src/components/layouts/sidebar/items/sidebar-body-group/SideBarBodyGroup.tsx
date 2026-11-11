@@ -59,7 +59,7 @@ export const SideBarBodyGroup: React.FC<Props> = ({
 	bodyItems.forEach((item) => {
 		if (React.isValidElement<any>(item) && item.type === SideBarBodyGroup) {
 			pinned.push(item);
-		} else if (React.isValidElement<any>(item) && item.props?.sortable === false) {
+		} else if (React.isValidElement<any>(item) && (item.props as any)?.sortable === false) {
 			pinned.push(item);
 		} else {
 			sortableItems.push(item);
@@ -68,7 +68,7 @@ export const SideBarBodyGroup: React.FC<Props> = ({
 
 	sortableItems.sort((a, b) => {
 		if (React.isValidElement<any>(a) && React.isValidElement<any>(b)) {
-			return compareLabels(String(a.props?.label ?? ''), String(b.props?.label ?? ''));
+			return compareLabels(String((a.props as any)?.label ?? ''), String((b.props as any)?.label ?? ''));
 		}
 		return 0;
 	});

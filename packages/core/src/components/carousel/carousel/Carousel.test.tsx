@@ -39,36 +39,36 @@ describe('Carousel', () => {
 
 	it('starts on the first item', () => {
 		const {container} = renderCarousel();
-		expect(track(container).style.transform).toBe('translate3d(-0%, 0, 0)');
+		expect(track(container).style.transform).toBe('translate3d(0%, 0px, 0px)');
 	});
 
 	it('moves the track on when the next control is used', () => {
 		const {container} = renderCarousel();
 		// a step is the item width plus the gap that follows it, so the gap has to
 		// be part of the offset or the previous item stays partly in view
-		expect(track(container).style.transform).toBe('translate3d(-0%, 0, 0)');
+		expect(track(container).style.transform).toBe('translate3d(0%, 0px, 0px)');
 		fireEvent.click(next());
-		expect(track(container).style.transform).toBe('translate3d(calc(-100% - 16px), 0, 0)');
+		expect(track(container).style.transform).toBe('translate3d(calc(-100% - 16px), 0px, 0px)');
 	});
 
 	it('moves the track back when the previous control is used', () => {
 		const {container} = renderCarousel();
 		fireEvent.click(next());
 		fireEvent.click(previous());
-		expect(track(container).style.transform).toBe('translate3d(-0%, 0, 0)');
+		expect(track(container).style.transform).toBe('translate3d(0%, 0px, 0px)');
 	});
 
 	it('adds a gap to the offset for every step taken', () => {
 		const {container} = renderCarousel();
 		fireEvent.click(next());
 		fireEvent.click(next());
-		expect(track(container).style.transform).toBe('translate3d(calc(-200% - 32px), 0, 0)');
+		expect(track(container).style.transform).toBe('translate3d(calc(-200% - 32px), 0px, 0px)');
 	});
 
 	it('offsets by the percentage alone when there is no gap', () => {
 		const {container} = renderCarousel({gap: 0});
 		fireEvent.click(next());
-		expect(track(container).style.transform).toBe('translate3d(-100%, 0, 0)');
+		expect(track(container).style.transform).toBe('translate3d(-100%, 0px, 0px)');
 	});
 
 	it('disables the previous control on the first item', () => {
@@ -88,7 +88,7 @@ describe('Carousel', () => {
 		fireEvent.click(next());
 		fireEvent.click(next());
 		fireEvent.click(next());
-		expect(track(container).style.transform).toBe('translate3d(calc(-200% - 32px), 0, 0)');
+		expect(track(container).style.transform).toBe('translate3d(calc(-200% - 32px), 0px, 0px)');
 	});
 
 	it('wraps to the start when looping', () => {
@@ -96,20 +96,20 @@ describe('Carousel', () => {
 		fireEvent.click(next());
 		fireEvent.click(next());
 		fireEvent.click(next());
-		expect(track(container).style.transform).toBe('translate3d(-0%, 0, 0)');
+		expect(track(container).style.transform).toBe('translate3d(0%, 0px, 0px)');
 	});
 
 	it('wraps to the end when looping backwards', () => {
 		const {container} = renderCarousel({loop: true});
 		fireEvent.click(previous());
-		expect(track(container).style.transform).toBe('translate3d(calc(-200% - 32px), 0, 0)');
+		expect(track(container).style.transform).toBe('translate3d(calc(-200% - 32px), 0px, 0px)');
 	});
 
 	it('steps by one item however many are in view', () => {
 		const {container} = renderCarousel({itemsPerView: 2});
 		// the item is (100% - 16px) / 2 wide, so the step is 50% + 8px
 		fireEvent.click(next());
-		expect(track(container).style.transform).toBe('translate3d(calc(-50% - 8px), 0, 0)');
+		expect(track(container).style.transform).toBe('translate3d(calc(-50% - 8px), 0px, 0px)');
 	});
 
 	it('offsets down the track when vertical', () => {
@@ -123,7 +123,7 @@ describe('Carousel', () => {
 			</Carousel>
 		);
 		fireEvent.click(next());
-		expect(track(container).style.transform).toBe('translate3d(0, calc(-100% - 16px), 0)');
+		expect(track(container).style.transform).toBe('translate3d(0px, calc(-100% - 16px), 0px)');
 	});
 
 	it('stops once the last item is in view', () => {
@@ -135,7 +135,7 @@ describe('Carousel', () => {
 	it('moves with the arrow keys', () => {
 		const {container} = renderCarousel();
 		fireEvent.keyDown(container.querySelector('.blue-orange-carousel')!, {key: 'ArrowRight'});
-		expect(track(container).style.transform).toBe('translate3d(calc(-100% - 16px), 0, 0)');
+		expect(track(container).style.transform).toBe('translate3d(calc(-100% - 16px), 0px, 0px)');
 	});
 
 	it('reports the item it moved to', () => {

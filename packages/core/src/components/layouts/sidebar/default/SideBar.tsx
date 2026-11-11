@@ -60,13 +60,13 @@ export const SideBar: React.FC<Props> = ({
 	React.Children.forEach(children, child => {
 		if (React.isValidElement(child)) {
 			if (child.type === SideBarHeader) {
-				headerItems.push(child.props.children);
+				headerItems.push((child.props as any).children);
 			} else if (child.type === SideBarBody) {
-				React.Children.forEach(child.props.children, (bodyChild) => {
+				React.Children.forEach((child.props as any).children, (bodyChild) => {
 					bodyItems.push(bodyChild);
 				});
 			} else if (child.type === SideBarFooter) {
-				footerItems.push(child.props.children);
+				footerItems.push((child.props as any).children);
 			}
 		}
 	});
@@ -74,12 +74,12 @@ export const SideBar: React.FC<Props> = ({
 	const compareLabels = (a: string, b: string) => a.localeCompare(b, undefined, {sensitivity: 'base'});
 	const getElementLabel = (element: React.ReactElement): string => {
 		if (element.type === SideBarBodyItem || element.type === SideBarBodyItemLink || element.type === SideBarBodyLabel) {
-			return String(element.props?.label ?? '');
+			return String((element.props as any)?.label ?? '');
 		}
 
 		if (element.type === SideBarBodyGroup) {
-			const groupChildren = React.Children.toArray(element.props?.children);
-			const labelEl = groupChildren.find((c) => React.isValidElement(c) && c.type === SideBarBodyLabel) as React.ReactElement | undefined;
+			const groupChildren = React.Children.toArray((element.props as any)?.children);
+			const labelEl = groupChildren.find((c) => React.isValidElement(c) && c.type === SideBarBodyLabel) as React.ReactElement<any> | undefined;
 			return String(labelEl?.props?.label ?? '');
 		}
 
@@ -95,7 +95,7 @@ export const SideBar: React.FC<Props> = ({
 			return;
 		}
 
-		if (item.props?.sortable === false) {
+		if ((item.props as any)?.sortable === false) {
 			pinnedBodyItems.push(item);
 			return;
 		}
@@ -126,13 +126,13 @@ export const SideBar: React.FC<Props> = ({
 			if (child.type === SideBarBodyGroup) {
 				const groupLabel = getElementLabel(child);
 				const nextParts = groupLabel ? [...groupPathParts, groupLabel] : groupPathParts;
-				collectSearchEntries(child.props?.children, nextParts);
+				collectSearchEntries((child.props as any)?.children, nextParts);
 				return;
 			}
 
 			if (child.type === SideBarBodyItem || child.type === SideBarBodyItemLink) {
 				const groupPath = groupPathParts.join(" / ");
-				const label = String(child.props?.label ?? '');
+				const label = String((child.props as any)?.label ?? '');
 				searchEntries.push({
 					label,
 					groupPath,

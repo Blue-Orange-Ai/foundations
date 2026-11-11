@@ -61,14 +61,14 @@ export const ButtonTabs: React.FC<Props> = ({
 		if (React.isValidElement(child)) {
 			if (child.type === ButtonTab) {
 				tabs.push({
-					uuid: child.props.uuid as string,
-					children: child.props.children
+					uuid: (child.props as any).uuid as string,
+					children: (child.props as any).children
 				});
 				tabMetaData.push({
-					uuid: child.props.uuid as string,
-					name: child.props.name as string,
-					icon: child.props.icon as (string | undefined),
-					disabled: (child.props.disabled as boolean) ?? false
+					uuid: (child.props as any).uuid as string,
+					name: (child.props as any).name as string,
+					icon: (child.props as any).icon as (string | undefined),
+					disabled: ((child.props as any).disabled as boolean) ?? false
 				});
 			}
 		}

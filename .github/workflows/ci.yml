@@ -77,8 +77,7 @@ jobs:
       - name: Build all packages
         run: npx lerna run build
 
-      # `clients` has no test suite (its test script is the npm placeholder that
-      # exits 1), and a few UI packages have no spec files yet — vitest also
+      # A few packages (clients among them) have no spec files yet — vitest
       # exits 1 on an empty run, hence --passWithNoTests.
       #
       # --no-bail so one broken package does not cancel the rest: by default Nx
@@ -86,7 +85,7 @@ jobs:
       # which hides every other break until the first is fixed. The step still
       # exits non-zero when any package fails; it just reports them all at once.
       - name: Test all packages
-        run: npx lerna run test --ignore @blue-orange-ai/foundations-clients --no-bail -- --passWithNoTests
+        run: npx lerna run test --no-bail -- --passWithNoTests
 
       # The recovery steps below run under always() so a build or test failure
       # does not hide the repaired lockfile, and vice versa.

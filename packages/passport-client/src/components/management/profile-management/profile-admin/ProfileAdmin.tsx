@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 
 import "./ProfileAdmin.css"
-import "react-toggle/style.css"
 import {User, UserState} from "@blue-orange-ai/foundations-clients";
 import {usePassport} from "../../../providers/PassportProvider";
 import {Button, ButtonType, Dropdown, DropdownItemIcon, TextArea} from "@blue-orange-ai/foundations-core";

@@ -139,7 +139,9 @@ const fire = (el: HTMLElement, type: string, detail?: any) =>
 
 beforeEach(() => {
 	// resetMocks has already wiped implementations — reinstall them here.
-	MockBlockEditor.mockImplementation((element: any, doc: any, options: any) => {
+	// A `function`, not an arrow: the wrapper calls BlockEditor with `new`, which
+	// Vitest 4+ only allows for function or class implementations.
+	MockBlockEditor.mockImplementation(function (element: any, doc: any, options: any) {
 		const editor: any = buildEditorMock(element, doc, options);
 		editor.getDocumentMode.mockImplementation(() => editor.documentMode);
 		editor.setDocumentMode.mockImplementation((mode: string) => {

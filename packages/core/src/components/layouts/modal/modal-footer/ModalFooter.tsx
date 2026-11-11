@@ -17,9 +17,9 @@ export const ModalFooter: React.FC<Props> = ({children}) => {
 	React.Children.forEach(children, child => {
 		if (React.isValidElement(child)) {
 			if (child.type === ModalFooterLeft) {
-				leftItems.push(child.props.children);
+				leftItems.push((child.props as any).children);
 			} else if (child.type === ModalFooterRight) {
-				rightItems.push(child.props.children);
+				rightItems.push((child.props as any).children);
 			}
 		}
 	});

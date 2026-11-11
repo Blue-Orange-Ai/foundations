@@ -84,40 +84,40 @@ export const Dropdown: React.FC<Props> = ({
 					collectItems((child.props as {children?: React.ReactNode}).children)
 				} else if (child.type === DropdownItemHeading) {
 					items.push({
-						label: child.props.label,
-						reference: child.props.value,
-						selected: child.props.selected,
+						label: (child.props as any).label,
+						reference: (child.props as any).value,
+						selected: (child.props as any).selected,
 						type: DropdownItemType.HEADING,
-						disabled: child.props.disabled,
+						disabled: (child.props as any).disabled,
 						heading: true
 					})
 				} else if (child.type === DropdownItemIcon) {
 					items.push({
-						label: child.props.label,
-						reference: child.props.value,
-						selected: child.props.selected,
+						label: (child.props as any).label,
+						reference: (child.props as any).value,
+						selected: (child.props as any).selected,
 						type: DropdownItemType.ICON,
-						disabled: child.props.disabled,
+						disabled: (child.props as any).disabled,
 						icon: true,
-						src: child.props.src
+						src: (child.props as any).src
 					})
 				} else if (child.type === DropdownItemImage) {
 					items.push({
-						label: child.props.label,
-						reference: child.props.value,
-						selected: child.props.selected,
+						label: (child.props as any).label,
+						reference: (child.props as any).value,
+						selected: (child.props as any).selected,
 						type: DropdownItemType.IMAGE,
-						disabled: child.props.disabled,
+						disabled: (child.props as any).disabled,
 						image: true,
-						src: child.props.src
+						src: (child.props as any).src
 					})
 				} else if (child.type === DropdownItemText) {
 					items.push({
-						label: child.props.label,
-						reference: child.props.value,
-						selected: child.props.selected,
+						label: (child.props as any).label,
+						reference: (child.props as any).value,
+						selected: (child.props as any).selected,
 						type: DropdownItemType.TEXT,
-						disabled: child.props.disabled,
+						disabled: (child.props as any).disabled,
 					})
 				}
 			}

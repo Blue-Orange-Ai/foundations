@@ -110,14 +110,14 @@ export const OptionCards: React.FC<Props> = ({
 		if (React.isValidElement(child)) {
 			if (child.type === OptionCard) {
 				options.push({
-					uuid: child.props.uuid as string,
-					label: child.props.label as string,
-					hint: child.props.hint as (string | undefined),
-					icon: child.props.icon as (string | undefined),
-					iconElement: child.props.iconElement as (React.ReactNode | undefined),
-					tag: child.props.tag as (React.ReactNode | undefined),
-					disabled: (child.props.disabled as boolean) ?? false,
-					children: child.props.children as React.ReactNode
+					uuid: (child.props as any).uuid as string,
+					label: (child.props as any).label as string,
+					hint: (child.props as any).hint as (string | undefined),
+					icon: (child.props as any).icon as (string | undefined),
+					iconElement: (child.props as any).iconElement as (React.ReactNode | undefined),
+					tag: (child.props as any).tag as (React.ReactNode | undefined),
+					disabled: ((child.props as any).disabled as boolean) ?? false,
+					children: (child.props as any).children as React.ReactNode
 				});
 			}
 		}

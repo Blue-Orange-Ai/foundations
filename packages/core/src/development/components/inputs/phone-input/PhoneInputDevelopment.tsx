@@ -7,7 +7,7 @@ import {
 	HorizontalSplitPage
 } from "../../../../components/layouts/pages/split-pages/horizontal-split-page/HorizontalSplitPage";
 import {PhoneInput} from "../../../../components/inputs/phone/PhoneInput";
-import {Telephone} from "@blue-orange-ai/foundations-clients/lib/Passport";
+import {Telephone} from "@blue-orange-ai/foundations-clients";
 import {ComponentDoc} from "../../../framework/ComponentDoc";
 import {PropSpec} from "../../../framework/PropSpec";
 import {validationProps} from "../../../framework/InputProps";

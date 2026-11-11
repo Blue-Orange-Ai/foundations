@@ -77,7 +77,7 @@ describe("PinHead", () => {
 	it("places a badge that does fit", () => {
 		const {container} = render(
 			<PinHead size="medium" label="A" badgeEnhancerSize="small" badgeEnhancerContent={<span>2</span>} />);
-		expect((badge(container) as HTMLElement).style.transform).toBe("translate(calc(100% + -10px), -4px)");
+		expect((badge(container) as HTMLElement).style.transform).toBe("translate(calc(100% - 10px), -4px)");
 	});
 });
 

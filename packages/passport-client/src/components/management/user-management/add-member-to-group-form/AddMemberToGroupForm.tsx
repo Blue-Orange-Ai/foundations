@@ -14,7 +14,6 @@ import {
     ToasterType,
     ToastLocation
 } from "@blue-orange-ai/foundations-core";
-import {isDisabled} from "@testing-library/user-event/dist/utils";
 import passport from "@blue-orange-ai/foundations-core/dist/types/components/config/BlueOrangePassportConfig";
 
 interface Props {

@@ -182,7 +182,7 @@ export const FormGroup: React.FC<Props> = ({
 	React.Children.forEach(children, child => {
 		if (React.isValidElement(child)) {
 			if (child.type === FormActions) {
-				React.Children.forEach(child.props.children, actionChild => {
+				React.Children.forEach((child.props as any).children, actionChild => {
 					actionItems.push(actionChild);
 				});
 			} else {

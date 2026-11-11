@@ -54,12 +54,12 @@ export const NavigationMenu: React.FC<Props> = ({
 		if (React.isValidElement(child)) {
 			if (child.type === NavigationMenuItem) {
 				items.push({
-					label: child.props.label as string,
-					icon: child.props.icon as (string | undefined),
-					href: sanitizeUrl(child.props.href),
-					disabled: (child.props.disabled as boolean) ?? false,
-					onClick: child.props.onClick as ((() => void) | undefined),
-					content: child.props.children as React.ReactNode
+					label: (child.props as any).label as string,
+					icon: (child.props as any).icon as (string | undefined),
+					href: sanitizeUrl((child.props as any).href),
+					disabled: ((child.props as any).disabled as boolean) ?? false,
+					onClick: (child.props as any).onClick as ((() => void) | undefined),
+					content: (child.props as any).children as React.ReactNode
 				});
 			}
 		}

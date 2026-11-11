@@ -180,7 +180,8 @@ describe('MultiStageLoading', () => {
 			<MultiStageLoading stages={STAGES} activeStage={1} progress={true}></MultiStageLoading>
 		);
 		const bar = container.querySelector('.blue-orange-multi-stage-loading-progress-bar') as HTMLElement;
-		expect(bar.style.width).toBe(String((1 / 3) * 100) + '%');
+		// jsdom serialises the width to the precision a browser would, so compare numerically.
+		expect(parseFloat(bar.style.width)).toBeCloseTo((1 / 3) * 100, 3);
 	});
 
 	it('leaves the progress bar out by default', () => {

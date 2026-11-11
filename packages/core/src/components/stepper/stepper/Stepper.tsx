@@ -81,14 +81,14 @@ export const Stepper: React.FC<Props> = ({
 		if (React.isValidElement(child)) {
 			if (child.type === StepperStep) {
 				steps.push({
-					uuid: child.props.uuid as string,
-					title: child.props.title as string,
-					description: child.props.description as (string | undefined),
-					icon: child.props.icon as (string | undefined),
-					badge: child.props.badge as (string | undefined),
-					state: child.props.state as (StepperStepState | undefined),
-					disabled: (child.props.disabled as boolean) ?? false,
-					children: child.props.children as React.ReactNode
+					uuid: (child.props as any).uuid as string,
+					title: (child.props as any).title as string,
+					description: (child.props as any).description as (string | undefined),
+					icon: (child.props as any).icon as (string | undefined),
+					badge: (child.props as any).badge as (string | undefined),
+					state: (child.props as any).state as (StepperStepState | undefined),
+					disabled: ((child.props as any).disabled as boolean) ?? false,
+					children: (child.props as any).children as React.ReactNode
 				});
 			}
 		}
