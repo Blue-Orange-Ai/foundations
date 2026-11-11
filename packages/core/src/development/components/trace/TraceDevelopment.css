@@ -1,0 +1,60 @@
+.blue-orange-trace-development-block {
+    width: 100%;
+    max-width: 440px;
+    margin-bottom: 8px;
+}
+
+.blue-orange-trace-development-row {
+    margin-bottom: 12px;
+}
+
+.blue-orange-trace-development-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.blue-orange-trace-development-turn {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 440px;
+    margin-bottom: 8px;
+    font-size: 0.875rem;
+}
+
+.blue-orange-trace-development-bubble {
+    align-self: flex-end;
+    max-width: 80%;
+    padding: 8px 14px;
+    border-radius: 16px;
+    background-color: #f4f4f5;
+    color: var(--blue-orange-light-default-text-color);
+}
+
+.dark .blue-orange-trace-development-bubble {
+    background-color: #27272a;
+    color: var(--blue-orange-dark-default-text-color);
+}
+
+.blue-orange-trace-development-reply {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--blue-orange-light-default-text-color);
+}
+
+.dark .blue-orange-trace-development-reply {
+    color: var(--blue-orange-dark-default-text-color);
+}
+
+.blue-orange-trace-development-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

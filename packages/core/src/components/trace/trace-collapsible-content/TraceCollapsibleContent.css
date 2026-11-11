@@ -1,0 +1,45 @@
+/* The panel animates between 0fr and 1fr rows, which tweens to the content's
+   real height without measuring it. Visibility flips at the end of a close
+   (and at the start of an open), which takes the hidden detail out of the tab
+   order and the accessibility tree. */
+.blue-orange-trace-collapsible-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    min-width: 0;
+    visibility: hidden;
+    transition: grid-template-rows 200ms ease, visibility 200ms;
+}
+
+.blue-orange-trace-collapsible-content-open {
+    grid-template-rows: 1fr;
+    visibility: visible;
+}
+
+.blue-orange-trace-collapsible-content-clip {
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* The rail lines up under the centre of the line's 16px icon. */
+.blue-orange-trace-collapsible-content-inner {
+    min-width: 0;
+    margin: 8px 0 4px 7px;
+    padding: 0 4px 0 16px;
+    border-left: 1px solid var(--blue-orange-light-trace-rail-color);
+    font-size: 0.875rem;
+    line-height: 1.625;
+    overflow-wrap: break-word;
+    color: var(--blue-orange-light-trace-color);
+}
+
+.dark .blue-orange-trace-collapsible-content-inner {
+    border-left-color: var(--blue-orange-dark-trace-rail-color);
+    color: var(--blue-orange-dark-trace-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .blue-orange-trace-collapsible-content {
+        transition: none;
+    }
+}

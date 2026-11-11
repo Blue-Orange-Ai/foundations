@@ -135,6 +135,17 @@ export * from './components/timeline/timeline-title/TimelineTitle';
 export * from './components/timeline/timeline-description/TimelineDescription';
 export * from './components/timeline/timeline-content/TimelineContent';
 
+// Trace
+export * from './components/trace/trace/Trace';
+export * from './components/trace/trace/TraceContext';
+export * from './components/trace/trace-line/TraceLine';
+export * from './components/trace/trace-icon/TraceIcon';
+export * from './components/trace/trace-title/TraceTitle';
+export * from './components/trace/trace-description/TraceDescription';
+export * from './components/trace/trace-collapsible/TraceCollapsible';
+export * from './components/trace/trace-collapsible-trigger/TraceCollapsibleTrigger';
+export * from './components/trace/trace-collapsible-content/TraceCollapsibleContent';
+
 // Context Menu
 export * from './components/contextmenu/contextmenu/ContextMenu';
 export * from './components/contextmenu/context-menu-heading/ContextMenuHeading';

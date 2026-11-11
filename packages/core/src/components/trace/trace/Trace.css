@@ -1,0 +1,37 @@
+.blue-orange-trace {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+}
+
+/* A link or button wrapping a line becomes the row: it shrinks to the line,
+   drops the browser's own chrome, and carries the focus ring. */
+.blue-orange-trace > a:has(> .blue-orange-trace-line),
+.blue-orange-trace > button:has(> .blue-orange-trace-line) {
+    display: flex;
+    width: fit-content;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    text-decoration: none;
+    outline: none;
+}
+
+.blue-orange-trace > a:has(> .blue-orange-trace-line):focus-visible,
+.blue-orange-trace > button:has(> .blue-orange-trace-line):focus-visible {
+    box-shadow: 0 0 0 3px var(--blue-orange-light-trace-ring-color);
+}
+
+.dark .blue-orange-trace > a:has(> .blue-orange-trace-line):focus-visible,
+.dark .blue-orange-trace > button:has(> .blue-orange-trace-line):focus-visible {
+    box-shadow: 0 0 0 3px var(--blue-orange-dark-trace-ring-color);
+}
