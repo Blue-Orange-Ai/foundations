@@ -1,20 +1,10 @@
 import { resolve } from "path";
-import { defineConfig } from "vite";
+import { defineConfig, esmExternalRequirePlugin } from "vite";
 import dts from 'vite-plugin-dts';
 import react from "@vitejs/plugin-react";
 
 export default defineConfig({
     server: { port: 3000, open: false },
-    // foundations-clients is a symlinked workspace package that ships CommonJS,
-    // so Vite must pre-bundle it into ESM instead of serving it raw.
-    optimizeDeps: {
-        include: ["@blue-orange-ai/foundations-clients"],
-        // sockjs-client (via foundations-clients) references Node's `global`,
-        // which webpack used to shim and Vite does not.
-        esbuildOptions: {
-            define: { global: "globalThis" },
-        },
-    },
     test: {
         globals: true,
         environment: "jsdom",
@@ -27,16 +17,21 @@ export default defineConfig({
             // Vite 6 names the emitted CSS after the package (foundations-*.css)
             // by default; consumers import <pkg>/dist/style.css, so keep that name.
             cssFileName: "style",
-            entry: resolve(__dirname, "src/vite-entry.tsx"),
+            entry: resolve(import.meta.dirname, "src/vite-entry.tsx"),
             name: "core",
             formats: ["es", "umd"],
-            fileName: (format) => `index.${format}.js`,
+            fileName: (format) => (format === "es" ? "index.mjs" : "index.umd.js"),
         },
-        rollupOptions: {
-            external: ["react", "react-dom", "react/jsx-runtime", "react-dom/client", "@blue-orange-ai/foundations-clients"],
+        rolldownOptions: {
+            external: ["@blue-orange-ai/foundations-clients"],
         },
     },
     plugins: [
+        // Bundled CommonJS dependencies (e.g. use-sync-external-store via
+        // @tiptap/react) require() React. Rolldown cannot turn a require() of an
+        // external into an import on its own and would ship a require() shim
+        // that throws in the browser, so convert those calls to ESM imports.
+        esmExternalRequirePlugin({ external: ["react", "react-dom", "react/jsx-runtime", "react-dom/client"] }),
         react(),
         dts({
             insertTypesEntry: true,

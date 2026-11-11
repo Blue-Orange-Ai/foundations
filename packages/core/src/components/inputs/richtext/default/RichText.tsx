@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 
-import {StarterKit} from "@tiptap/starter-kit";
+import {RichTextStarterKit} from "../extensions/RichTextStarterKit";
 import {AnyExtension, EditorContent, Extensions, useEditor} from "@tiptap/react";
 import {Extension} from "@tiptap/core";
 import {ButtonIcon} from "../../../buttons/button-icon/ButtonIcon";
@@ -303,8 +303,8 @@ export const RichText: React.FC<Props> = ({
 		}
 	});
 
-	var extensions = [
-		StarterKit,
+	var extensions: AnyExtension[] = [
+		RichTextStarterKit,
 		Placeholder.configure({
 			placeholder: () => placeholderRef.current,
 		}),
@@ -315,7 +315,7 @@ export const RichText: React.FC<Props> = ({
 	]
 
 	const extensionsNoMentions = [
-		StarterKit,
+		RichTextStarterKit,
 		Placeholder.configure({
 			placeholder: () => placeholderRef.current,
 		}),
@@ -325,7 +325,7 @@ export const RichText: React.FC<Props> = ({
 	]
 
 	const extensionsNoEmojis = [
-		StarterKit,
+		RichTextStarterKit,
 		Placeholder.configure({
 			placeholder: () => placeholderRef.current,
 		}),
@@ -335,7 +335,7 @@ export const RichText: React.FC<Props> = ({
 	]
 
 	const extensionsNoMentionsNoEmojis: AnyExtension[] = [
-		StarterKit,
+		RichTextStarterKit,
 		Placeholder.configure({
 			placeholder: () => placeholderRef.current,
 		}),
@@ -358,6 +358,9 @@ export const RichText: React.FC<Props> = ({
 
 	const editor = useEditor({
 		extensions,
+		// TipTap 3 stopped re-rendering on every transaction by default; the
+		// toolbar and footer read editor state (isActive, isEmpty) during render.
+		shouldRerenderOnTransaction: true,
 		content: toEditorContent(contentRef.current, {allowMentions, allowEmojis}),
 		editable: !disabled,
 		onUpdate({ editor }) {
@@ -489,7 +492,7 @@ export const RichText: React.FC<Props> = ({
 			? editor.getHTML() === next
 			: JSON.stringify(editor.getJSON()) === JSON.stringify(next));
 		if (editor && !editor.isDestroyed && !holds) {
-			editor.commands.setContent(next, false);
+			editor.commands.setContent(next, {emitUpdate: false});
 		}
 	}, [content, editor]);
 

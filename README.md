@@ -58,7 +58,7 @@ The library covers a wide range of UI needs: core components (buttons, inputs, t
 
 ### Prerequisites
 
-- **Node.js** >= 18
+- **Node.js** >= 22.12 (required by Vite 8 and Vitest 5)
 - **npm** >= 9
 - **React** >= 18.2.0 (peer dependency for all UI packages)
 
@@ -179,7 +179,7 @@ packages/<name>/
 ├── dist/                   # Build output
 ├── package.json
 ├── tsconfig.json
-└── vite.config.js          # Vite build configuration
+└── vite.config.mjs         # Vite build configuration
 ```
 
 ### Dependency Graph
@@ -212,11 +212,12 @@ packages/<name>/
 
 ### Build System
 
-- **UI packages** use **Vite** end-to-end: dev server (`vite`), library build (`vite build`, producing ESM and UMD output), and tests (**Vitest**), plus `tsc` for type declarations
-- The **clients** package uses plain `tsc`, outputting CommonJS to `lib/`
+- Every package uses **Vite 8** (Rolldown): dev server (`vite`), library build (`vite build`), and tests (**Vitest**), plus `tsc` (TypeScript 7) for type declarations
+- **UI packages** produce ESM (`dist/index.mjs`) and UMD (`dist/index.umd.js`) output
+- The **clients** package produces ESM (`lib/index.mjs`) and CommonJS (`lib/index.js`) output
 - Entry point for Vite packages is `src/vite-entry.tsx` — a barrel file re-exporting all public components
 - Each package has a root `index.html` that loads `src/index.tsx` — this is the Vite dev-server entry. Monaco-based packages wire their editor workers via `src/monaco-environment.ts` (imported only by the dev entry, not the library build)
-- **TypeScript** target: ES5, module: ESNext, strict mode enabled
+- **TypeScript** target: ES2020, module: ESNext, `moduleResolution: bundler`, strict mode enabled
 
 ### Component Conventions
 

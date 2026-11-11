@@ -38,9 +38,9 @@ export const HorizontalSplitPage: React.FC<Props> = ({
 	React.Children.forEach(children, child => {
 		if (React.isValidElement(child)) {
 			if (child.type === SplitPageMajor) {
-				majorItems.push(child.props.children);
+				majorItems.push((child.props as any).children);
 			} else if (child.type === SplitPageMinor) {
-				minorItems.push(child.props.children);
+				minorItems.push((child.props as any).children);
 			}
 		}
 	});

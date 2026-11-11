@@ -5,30 +5,45 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "build": "vite build && tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "prepare": "npm run build"
   },
   "keywords": [],
   "author": "Blue Orange AI",
   "license": "ISC",
   "dependencies": {
-    "@stomp/stompjs": "^7.3.0",
-    "js-cookie": "^3.0.6",
-    "libphonenumber-js": "^1.13.11",
-    "lru-cache": "^10.4.3",
-    "remixicon": "^3.7.0",
+    "@stomp/stompjs": "^7.5.0",
+    "js-cookie": "^3.0.8",
+    "libphonenumber-js": "^1.13.16",
+    "lru-cache": "^11.5.3",
+    "remixicon": "^4.9.1",
     "sockjs": "^0.3.24",
     "sockjs-client": "^1.6.1",
     "tippy.js": "^6.3.7"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",
+    "@types/node": "^22.20.5",
     "@types/sockjs-client": "^1.5.4",
-    "typescript": "^4.9.5"
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
   },
   "publishConfig": {
     "@blue-orange-ai:registry": "https://npm.pkg.github.com"
   },
-  "gitHead": "ddf038c6457a63b9a00b61f9f0c21e1602c6daf2"
+  "gitHead": "ddf038c6457a63b9a00b61f9f0c21e1602c6daf2",
+  "module": "lib/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.mjs",
+      "require": "./lib/index.js"
+    }
+  },
+  "files": [
+    "lib"
+  ]
 }

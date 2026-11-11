@@ -46,11 +46,11 @@ export const Menubar: React.FC<Props> = ({
 		if (React.isValidElement(child)) {
 			if (child.type === MenubarMenu) {
 				menus.push({
-					label: child.props.label as string,
-					icon: child.props.icon as (string | undefined),
-					disabled: (child.props.disabled as boolean) ?? false,
-					items: (child.props.items as Array<IContextMenuItem>) ?? [],
-					onClick: child.props.onClick as (((item: IContextMenuItem) => void) | undefined)
+					label: (child.props as any).label as string,
+					icon: (child.props as any).icon as (string | undefined),
+					disabled: ((child.props as any).disabled as boolean) ?? false,
+					items: ((child.props as any).items as Array<IContextMenuItem>) ?? [],
+					onClick: (child.props as any).onClick as (((item: IContextMenuItem) => void) | undefined)
 				});
 			}
 		}

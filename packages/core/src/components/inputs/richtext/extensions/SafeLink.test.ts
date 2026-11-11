@@ -1,5 +1,5 @@
 import {Editor} from '@tiptap/core';
-import {StarterKit} from '@tiptap/starter-kit';
+import {RichTextStarterKit} from './RichTextStarterKit';
 import {SafeLink} from './SafeLink';
 
 const clickHandler = (editor: Editor) => {
@@ -23,7 +23,7 @@ describe('SafeLink', () => {
 	});
 
 	const create = (content: any) => {
-		editor = new Editor({element: document.createElement('div'), extensions: [StarterKit, SafeLink], content});
+		editor = new Editor({element: document.createElement('div'), extensions: [RichTextStarterKit, SafeLink], content});
 		return editor;
 	};
 

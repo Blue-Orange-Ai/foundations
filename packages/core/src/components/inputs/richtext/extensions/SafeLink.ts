@@ -1,4 +1,4 @@
-import {Link} from '@tiptap/extension-link'
+import {Link, LinkOptions} from '@tiptap/extension-link'
 import {Plugin, PluginKey} from '@tiptap/pm/state'
 import {isSafeUrl, sanitizeUrl} from '../../../utils/SanitizeUrl'
 
@@ -14,9 +14,9 @@ export const SAFE_LINK_REL = 'noopener noreferrer nofollow'
 const SafeLinkClickKey = new PluginKey('safeLinkClick')
 
 export const SafeLink = Link.extend({
-    addOptions() {
+    addOptions(): LinkOptions {
         return {
-            ...this.parent?.(),
+            ...(this.parent?.() as LinkOptions),
             // Clicks are handled below instead, with noopener.
             openOnClick: false,
             protocols: ['ftp', 'mailto'],

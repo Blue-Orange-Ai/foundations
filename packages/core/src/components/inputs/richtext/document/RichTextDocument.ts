@@ -1,6 +1,6 @@
 import {AnyExtension, elementFromString, getSchema} from "@tiptap/core";
 import {DOMParser as ProseMirrorDOMParser, Schema} from "@tiptap/pm/model";
-import {StarterKit} from "@tiptap/starter-kit";
+import {RichTextStarterKit} from "../extensions/RichTextStarterKit";
 import {SafeLink} from "../extensions/SafeLink";
 import CustomMention from "../mention-extension/MentionExtension";
 import {EmojiMention} from "../extensions/EmojiMention";
@@ -45,7 +45,7 @@ export type RichTextContent = RichTextDocument | string | null | undefined;
 
 /** The extensions the editors are built from, without their interactive parts. */
 export const richTextSchemaExtensions = (): AnyExtension[] => [
-	StarterKit,
+	RichTextStarterKit,
 	SafeLink,
 	CustomMention,
 	EmojiMention,

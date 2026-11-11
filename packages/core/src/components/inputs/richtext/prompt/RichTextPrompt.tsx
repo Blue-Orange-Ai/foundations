@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 
-import {StarterKit} from "@tiptap/starter-kit";
+import {RichTextStarterKit} from "../extensions/RichTextStarterKit";
 import {AnyExtension, EditorContent, useEditor} from "@tiptap/react";
 import {ButtonIcon} from "../../../buttons/button-icon/ButtonIcon";
 import { v4 as uuidv4 } from 'uuid';
@@ -185,8 +185,8 @@ export const RichTextPrompt: React.FC<Props> = ({
 		},
 	})
 
-	var extensions = [
-		StarterKit,
+	var extensions: AnyExtension[] = [
+		RichTextStarterKit,
 		Placeholder.configure({
 			placeholder: placeholder ?? "",
 		}),
@@ -196,7 +196,7 @@ export const RichTextPrompt: React.FC<Props> = ({
 	]
 
 	const extensionsNoMentions = [
-		StarterKit,
+		RichTextStarterKit,
 		Placeholder.configure({
 			placeholder: placeholder ?? "",
 		}),
@@ -205,7 +205,7 @@ export const RichTextPrompt: React.FC<Props> = ({
 	]
 
 	const extensionsNoEmojis = [
-		StarterKit,
+		RichTextStarterKit,
 		Placeholder.configure({
 			placeholder: placeholder ?? "",
 		}),
@@ -214,7 +214,7 @@ export const RichTextPrompt: React.FC<Props> = ({
 	]
 
 	const extensionsNoMentionsNoEmojis: AnyExtension[] = [
-		StarterKit,
+		RichTextStarterKit,
 		Placeholder.configure({
 			placeholder: placeholder ?? "",
 		}),
@@ -236,6 +236,9 @@ export const RichTextPrompt: React.FC<Props> = ({
 
 	const editor = useEditor({
 		extensions,
+		// TipTap 3 stopped re-rendering on every transaction by default; the
+		// toolbar and footer read editor state (isActive, isEmpty) during render.
+		shouldRerenderOnTransaction: true,
 		content: toEditorContent(content, {allowMentions, allowEmojis}),
 		onUpdate({ editor }) {
 			editorChanged();

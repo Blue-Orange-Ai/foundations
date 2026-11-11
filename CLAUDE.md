@@ -53,7 +53,7 @@ All packages live under `packages/`. There is no root-level source code.
 - **passport-client** — Auth/user management UI (depends on core + clients)
 - **deployment-manager** — Deployment management UI (depends on core, uses Monaco)
 
-**Non-UI package** (built with plain tsc, output CommonJS):
+**Non-UI package** (built with Vite, output ESM + CommonJS):
 - **clients** — Shared API client utilities (STOMP/WebSocket, cookies, phone parsing, LRU cache)
 
 ### Dependency graph (internal)
@@ -70,8 +70,9 @@ All packages live under `packages/`. There is no root-level source code.
 
 ### Build system
 
-- Most packages use **Vite** for library builds (`vite.config.js`), producing `dist/index.mjs` (ESM) and `dist/index.umd.js` (UMD), plus `tsc` for type declarations into `dist/types/`
-- The `clients` package uses plain `tsc` outputting to `lib/`
+- All packages use **Vite 8** (Rolldown) for library builds (`vite.config.mjs`). UI packages produce `dist/index.mjs` (ESM) and `dist/index.umd.js` (UMD), plus `tsc` for type declarations into `dist/types/`
+- The `clients` package builds `lib/index.mjs` (ESM) and `lib/index.js` (CommonJS), with `tsc` emitting declarations into `lib/`
+- React is externalised through `esmExternalRequirePlugin` in each UI package's `plugins` (not `rolldownOptions.external`), so bundled CommonJS dependencies that `require()` React become ESM imports instead of a browser-breaking `require` shim
 - Entry point for Vite packages: `src/vite-entry.tsx` — a barrel file re-exporting all public components
 - Dev server, library build, and tests all run on **Vite**: `npm start`/`npm run dev` (Vite dev server, serves each package's root `index.html`), `npm run build` (`vite build && tsc`), `npm test` (Vitest). Monaco packages wire their editor workers via `src/monaco-environment.ts` (imported only by the dev entry, not the library build)
 - React 18 **and** 19 are supported — `react`/`react-dom` peer dependencies are `^18.2.0 || ^19.0.0` across all UI packages
