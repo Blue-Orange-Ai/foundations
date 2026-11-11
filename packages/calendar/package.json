@@ -1,13 +1,13 @@
 {
   "name": "@blue-orange-ai/foundations-calendar",
-  "version": "0.4.29",
+  "version": "0.4.30",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
   "author": "Blue Orange AI",
   "private": false,
   "dependencies": {
-    "@blue-orange-ai/foundations-core": "^0.4.29",
+    "@blue-orange-ai/foundations-core": "^0.4.30",
     "animate.css": "^4.1.1",
     "moment": "^2.31.0",
     "moment-timezone": "^0.6.6",

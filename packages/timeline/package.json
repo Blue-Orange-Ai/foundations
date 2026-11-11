@@ -1,13 +1,13 @@
 {
   "name": "@blue-orange-ai/foundations-timeline",
-  "version": "0.4.29",
+  "version": "0.4.30",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
   "author": "Blue Orange AI",
   "private": false,
   "dependencies": {
-    "@blue-orange-ai/foundations-core": "^0.4.29",
+    "@blue-orange-ai/foundations-core": "^0.4.30",
     "remixicon": "^4.9.1",
     "tippy.js": "^6.3.7",
     "uuid": "^14.0.3"

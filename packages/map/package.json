@@ -1,6 +1,6 @@
 {
   "name": "@blue-orange-ai/foundations-map",
-  "version": "0.4.29",
+  "version": "0.4.30",
   "main": "dist/index.umd.js",
   "module": "dist/index.mjs",
   "types": "dist/types/vite-entry.d.ts",
@@ -17,7 +17,7 @@
     "react-dom": "^18.2.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@blue-orange-ai/foundations-core": "^0.4.29",
+    "@blue-orange-ai/foundations-core": "^0.4.30",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
