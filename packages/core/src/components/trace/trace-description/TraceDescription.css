@@ -1,0 +1,26 @@
+.blue-orange-trace-description {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    color: var(--blue-orange-light-trace-description-color);
+}
+
+.dark .blue-orange-trace-description {
+    color: var(--blue-orange-dark-trace-description-color);
+}
+
+.blue-orange-trace-description-added {
+    color: var(--blue-orange-light-trace-added-color);
+}
+
+.dark .blue-orange-trace-description-added {
+    color: var(--blue-orange-dark-trace-added-color);
+}
+
+.blue-orange-trace-description-removed {
+    color: var(--blue-orange-light-trace-error-color);
+}
+
+.dark .blue-orange-trace-description-removed {
+    color: var(--blue-orange-dark-trace-error-color);
+}

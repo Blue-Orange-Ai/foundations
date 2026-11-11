@@ -1,0 +1,68 @@
+.blue-orange-trace-collapsible-trigger {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: fit-content;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: none;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+    color: var(--blue-orange-light-trace-color);
+    transition: color 150ms ease;
+}
+
+.dark .blue-orange-trace-collapsible-trigger {
+    color: var(--blue-orange-dark-trace-color);
+}
+
+.blue-orange-trace-collapsible-trigger:hover {
+    color: var(--blue-orange-light-trace-hover-color);
+}
+
+.dark .blue-orange-trace-collapsible-trigger:hover {
+    color: var(--blue-orange-dark-trace-hover-color);
+}
+
+.blue-orange-trace-collapsible-trigger:focus-visible {
+    box-shadow: 0 0 0 3px var(--blue-orange-light-trace-ring-color);
+}
+
+.dark .blue-orange-trace-collapsible-trigger:focus-visible {
+    box-shadow: 0 0 0 3px var(--blue-orange-dark-trace-ring-color);
+}
+
+.blue-orange-trace-collapsible-trigger:disabled {
+    cursor: default;
+    opacity: 0.6;
+}
+
+/* A failed step colours its chevron along with the line. */
+.blue-orange-trace-collapsible-trigger:has(> .blue-orange-trace-line-error) {
+    color: var(--blue-orange-light-trace-error-color);
+}
+
+.dark .blue-orange-trace-collapsible-trigger:has(> .blue-orange-trace-line-error) {
+    color: var(--blue-orange-dark-trace-error-color);
+}
+
+.blue-orange-trace-collapsible-chevron {
+    transition: transform 200ms ease;
+}
+
+.blue-orange-trace-collapsible-trigger[aria-expanded="true"] > .blue-orange-trace-collapsible-chevron {
+    transform: rotate(90deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .blue-orange-trace-collapsible-trigger,
+    .blue-orange-trace-collapsible-chevron {
+        transition: none;
+    }
+}

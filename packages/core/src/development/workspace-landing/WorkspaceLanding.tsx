@@ -128,6 +128,7 @@ import {HoverCardDevelopment} from "../components/tooltips/hover-card/HoverCardD
 import {StepperDevelopment} from "../components/stepper/StepperDevelopment";
 import {QuestionnaireDevelopment} from "../components/questionnaire/QuestionnaireDevelopment";
 import {TimelineDevelopment} from "../components/timeline/TimelineDevelopment";
+import {TraceDevelopment} from "../components/trace/TraceDevelopment";
 import {WizardDevelopment} from "../components/wizard/WizardDevelopment";
 
 interface Props {
@@ -881,6 +882,15 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 						onClick={() => navigate("/timeline")}
 					></SideBarBodyItem>
 					<SideBarBodyItem
+						label={"Trace"}
+						active={component == "trace"}
+						focused={false}
+						defaultStyle={inactiveStyle}
+						activeStyle={activeStyle}
+						icon={<i className="ri-route-line"></i>}
+						onClick={() => navigate("/trace")}
+					></SideBarBodyItem>
+					<SideBarBodyItem
 						label={"Wizard"}
 						active={component == "wizard"}
 						focused={false}
@@ -1405,6 +1415,7 @@ export const WorkspaceLanding: React.FC<Props> = ({}) => {
 			{component == "stepper" && <StepperDevelopment></StepperDevelopment>}
 			{component == "questionnaire" && <QuestionnaireDevelopment></QuestionnaireDevelopment>}
 			{component == "timeline" && <TimelineDevelopment></TimelineDevelopment>}
+			{component == "trace" && <TraceDevelopment></TraceDevelopment>}
 			{component == "wizard" && <WizardDevelopment></WizardDevelopment>}
 		</SidebarPage>
 	)

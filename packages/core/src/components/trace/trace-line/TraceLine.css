@@ -1,0 +1,87 @@
+.blue-orange-trace-line {
+    /* The two tones a line moves between. Set here so the title's shimmer can
+       paint with them once its own colour is made transparent. */
+    --blue-orange-trace-line-base-color: var(--blue-orange-light-trace-color);
+    --blue-orange-trace-line-strong-color: var(--blue-orange-light-trace-hover-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    max-width: 100%;
+    min-width: 0;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--blue-orange-trace-line-base-color);
+    transition: color 150ms ease;
+}
+
+.dark .blue-orange-trace-line {
+    --blue-orange-trace-line-base-color: var(--blue-orange-dark-trace-color);
+    --blue-orange-trace-line-strong-color: var(--blue-orange-dark-trace-hover-color);
+}
+
+/* Wrapped in a link or a button, the line is the thing being clicked. */
+a > .blue-orange-trace-line,
+button > .blue-orange-trace-line {
+    cursor: pointer;
+}
+
+a:hover > .blue-orange-trace-line,
+button:hover > .blue-orange-trace-line {
+    color: var(--blue-orange-trace-line-strong-color);
+}
+
+.blue-orange-trace-line-error,
+a:hover > .blue-orange-trace-line-error,
+button:hover > .blue-orange-trace-line-error {
+    color: var(--blue-orange-light-trace-error-color);
+}
+
+.dark .blue-orange-trace-line-error,
+.dark a:hover > .blue-orange-trace-line-error,
+.dark button:hover > .blue-orange-trace-line-error {
+    color: var(--blue-orange-dark-trace-error-color);
+}
+
+.blue-orange-trace-line-pending {
+    opacity: 0.6;
+}
+
+/* A band of the stronger tone sweeps across the title while the step runs. */
+@keyframes blue-orange-trace-shimmer {
+    from {
+        background-position: 100% 0;
+    }
+    to {
+        background-position: -100% 0;
+    }
+}
+
+.blue-orange-trace-line-running > .blue-orange-trace-title {
+    background-image: linear-gradient(
+        90deg,
+        var(--blue-orange-trace-line-base-color) 0%,
+        var(--blue-orange-trace-line-base-color) 35%,
+        var(--blue-orange-trace-line-strong-color) 50%,
+        var(--blue-orange-trace-line-base-color) 65%,
+        var(--blue-orange-trace-line-base-color) 100%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: blue-orange-trace-shimmer 2s linear infinite;
+}
+
+/* The title already says the step is running, so the sweep is only decoration. */
+@media (prefers-reduced-motion: reduce) {
+    .blue-orange-trace-line-running > .blue-orange-trace-title {
+        animation: none;
+        background-image: none;
+        color: inherit;
+    }
+
+    .blue-orange-trace-line {
+        transition: none;
+    }
+}

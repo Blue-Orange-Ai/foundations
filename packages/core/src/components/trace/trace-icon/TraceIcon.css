@@ -1,0 +1,27 @@
+.blue-orange-trace-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    font-size: 1rem;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.blue-orange-trace-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* A trailing icon — a chevron, an arrow out — sits closer to the title. */
+.blue-orange-trace-title ~ .blue-orange-trace-icon {
+    margin-left: -4px;
+}
+
+/* The spinner follows the line rather than its own themed colour. */
+.blue-orange-trace-icon .blue-orange-spinner,
+.dark .blue-orange-trace-icon .blue-orange-spinner {
+    color: inherit;
+}
